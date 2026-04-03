@@ -28,7 +28,7 @@ namespace SVM
 
             app.MapControllerRoute(
                 name: "default",
-                pattern: "{controller=Admin}/{action=AdminPanel}/{id?}");
+                pattern: "{controller=Home}/{action=Index}/{id?}");
 
             app.Run();
         }
