@@ -1,3 +1,6 @@
+using Microsoft.EntityFrameworkCore;
+using SVM.Models;
+
 namespace SVM
 {
     public class Program
@@ -8,7 +11,7 @@ namespace SVM
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
-
+            builder.Services.AddDbContext<SvmContext>(option=>option.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStrings")));
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
