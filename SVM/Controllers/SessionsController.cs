@@ -1,43 +1,65 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
+using System.Net.Http;
+using System.Net.Http.Json;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
 using SVM.Models;
 
 namespace SVM.Controllers
 {
     public class SessionsController : Controller
     {
-        private readonly SvmContext _context;
+        private readonly HttpClient _client;
 
-        public SessionsController(SvmContext context)
+        public SessionsController(IHttpClientFactory client)
         {
-            _context = context;
+            _client = client.CreateClient();
+            _client.BaseAddress = new Uri("https://localhost:7191/api/");
         }
 
         // GET: Sessions
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Sessions.ToListAsync());
+            List<Session> sessions = new List<Session>();
+
+            var response = await _client.GetAsync("Sessions");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsStringAsync();
+                var option = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+                sessions = JsonSerializer.Deserialize<List<Session>>(data, option);
+            }
+            else
+            {
+                ModelState.AddModelError("", "Failed to load sessions");
+            }
+
+            return View(sessions);
         }
 
         // GET: Sessions/Details/5
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var session = await _context.Sessions
-                .FirstOrDefaultAsync(m => m.SessionId == id);
-            if (session == null)
-            {
+            var response = await _client.GetAsync($"Sessions/{id}");
+
+            if (!response.IsSuccessStatusCode)
                 return NotFound();
-            }
+
+            var data = await response.Content.ReadAsStringAsync();
+
+            var session = JsonSerializer.Deserialize<Session>(data, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
 
             return View(session);
         }
@@ -49,18 +71,22 @@ namespace SVM.Controllers
         }
 
         // POST: Sessions/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("SessionId,SessionName,StartDate,EndDate,IsActive")] Session session)
+        public async Task<IActionResult> Create(Session session)
         {
             if (ModelState.IsValid)
             {
-                _context.Add(session);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                var response = await _client.PostAsJsonAsync("Sessions", session);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+
+                ModelState.AddModelError("", "Create failed!");
             }
+
             return View(session);
         }
 
@@ -68,50 +94,46 @@ namespace SVM.Controllers
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var session = await _context.Sessions.FindAsync(id);
-            if (session == null)
-            {
+            var response = await _client.GetAsync($"Sessions/{id}");
+
+            if (!response.IsSuccessStatusCode)
                 return NotFound();
-            }
+
+            var data = await response.Content.ReadAsStringAsync();
+
+            var session = JsonSerializer.Deserialize<Session>(data, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            if (session == null)
+                return NotFound();
+
             return View(session);
         }
 
         // POST: Sessions/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("SessionId,SessionName,StartDate,EndDate,IsActive")] Session session)
+        public async Task<IActionResult> Edit(int id, Session session)
         {
             if (id != session.SessionId)
-            {
                 return NotFound();
-            }
 
             if (ModelState.IsValid)
             {
-                try
+                var response = await _client.PutAsJsonAsync($"Sessions/{id}", session);
+
+                if (response.IsSuccessStatusCode)
                 {
-                    _context.Update(session);
-                    await _context.SaveChangesAsync();
+                    return RedirectToAction(nameof(Index));
                 }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!SessionExists(session.SessionId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
-                }
-                return RedirectToAction(nameof(Index));
+
+                ModelState.AddModelError("", "Update failed!");
             }
+
             return View(session);
         }
 
@@ -119,16 +141,22 @@ namespace SVM.Controllers
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
-            var session = await _context.Sessions
-                .FirstOrDefaultAsync(m => m.SessionId == id);
-            if (session == null)
-            {
+            var response = await _client.GetAsync($"Sessions/{id}");
+
+            if (!response.IsSuccessStatusCode)
                 return NotFound();
-            }
+
+            var data = await response.Content.ReadAsStringAsync();
+
+            var session = JsonSerializer.Deserialize<Session>(data, new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            });
+
+            if (session == null)
+                return NotFound();
 
             return View(session);
         }
@@ -138,19 +166,15 @@ namespace SVM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var session = await _context.Sessions.FindAsync(id);
-            if (session != null)
+            var response = await _client.DeleteAsync($"Sessions/{id}");
+
+            if (response.IsSuccessStatusCode)
             {
-                _context.Sessions.Remove(session);
+                return RedirectToAction(nameof(Index));
             }
 
-            await _context.SaveChangesAsync();
+            ModelState.AddModelError("", "Delete failed!");
             return RedirectToAction(nameof(Index));
-        }
-
-        private bool SessionExists(int id)
-        {
-            return _context.Sessions.Any(e => e.SessionId == id);
         }
     }
 }
