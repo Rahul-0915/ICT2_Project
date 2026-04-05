@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace SVM_API.Models;
 
@@ -14,7 +15,7 @@ public partial class Session
     public DateOnly? EndDate { get; set; }
 
     public int? IsActive { get; set; }
-
+    [JsonIgnore]
     public virtual ICollection<Class> Classes { get; set; } = new List<Class>();
 
     public virtual ICollection<Student> Students { get; set; } = new List<Student>();

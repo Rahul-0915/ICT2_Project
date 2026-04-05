@@ -51,6 +51,8 @@ public partial class Student
 
     public string? PreviousSchool { get; set; }
 
+    public string? StudentPhoto { get; set; }
+
     public virtual Class? Class { get; set; }
 
     public virtual ICollection<FeePayment> FeePayments { get; set; } = new List<FeePayment>();

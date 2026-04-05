@@ -31,6 +31,8 @@ public partial class Staff
 
     public string? Address { get; set; }
 
+    public string? StafPhoto { get; set; }
+
     public virtual ICollection<StaffAttendance> StaffAttendances { get; set; } = new List<StaffAttendance>();
 
     public virtual ICollection<TeacherSubject> TeacherSubjects { get; set; } = new List<TeacherSubject>();

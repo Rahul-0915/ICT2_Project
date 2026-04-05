@@ -249,6 +249,10 @@ public partial class SvmContext : DbContext
             entity.Property(e => e.Salary)
                 .HasColumnType("decimal(10, 2)")
                 .HasColumnName("salary");
+            entity.Property(e => e.StafPhoto)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("staf_photo");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.User).WithMany(p => p.Staff)
@@ -347,6 +351,10 @@ public partial class SvmContext : DbContext
                 .HasMaxLength(50)
                 .IsUnicode(false)
                 .HasColumnName("state");
+            entity.Property(e => e.StudentPhoto)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("student_photo");
             entity.Property(e => e.UserId).HasColumnName("user_id");
 
             entity.HasOne(d => d.Class).WithMany(p => p.Students)

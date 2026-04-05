@@ -1,24 +1,21 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace SVM.Models;
 
 public partial class Session
 {
     public int SessionId { get; set; }
-    [Required(ErrorMessage = "Session Name is required")]
-    [StringLength(20, ErrorMessage = "Max 20 characters allowed")]
-    public string? SessionName { get; set; }
-    [Required(ErrorMessage = "Start Date is required")]
-    [DataType(DataType.Date)]
-    public DateOnly? StartDate { get; set; }
-    [Required(ErrorMessage = "End Date is required")]
-    [DataType(DataType.Date)]
-    public DateOnly? EndDate { get; set; }
-    [Required(ErrorMessage = "Please select active status")]
-    public int? IsActive { get; set; }
 
+    public string? SessionName { get; set; }
+
+    public DateOnly? StartDate { get; set; }
+
+    public DateOnly? EndDate { get; set; }
+
+    public int? IsActive { get; set; }
+    [JsonIgnore]
     public virtual ICollection<Class> Classes { get; set; } = new List<Class>();
 
     public virtual ICollection<Student> Students { get; set; } = new List<Student>();
