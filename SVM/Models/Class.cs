@@ -1,20 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 
 namespace SVM.Models;
 
 public partial class Class
 {
     public int ClassId { get; set; }
-
+    [Required(ErrorMessage = "Class Name is required")]
     public string? ClassName { get; set; }
+    [Required(ErrorMessage = "Medium is required")]
 
     public string? Medium { get; set; }
+    [Required(ErrorMessage = "Session is required")]
 
     public int? SessionId { get; set; }
 
     public virtual ICollection<FeeStructure> FeeStructures { get; set; } = new List<FeeStructure>();
-
+    [JsonIgnore]
     public virtual ICollection<Section> Sections { get; set; } = new List<Section>();
 
     public virtual Session? Session { get; set; }

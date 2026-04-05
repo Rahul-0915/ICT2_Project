@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 
 namespace SVM.Models;
@@ -7,12 +8,15 @@ namespace SVM.Models;
 public partial class Session
 {
     public int SessionId { get; set; }
-
+    [Required(ErrorMessage = "Session Name is required")]
     public string? SessionName { get; set; }
 
-    public DateOnly? StartDate { get; set; }
+    [Required(ErrorMessage = "Start Date is required")]
 
+    public DateOnly? StartDate { get; set; }
+    [Required(ErrorMessage = "End Date is required")]
     public DateOnly? EndDate { get; set; }
+    [Required(ErrorMessage = "Status is required")]
 
     public int? IsActive { get; set; }
     [JsonIgnore]

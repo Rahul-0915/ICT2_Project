@@ -119,15 +119,20 @@ namespace SVM.Controllers
             {
                 return NotFound();
             }
+            if (!ModelState.IsValid)
+            {
+                await LoadSessions();
+                return View(classData);
+            }
             var response = await _client.PutAsJsonAsync($"Classes/{id}", classData);
             if (response.IsSuccessStatusCode)
             {
                 return RedirectToAction(nameof(Index));
             }
-
             ModelState.AddModelError("", "Create failed!");
             await LoadSessions();
             return View(classData);
+
 
         }
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace SVM_API.Models;
 
@@ -14,7 +15,7 @@ public partial class Class
     public int? SessionId { get; set; }
 
     public virtual ICollection<FeeStructure> FeeStructures { get; set; } = new List<FeeStructure>();
-
+    [JsonIgnore]
     public virtual ICollection<Section> Sections { get; set; } = new List<Section>();
 
     public virtual Session? Session { get; set; }
