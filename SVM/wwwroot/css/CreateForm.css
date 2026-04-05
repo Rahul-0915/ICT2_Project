@@ -1,0 +1,104 @@
+﻿body {
+    background: #f4f7fb;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+}
+
+/* Form Container */
+.row {
+    justify-content: center;
+}
+
+.col-md-4 {
+    background: #ffffff;
+    padding: 25px 25px 20px 25px;
+    border-radius: 12px;
+    box-shadow: 0 5px 18px rgba(0,0,0,0.08);
+    margin-top: 20px;
+    min-width: 350px;
+}
+
+/* Headings */
+h1 {
+    text-align: center;
+    color: #2c3e50;
+}
+
+h4 {
+    text-align: center;
+    color: #7f8c8d;
+    margin-bottom: 15px;
+}
+
+/* Divider */
+hr {
+    border: none;
+    height: 1px;
+    background: #e0e0e0;
+    margin-bottom: 20px;
+}
+
+/* Form Group */
+.form-group {
+    margin-bottom: 18px;
+}
+
+/* Labels */
+label {
+    font-size: 13px;
+    color: #555;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Inputs & Select */
+.form-control {
+    width: 100%;
+    padding: 10px;
+    border-radius: 6px;
+    border: 1px solid #dcdde1;
+    font-size: 14px;
+    transition: 0.2s;
+}
+
+    /* Focus effect */
+    .form-control:focus {
+        border-color: #5c6b73;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(92,107,115,0.15);
+    }
+
+/* Validation text */
+.text-danger {
+    font-size: 12px;
+}
+
+/* Submit Button */
+.btn-primary {
+    width: 100%;
+    padding: 10px;
+    background: #5c6b73;
+    border: none;
+    border-radius: 6px;
+    font-size: 15px;
+    color: white;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+    .btn-primary:hover {
+        background: #3e4a50;
+    }
+
+/* Back Link */
+a {
+    display: inline-block;
+    margin-top: 15px;
+    color:red;
+    color: #5c6b73;
+    text-decoration: none;
+    font-size: 14px;
+}
+
+    a:hover {
+        text-decoration: underline;
+    }

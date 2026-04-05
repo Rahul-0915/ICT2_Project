@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace SVM_API.Migrations
 {
     /// <inheritdoc />
-    public partial class initialCreate : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -119,7 +119,8 @@ namespace SVM_API.Migrations
                     salary = table.Column<decimal>(type: "decimal(10,2)", nullable: true),
                     phone = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
                     email = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
-                    address = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: true)
+                    address = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: true),
+                    staf_photo = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -245,7 +246,8 @@ namespace SVM_API.Migrations
                     pincode = table.Column<string>(type: "varchar(10)", unicode: false, maxLength: 10, nullable: true),
                     phone = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
                     mother_phone = table.Column<string>(type: "varchar(20)", unicode: false, maxLength: 20, nullable: true),
-                    previous_school = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true)
+                    previous_school = table.Column<string>(type: "varchar(100)", unicode: false, maxLength: 100, nullable: true),
+                    student_photo = table.Column<string>(type: "varchar(255)", unicode: false, maxLength: 255, nullable: true)
                 },
                 constraints: table =>
                 {

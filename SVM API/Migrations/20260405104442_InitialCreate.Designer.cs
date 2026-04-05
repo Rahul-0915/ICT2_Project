@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SVM.Models;
+using SVM_API.Models;
 
 #nullable disable
 
-namespace SVM.Migrations
+namespace SVM_API.Migrations
 {
     [DbContext(typeof(SvmContext))]
-    [Migration("20260405063259_InitialCreate")]
+    [Migration("20260405104442_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -25,7 +25,7 @@ namespace SVM.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("SVM.Models.AdmissionInquiry", b =>
+            modelBuilder.Entity("SVM_API.Models.AdmissionInquiry", b =>
                 {
                     b.Property<int>("InquiryId")
                         .ValueGeneratedOnAdd()
@@ -76,7 +76,7 @@ namespace SVM.Migrations
                     b.ToTable("admission_inquiry", (string)null);
                 });
 
-            modelBuilder.Entity("SVM.Models.Class", b =>
+            modelBuilder.Entity("SVM_API.Models.Class", b =>
                 {
                     b.Property<int>("ClassId")
                         .ValueGeneratedOnAdd()
@@ -109,7 +109,7 @@ namespace SVM.Migrations
                     b.ToTable("classes", (string)null);
                 });
 
-            modelBuilder.Entity("SVM.Models.FeePayment", b =>
+            modelBuilder.Entity("SVM_API.Models.FeePayment", b =>
                 {
                     b.Property<int>("PaymentId")
                         .ValueGeneratedOnAdd()
@@ -150,7 +150,7 @@ namespace SVM.Migrations
                     b.ToTable("fee_payment", (string)null);
                 });
 
-            modelBuilder.Entity("SVM.Models.FeeStructure", b =>
+            modelBuilder.Entity("SVM_API.Models.FeeStructure", b =>
                 {
                     b.Property<int>("FeeId")
                         .ValueGeneratedOnAdd()
@@ -191,7 +191,7 @@ namespace SVM.Migrations
                     b.ToTable("fee_structure", (string)null);
                 });
 
-            modelBuilder.Entity("SVM.Models.Groupmaster", b =>
+            modelBuilder.Entity("SVM_API.Models.Groupmaster", b =>
                 {
                     b.Property<int>("GId")
                         .ValueGeneratedOnAdd()
@@ -212,7 +212,7 @@ namespace SVM.Migrations
                     b.ToTable("groupmaster", (string)null);
                 });
 
-            modelBuilder.Entity("SVM.Models.Section", b =>
+            modelBuilder.Entity("SVM_API.Models.Section", b =>
                 {
                     b.Property<int>("SectionId")
                         .ValueGeneratedOnAdd()
@@ -239,7 +239,7 @@ namespace SVM.Migrations
                     b.ToTable("sections", (string)null);
                 });
 
-            modelBuilder.Entity("SVM.Models.Session", b =>
+            modelBuilder.Entity("SVM_API.Models.Session", b =>
                 {
                     b.Property<int>("SessionId")
                         .ValueGeneratedOnAdd()
@@ -249,24 +249,20 @@ namespace SVM.Migrations
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("SessionId"));
 
                     b.Property<DateOnly?>("EndDate")
-                        .IsRequired()
                         .HasColumnType("date")
                         .HasColumnName("end_date");
 
                     b.Property<int?>("IsActive")
-                        .IsRequired()
                         .HasColumnType("int")
                         .HasColumnName("is_active");
 
                     b.Property<string>("SessionName")
-                        .IsRequired()
                         .HasMaxLength(20)
                         .IsUnicode(false)
                         .HasColumnType("varchar(20)")
                         .HasColumnName("session_name");
 
                     b.Property<DateOnly?>("StartDate")
-                        .IsRequired()
                         .HasColumnType("date")
                         .HasColumnName("start_date");
 
@@ -276,7 +272,7 @@ namespace SVM.Migrations
                     b.ToTable("sessions", (string)null);
                 });
 
-            modelBuilder.Entity("SVM.Models.Staff", b =>
+            modelBuilder.Entity("SVM_API.Models.Staff", b =>
                 {
                     b.Property<int>("StaffId")
                         .ValueGeneratedOnAdd()
@@ -345,6 +341,12 @@ namespace SVM.Migrations
                         .HasColumnType("decimal(10, 2)")
                         .HasColumnName("salary");
 
+                    b.Property<string>("StafPhoto")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("staf_photo");
+
                     b.Property<int?>("UserId")
                         .HasColumnType("int")
                         .HasColumnName("user_id");
@@ -357,7 +359,7 @@ namespace SVM.Migrations
                     b.ToTable("staff", (string)null);
                 });
 
-            modelBuilder.Entity("SVM.Models.StaffAttendance", b =>
+            modelBuilder.Entity("SVM_API.Models.StaffAttendance", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -396,7 +398,7 @@ namespace SVM.Migrations
                     b.ToTable("staff_attendance", (string)null);
                 });
 
-            modelBuilder.Entity("SVM.Models.Student", b =>
+            modelBuilder.Entity("SVM_API.Models.Student", b =>
                 {
                     b.Property<int>("StudentId")
                         .ValueGeneratedOnAdd()
@@ -517,6 +519,12 @@ namespace SVM.Migrations
                         .HasColumnType("varchar(50)")
                         .HasColumnName("state");
 
+                    b.Property<string>("StudentPhoto")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("student_photo");
+
                     b.Property<int?>("UserId")
                         .HasColumnType("int")
                         .HasColumnName("user_id");
@@ -535,7 +543,7 @@ namespace SVM.Migrations
                     b.ToTable("students", (string)null);
                 });
 
-            modelBuilder.Entity("SVM.Models.StudentAttendance", b =>
+            modelBuilder.Entity("SVM_API.Models.StudentAttendance", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -566,7 +574,7 @@ namespace SVM.Migrations
                     b.ToTable("student_attendance", (string)null);
                 });
 
-            modelBuilder.Entity("SVM.Models.Subject", b =>
+            modelBuilder.Entity("SVM_API.Models.Subject", b =>
                 {
                     b.Property<int>("SubjectId")
                         .ValueGeneratedOnAdd()
@@ -593,7 +601,7 @@ namespace SVM.Migrations
                     b.ToTable("subjects", (string)null);
                 });
 
-            modelBuilder.Entity("SVM.Models.TeacherSubject", b =>
+            modelBuilder.Entity("SVM_API.Models.TeacherSubject", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -632,7 +640,7 @@ namespace SVM.Migrations
                     b.ToTable("teacher_subject", (string)null);
                 });
 
-            modelBuilder.Entity("SVM.Models.User", b =>
+            modelBuilder.Entity("SVM_API.Models.User", b =>
                 {
                     b.Property<int>("UserId")
                         .ValueGeneratedOnAdd()
@@ -689,9 +697,9 @@ namespace SVM.Migrations
                     b.ToTable("users", (string)null);
                 });
 
-            modelBuilder.Entity("SVM.Models.Class", b =>
+            modelBuilder.Entity("SVM_API.Models.Class", b =>
                 {
-                    b.HasOne("SVM.Models.Session", "Session")
+                    b.HasOne("SVM_API.Models.Session", "Session")
                         .WithMany("Classes")
                         .HasForeignKey("SessionId")
                         .HasConstraintName("FK__classes__session__1273C1CD");
@@ -699,14 +707,14 @@ namespace SVM.Migrations
                     b.Navigation("Session");
                 });
 
-            modelBuilder.Entity("SVM.Models.FeePayment", b =>
+            modelBuilder.Entity("SVM_API.Models.FeePayment", b =>
                 {
-                    b.HasOne("SVM.Models.FeeStructure", "Fee")
+                    b.HasOne("SVM_API.Models.FeeStructure", "Fee")
                         .WithMany("FeePayments")
                         .HasForeignKey("FeeId")
                         .HasConstraintName("FK__fee_payme__fee_i__60A75C0F");
 
-                    b.HasOne("SVM.Models.Student", "Student")
+                    b.HasOne("SVM_API.Models.Student", "Student")
                         .WithMany("FeePayments")
                         .HasForeignKey("StudentId")
                         .HasConstraintName("FK__fee_payme__stude__5FB337D6");
@@ -716,14 +724,14 @@ namespace SVM.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("SVM.Models.FeeStructure", b =>
+            modelBuilder.Entity("SVM_API.Models.FeeStructure", b =>
                 {
-                    b.HasOne("SVM.Models.Class", "Class")
+                    b.HasOne("SVM_API.Models.Class", "Class")
                         .WithMany("FeeStructures")
                         .HasForeignKey("ClassId")
                         .HasConstraintName("FK__fee_struc__class__59FA5E80");
 
-                    b.HasOne("SVM.Models.Section", "Section")
+                    b.HasOne("SVM_API.Models.Section", "Section")
                         .WithMany("FeeStructures")
                         .HasForeignKey("SectionId")
                         .HasConstraintName("FK__fee_struc__secti__5AEE82B9");
@@ -733,9 +741,9 @@ namespace SVM.Migrations
                     b.Navigation("Section");
                 });
 
-            modelBuilder.Entity("SVM.Models.Section", b =>
+            modelBuilder.Entity("SVM_API.Models.Section", b =>
                 {
-                    b.HasOne("SVM.Models.Class", "Class")
+                    b.HasOne("SVM_API.Models.Class", "Class")
                         .WithMany("Sections")
                         .HasForeignKey("ClassId")
                         .HasConstraintName("FK__sections__class___48CFD27E");
@@ -743,9 +751,9 @@ namespace SVM.Migrations
                     b.Navigation("Class");
                 });
 
-            modelBuilder.Entity("SVM.Models.Staff", b =>
+            modelBuilder.Entity("SVM_API.Models.Staff", b =>
                 {
-                    b.HasOne("SVM.Models.User", "User")
+                    b.HasOne("SVM_API.Models.User", "User")
                         .WithMany("Staff")
                         .HasForeignKey("UserId")
                         .HasConstraintName("FK__staff__user_id__09DE7BCC");
@@ -753,9 +761,9 @@ namespace SVM.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SVM.Models.StaffAttendance", b =>
+            modelBuilder.Entity("SVM_API.Models.StaffAttendance", b =>
                 {
-                    b.HasOne("SVM.Models.Staff", "Staff")
+                    b.HasOne("SVM_API.Models.Staff", "Staff")
                         .WithMany("StaffAttendances")
                         .HasForeignKey("StaffId")
                         .HasConstraintName("FK__staff_att__staff__30F848ED");
@@ -763,24 +771,24 @@ namespace SVM.Migrations
                     b.Navigation("Staff");
                 });
 
-            modelBuilder.Entity("SVM.Models.Student", b =>
+            modelBuilder.Entity("SVM_API.Models.Student", b =>
                 {
-                    b.HasOne("SVM.Models.Class", "Class")
+                    b.HasOne("SVM_API.Models.Class", "Class")
                         .WithMany("Students")
                         .HasForeignKey("ClassId")
                         .HasConstraintName("FK__students__class___4E88ABD4");
 
-                    b.HasOne("SVM.Models.Section", "Section")
+                    b.HasOne("SVM_API.Models.Section", "Section")
                         .WithMany("Students")
                         .HasForeignKey("SectionId")
                         .HasConstraintName("FK__students__sectio__4F7CD00D");
 
-                    b.HasOne("SVM.Models.Session", "Session")
+                    b.HasOne("SVM_API.Models.Session", "Session")
                         .WithMany("Students")
                         .HasForeignKey("SessionId")
                         .HasConstraintName("FK__students__sessio__5070F446");
 
-                    b.HasOne("SVM.Models.User", "User")
+                    b.HasOne("SVM_API.Models.User", "User")
                         .WithMany("Students")
                         .HasForeignKey("UserId")
                         .HasConstraintName("FK__students__user_i__4D94879B");
@@ -794,9 +802,9 @@ namespace SVM.Migrations
                     b.Navigation("User");
                 });
 
-            modelBuilder.Entity("SVM.Models.StudentAttendance", b =>
+            modelBuilder.Entity("SVM_API.Models.StudentAttendance", b =>
                 {
-                    b.HasOne("SVM.Models.Student", "Student")
+                    b.HasOne("SVM_API.Models.Student", "Student")
                         .WithMany("StudentAttendances")
                         .HasForeignKey("StudentId")
                         .HasConstraintName("FK__student_a__stude__5535A963");
@@ -804,9 +812,9 @@ namespace SVM.Migrations
                     b.Navigation("Student");
                 });
 
-            modelBuilder.Entity("SVM.Models.Subject", b =>
+            modelBuilder.Entity("SVM_API.Models.Subject", b =>
                 {
-                    b.HasOne("SVM.Models.Class", "Class")
+                    b.HasOne("SVM_API.Models.Class", "Class")
                         .WithMany("Subjects")
                         .HasForeignKey("ClassId")
                         .HasConstraintName("FK__subjects__class___173876EA");
@@ -814,24 +822,24 @@ namespace SVM.Migrations
                     b.Navigation("Class");
                 });
 
-            modelBuilder.Entity("SVM.Models.TeacherSubject", b =>
+            modelBuilder.Entity("SVM_API.Models.TeacherSubject", b =>
                 {
-                    b.HasOne("SVM.Models.Class", "Class")
+                    b.HasOne("SVM_API.Models.Class", "Class")
                         .WithMany("TeacherSubjects")
                         .HasForeignKey("ClassId")
                         .HasConstraintName("FK__teacher_s__class__1DE57479");
 
-                    b.HasOne("SVM.Models.Session", "Session")
+                    b.HasOne("SVM_API.Models.Session", "Session")
                         .WithMany("TeacherSubjects")
                         .HasForeignKey("SessionId")
                         .HasConstraintName("FK__teacher_s__sessi__1ED998B2");
 
-                    b.HasOne("SVM.Models.Staff", "Staff")
+                    b.HasOne("SVM_API.Models.Staff", "Staff")
                         .WithMany("TeacherSubjects")
                         .HasForeignKey("StaffId")
                         .HasConstraintName("FK__teacher_s__staff__1BFD2C07");
 
-                    b.HasOne("SVM.Models.Subject", "Subject")
+                    b.HasOne("SVM_API.Models.Subject", "Subject")
                         .WithMany("TeacherSubjects")
                         .HasForeignKey("SubjectId")
                         .HasConstraintName("FK__teacher_s__subje__1CF15040");
@@ -845,9 +853,9 @@ namespace SVM.Migrations
                     b.Navigation("Subject");
                 });
 
-            modelBuilder.Entity("SVM.Models.User", b =>
+            modelBuilder.Entity("SVM_API.Models.User", b =>
                 {
-                    b.HasOne("SVM.Models.Groupmaster", "Group")
+                    b.HasOne("SVM_API.Models.Groupmaster", "Group")
                         .WithMany("Users")
                         .HasForeignKey("GroupId")
                         .HasConstraintName("FK__users__group_id__0519C6AF");
@@ -855,7 +863,7 @@ namespace SVM.Migrations
                     b.Navigation("Group");
                 });
 
-            modelBuilder.Entity("SVM.Models.Class", b =>
+            modelBuilder.Entity("SVM_API.Models.Class", b =>
                 {
                     b.Navigation("FeeStructures");
 
@@ -868,24 +876,24 @@ namespace SVM.Migrations
                     b.Navigation("TeacherSubjects");
                 });
 
-            modelBuilder.Entity("SVM.Models.FeeStructure", b =>
+            modelBuilder.Entity("SVM_API.Models.FeeStructure", b =>
                 {
                     b.Navigation("FeePayments");
                 });
 
-            modelBuilder.Entity("SVM.Models.Groupmaster", b =>
+            modelBuilder.Entity("SVM_API.Models.Groupmaster", b =>
                 {
                     b.Navigation("Users");
                 });
 
-            modelBuilder.Entity("SVM.Models.Section", b =>
+            modelBuilder.Entity("SVM_API.Models.Section", b =>
                 {
                     b.Navigation("FeeStructures");
 
                     b.Navigation("Students");
                 });
 
-            modelBuilder.Entity("SVM.Models.Session", b =>
+            modelBuilder.Entity("SVM_API.Models.Session", b =>
                 {
                     b.Navigation("Classes");
 
@@ -894,26 +902,26 @@ namespace SVM.Migrations
                     b.Navigation("TeacherSubjects");
                 });
 
-            modelBuilder.Entity("SVM.Models.Staff", b =>
+            modelBuilder.Entity("SVM_API.Models.Staff", b =>
                 {
                     b.Navigation("StaffAttendances");
 
                     b.Navigation("TeacherSubjects");
                 });
 
-            modelBuilder.Entity("SVM.Models.Student", b =>
+            modelBuilder.Entity("SVM_API.Models.Student", b =>
                 {
                     b.Navigation("FeePayments");
 
                     b.Navigation("StudentAttendances");
                 });
 
-            modelBuilder.Entity("SVM.Models.Subject", b =>
+            modelBuilder.Entity("SVM_API.Models.Subject", b =>
                 {
                     b.Navigation("TeacherSubjects");
                 });
 
-            modelBuilder.Entity("SVM.Models.User", b =>
+            modelBuilder.Entity("SVM_API.Models.User", b =>
                 {
                     b.Navigation("Staff");
 

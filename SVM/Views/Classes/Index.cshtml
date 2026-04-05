@@ -4,6 +4,12 @@
     ViewData["Title"] = "Index";
 }
 
+
+<html>
+    <head>
+    <link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
+    </head>
+<body>
 <h1>Index</h1>
 
 <p>
@@ -25,23 +31,26 @@
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.ClassName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Medium)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Session.SessionName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.ClassId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.ClassId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.ClassId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.ClassName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Medium)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Session.SessionName)
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.ClassId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.ClassId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.ClassId">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
+</body>
+</html>

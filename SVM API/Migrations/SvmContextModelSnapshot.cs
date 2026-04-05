@@ -338,6 +338,12 @@ namespace SVM_API.Migrations
                         .HasColumnType("decimal(10, 2)")
                         .HasColumnName("salary");
 
+                    b.Property<string>("StafPhoto")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("staf_photo");
+
                     b.Property<int?>("UserId")
                         .HasColumnType("int")
                         .HasColumnName("user_id");
@@ -509,6 +515,12 @@ namespace SVM_API.Migrations
                         .IsUnicode(false)
                         .HasColumnType("varchar(50)")
                         .HasColumnName("state");
+
+                    b.Property<string>("StudentPhoto")
+                        .HasMaxLength(255)
+                        .IsUnicode(false)
+                        .HasColumnType("varchar(255)")
+                        .HasColumnName("student_photo");
 
                     b.Property<int?>("UserId")
                         .HasColumnType("int")

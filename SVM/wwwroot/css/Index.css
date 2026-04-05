@@ -1,0 +1,113 @@
+﻿body {
+    background: #f4f7fb;
+    font-family: "Segoe UI", Tahoma, sans-serif;
+    padding: 20px;
+}
+
+h1 {
+    margin-bottom: 20px;
+    color: #2c3e50;
+}
+
+/* Create Button */
+p a {
+    display: inline-block;
+    text-decoration: none;
+    font-size: 0;
+    width: 50px;
+    height: 50px;
+    background: #5c6b73;
+    border-radius: 50%;
+    position: relative;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+}
+
+    p a::before {
+        content: "+";
+        font-size: 30px;
+        color: white;
+        position: absolute;
+        top: 6px;
+        left: 16px;
+    }
+
+/* Hide Table Header */
+.table thead {
+    display: none;
+}
+
+/* Grid Layout */
+.table tbody {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 18px;
+}
+
+    /* Card */
+    .table tbody tr {
+        display: block;
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+    }
+
+/* Each Field */
+.table td {
+    display: block;
+    padding: 4px 0;
+    border: none;
+    text-align: center;
+}
+
+    /* Remove labels */
+    .table td:nth-child(1)::before,
+    .table td:nth-child(2)::before,
+    .table td:nth-child(3)::before {
+        content: "";
+    }
+
+    /* Class Circle */
+    .table td:first-child {
+        width: 80px;
+        height: 80px;
+        line-height: 80px;
+        margin: 0 auto 10px auto;
+        background: #8d6e63;
+        color: white;
+        border-radius: 50%;
+        font-size: 26px;
+        font-weight: bold;
+    }
+
+    /* Medium */
+    .table td:nth-child(2) {
+        font-size: 15px;
+        color: #2c3e50;
+    }
+
+    /* Session */
+    .table td:nth-child(3) {
+        font-size: 13px;
+        color: #7f8c8d;
+    }
+
+    /* Action Buttons */
+    .table td:last-child {
+        margin-top: 10px;
+    }
+
+    .table td a {
+        text-decoration: none;
+        padding: 5px 10px;
+        margin: 3px;
+        border-radius: 5px;
+        font-size: 11px;
+        background: #eef1f5;
+        color: #2c3e50;
+    }
+
+        .table td a:hover {
+            background: #5c6b73;
+            color: white;
+        }

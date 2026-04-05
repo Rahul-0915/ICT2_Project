@@ -52,9 +52,8 @@
                     color: white;
                 }
 
-/* SUBMENU */
+/* SUBMENU LEVEL 1 */
 .submenu {
-    display: none;
     position: absolute;
     background: white;
     top: 50px;
@@ -64,20 +63,59 @@
     border-radius: 8px;
     border: 1px solid #ddd;
     z-index: 1000;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: 0.25s;
 }
 
-    .submenu a {
-        display: block;
-        padding: 10px 12px;
-        color: #333;
-        border-radius: 5px;
-        font-size: 16px;
-        text-decoration: none;
+/* SHOW ON HOVER */
+.menu ul li:hover .submenu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.submenu a {
+    display: block;
+    padding: 10px 12px;
+    color: #333;
+    border-radius: 5px;
+    font-size: 16px;
+    text-decoration: none;
+}
+
+    .submenu a:hover {
+        background: #eef1f5;
     }
 
-        .submenu a:hover {
-            background: #eef1f5;
-        }
+/* SUBMENU LEVEL 2 (Nested submenu) */
+.submenu-item {
+    position: relative;
+}
+
+.submenu2 {
+    position: absolute;
+    top: 0;
+    left: 100%;
+    min-width: 200px;
+    background: white;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateX(10px);
+    transition: 0.25s;
+}
+
+/* SHOW NESTED SUBMENU */
+.submenu-item:hover .submenu2 {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+}
 
 /* DASHBOARD */
 .container {
@@ -111,7 +149,7 @@
         font-size: 26px;
     }
 
-/* ICON BOX CENTER FIX */
+/* ICON BOX */
 .iconBox {
     width: 55px;
     height: 55px;
@@ -123,12 +161,6 @@
     align-items: center;
     justify-content: center;
 }
-
-    .iconBox i {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-    }
 
 /* Icon Colors */
 .c1 {
@@ -161,39 +193,6 @@
 
 .c8 {
     background: #224abe;
-}
-
-/* Border colors */
-.panel:nth-child(1) {
-    border-top: 5px solid #4e73df;
-}
-
-.panel:nth-child(2) {
-    border-top: 5px solid #1cc88a;
-}
-
-.panel:nth-child(3) {
-    border-top: 5px solid #36b9cc;
-}
-
-.panel:nth-child(4) {
-    border-top: 5px solid #f6c23e;
-}
-
-.panel:nth-child(5) {
-    border-top: 5px solid #e74a3b;
-}
-
-.panel:nth-child(6) {
-    border-top: 5px solid #858796;
-}
-
-.panel:nth-child(7) {
-    border-top: 5px solid #5a5c69;
-}
-
-.panel:nth-child(8) {
-    border-top: 5px solid #224abe;
 }
 
 /* Bottom Boxes */
