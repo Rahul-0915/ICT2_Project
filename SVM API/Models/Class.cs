@@ -21,7 +21,7 @@ public partial class Class
     public virtual Session? Session { get; set; }
 
     public virtual ICollection<Student> Students { get; set; } = new List<Student>();
-
+    [JsonIgnore]
     public virtual ICollection<Subject> Subjects { get; set; } = new List<Subject>();
 
     public virtual ICollection<TeacherSubject> TeacherSubjects { get; set; } = new List<TeacherSubject>();

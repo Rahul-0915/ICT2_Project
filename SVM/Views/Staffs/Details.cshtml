@@ -1,0 +1,98 @@
+﻿@model SVM.Models.Staff
+
+@{
+	ViewData["Title"] = "Details";
+}
+
+<h1>Details</h1>
+
+<div>
+	<h4>Staff</h4>
+	<hr />
+	<dl class="row">
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.FirstName)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.FirstName)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.LastName)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.LastName)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Designation)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Designation)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Qualification)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Qualification)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.ExperienceYears)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.ExperienceYears)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.JoiningDate)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.JoiningDate)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Salary)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Salary)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Phone)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Phone)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Email)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Email)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Address)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Address)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.StafPhoto)
+		</dt>
+		<dd class="col-sm-10">
+
+			@if (!string.IsNullOrEmpty(Model.StafPhoto))
+			{
+				<img src="@Model.StafPhoto" width="100" height="100" alt="Staff Photo" />
+			}
+			else
+			{
+				<span>No Image</span>
+			}
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.User.Username)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.User.Username)
+		</dd>
+	</dl>
+</div>
+<div>
+	<a asp-action="Edit" asp-route-id="@Model?.StaffId">Edit</a> |
+	<a asp-action="Index">Back to List</a>
+</div>

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace SVM.Models;
 
@@ -22,7 +23,7 @@ public partial class User
     public string? ProfilePhoto { get; set; }
 
     public virtual Groupmaster? Group { get; set; }
-
+    [JsonIgnore]
     public virtual ICollection<Staff> Staff { get; set; } = new List<Staff>();
 
     public virtual ICollection<Student> Students { get; set; } = new List<Student>();

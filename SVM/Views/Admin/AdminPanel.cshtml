@@ -54,8 +54,8 @@
             <li>
                 <a href="#"><i class="fa fa-chalkboard-teacher"></i> Staff</a>
                 <div class="submenu">
-                    <a href="#">Add Staff</a>
-                    <a href="#">Staff List</a>
+                    <a asp-action="Create" asp-controller="Staffs" target="mainFrame">Add Staff</a>
+                    <a asp-action="Index" asp-controller="Staffs" target="mainFrame">Staff List</a>
                     <a href="#">Salary</a>
                 </div>
             </li>
@@ -74,7 +74,7 @@
                             <a asp-action="Index" asp-controller="Sections" target="mainFrame"> Division</a>
                         </div>
                     </div>
-                    <a href="#">Subjects</a>
+                    <a target="mainFrame" asp-controller="Subjects" asp-action="Create" >Subjects</a>
                     <a href="#">Exams</a>
                     <!--itemsub Result menu -->
                     <div class="submenu-item">
