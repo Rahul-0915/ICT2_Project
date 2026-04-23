@@ -223,3 +223,37 @@
     border: none;
     background: #f4f6f9;
 }
+/* Dashboard Card Styles */
+.panel span {
+    display: block;
+    font-size: 14px;
+    color: #666;
+    margin-top: 5px;
+}
+
+.box ul {
+    list-style: none;
+    padding: 0;
+}
+
+    .box ul li {
+        padding: 8px 0;
+        border-bottom: 1px solid #eee;
+        font-size: 14px;
+    }
+
+.logout-btn {
+    background: rgba(255, 255, 255, 0.2);
+    color: white;
+    padding: 6px 15px;
+    border-radius: 20px;
+    text-decoration: none;
+    margin-left: 10px;
+    transition: all 0.3s ease;
+    display: inline-block;
+}
+
+    .logout-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+        transform: translateY(-2px);
+    }

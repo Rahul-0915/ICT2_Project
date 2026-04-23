@@ -1,5 +1,4 @@
-﻿
-@{
+﻿@{
     Layout = null;
 }
 
@@ -16,8 +15,8 @@
 
     <!-- HEADER -->
     <div class="header">
-        <div class="logo">My School Admin Panel</div>
-        <div class="right">Session 2025-26 | Logout</div>
+        <div class="logo">SVM Admin Panel</div>
+        <div class="right">Session 2025-26 |<a asp-controller="Account" asp-action="Logout" class="logout-btn">Logout</a></div>
     </div>
 
     <!-- MENU -->
@@ -67,14 +66,14 @@
                 <div class="submenu">
                     <!--itemsub class & div menu -->
                     <div class="submenu-item">
-                        <a > Classes & Sections</a>
-                     
+                        <a> Classes & Sections</a>
+
                         <div class="submenu2">
                             <a asp-action="Index" asp-controller="Classes" target="mainFrame"> Classes</a>
                             <a asp-action="Index" asp-controller="Sections" target="mainFrame"> Division</a>
                         </div>
                     </div>
-                    <a target="mainFrame" asp-controller="Subjects" asp-action="Index" >Subjects</a>
+                    <a target="mainFrame" asp-controller="Subjects" asp-action="Index">Subjects</a>
                     <a href="#">Exams</a>
                     <!--itemsub Result menu -->
                     <div class="submenu-item">
@@ -114,7 +113,7 @@
         </ul>
     </div>
 
-    
+
     <iframe id="mainFrame" name="mainFrame"></iframe>
 
 </body>
