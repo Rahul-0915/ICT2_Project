@@ -31,9 +31,22 @@ namespace SVM.Controllers
                 var data = await response.Content.ReadAsStringAsync();
                 var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 subjectList = JsonSerializer.Deserialize<List<Subject>>(data, option);
-            }
 
-            if (!response.IsSuccessStatusCode)
+                // Manually load Class for each subject
+                foreach (var subject in subjectList)
+                {
+                    if (subject.ClassId.HasValue)
+                    {
+                        var classResponse = await _client.GetAsync($"Classes/{subject.ClassId}");
+                        if (classResponse.IsSuccessStatusCode)
+                        {
+                            var classData = await classResponse.Content.ReadAsStringAsync();
+                            subject.Class = JsonSerializer.Deserialize<Class>(classData, option);
+                        }
+                    }
+                }
+            }
+            else
             {
                 ModelState.AddModelError("", "Failed to load subjects");
             }
@@ -44,21 +57,25 @@ namespace SVM.Controllers
         // GET: Subjects/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var response = await _client.GetAsync($"Subjects/{id}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return NotFound();
-            }
+            if (!response.IsSuccessStatusCode) return NotFound();
 
             var data = await response.Content.ReadAsStringAsync();
             var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var subjectData = JsonSerializer.Deserialize<Subject>(data, option);
+
+            // Load Class details with Medium
+            if (subjectData.ClassId.HasValue)
+            {
+                var classResponse = await _client.GetAsync($"Classes/{subjectData.ClassId}");
+                if (classResponse.IsSuccessStatusCode)
+                {
+                    var classData = await classResponse.Content.ReadAsStringAsync();
+                    subjectData.Class = JsonSerializer.Deserialize<Class>(classData, option);
+                }
+            }
 
             return View(subjectData);
         }
@@ -75,6 +92,14 @@ namespace SVM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("SubjectId,SubjectName,ClassId")] Subject subject)
         {
+            // Duplicate check
+            if (await IsSubjectDuplicate(subject.SubjectName, subject.ClassId))
+            {
+                ModelState.AddModelError("SubjectName", $"⚠️ Subject '{subject.SubjectName}' already exists in this Class!");
+                await LoadClasses(subject.ClassId);
+                return View(subject);
+            }
+
             if (ModelState.IsValid)
             {
                 var response = await _client.PostAsJsonAsync("Subjects", subject);
@@ -94,24 +119,16 @@ namespace SVM.Controllers
         // GET: Subjects/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var response = await _client.GetAsync($"Subjects/{id}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return NotFound();
-            }
+            if (!response.IsSuccessStatusCode) return NotFound();
 
             var data = await response.Content.ReadAsStringAsync();
             var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var subjectData = JsonSerializer.Deserialize<Subject>(data, option);
 
             await LoadClasses(subjectData.ClassId);
-
             return View(subjectData);
         }
 
@@ -120,9 +137,14 @@ namespace SVM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("SubjectId,SubjectName,ClassId")] Subject subject)
         {
-            if (id != subject.SubjectId)
+            if (id != subject.SubjectId) return NotFound();
+
+            // Duplicate check while editing
+            if (await IsSubjectDuplicate(subject.SubjectName, subject.ClassId, id))
             {
-                return NotFound();
+                ModelState.AddModelError("SubjectName", $"⚠️ Subject '{subject.SubjectName}' already exists in this Class!");
+                await LoadClasses(subject.ClassId);
+                return View(subject);
             }
 
             if (!ModelState.IsValid)
@@ -146,38 +168,58 @@ namespace SVM.Controllers
         // GET: Subjects/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var response = await _client.GetAsync($"Subjects/{id}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return NotFound();
-            }
+            if (!response.IsSuccessStatusCode) return NotFound();
 
             var data = await response.Content.ReadAsStringAsync();
             var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var subjectData = JsonSerializer.Deserialize<Subject>(data, option);
 
+            // Load Class details with Medium
+            if (subjectData.ClassId.HasValue)
+            {
+                var classResponse = await _client.GetAsync($"Classes/{subjectData.ClassId}");
+                if (classResponse.IsSuccessStatusCode)
+                {
+                    var classData = await classResponse.Content.ReadAsStringAsync();
+                    subjectData.Class = JsonSerializer.Deserialize<Class>(classData, option);
+                }
+            }
+
             return View(subjectData);
         }
-
         // POST: Subjects/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             var response = await _client.DeleteAsync($"Subjects/{id}");
-
             if (!response.IsSuccessStatusCode)
             {
                 ModelState.AddModelError("", "Delete failed!");
             }
-
             return RedirectToAction(nameof(Index));
+        }
+
+        // Duplicate Check Method
+        private async Task<bool> IsSubjectDuplicate(string subjectName, int? classId, int? excludeId = null)
+        {
+            var response = await _client.GetAsync("Subjects");
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsStringAsync();
+                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var subjects = JsonSerializer.Deserialize<List<Subject>>(data, option);
+
+                return subjects.Any(s =>
+                    s.SubjectName == subjectName &&
+                    s.ClassId == classId &&
+                    (excludeId == null || s.SubjectId != excludeId)
+                );
+            }
+            return false;
         }
 
         private async Task<bool> SubjectExists(int id)
@@ -186,6 +228,7 @@ namespace SVM.Controllers
             return response.IsSuccessStatusCode;
         }
 
+        // Updated LoadClasses - Show ClassName with Medium
         private async Task LoadClasses(int? selectedClassId = null)
         {
             var response = await _client.GetAsync("Classes");
@@ -195,11 +238,18 @@ namespace SVM.Controllers
                 var data = await response.Content.ReadAsStringAsync();
                 var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 var classes = JsonSerializer.Deserialize<List<Class>>(data, option);
-                ViewData["ClassId"] = new SelectList(classes, "ClassId", "ClassName", selectedClassId);
+
+                // Format: "6 - Gujarati" or "6 - English"
+                var classList = classes.Select(c => new SelectListItem
+                {
+                    Value = c.ClassId.ToString(),
+                    Text = $"{c.ClassName} - {c.Medium}"
+                }).ToList();
+
+                ViewData["ClassId"] = new SelectList(classList, "Value", "Text", selectedClassId?.ToString());
             }
             else
             {
-                // Handle error - create empty select list to avoid null reference
                 ViewData["ClassId"] = new SelectList(new List<Class>(), "ClassId", "ClassName", selectedClassId);
                 ModelState.AddModelError("", "Unable to load classes");
             }

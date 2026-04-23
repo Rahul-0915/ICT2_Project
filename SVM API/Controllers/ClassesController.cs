@@ -103,5 +103,6 @@ namespace SVM_API.Controllers
         {
             return _context.Classes.Any(e => e.ClassId == id);
         }
+
     }
 }

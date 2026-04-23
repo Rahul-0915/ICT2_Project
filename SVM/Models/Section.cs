@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace SVM.Models;
 
@@ -17,4 +18,5 @@ public partial class Section
     public virtual ICollection<FeeStructure> FeeStructures { get; set; } = new List<FeeStructure>();
 
     public virtual ICollection<Student> Students { get; set; } = new List<Student>();
+   
 }

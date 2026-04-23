@@ -14,6 +14,7 @@ public partial class Session
     [Required(ErrorMessage = "Start Date is required")]
 
     public DateOnly? StartDate { get; set; }
+
     [Required(ErrorMessage = "End Date is required")]
     public DateOnly? EndDate { get; set; }
     [Required(ErrorMessage = "Status is required")]

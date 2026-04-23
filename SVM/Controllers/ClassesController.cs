@@ -64,6 +64,7 @@ namespace SVM.Controllers
         public async Task<IActionResult> Create()
         {
             await LoadSessions();
+            LoadMediums();
             return View();
         }
 
@@ -74,6 +75,15 @@ namespace SVM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ClassId,ClassName,Medium,SessionId")] Class classData)
         {
+            // ✅ Duplicate check before saving
+            if (await IsClassDuplicate(classData.ClassName, classData.Medium))
+            {
+                ModelState.AddModelError("ClassName", $"Class '{classData.ClassName}' with Medium '{classData.Medium}' already exists!");
+                ModelState.AddModelError("Medium", "This combination already exists.");
+                await LoadSessions();
+                LoadMediums();
+                return View(classData);
+            }
 
             if (ModelState.IsValid)
             {
@@ -82,10 +92,19 @@ namespace SVM.Controllers
                 {
                     return RedirectToAction(nameof(Index));
                 }
-
-                ModelState.AddModelError("", "Create failed!");
+                // Check if API returned duplicate error
+                if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                {
+                    var errorData = await response.Content.ReadAsStringAsync();
+                    ModelState.AddModelError("", "Duplicate class detected!");
+                }
+                else
+                {
+                    ModelState.AddModelError("", "Create failed!");
+                }
             }
             await LoadSessions();
+            LoadMediums();
             return View(classData);
         }
 
@@ -104,7 +123,7 @@ namespace SVM.Controllers
             var data = await response.Content.ReadAsStringAsync();
             var classData = JsonSerializer.Deserialize<Class>(data, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
             await LoadSessions();
-
+            LoadMediums();
             return View(classData);
         }
 
@@ -119,21 +138,29 @@ namespace SVM.Controllers
             {
                 return NotFound();
             }
-            if (!ModelState.IsValid)
+
+            // ✅ Duplicate check while editing (excluding current class)
+            if (await IsClassDuplicate(classData.ClassName, classData.Medium, id))
             {
+                ModelState.AddModelError("ClassName", $"Class '{classData.ClassName}' with Medium '{classData.Medium}' already exists!");
+                ModelState.AddModelError("Medium", "This combination already exists.");
                 await LoadSessions();
+                LoadMediums();
                 return View(classData);
             }
-            var response = await _client.PutAsJsonAsync($"Classes/{id}", classData);
-            if (response.IsSuccessStatusCode)
+
+            if (ModelState.IsValid)
             {
-                return RedirectToAction(nameof(Index));
+                var response = await _client.PutAsJsonAsync($"Classes/{id}", classData);
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                ModelState.AddModelError("", "Update failed!");
             }
-            ModelState.AddModelError("", "Create failed!");
             await LoadSessions();
+            LoadMediums();
             return View(classData);
-
-
         }
 
         // GET: Classes/Delete/5
@@ -185,6 +212,33 @@ namespace SVM.Controllers
                 ViewData["SessionId"] = new SelectList(sessions, "SessionId", "SessionName");
             }
         }
+        private void LoadMediums()
+        {
+            var mediums = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "Gujarati", Text = "Gujarati" },
+                new SelectListItem { Value = "English", Text = "English" }
+            };
+            ViewBag.MediumList = mediums;
+        }
+        private async Task<bool> IsClassDuplicate(string className, string medium, int? excludeId = null)
+        {
+            var response = await _client.GetAsync("Classes");
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsStringAsync();
+                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var classes = JsonSerializer.Deserialize<List<Class>>(data, option);
+
+                return classes.Any(c =>
+                    c.ClassName == className &&
+                    c.Medium == medium &&
+                    (excludeId == null || c.ClassId != excludeId)
+                );
+            }
+            return false;
+        }
+
     }
 
 }

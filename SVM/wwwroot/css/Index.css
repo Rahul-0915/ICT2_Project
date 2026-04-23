@@ -1,35 +1,55 @@
-﻿body {
+﻿/* Index.css - Class Index Page */
+/* Exact match with Sessions theme */
+
+body {
     background: #f4f7fb;
     font-family: "Segoe UI", Tahoma, sans-serif;
+    margin: 0;
     padding: 20px;
 }
 
 h1 {
+    color: #333;
     margin-bottom: 20px;
-    color: #2c3e50;
+    font-weight: 600;
+    font-size: 32px;
+    text-align: center;
 }
 
-/* Create Button */
-p a {
-    display: inline-block;
-    text-decoration: none;
-    font-size: 0;
-    width: 50px;
-    height: 50px;
-    background: #5c6b73;
-    border-radius: 50%;
-    position: relative;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+/* Create Button - Perfect Centered Plus */
+p {
+    text-align: right;
+    margin-bottom: 20px;
 }
 
-    p a::before {
-        content: "+";
-        font-size: 30px;
+
+    p a {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+        width: 50px;
+        height: 50px;
+        background: #4CAF50;
+        border-radius: 50%;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+        transition: 0.3s ease;
+        font-size: 32px;
+        font-weight: bold;
         color: white;
-        position: absolute;
-        top: 6px;
-        left: 16px;
+        padding: 0;
+        line-height: 50px;
+        vertical-align: central;
     }
+
+
+
+        p a:hover {
+            background-color: #2e7d32;
+            transform: scale(1.05);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            color: white;
+        }
 
 /* Hide Table Header */
 .table thead {
@@ -39,18 +59,26 @@ p a {
 /* Grid Layout */
 .table tbody {
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
-    gap: 18px;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 22px;
 }
 
     /* Card */
     .table tbody tr {
         display: block;
         background: white;
-        border-radius: 12px;
-        padding: 20px;
-        box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        border-radius: 16px;
+        padding: 25px 20px 20px 20px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        transition: 0.3s ease;
+        border: 1px solid #eef2f5;
+        text-align: center;
     }
+
+        .table tbody tr:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
 
 /* Each Field */
 .table td {
@@ -60,54 +88,184 @@ p a {
     text-align: center;
 }
 
-    /* Remove labels */
-    .table td:nth-child(1)::before,
-    .table td:nth-child(2)::before,
-    .table td:nth-child(3)::before {
-        content: "";
-    }
-
     /* Class Circle */
     .table td:first-child {
-        width: 80px;
-        height: 80px;
-        line-height: 80px;
-        margin: 0 auto 10px auto;
-        background: #8d6e63;
+        width: 85px;
+        height: 85px;
+        margin: 0 auto 15px auto;
+        background: #5c6b73;
         color: white;
         border-radius: 50%;
-        font-size: 26px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 32px;
         font-weight: bold;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     }
 
-    /* Medium */
+    /* Medium field */
     .table td:nth-child(2) {
-        font-size: 15px;
+        font-size: 17px;
+        font-weight: 600;
         color: #2c3e50;
+        margin-bottom: 8px;
     }
 
-    /* Session */
+    /* Session field */
     .table td:nth-child(3) {
         font-size: 13px;
+        font-weight: 500;
         color: #7f8c8d;
+        background: #f0f2f5;
+        display: inline-block;
+        padding: 5px 15px;
+        border-radius: 20px;
+        margin: 8px auto 0 auto;
+    }
+
+    /* Action Buttons Container */
+    .table td:last-child {
+        margin-top: 15px;
+        padding-top: 15px;
+        border-top: 1px solid #eef2f5;
     }
 
     /* Action Buttons */
-    .table td:last-child {
-        margin-top: 10px;
+    .table td a {
+        text-decoration: none;
+        padding: 8px 16px;
+        margin: 4px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        transition: 0.2s ease;
+        display: inline-block;
+        min-width: 55px;
+    }
+
+        /* Edit Button */
+        .table td a[href*="Edit"] {
+            background: #007bff;
+            color: white;
+        }
+
+            .table td a[href*="Edit"]:hover {
+                background: #0056b3;
+                transform: translateY(-2px);
+            }
+
+        /* Details Button */
+        .table td a[href*="Details"] {
+            background: #17a2b8;
+            color: white;
+        }
+
+            .table td a[href*="Details"]:hover {
+                background: #138496;
+                transform: translateY(-2px);
+            }
+
+        /* Delete Button */
+        .table td a[href*="Delete"] {
+            background: #dc3545;
+            color: white;
+        }
+
+            .table td a[href*="Delete"]:hover {
+                background: #c82333;
+                transform: translateY(-2px);
+            }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    body {
+        padding: 15px;
+    }
+
+    h1 {
+        font-size: 28px;
+    }
+
+    .table tbody {
+        grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+        gap: 15px;
+    }
+
+        .table tbody tr {
+            padding: 20px 15px 15px 15px;
+        }
+
+    .table td:first-child {
+        width: 70px;
+        height: 70px;
+        font-size: 28px;
+    }
+
+    .table td:nth-child(2) {
+        font-size: 16px;
+    }
+
+    .table td:nth-child(3) {
+        font-size: 12px;
+        padding: 4px 12px;
     }
 
     .table td a {
-        text-decoration: none;
-        padding: 5px 10px;
-        margin: 3px;
-        border-radius: 5px;
+        padding: 6px 12px;
         font-size: 11px;
-        background: #eef1f5;
-        color: #2c3e50;
+        min-width: 45px;
+    }
+}
+/* Add these styles to your existing Index.css */
+
+/* Filter Container */
+.filter-container {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-bottom: 20px;
+    padding: 10px 15px;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+    .filter-container label {
+        font-size: 15px;
+        font-weight: 600;
+        color: #555;
+        margin: 0;
     }
 
-        .table td a:hover {
-            background: #5c6b73;
-            color: white;
-        }
+.filter-dropdown {
+    padding: 8px 15px;
+    font-size: 14px;
+    font-weight: 500;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: white;
+    color: #333;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+    .filter-dropdown:focus {
+        outline: none;
+        border-color: #4CAF50;
+        box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+    }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .filter-container {
+        justify-content: center;
+        margin-bottom: 15px;
+    }
+
+    .filter-dropdown {
+        padding: 6px 12px;
+        font-size: 13px;
+    }
+}

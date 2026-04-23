@@ -75,6 +75,19 @@ namespace SVM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Session session)
         {
+            if (session.StartDate != null && session.EndDate != null)
+            {
+                if (session.EndDate < session.StartDate)
+                {
+                    ModelState.AddModelError("EndDate", "End Date cannot be earlier than Start Date");
+                }
+            }
+            // Auto-calculate IsActive before saving
+            session.IsActive = CalculateIsActive(session.StartDate, session.EndDate);
+
+            // Remove IsActive validation error if any
+            ModelState.Remove("IsActive");
+
             if (ModelState.IsValid)
             {
                 var response = await _client.PostAsJsonAsync("Sessions", session);
@@ -89,6 +102,7 @@ namespace SVM.Controllers
 
             return View(session);
         }
+
 
         // GET: Sessions/Edit/5
         public async Task<IActionResult> Edit(int? id)
@@ -115,12 +129,26 @@ namespace SVM.Controllers
         }
 
         // POST: Sessions/Edit/5
+        // POST: Sessions/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Session session)
         {
             if (id != session.SessionId)
                 return NotFound();
+
+            if (session.StartDate != null && session.EndDate != null)
+            {
+                if (session.EndDate < session.StartDate)
+                {
+                    ModelState.AddModelError("EndDate", "End Date cannot be earlier than Start Date");
+                }
+            }
+            // Auto-calculate IsActive before saving
+            session.IsActive = CalculateIsActive(session.StartDate, session.EndDate);
+
+            // Remove IsActive validation error if any
+            ModelState.Remove("IsActive");
 
             if (ModelState.IsValid)
             {
@@ -175,6 +203,20 @@ namespace SVM.Controllers
 
             ModelState.AddModelError("", "Delete failed!");
             return RedirectToAction(nameof(Index));
+        }
+
+        // Helper method to calculate IsActive based on dates
+        private int CalculateIsActive(DateOnly? startDate, DateOnly? endDate)
+        {
+            if (startDate == null || endDate == null)
+                return 0;
+
+            var today = DateOnly.FromDateTime(DateTime.Today);
+
+            if (today >= startDate && today <= endDate)
+                return 1;  // Active
+            else
+                return 0;  // Inactive
         }
     }
 }

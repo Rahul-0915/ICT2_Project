@@ -4,10 +4,9 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
+<link rel="stylesheet" href="~/css/List.css" asp-append-version="true" />
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn-add" asp-action="Create">+</a>
 </p>
 <table class="table">
     <thead>
@@ -15,27 +14,33 @@
             <th>
                 @Html.DisplayNameFor(model => model.SubjectName)
             </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Class.ClassName)
-            </th>
+            <th>Class & Medium</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.SubjectName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Class.ClassName)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.SubjectId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.SubjectId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.SubjectId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SubjectName)
+                </td>
+                <td>
+                    @if (item.Class != null)
+                    {
+                        @($"{item.Class.ClassName} - {item.Class.Medium}")
+                    }
+                    else
+                    {
+                        <span class="text-muted">N/A</span>
+                    }
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.SubjectId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.SubjectId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.SubjectId">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>

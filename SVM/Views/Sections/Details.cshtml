@@ -3,28 +3,44 @@
 @{
     ViewData["Title"] = "Details";
 }
+<link rel="stylesheet" href="~/css/Detail.css" asp-append-version="true" />
 
-<h1>Details</h1>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Section Details</title>
+</head>
+<body>
+    <h1>Details</h1>
 
-<div>
-    <h4>Section</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SectionName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SectionName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Class.ClassName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Class.ClassName)
-        </dd>
-    </dl>
-</div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.SectionId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div>
+        <h4>Section</h4>
+        <hr />
+        <dl class="row">
+            <dt class="col-sm-2">
+                @Html.DisplayNameFor(model => model.SectionName)
+            </dt>
+            <dd class="col-sm-10">
+                @Html.DisplayFor(model => model.SectionName)
+            </dd>
+            <dt class="col-sm-2">
+                Class
+            </dt>
+            <dd class="col-sm-10">
+                @if (Model.Class != null)
+                {
+                    @($"{Model.Class.ClassName} - {Model.Class.Medium}")
+                }
+                else
+                {
+                    <span class="text-muted">N/A</span>
+                }
+            </dd>
+        </dl>
+    </div>
+    <div>
+        <a asp-action="Edit" asp-route-id="@Model?.SectionId">Edit</a> |
+        <a asp-action="Index">Back to List</a>
+    </div>
+</body>
+</html>

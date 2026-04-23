@@ -4,10 +4,9 @@
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
-
+<link rel="stylesheet" href="~/css/List.css" asp-append-version="true" />
 <p>
-    <a asp-action="Create">Create New</a>
+    <a class="btn-add" asp-action="Create">+</a>
 </p>
 <table class="table">
     <thead>
@@ -22,32 +21,54 @@
                 @Html.DisplayNameFor(model => model.EndDate)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.IsActive)
+                Status
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.SessionName)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.StartDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.EndDate)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.IsActive)
-            </td>
-            <td>
-                <a asp-action="Edit" asp-route-id="@item.SessionId">Edit</a> |
-                <a asp-action="Details" asp-route-id="@item.SessionId">Details</a> |
-                <a asp-action="Delete" asp-route-id="@item.SessionId">Delete</a>
-            </td>
-        </tr>
-}
+        @foreach (var item in Model)
+        {
+            // Calculate status based on dates
+            var today = DateOnly.FromDateTime(DateTime.Today);
+            var statusText = "";
+            var statusClass = "";
+
+            if (today >= item.StartDate && today <= item.EndDate)
+            {
+                statusText = "Active";
+                statusClass = "status-active";
+            }
+            else if (today < item.StartDate)
+            {
+                statusText = "Upcoming";
+                statusClass = "status-upcoming";
+            }
+            else
+            {
+                statusText = "Expired";
+                statusClass = "status-expired";
+            }
+
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.SessionName)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.StartDate)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.EndDate)
+                </td>
+                <td>
+                    <span class="@statusClass">@statusText</span>
+                </td>
+                <td>
+                    <a asp-action="Edit" asp-route-id="@item.SessionId">Edit</a> |
+                    <a asp-action="Details" asp-route-id="@item.SessionId">Details</a> |
+                    <a asp-action="Delete" asp-route-id="@item.SessionId">Delete</a>
+                </td>
+            </tr>
+        }
     </tbody>
 </table>
