@@ -74,15 +74,33 @@ namespace SVM_API.Controllers
 
         // POST: api/Users
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        // POST: api/Users
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser(User user)
+        public async Task<ActionResult<User>> PostUser([FromForm] User user)  // [FromBody] se [FromForm] karo
         {
-            _context.Users.Add(user);
-            await _context.SaveChangesAsync();
+            try
+            {
+                // Check if user already exists
+                if (_context.Users.Any(u => u.Username == user.Username))
+                {
+                    return BadRequest(new { error = "Username already exists" });
+                }
 
-            return CreatedAtAction("GetUser", new { id = user.UserId }, user);
+                if (_context.Users.Any(u => u.Email == user.Email))
+                {
+                    return BadRequest(new { error = "Email already exists" });
+                }
+
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction("GetUser", new { id = user.UserId }, user);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
-
         // DELETE: api/Users/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)

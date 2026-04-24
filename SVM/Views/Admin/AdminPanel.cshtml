@@ -1,120 +1,121 @@
 ﻿@{
-    Layout = null;
+	Layout = null;
 }
 
 <!DOCTYPE html>
 <html>
 
 <head>
-    <title>S.V.M Admin Panel</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="~/css/AdminPanel.css" asp-append-version="true" />
+	<title>S.V.M Admin Panel</title>
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="~/css/AdminPanel.css" asp-append-version="true" />
 </head>
 
 <body>
 
-    <!-- HEADER -->
-    <div class="header">
-        <div class="logo">SVM Admin Panel</div>
-        <div class="right">Session 2025-26 |<a asp-controller="Account" asp-action="Logout" class="logout-btn">Logout</a></div>
-    </div>
+	<!-- HEADER -->
+	<div class="header">
+		<div class="logo">SVM Admin Panel</div>
 
-    <!-- MENU -->
-    <div class="menu">
-        <ul>
+		<!-- Admin Dropdown - exactly like submenu-item -->
+		<div class="admin-dropdown">
+			<a href="javascript:void(0)">Admin <i class="fa fa-chevron-down"></i></a>
+			<div class="admin-dropdown-menu">
+				<a asp-action="CreateWithGroup" asp-controller="Users" asp-route-groupId="1">
+					<i class="fa fa-user-plus"></i> Add Admin
+				</a>
+				<a asp-controller="Account" asp-action="Logout">
+					<i class="fa fa-sign-out-alt"></i> Logout
+				</a>
+			</div>
+		</div>
+	</div>
 
-            <li>
-                <a asp-action="AdminDashboard" asp-controller="Admin" target="mainFrame">
-                    <i class="fa fa-home"></i> Dashboard
-                </a>
-            </li>
+	<div class="menu">
+		<ul>
 
-            <!-- student -->
-            <li>
-                <a href="#"><i class="fa fa-user-graduate"></i> Students</a>
-                <div class="submenu">
-                    <a href="#">Add Student</a>
-                    <a href="#">Student List</a>
-                    <!--itemsub student menu -->
-                    <div class="submenu-item">
-                        <a href="#">Student Fees</a>
-                        <div class="submenu2">
-                            <a href="#">Pay Fees</a>
-                            <a href="#">Installments</a>
-                            <a href="#">Receipts</a>
-                        </div>
-                    </div>
+			<li>
+				<a asp-action="AdminDashboard" asp-controller="Admin" target="mainFrame">
+					<i class="fa fa-home"></i> Dashboard
+				</a>
+			</li>
 
-                    <a href="#">Attendance</a>
-                </div>
-            </li>
+			<!-- student -->
+			<li>
+				<a href="#"><i class="fa fa-user-graduate"></i> Students</a>
+				<div class="submenu">
+					<a href="#">Add Student</a>
+					<a href="#">Student List</a>
+					<div class="submenu-item">
+						<a href="#">Student Fees</a>
+						<div class="submenu2">
+							<a href="#">Pay Fees</a>
+							<a href="#">Installments</a>
+							<a href="#">Receipts</a>
+						</div>
+					</div>
+					<a href="#">Attendance</a>
+				</div>
+			</li>
 
-            <!-- STAFF -->
-            <li>
-                <a href="#"><i class="fa fa-chalkboard-teacher"></i> Staff</a>
-                <div class="submenu">
-                    <a asp-action="Create" asp-controller="Staffs" target="mainFrame">Add Staff</a>
-                    <a asp-action="Index" asp-controller="Staffs" target="mainFrame">Staff List</a>
-                    <a href="#">Salary</a>
-                </div>
-            </li>
+			<!-- STAFF -->
+			<li>
+				<a href="#"><i class="fa fa-chalkboard-teacher"></i> Staff</a>
+				<div class="submenu">
+					<a asp-action="Create" asp-controller="Staffs" target="mainFrame">Add Staff</a>
+					<a asp-action="Index" asp-controller="Staffs" target="mainFrame">Staff List</a>
+					<a href="#">Salary</a>
+				</div>
+			</li>
 
-            <!-- academic menu -->
-            <li>
-                <a href="#"><i class="fa fa-book"></i> Academic</a>
-                <!--sub academic menu -->
-                <div class="submenu">
-                    <!--itemsub class & div menu -->
-                    <div class="submenu-item">
-                        <a> Classes & Sections</a>
+			<!-- academic menu -->
+			<li>
+				<a href="#"><i class="fa fa-book"></i> Academic</a>
+				<div class="submenu">
+					<div class="submenu-item">
+						<a> Classes & Sections</a>
+						<div class="submenu2">
+							<a asp-action="Index" asp-controller="Classes" target="mainFrame"> Classes</a>
+							<a asp-action="Index" asp-controller="Sections" target="mainFrame"> Division</a>
+						</div>
+					</div>
+					<a target="mainFrame" asp-controller="Subjects" asp-action="Index">Subjects</a>
+					<a href="#">Exams</a>
+					<div class="submenu-item">
+						<a href="#">Results</a>
+						<div class="submenu2">
+							<a href="#">Result Entry</a>
+							<a href="#">Report Card</a>
+						</div>
+					</div>
+					<a href="#">Timetable</a>
+				</div>
+			</li>
 
-                        <div class="submenu2">
-                            <a asp-action="Index" asp-controller="Classes" target="mainFrame"> Classes</a>
-                            <a asp-action="Index" asp-controller="Sections" target="mainFrame"> Division</a>
-                        </div>
-                    </div>
-                    <a target="mainFrame" asp-controller="Subjects" asp-action="Index">Subjects</a>
-                    <a href="#">Exams</a>
-                    <!--itemsub Result menu -->
-                    <div class="submenu-item">
-                        <a href="#">Results</a>
-                        <div class="submenu2">
-                            <a href="#">Result Entry</a>
-                            <a href="#">Report Card</a>
-                        </div>
-                    </div>
+			<!-- account menu -->
+			<li>
+				<a href="#"><i class="fa fa-wallet"></i> Accounts</a>
+				<div class="submenu">
+					<a href="#">Fees</a>
+					<a href="#">Expenses</a>
+					<a href="#">Salary</a>
+				</div>
+			</li>
 
-                    <a href="#">Timetable</a>
-                </div>
-            </li>
+			<!-- settings menu -->
+			<li>
+				<a href="#"><i class="fa fa-cog"></i> Settings</a>
+				<div class="submenu">
+					<a asp-action="Index" asp-controller="Sessions" target="mainFrame">Session</a>
+					<a href="#">Medium</a>
+					<a href="#">Users</a>
+				</div>
+			</li>
 
-            <!-- account menu -->
-            <li>
-                <a href="#"><i class="fa fa-wallet"></i> Accounts</a>
-                <!-- sub seeting menu -->
-                <div class="submenu">
-                    <a href="#">Fees</a>
-                    <a href="#">Expenses</a>
-                    <a href="#">Salary</a>
-                </div>
-            </li>
+		</ul>
+	</div>
 
-            <!-- seeting menu -->
-            <li>
-                <a href="#"><i class="fa fa-cog"></i> Settings</a>
-                <!-- sub seeting menu -->
-                <div class="submenu">
-                    <a asp-action="Index" asp-controller="Sessions" target="mainFrame">Session</a>
-                    <a href="#">Medium</a>
-                    <a href="#">Users</a>
-                </div>
-            </li>
-
-        </ul>
-    </div>
-
-
-    <iframe id="mainFrame" name="mainFrame"></iframe>
+	<iframe id="mainFrame" name="mainFrame"></iframe>
 
 </body>
 <script src="~/js/AdminPanel.js"></script>

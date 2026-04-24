@@ -22,6 +22,7 @@ namespace SVM
             });
 
             var app = builder.Build();
+            app.UseStaticFiles(); // This should be there
 
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
