@@ -1,0 +1,190 @@
+﻿@model IEnumerable<SVM.Models.Student>
+
+@{
+	ViewData["Title"] = "Index";
+}
+@if (TempData["Error"] != null)
+{
+	<div class="alert alert-danger">@TempData["Error"]</div>
+}
+@* @if (TempData["Success"] != null)
+{
+	<div class="alert alert-success">@TempData["Success"]</div>
+} *@
+<link rel="stylesheet" href="~/css/List.css" asp-append-version="true" />
+
+<p>
+	<a asp-action="Create" class="btn-add">+</a>
+</p>
+<table class="table">
+	<thead>
+		<tr>
+			<th>
+				@Html.DisplayNameFor(model => model.StudentPhoto)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.AdmissionNo)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.AdmissionDate)
+			</th>
+			@* <th>
+                @Html.DisplayNameFor(model => model.RollNo)
+            </th> *@
+			<th>
+				@Html.DisplayNameFor(model => model.FirstName)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.LastName)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.FatherName)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Dob)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Gender)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Grno)
+			</th>
+			@* <th>
+                @Html.DisplayNameFor(model => model.BloodGroup)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.AadharNo)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Address)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.City)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.State)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Pincode)
+            </th> *@
+			<th>
+				@Html.DisplayNameFor(model => model.Phone)
+			</th>
+			@* <th>
+                @Html.DisplayNameFor(model => model.MotherPhone)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.PreviousSchool)
+            </th> *@
+
+			<th>
+				@Html.DisplayNameFor(model => model.Class)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Section)
+			</th>
+			<th>
+				@Html.DisplayNameFor(model => model.Session)
+			</th>
+			@* <th>
+                @Html.DisplayNameFor(model => model.User)
+            </th> *@
+			<th></th>
+		</tr>
+	</thead>
+	<tbody>
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>
+					@if (!string.IsNullOrEmpty(item.StudentPhoto))
+					{
+						<img src="@item.StudentPhoto" alt="Student Photo"
+							 style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%; border: 1px solid #ddd;" />
+					}
+					else
+					{
+						<div style="width: 50px; height: 50px; background-color: #f0f0f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #aaa;">
+							📷
+						</div>
+					}
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.AdmissionNo)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.AdmissionDate)
+				</td>
+				@* <td>
+                    @Html.DisplayFor(modelItem => item.RollNo)
+                </td> *@
+				<td>
+					@Html.DisplayFor(modelItem => item.FirstName)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.LastName)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.FatherName)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Dob)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Gender)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Grno)
+				</td>
+				@* <td>
+                    @Html.DisplayFor(modelItem => item.BloodGroup)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.AadharNo)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Address)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.City)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.State)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Pincode)
+                </td> *@
+				<td>
+					@Html.DisplayFor(modelItem => item.Phone)
+				</td>
+				@* <td>
+                    @Html.DisplayFor(modelItem => item.MotherPhone)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.PreviousSchool)
+                </td> *@
+
+				<!-- Display Student Photo as a circular image -->
+
+
+				<td>
+					@Html.DisplayFor(modelItem => item.Class.ClassName)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Section.SectionName)
+				</td>
+				<td>
+					@Html.DisplayFor(modelItem => item.Session.SessionName)
+				</td>
+				@* <td>
+                    @Html.DisplayFor(modelItem => item.User.Email)
+                </td> *@
+				<td>
+					<a asp-action="Edit" asp-route-id="@item.StudentId">Edit</a> |
+					<a asp-action="Details" asp-route-id="@item.StudentId">Details</a> |
+					<a asp-action="Delete" asp-route-id="@item.StudentId">Delete</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>

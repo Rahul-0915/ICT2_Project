@@ -1,0 +1,263 @@
+﻿@model SVM.Models.Student
+
+@{
+    ViewData["Title"] = "Create";
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="~/css/CreateForm.css" asp-append-version="true" />
+    <title>Create Student</title>
+    <style>
+        .hidden-field {
+            display: none;
+        }
+
+        .image-preview-container {
+            margin-top: 10px;
+        }
+
+        #imagePreview {
+            max-width: 150px;
+            max-height: 150px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h4>Add Student</h4>
+        <hr />
+        <div class="row">
+            <div class="col-md-4">
+                <form asp-action="Create" method="post" enctype="multipart/form-data">
+                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                    <!-- PERSONAL INFORMATION -->
+                    <h5>Personal Information</h5>
+                    <div class="form-group">
+                        <label asp-for="FirstName" class="control-label">First Name</label>
+                        <input asp-for="FirstName" class="form-control" />
+                        <span asp-validation-for="FirstName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="LastName" class="control-label">Last Name</label>
+                        <input asp-for="LastName" class="form-control" />
+                        <span asp-validation-for="LastName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="FatherName" class="control-label">Father's Name</label>
+                        <input asp-for="FatherName" class="form-control" />
+                        <span asp-validation-for="FatherName" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Dob" class="control-label">Date of Birth</label>
+                        <input asp-for="Dob" type="date" class="form-control" />
+                        <span asp-validation-for="Dob" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Gender" class="control-label">Gender</label>
+                        <select asp-for="Gender" class="form-control">
+                            <option value="">-- Select Gender --</option>
+                            <option value="Male">Male</option>
+                            <option value="Female">Female</option>
+                            <option value="Other">Other</option>
+                        </select>
+                        <span asp-validation-for="Gender" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="BloodGroup" class="control-label">Blood Group</label>
+                        <select asp-for="BloodGroup" class="form-control">
+                            <option value="">-- Select Blood Group --</option>
+                            <option value="A+">A+</option>
+                            <option value="A-">A-</option>
+                            <option value="B+">B+</option>
+                            <option value="B-">B-</option>
+                            <option value="O+">O+</option>
+                            <option value="O-">O-</option>
+                            <option value="AB+">AB+</option>
+                            <option value="AB-">AB-</option>
+                        </select>
+                        <span asp-validation-for="BloodGroup" class="text-danger"></span>
+                    </div>
+
+                    <!-- ACADEMIC INFORMATION -->
+                    <h5>Academic Information</h5>
+                    <div class="form-group">
+                        <label asp-for="AdmissionDate" class="control-label">Admission Date</label>
+                        <input asp-for="AdmissionDate" type="date" class="form-control" />
+                        <span asp-validation-for="AdmissionDate" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Grno" class="control-label">GR Number</label>
+                        <input asp-for="Grno" class="form-control" />
+                        <span asp-validation-for="Grno" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">Medium</label>
+                        <select id="Medium" class="form-control">
+                            <option value="">-- Select Medium --</option>
+                            <option value="Gujarati">Gujarati</option>
+                            <option value="English">English</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="SessionGroup">
+                        <label asp-for="SessionId" class="control-label">Academic Session</label>
+                        <select asp-for="SessionId" class="form-control" asp-items="ViewBag.SessionId">
+                            <option value="">-- Select Session --</option>
+                        </select>
+                        <span asp-validation-for="SessionId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group" id="ClassGroup">
+                        <label asp-for="ClassId" class="control-label">Class</label>
+                        <select asp-for="ClassId" class="form-control" asp-items="ViewBag.ClassId">
+                            <option value="">-- Select Class --</option>
+                        </select>
+                        <span asp-validation-for="ClassId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group" id="SectionGroup">
+                        <label asp-for="SectionId" class="control-label">Section</label>
+                        <select asp-for="SectionId" class="form-control" asp-items="ViewBag.SectionId">
+                            <option value="">-- Select Section --</option>
+                        </select>
+                        <span asp-validation-for="SectionId" class="text-danger"></span>
+                    </div>
+
+                    <!-- CONTACT INFORMATION -->
+                    <h5>Contact Information</h5>
+                    <div class="form-group">
+                        <label asp-for="Phone" class="control-label">Phone Number</label>
+                        <input asp-for="Phone" class="form-control" />
+                        <span asp-validation-for="Phone" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="MotherPhone" class="control-label">Mother's Phone</label>
+                        <input asp-for="MotherPhone" class="form-control" />
+                        <span asp-validation-for="MotherPhone" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Address" class="control-label">Address</label>
+                        <input asp-for="Address" class="form-control" />
+                        <span asp-validation-for="Address" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="City" class="control-label">City</label>
+                        <input asp-for="City" class="form-control" />
+                        <span asp-validation-for="City" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="State" class="control-label">State</label>
+                        <input asp-for="State" class="form-control" />
+                        <span asp-validation-for="State" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="Pincode" class="control-label">Pincode</label>
+                        <input asp-for="Pincode" class="form-control" />
+                        <span asp-validation-for="Pincode" class="text-danger"></span>
+                    </div>
+
+                    <!-- ADDITIONAL INFORMATION -->
+                    <h5>Additional Information</h5>
+                    <div class="form-group">
+                        <label asp-for="AadharNo" class="control-label">Aadhar Number</label>
+                        <input asp-for="AadharNo" class="form-control" />
+                        <span asp-validation-for="AadharNo" class="text-danger"></span>
+                    </div>
+                    <div class="form-group">
+                        <label asp-for="PreviousSchool" class="control-label">Previous School</label>
+                        <input asp-for="PreviousSchool" class="form-control" />
+                        <span asp-validation-for="PreviousSchool" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="control-label">Student Photo (Required)</label>
+                        <input type="file" id="ImageFile" name="photoFile" class="form-control" accept="image/*" onchange="previewImage(event)" required />
+                        <span asp-validation-for="StudentPhoto" class="text-danger"></span>
+                        <div id="imagePreviewContainer" class="image-preview-container" style="display:none;">
+                            <img id="imagePreview" src="#" alt="Preview" />
+                        </div>
+                    </div>
+
+                    <!-- ===== ADDED BY FIELD - CHANGED ===== -->
+                    <div class="form-group">
+                        <label asp-for="UserId" class="control-label">Added By</label>
+                        <input type="hidden" asp-for="UserId" value="@ViewBag.AdminId" />
+                        <input type="text" class="form-control" value="@ViewBag.AdminName" readonly disabled />
+                        <span asp-validation-for="UserId" class="text-danger"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <input type="submit" value="Create Student" class="btn btn-primary" />
+                    </div>
+                </form>
+                <div class="back-link">
+                    <a asp-action="Index">← Back to List</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        function previewImage(event) {
+            const reader = new FileReader();
+            const preview = document.getElementById('imagePreview');
+            const container = document.getElementById('imagePreviewContainer');
+            reader.onload = function() { preview.src = reader.result; container.style.display = 'block'; }
+            if (event.target.files[0]) reader.readAsDataURL(event.target.files[0]);
+            else container.style.display = 'none';
+        }
+
+        $(document).ready(function() {
+            $('#SessionGroup, #ClassGroup, #SectionGroup').hide();
+            $('#Medium').change(function() {
+                var selectedMedium = $(this).val();
+                if (selectedMedium === 'Gujarati' || selectedMedium === 'English') {
+                    $('#SessionGroup, #ClassGroup, #SectionGroup').show();
+                    loadClassesByMedium(selectedMedium);
+                } else {
+                    $('#SessionGroup, #ClassGroup, #SectionGroup').hide();
+                    $('#ClassId').html('<option value="">-- Select Class --</option>');
+                    $('#SectionId').html('<option value="">-- Select Section --</option>');
+                    $('#SessionId').html('<option value="">-- Select Session --</option>');
+                }
+            });
+            $('#ClassId').change(function() {
+                var classId = $(this).val();
+                if (classId) loadSectionsByClass(classId);
+                else $('#SectionId').html('<option value="">-- Select Section --</option>');
+            });
+            function loadClassesByMedium(medium) {
+                $.ajax({ url: '@Url.Action("GetClassesByMedium", "Students")', type: 'GET', data: { medium: medium },
+                    success: function(data) {
+                        var classSelect = $('#ClassId');
+                        classSelect.empty();
+                        classSelect.append('<option value="">-- Select Class --</option>');
+                        $.each(data, function(index, item) { classSelect.append($('<option></option>').val(item.value).text(item.text)); });
+                        $('#SectionId').html('<option value="">-- Select Section --</option>');
+                    },
+                    error: function() { alert('Error loading classes'); }
+                });
+            }
+            function loadSectionsByClass(classId) {
+                $.ajax({ url: '@Url.Action("GetSectionsByClass", "Students")', type: 'GET', data: { classId: classId },
+                    success: function(data) {
+                        var sectionSelect = $('#SectionId');
+                        sectionSelect.empty();
+                        sectionSelect.append('<option value="">-- Select Section --</option>');
+                        $.each(data, function(index, item) { sectionSelect.append($('<option></option>').val(item.value).text(item.text)); });
+                    },
+                    error: function() { alert('Error loading sections'); }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

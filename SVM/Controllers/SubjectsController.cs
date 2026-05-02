@@ -83,7 +83,8 @@ namespace SVM.Controllers
         // GET: Subjects/Create
         public async Task<IActionResult> Create()
         {
-            await LoadClasses();
+            // Empty class dropdown; will be filled by JS after medium selection
+            ViewData["ClassId"] = new SelectList(new List<Class>(), "ClassId", "ClassName");
             return View();
         }
 
@@ -117,6 +118,7 @@ namespace SVM.Controllers
         }
 
         // GET: Subjects/Edit/5
+        // GET: Subjects/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -128,10 +130,22 @@ namespace SVM.Controllers
             var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var subjectData = JsonSerializer.Deserialize<Subject>(data, option);
 
-            await LoadClasses(subjectData.ClassId);
+            // Load current class details to get its medium
+            if (subjectData.ClassId.HasValue)
+            {
+                var classResponse = await _client.GetAsync($"Classes/{subjectData.ClassId}");
+                if (classResponse.IsSuccessStatusCode)
+                {
+                    var classData = await classResponse.Content.ReadAsStringAsync();
+                    var currentClass = JsonSerializer.Deserialize<Class>(classData, option);
+                    ViewBag.CurrentMedium = currentClass?.Medium;
+                    ViewBag.CurrentClassId = subjectData.ClassId;
+                }
+            }
+
+            // Do NOT populate ViewData["ClassId"] – it will be filled by JavaScript
             return View(subjectData);
         }
-
         // POST: Subjects/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -253,6 +267,22 @@ namespace SVM.Controllers
                 ViewData["ClassId"] = new SelectList(new List<Class>(), "ClassId", "ClassName", selectedClassId);
                 ModelState.AddModelError("", "Unable to load classes");
             }
+        }
+        [HttpGet]
+        public async Task<JsonResult> GetClassesByMedium(string medium)
+        {
+            var response = await _client.GetAsync("Classes");
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsStringAsync();
+                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var allClasses = JsonSerializer.Deserialize<List<Class>>(data, option);
+                var filteredClasses = allClasses.Where(c => c.Medium == medium)
+                                                .Select(c => new { value = c.ClassId, text = c.ClassName })
+                                                .ToList();
+                return Json(filteredClasses);
+            }
+            return Json(new List<object>());
         }
     }
 }

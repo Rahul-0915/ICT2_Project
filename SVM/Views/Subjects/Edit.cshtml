@@ -1,51 +1,117 @@
 ﻿@model SVM.Models.Subject
 
 @{
-    ViewData["Title"] = "Edit";
+	ViewData["Title"] = "Edit";
 }
 
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="~/css/CreateForm.css" asp-append-version="true" />
-    <title>Edit Subject</title>
+	<link rel="stylesheet" href="~/css/CreateForm.css" asp-append-version="true" />
+	<title>Edit Subject</title>
+	<style>
+		.form-group {
+			margin-bottom: 1rem;
+		}
+	</style>
 </head>
 <body>
-    <div class="container">
-        <h4>Edit Subject</h4>
-        <hr />
+	<div class="container">
+		<h4>Edit Subject</h4>
+		<hr />
 
-        <div class="row">
-            <div class="col-md-4">
-                <form asp-action="Edit">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <input type="hidden" asp-for="SubjectId" />
+		<div class="row">
+			<div class="col-md-4">
+				<form asp-action="Edit">
+					<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+					<input type="hidden" asp-for="SubjectId" />
 
-                    <div class="form-group">
-                        <label asp-for="SubjectName" class="control-label">Subject Name</label>
-                        <input asp-for="SubjectName" class="form-control" />
-                        <span asp-validation-for="SubjectName" class="text-danger"></span>
-                    </div>
+					<!-- Medium Selection -->
+					<div class="form-group">
+						<label class="control-label">Medium</label>
+						<select id="Medium" class="form-control">
+							<option value="">-- Select Medium --</option>
+							<option value="Gujarati">Gujarati</option>
+							<option value="English">English</option>
+						</select>
+					</div>
 
-                    <div class="form-group">
-                        <label asp-for="Class.ClassName" class="control-label">Select Class</label>
-                        <select asp-for="ClassId" class="form-control" asp-items="ViewBag.ClassId">
-                            <option value="">-- Select Class --</option>
-                        </select>
-                        <span asp-validation-for="ClassId" class="text-danger"></span>
-                    </div>
+					<!-- Class Dropdown (loaded dynamically) -->
+					<div class="form-group">
+						<label asp-for="Class.ClassName" class="control-label">Select Class</label>
+						<select asp-for="ClassId" class="form-control">
+							<option value="">-- First select Medium --</option>
+						</select>
+						<span asp-validation-for="ClassId" class="text-danger"></span>
+					</div>
 
-                    <div class="form-group">
-                        <input type="submit" value="Save" class="btn btn-primary" />
-                    </div>
-                </form>
+					<!-- Subject Name -->
+					<div class="form-group">
+						<label asp-for="SubjectName" class="control-label">Subject Name</label>
+						<input asp-for="SubjectName" class="form-control" />
+						<span asp-validation-for="SubjectName" class="text-danger"></span>
+					</div>
 
-                <!-- Back to List link -->
-                <div class="back-link">
-                    <a asp-action="Index">← Back to List</a>
-                </div>
-            </div>
-        </div>
-    </div>
+					<div class="form-group">
+						<input type="submit" value="Save" class="btn btn-primary" />
+					</div>
+				</form>
+
+				<div class="back-link">
+					<a asp-action="Index">← Back to List</a>
+				</div>
+			</div>
+		</div>
+	</div>
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+		$(document).ready(function() {
+			var currentMedium = '@ViewBag.CurrentMedium';
+			var currentClassId = '@ViewBag.CurrentClassId';
+
+			// Set selected medium in dropdown
+			if (currentMedium) {
+				$('#Medium').val(currentMedium);
+				loadClasses(currentMedium, currentClassId);
+			}
+
+			// When Medium changes, load classes
+			$('#Medium').change(function() {
+				var selectedMedium = $(this).val();
+				if (selectedMedium === '') {
+					$('#ClassId').html('<option value="">-- First select Medium --</option>');
+					return;
+				}
+				loadClasses(selectedMedium, null);
+			});
+
+			function loadClasses(medium, selectedClassId) {
+				var classDropdown = $('#ClassId');
+				classDropdown.html('<option value="">Loading classes...</option>');
+
+				$.ajax({
+					url: '@Url.Action("GetClassesByMedium", "Subjects")',
+					type: 'GET',
+					data: { medium: medium },
+					success: function(data) {
+						classDropdown.empty();
+						classDropdown.append('<option value="">-- Select Class --</option>');
+						$.each(data, function(index, item) {
+							var option = $('<option></option>').val(item.value).text(item.text);
+							if (selectedClassId && selectedClassId == item.value) {
+								option.attr('selected', 'selected');
+							}
+							classDropdown.append(option);
+						});
+					},
+					error: function() {
+						classDropdown.html('<option value="">Error loading classes</option>');
+						alert('Failed to load classes. Please try again.');
+					}
+				});
+			}
+		});
+	</script>
 </body>
 </html>

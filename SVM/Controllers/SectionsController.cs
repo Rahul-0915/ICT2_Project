@@ -21,8 +21,8 @@ namespace SVM.Controllers
             _client.BaseAddress = new Uri("https://localhost:7191/api/");
         }
 
-        // GET: Sections
-        public async Task<IActionResult> Index()
+        // GET: Sections – ONLY ONE Index method
+        public async Task<IActionResult> Index(string medium = "")
         {
             List<Section> sectionList = new List<Section>();
 
@@ -32,14 +32,36 @@ namespace SVM.Controllers
                 var data = await response.Content.ReadAsStringAsync();
                 var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 sectionList = JsonSerializer.Deserialize<List<Section>>(data, option);
+
+                // Load Class details for each section (to get Medium and ClassName)
+                foreach (var section in sectionList)
+                {
+                    if (section.ClassId.HasValue)
+                    {
+                        var classResponse = await _client.GetAsync($"Classes/{section.ClassId}");
+                        if (classResponse.IsSuccessStatusCode)
+                        {
+                            var classData = await classResponse.Content.ReadAsStringAsync();
+                            section.Class = JsonSerializer.Deserialize<Class>(classData, option);
+                        }
+                    }
+                }
+
+                // Filter by medium if selected
+                if (!string.IsNullOrEmpty(medium))
+                {
+                    sectionList = sectionList.Where(s => s.Class?.Medium == medium).ToList();
+                }
             }
             else
             {
                 ModelState.AddModelError("", "Failed to load sections");
             }
 
+            ViewBag.SelectedMedium = medium;
             return View(sectionList);
         }
+
 
         // GET: Sections/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -67,7 +89,8 @@ namespace SVM.Controllers
         // GET: Sections/Create
         public async Task<IActionResult> Create()
         {
-            await LoadClasses();
+            // Class dropdown initially empty – will be populated by JS after medium selection
+            ViewData["ClassId"] = new SelectList(new List<Class>(), "ClassId", "ClassName");   // ← only ClassName
             return View();
         }
 
@@ -105,32 +128,35 @@ namespace SVM.Controllers
             return View(section);
         }
 
+
         // GET: Sections/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var response = await _client.GetAsync($"Sections/{id}");
-
-            if (!response.IsSuccessStatusCode)
-            {
-                return NotFound();
-            }
+            if (!response.IsSuccessStatusCode) return NotFound();
 
             var data = await response.Content.ReadAsStringAsync();
+            var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var section = JsonSerializer.Deserialize<Section>(data, option);
 
-            var section = JsonSerializer.Deserialize<Section>(data, new JsonSerializerOptions
+            // Load current class details to get its medium
+            if (section.ClassId.HasValue)
             {
-                PropertyNameCaseInsensitive = true
-            });
+                var classResponse = await _client.GetAsync($"Classes/{section.ClassId}");
+                if (classResponse.IsSuccessStatusCode)
+                {
+                    var classData = await classResponse.Content.ReadAsStringAsync();
+                    var currentClass = JsonSerializer.Deserialize<Class>(classData, option);
+                    ViewBag.CurrentMedium = currentClass?.Medium;
+                    ViewBag.CurrentClassId = section.ClassId;
+                }
+            }
 
-            await LoadClasses();
+            // Do NOT populate ViewData["ClassId"] here – will be filled by JS
             return View(section);
         }
-
         // POST: Sections/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -211,7 +237,7 @@ namespace SVM.Controllers
                 var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 var classes = JsonSerializer.Deserialize<List<Class>>(data, option);
 
-                ViewData["ClassId"] = new SelectList(classes, "ClassId", "ClassNameWithMedium");
+                ViewData["ClassId"] = new SelectList(classes, "ClassId", "ClassName");   // ← only ClassName
             }
         }
         // Add this method in SectionsController
@@ -231,6 +257,22 @@ namespace SVM.Controllers
                 );
             }
             return false;
+        }
+        [HttpGet]
+        public async Task<JsonResult> GetClassesByMedium(string medium)
+        {
+            var response = await _client.GetAsync("Classes");
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsStringAsync();
+                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var allClasses = JsonSerializer.Deserialize<List<Class>>(data, option);
+                var filteredClasses = allClasses.Where(c => c.Medium == medium)
+                                                .Select(c => new { value = c.ClassId, text = c.ClassName })   // ← only ClassName
+                                                .ToList();
+                return Json(filteredClasses);
+            }
+            return Json(new List<object>());
         }
 
     }

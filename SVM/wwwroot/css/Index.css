@@ -226,6 +226,7 @@ p {
     justify-content: flex-end;
     gap: 12px;
     margin-bottom: 20px;
+    
     padding: 10px 15px;
     background: white;
     border-radius: 12px;
@@ -242,6 +243,7 @@ p {
 .filter-dropdown {
     padding: 8px 15px;
     font-size: 14px;
+    
     font-weight: 500;
     border: 1px solid #ddd;
     border-radius: 8px;

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Http.Features;
+using Microsoft.EntityFrameworkCore;
 using SVM.Models;
 
 namespace SVM
@@ -20,7 +21,10 @@ namespace SVM
                 options.Cookie.HttpOnly = true;
                 options.Cookie.IsEssential = true;
             });
-
+            builder.Services.Configure<FormOptions>(options =>
+            {
+                options.MultipartBodyLengthLimit = 50_000_000; // 50 MB
+            });
             var app = builder.Build();
             app.UseStaticFiles(); // This should be there
 

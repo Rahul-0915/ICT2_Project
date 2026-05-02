@@ -1,50 +1,67 @@
 ﻿@model IEnumerable<SVM.Models.Section>
 
 @{
-    ViewData["Title"] = "Index";
+	ViewData["Title"] = "Index";
 }
 
+<link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
 
-<html>
-    <head>
-    <link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
-        <body>
-        <p>
-            <a asp-action="Create">+</a>
-        </p>
-        <h2>sections</h2>
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>
-                        @Html.DisplayNameFor(model => model.SectionName)
-                    </th>
-                    <th>
-                        @Html.DisplayNameFor(model => model.Class)
-                    </th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var item in Model)
-                {
-                    <tr>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.SectionName)
-                        </td>
-                        <td>
-                            @Html.DisplayFor(modelItem => item.Class.ClassName)
-                        </td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@item.SectionId">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.SectionId">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.SectionId">Delete</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
+<h1>Sections</h1>
 
-        </body>
-    </head>
-</html>
+<!-- Medium Filter Dropdown -->
+<div class="filter-container">
+	<label for="mediumFilter">Filter by Medium:</label>
+	<select id="mediumFilter" class="filter-dropdown">
+		<option value="all">-- All Mediums --</option>
+		<option value="Gujarati">Gujarati</option>
+		<option value="English">English</option>
+	</select>
+</div>
+
+<p>
+	<a asp-action="Create">+</a>
+</p>
+
+<table class="table">
+	<thead>
+		<tr>
+			<th>Division (Section Name)</th>
+			<th>Class</th>
+			<th>Medium</th>   <!-- New Column -->
+			<th>Actions</th>
+		</tr>
+	</thead>
+	<tbody id="sectionsTableBody">
+		@foreach (var item in Model)
+		{
+			<tr data-medium="@item.Class?.Medium">
+				<td>@Html.DisplayFor(modelItem => item.SectionName)</td>
+				<td>@Html.DisplayFor(modelItem => item.Class.ClassName)</td>
+				<td>@Html.DisplayFor(modelItem => item.Class.Medium)</td>   <!-- Display Medium -->
+				<td>
+					<a asp-action="Edit" asp-route-id="@item.SectionId">Edit</a> |
+					<a asp-action="Details" asp-route-id="@item.SectionId">Details</a> |
+					<a asp-action="Delete" asp-route-id="@item.SectionId">Delete</a>
+				</td>
+			</tr>
+		}
+	</tbody>
+</table>
+
+<script>
+	// Filter functionality (same as Classes page)
+	document.getElementById('mediumFilter').addEventListener('change', function() {
+		var selectedMedium = this.value;
+		var rows = document.querySelectorAll('#sectionsTableBody tr');
+
+		rows.forEach(function(row) {
+			var rowMedium = row.getAttribute('data-medium');
+
+			if (selectedMedium === 'all' || rowMedium === selectedMedium) {
+				row.style.display = '';
+			} else {
+				row.style.display = 'none';
+			}
+		});
+	});
+</script>
