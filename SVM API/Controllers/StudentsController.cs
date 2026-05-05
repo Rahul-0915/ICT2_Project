@@ -5,58 +5,53 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SVM.Models;
 using SVM_API.Models;
 
 namespace SVM_API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class SubjectsController : ControllerBase
+    public class StudentsController : ControllerBase
     {
         private readonly SvmContext _context;
 
-        public SubjectsController(SvmContext context)
+        public StudentsController(SvmContext context)
         {
             _context = context;
         }
 
-        // GET: api/Subjects
+        // GET: api/Students
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Subject>>> GetSubjects()
+        public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
         {
-            return await _context.Subjects
-                .Include(s=>s.Class)
-                .ToListAsync();
+            return await _context.Students.ToListAsync();
         }
 
-        // GET: api/Subjects/5
+        // GET: api/Students/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Subject>> GetSubject(int id)
+        public async Task<ActionResult<Student>> GetStudent(int id)
         {
-            var subject = await _context.Subjects
-                .Include(s => s.Class)
-                .FirstOrDefaultAsync(s=>s.SubjectId==id);
+            var student = await _context.Students.FindAsync(id);
 
-            if (subject == null)
+            if (student == null)
             {
                 return NotFound();
             }
 
-            return subject;
+            return student;
         }
 
-        // PUT: api/Subjects/5
+        // PUT: api/Students/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutSubject(int id, Subject subject)
+        public async Task<IActionResult> PutStudent(int id, Student student)
         {
-            if (id != subject.SubjectId)
+            if (id != student.StudentId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(subject).State = EntityState.Modified;
+            _context.Entry(student).State = EntityState.Modified;
 
             try
             {
@@ -64,7 +59,7 @@ namespace SVM_API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!SubjectExists(id))
+                if (!StudentExists(id))
                 {
                     return NotFound();
                 }
@@ -77,36 +72,36 @@ namespace SVM_API.Controllers
             return NoContent();
         }
 
-        // POST: api/Subjects
+        // POST: api/Students
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Subject>> PostSubject(Subject subject)
+        public async Task<ActionResult<Student>> PostStudent(Student student)
         {
-            _context.Subjects.Add(subject);
+            _context.Students.Add(student);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetSubject", new { id = subject.SubjectId }, subject);
+            return CreatedAtAction("GetStudent", new { id = student.StudentId }, student);
         }
 
-        // DELETE: api/Subjects/5
+        // DELETE: api/Students/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSubject(int id)
+        public async Task<IActionResult> DeleteStudent(int id)
         {
-            var subject = await _context.Subjects.FindAsync(id);
-            if (subject == null)
+            var student = await _context.Students.FindAsync(id);
+            if (student == null)
             {
                 return NotFound();
             }
 
-            _context.Subjects.Remove(subject);
+            _context.Students.Remove(student);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool SubjectExists(int id)
+        private bool StudentExists(int id)
         {
-            return _context.Subjects.Any(e => e.SubjectId == id);
+            return _context.Students.Any(e => e.StudentId == id);
         }
     }
 }

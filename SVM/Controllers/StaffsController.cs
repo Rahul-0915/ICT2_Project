@@ -1,22 +1,24 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Microsoft.EntityFrameworkCore;
-using SVM.Models;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Http;
+using SVM.Models;
 
 namespace SVM.Controllers
 {
     public class StaffsController : Controller
     {
-        private readonly SvmContext _context;
+        private readonly HttpClient _client;
 
-        public StaffsController(SvmContext context)
+        public StaffsController(IHttpClientFactory clientFactory)
         {
-            _context = context;
+            _client = clientFactory.CreateClient();
+            _client.BaseAddress = new Uri("https://localhost:7191/api/");
         }
 
         // Helper: Get current logged-in user ID from Session
@@ -37,8 +39,35 @@ namespace SVM.Controllers
         // GET: Staffs
         public async Task<IActionResult> Index()
         {
-            var svmContext = _context.Staff.Include(s => s.User);
-            return View(await svmContext.ToListAsync());
+            List<Staff> staffList = new List<Staff>();
+            var response = await _client.GetAsync("Staffs");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                staffList = JsonSerializer.Deserialize<List<Staff>>(data, options);
+
+                // Manually load User (FullName) for each staff member
+                foreach (var staff in staffList)
+                {
+                    if (staff.UserId.HasValue)
+                    {
+                        var userResp = await _client.GetAsync($"Users/{staff.UserId}");
+                        if (userResp.IsSuccessStatusCode)
+                        {
+                            var userData = await userResp.Content.ReadAsStringAsync();
+                            staff.User = JsonSerializer.Deserialize<User>(userData, options);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Failed to load staff members.");
+            }
+
+            return View(staffList);
         }
 
         // GET: Staffs/Details/5
@@ -46,16 +75,28 @@ namespace SVM.Controllers
         {
             if (id == null) return NotFound();
 
-            var staff = await _context.Staff
-                .Include(s => s.User)
-                .FirstOrDefaultAsync(m => m.StaffId == id);
-            if (staff == null) return NotFound();
+            var response = await _client.GetAsync($"Staffs/{id}");
+            if (!response.IsSuccessStatusCode) return NotFound();
+
+            var data = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var staff = JsonSerializer.Deserialize<Staff>(data, options);
+
+            // Load User (creator) details
+            if (staff.UserId.HasValue)
+            {
+                var userResp = await _client.GetAsync($"Users/{staff.UserId}");
+                if (userResp.IsSuccessStatusCode)
+                {
+                    var userData = await userResp.Content.ReadAsStringAsync();
+                    staff.User = JsonSerializer.Deserialize<User>(userData, options);
+                }
+            }
 
             return View(staff);
         }
 
         // GET: Staffs/Create
-        [HttpGet]
         public IActionResult Create()
         {
             var userId = GetCurrentUserId();
@@ -83,7 +124,7 @@ namespace SVM.Controllers
             }
             staff.UserId = currentUserId.Value;
 
-            // Remove UserId from ModelState to avoid validation issues
+            // Remove auto-generated fields from validation
             ModelState.Remove("UserId");
             ModelState.Remove("StafPhoto");
 
@@ -112,10 +153,34 @@ namespace SVM.Controllers
 
             if (ModelState.IsValid)
             {
-                _context.Add(staff);
-                await _context.SaveChangesAsync();
-                TempData["Success"] = $"Staff created successfully! Name: {staff.FirstName} {staff.LastName}";
-                return RedirectToAction(nameof(Index));
+                // Prepare object with DateOnly-compatible JoiningDate
+                var staffForApi = new
+                {
+                    staff.FirstName,
+                    staff.LastName,
+                    staff.Designation,
+                    staff.Qualification,
+                    staff.ExperienceYears,
+                    JoiningDate = staff.JoiningDate.Value.ToString("yyyy-MM-dd"),
+                    staff.Salary,
+                    staff.Phone,
+                    staff.Email,
+                    staff.Address,
+                    staff.StafPhoto,
+                    staff.UserId
+                };
+
+                var response = await _client.PostAsJsonAsync("Staffs", staffForApi);
+                if (response.IsSuccessStatusCode)
+                {
+                    TempData["Success"] = $"Staff created successfully!";
+                    return RedirectToAction(nameof(Index));
+                }
+                else
+                {
+                    var errorContent = await response.Content.ReadAsStringAsync();
+                    ModelState.AddModelError("", $"API Error: {response.StatusCode} - {errorContent}");
+                }
             }
 
             ViewBag.AdminName = GetCurrentUserName();
@@ -128,32 +193,67 @@ namespace SVM.Controllers
         {
             if (id == null) return NotFound();
 
-            // Include the User navigation property to get the creator's name
-            var staff = await _context.Staff
-                .Include(s => s.User)
-                .FirstOrDefaultAsync(s => s.StaffId == id);
+            var response = await _client.GetAsync($"Staffs/{id}");
+            if (!response.IsSuccessStatusCode) return NotFound();
 
-            if (staff == null) return NotFound();
+            var data = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var staff = JsonSerializer.Deserialize<Staff>(data, options);
 
-            // Pass the original creator's name to the view
-            ViewBag.AddedByName = staff.User?.FullName ?? staff.User?.Username ?? "Unknown";
+            // Get the original added-by user's full name
+            if (staff.UserId.HasValue)
+            {
+                var userResp = await _client.GetAsync($"Users/{staff.UserId}");
+                if (userResp.IsSuccessStatusCode)
+                {
+                    var userData = await userResp.Content.ReadAsStringAsync();
+                    var user = JsonSerializer.Deserialize<User>(userData, options);
+                    ViewBag.AddedByName = user?.FullName ?? user?.Username ?? "Unknown";
+                }
+            }
 
             return View(staff);
         }
+
         // POST: Staffs/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("StaffId,UserId,FirstName,LastName,Designation,Qualification,ExperienceYears,JoiningDate,Salary,Phone,Email,Address,StafPhoto")] Staff staff, IFormFile? photoFile)
+        public async Task<IActionResult> Edit(int id, [Bind("StaffId,FirstName,LastName,Designation,Qualification,ExperienceYears,JoiningDate,Salary,Phone,Email,Address")] Staff updatedStaff, IFormFile? photoFile)
         {
-            if (id != staff.StaffId) return NotFound();
+            if (id != updatedStaff.StaffId) return NotFound();
 
-            // Handle image upload if new image is provided
+            // 1. Load existing staff from API
+            var getResponse = await _client.GetAsync($"Staffs/{id}");
+            if (!getResponse.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError("", "Could not find the staff record.");
+                return View(updatedStaff);
+            }
+
+            var data = await getResponse.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var existingStaff = JsonSerializer.Deserialize<Staff>(data, options);
+            if (existingStaff == null) return NotFound();
+
+            // 2. Update only editable fields
+            existingStaff.FirstName = updatedStaff.FirstName;
+            existingStaff.LastName = updatedStaff.LastName;
+            existingStaff.Designation = updatedStaff.Designation;
+            existingStaff.Qualification = updatedStaff.Qualification;
+            existingStaff.ExperienceYears = updatedStaff.ExperienceYears;
+            existingStaff.JoiningDate = updatedStaff.JoiningDate;
+            existingStaff.Salary = updatedStaff.Salary;
+            existingStaff.Phone = updatedStaff.Phone;
+            existingStaff.Email = updatedStaff.Email;
+            existingStaff.Address = updatedStaff.Address;
+
+            // 3. Handle photo upload
             if (photoFile != null && photoFile.Length > 0)
             {
                 // Delete old image if exists
-                if (!string.IsNullOrEmpty(staff.StafPhoto))
+                if (!string.IsNullOrEmpty(existingStaff.StafPhoto))
                 {
-                    string oldImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", staff.StafPhoto.TrimStart('/'));
+                    string oldImagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", existingStaff.StafPhoto.TrimStart('/'));
                     if (System.IO.File.Exists(oldImagePath))
                     {
                         System.IO.File.Delete(oldImagePath);
@@ -168,25 +268,40 @@ namespace SVM.Controllers
                 {
                     await photoFile.CopyToAsync(stream);
                 }
-                staff.StafPhoto = $"/images/staff/{fileName}";
+                existingStaff.StafPhoto = $"/images/staff/{fileName}";
             }
 
-            if (ModelState.IsValid)
+            // 4. Prepare object with DateOnly-compatible JoiningDate
+            var staffForApi = new
             {
-                try
-                {
-                    _context.Update(staff);
-                    await _context.SaveChangesAsync();
-                    TempData["Success"] = "Staff updated successfully!";
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!StaffExists(staff.StaffId)) return NotFound();
-                    else throw;
-                }
+                existingStaff.StaffId,
+                existingStaff.UserId,
+                existingStaff.FirstName,
+                existingStaff.LastName,
+                existingStaff.Designation,
+                existingStaff.Qualification,
+                existingStaff.ExperienceYears,
+                JoiningDate = existingStaff.JoiningDate.Value.ToString("yyyy-MM-dd"),
+                existingStaff.Salary,
+                existingStaff.Phone,
+                existingStaff.Email,
+                existingStaff.Address,
+                existingStaff.StafPhoto
+            };
+
+            // 5. Send update to API
+            var putResponse = await _client.PutAsJsonAsync($"Staffs/{id}", staffForApi);
+            if (putResponse.IsSuccessStatusCode)
+            {
+                TempData["Success"] = "Staff updated successfully!";
                 return RedirectToAction(nameof(Index));
             }
-            return View(staff);
+            else
+            {
+                var errorContent = await putResponse.Content.ReadAsStringAsync();
+                ModelState.AddModelError("", $"Update failed: {errorContent}");
+                return View(updatedStaff);
+            }
         }
 
         // GET: Staffs/Delete/5
@@ -194,10 +309,23 @@ namespace SVM.Controllers
         {
             if (id == null) return NotFound();
 
-            var staff = await _context.Staff
-                .Include(s => s.User)
-                .FirstOrDefaultAsync(m => m.StaffId == id);
-            if (staff == null) return NotFound();
+            var response = await _client.GetAsync($"Staffs/{id}");
+            if (!response.IsSuccessStatusCode) return NotFound();
+
+            var data = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var staff = JsonSerializer.Deserialize<Staff>(data, options);
+
+            // Load User (creator) details for display
+            if (staff.UserId.HasValue)
+            {
+                var userResp = await _client.GetAsync($"Users/{staff.UserId}");
+                if (userResp.IsSuccessStatusCode)
+                {
+                    var userData = await userResp.Content.ReadAsStringAsync();
+                    staff.User = JsonSerializer.Deserialize<User>(userData, options);
+                }
+            }
 
             return View(staff);
         }
@@ -207,11 +335,15 @@ namespace SVM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var staff = await _context.Staff.FindAsync(id);
-            if (staff != null)
+            // First get the staff to delete the photo file
+            var response = await _client.GetAsync($"Staffs/{id}");
+            if (response.IsSuccessStatusCode)
             {
-                // Delete staff photo if exists
-                if (!string.IsNullOrEmpty(staff.StafPhoto))
+                var data = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var staff = JsonSerializer.Deserialize<Staff>(data, options);
+
+                if (!string.IsNullOrEmpty(staff?.StafPhoto))
                 {
                     string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", staff.StafPhoto.TrimStart('/'));
                     if (System.IO.File.Exists(imagePath))
@@ -219,16 +351,22 @@ namespace SVM.Controllers
                         System.IO.File.Delete(imagePath);
                     }
                 }
-                _context.Staff.Remove(staff);
             }
-            await _context.SaveChangesAsync();
+
+            var deleteResponse = await _client.DeleteAsync($"Staffs/{id}");
+            if (!deleteResponse.IsSuccessStatusCode)
+            {
+                ModelState.AddModelError("", "Delete failed!");
+            }
+
             TempData["Success"] = "Staff deleted successfully!";
             return RedirectToAction(nameof(Index));
         }
 
-        private bool StaffExists(int id)
+        private async Task<bool> StaffExists(int id)
         {
-            return _context.Staff.Any(e => e.StaffId == id);
+            var response = await _client.GetAsync($"Staffs/{id}");
+            return response.IsSuccessStatusCode;
         }
     }
 }

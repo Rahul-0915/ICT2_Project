@@ -1,6 +1,7 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
+using static Microsoft.EntityFrameworkCore.DbLoggerCategory;
 
 namespace SVM.Models;
 
@@ -42,10 +43,11 @@ public partial class SvmContext : DbContext
     public virtual DbSet<TeacherSubject> TeacherSubjects { get; set; }
 
     public virtual DbSet<User> Users { get; set; }
+    public DbSet<Updates> Updates { get; set; }
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
 #warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
-            => optionsBuilder.UseSqlServer("Data Source=LAPTOP-4UGH4KDC\\SQLEXPRESS;Initial Catalog=SVM;Integrated Security=True;Encrypt=False");
+        => optionsBuilder.UseSqlServer("Data Source=LAPTOP-4UGH4KDC\\SQLEXPRESS;Initial Catalog=SVM;Integrated Security=True;Encrypt=False");
     //    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see https://go.microsoft.com/fwlink/?LinkId=723263.
     //        => optionsBuilder.UseSqlServer("Data Source=LAPTOP-0UK50KGM\\SQLEXPRESS;Initial Catalog=SVM;Integrated Security=True;Encrypt=False");
@@ -227,7 +229,7 @@ public partial class SvmContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("email");
-          
+
             entity.Property(e => e.ExperienceYears).HasColumnName("experience_years");
             entity.Property(e => e.FirstName)
                 .HasMaxLength(50)

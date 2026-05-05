@@ -46,7 +46,7 @@
 			@Html.DisplayNameFor(model => model.JoiningDate)
 		</dt>
 		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.JoiningDate)
+			@Model.JoiningDate.Value.ToString("dd-mm-yyyy")
 		</dd>
 		<dt class="col-sm-2">
 			@Html.DisplayNameFor(model => model.Salary)
