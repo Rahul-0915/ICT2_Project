@@ -9,7 +9,7 @@ namespace SVM_API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-            builder.Services.AddDbContext<SvmContext>(option=>option.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStrings")));
+            builder.Services.AddDbContext<SvmContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStrings")));
             // Add services to the container.
             builder.Services.AddHttpClient();
 
