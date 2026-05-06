@@ -1,54 +1,51 @@
 ﻿@model SVM.Models.Updates
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Update Details";
 }
+<link rel="stylesheet" href="~/css/Detail.css" asp-append-version="true" />
 
-<h1>Details</h1>
+<h2>Update Details</h2>
 
 <div>
-    <h4>Updates</h4>
     <hr />
     <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Title)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Title)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Category)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Category)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.FilePath)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.FilePath)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Status)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Status)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CreatedAt)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CreatedAt)
+        <dt class="col-sm-2">Title</dt>
+        <dd class="col-sm-10">@Model.Title</dd>
+
+        <dt class="col-sm-2">Description</dt>
+        <dd class="col-sm-10">@Model.Description</dd>
+
+        <dt class="col-sm-2">Category</dt>
+        <dd class="col-sm-10">@Model.Category</dd>
+
+        <dt class="col-sm-2">Status</dt>
+        <dd class="col-sm-10">@(Model.Status == 1 ? "Active" : "Inactive")</dd>
+
+        <dt class="col-sm-2">Created At</dt>
+        <dd class="col-sm-10">@Model.CreatedAt.ToString("yyyy-MM-dd HH:mm:ss")</dd>   <!-- Removed ? -->
+
+        <dt class="col-sm-2">File</dt>
+        <dd class="col-sm-10">
+            @if (!string.IsNullOrEmpty(Model.FilePath))
+            {
+                if (Model.FilePath.EndsWith(".pdf", StringComparison.OrdinalIgnoreCase))
+                {
+                    <a href="@Model.FilePath" target="_blank">Open PDF</a>
+                }
+                else
+                {
+                    <img src="@Model.FilePath" style="max-width:300px;" />
+                }
+            }
+            else
+            {
+                <span>No file</span>
+            }
         </dd>
     </dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.Id">Edit</a> |
+    <a asp-action="Edit" asp-route-id="@Model.Id">Edit</a> |
     <a asp-action="Index">Back to List</a>
 </div>

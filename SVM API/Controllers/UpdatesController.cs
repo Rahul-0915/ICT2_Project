@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SVM_API.Models;
@@ -32,24 +31,25 @@ namespace SVM_API.Controllers
         public async Task<ActionResult<Updates>> GetUpdates(int id)
         {
             var updates = await _context.Updates.FindAsync(id);
-
-            if (updates == null)
-            {
-                return NotFound();
-            }
-
+            if (updates == null) return NotFound();
             return updates;
         }
 
+        // POST: api/Updates
+        [HttpPost]
+        public async Task<ActionResult<Updates>> PostUpdates(Updates updates)
+        {
+            updates.CreatedAt = DateTime.Now;
+            _context.Updates.Add(updates);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction("GetUpdates", new { id = updates.Id }, updates);
+        }
+
         // PUT: api/Updates/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutUpdates(int id, Updates updates)
         {
-            if (id != updates.Id)
-            {
-                return BadRequest();
-            }
+            if (id != updates.Id) return BadRequest();
 
             _context.Entry(updates).State = EntityState.Modified;
 
@@ -59,28 +59,10 @@ namespace SVM_API.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!UpdatesExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                if (!UpdatesExists(id)) return NotFound();
+                else throw;
             }
-
             return NoContent();
-        }
-
-        // POST: api/Updates
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Updates>> PostUpdates(Updates updates)
-        {
-            _context.Updates.Add(updates);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetUpdates", new { id = updates.Id }, updates);
         }
 
         // DELETE: api/Updates/5
@@ -88,14 +70,10 @@ namespace SVM_API.Controllers
         public async Task<IActionResult> DeleteUpdates(int id)
         {
             var updates = await _context.Updates.FindAsync(id);
-            if (updates == null)
-            {
-                return NotFound();
-            }
+            if (updates == null) return NotFound();
 
             _context.Updates.Remove(updates);
             await _context.SaveChangesAsync();
-
             return NoContent();
         }
 

@@ -42,7 +42,7 @@ namespace SVM
             app.UseRouting();
             app.UseSession();
             app.UseAuthorization();
-
+            app.UseStaticFiles();   // This enables serving files from wwwroot
 
             app.MapControllerRoute(
       name: "default",
