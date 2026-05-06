@@ -2,12 +2,30 @@
 
 @{
     ViewData["Title"] = "Index";
+
 }
-<link rel="stylesheet" href="~/css/List.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/Updates_Css/Updates_Notice.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <p>
     <a asp-action="Create" class="btn-add">+</a>
 </p>
-<table class="table">
+<div class="search-bar">
+
+    <input type="text" id="searchTitle" placeholder="Search Title..." />
+
+    <select id="searchCategory">
+        <option value="">All Category</option>
+        <option value="notice">Notice</option>
+        <option value="event">Event</option>
+    </select>
+
+    <input type="date" id="searchDate" />
+
+    <button onclick="filterTable()">Search</button>
+    <button onclick="resetFilter()">Reset</button>
+
+</div>
+<table class="table notice-table">
     <thead>
         <tr>
             <th>@Html.DisplayNameFor(model => model.Title)</th>
@@ -19,7 +37,7 @@
             <th></th>
         </tr>
     </thead>
-    <tbody>
+    <tbody class="notice-grid">
         @foreach (var item in Model)
         {
             <tr>
@@ -65,11 +83,20 @@
                 </td>
                 <td>@Html.DisplayFor(modelItem => item.CreatedAt)</td>
                 <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.Id">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id" class="action-btn edit" title="Edit">
+                        <i class="fa-solid fa-pen-to-square"></i>
+                    </a>
+
+                    <a asp-action="Details" asp-route-id="@item.Id" class="action-btn view" title="Details">
+                        <i class="fa-solid fa-eye"></i>
+                    </a>
+
+                    <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn delete" title="Delete">
+                        <i class="fa-solid fa-trash"></i>
+                    </a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
+<script src="/js/Updates_Notice_js/Updates_Notice.js"></script>

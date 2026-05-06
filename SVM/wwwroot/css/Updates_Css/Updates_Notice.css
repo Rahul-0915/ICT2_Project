@@ -1,0 +1,456 @@
+﻿/* Background (simple & real) Craete form................*/
+body {
+    margin: 0;
+    font-family: 'Segoe UI', sans-serif;
+    background-color: #efeae2;
+    background-image: url('/images/AdminDashboardBGImg.png');
+    background-repeat: repeat;
+}
+
+/* Container */
+.update-container {
+    display: flex;
+    justify-content: center;
+    padding: 40px 15px;
+}
+
+/* Card (clean, no fake glass) */
+.update-card {
+    width: 100%;
+    max-width: 900px;
+    background: #ffffff;
+    padding: 28px;
+    border-radius: 12px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.05);
+}
+
+/* Title */
+.form-title {
+    font-size: 22px;
+    font-weight: 600;
+    text-align:center;
+    color: #111827;
+    margin-bottom: 4px;
+}
+
+.form-subtitle {
+    margin-bottom: 20px;
+    color: #6b7280;
+    font-size: 13px;
+}
+
+/* Grid */
+.update-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+    /* Full width */
+    .update-form .form-group:nth-child(1),
+    .update-form .form-group:nth-child(2),
+    .update-form .form-group:last-of-type {
+        grid-column: span 2;
+    }
+
+/* Labels */
+.form-label {
+    font-size: 13px;
+    color: #374151;
+    margin-bottom: 5px;
+    display: block;
+}
+
+/* Inputs */
+.form-input {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #d1d5db;
+    background: #fff;
+    font-size: 14px;
+    transition: border-color 0.2s ease;
+}
+
+    /* Focus (simple, real) */
+    .form-input:focus {
+        border-color: #2563eb;
+        outline: none;
+    }
+
+/* Textarea */
+.textarea {
+    resize: none;
+}
+
+/* Select */
+.select {
+    cursor: pointer;
+}
+
+/* File input (clean box, not flashy) */
+.file-input {
+    border: 1px dashed #cbd5e1;
+    background: #f9fafb;
+    padding: 10px;
+    border-radius: 8px;
+}
+
+/* Preview */
+.preview-box img {
+    margin-top: 10px;
+    border-radius: 6px;
+    border: 1px solid #e5e7eb;
+}
+
+/* Button (real admin style) */
+.submit-btn {
+    grid-column: span 2;
+    padding: 11px;
+    font-size: 14px;
+    border-radius: 8px;
+    border: none;
+    background: #2563eb;
+    color: #fff;
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+    .submit-btn:hover {
+        background: #1d4ed8;
+    }
+
+/* Back link */
+.back-link {
+    grid-column: span 2;
+    text-align: center;
+    margin-top: 8px;
+}
+
+    .back-link a {
+        color: #2563eb;
+        text-decoration: none;
+        font-size: 13px;
+    }
+
+        .back-link a:hover {
+            text-decoration: underline;
+        }
+
+/* Error */
+.form-error {
+    font-size: 12px;
+    color: #dc2626;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .update-form {
+        grid-template-columns: 1fr;
+    }
+
+    .submit-btn,
+    .back-link {
+        grid-column: span 1;
+    }
+}
+
+
+/* display notice css* Index page ............................../
+/* Page */
+body {
+    margin-top:10px;
+    background: #f5f7fa;
+    font-family: 'Segoe UI', sans-serif;
+    color: #111827;
+    background-color: #efeae2;
+    background-image: url('/images/AdminDashboardBGImg.png');
+    background-repeat: repeat;
+}
+
+/* Header */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 18px;
+}
+
+    .page-header h2 {
+        margin: 0;
+        font-size: 22px;
+        font-weight: 700;
+    }
+
+/* Add Button */
+.btn-add {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: #2563eb;
+    color: #fff;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    text-decoration: none;
+    font-size: 22px;
+}
+
+    .btn-add:hover {
+        transform: translateY(-2px);
+    }
+
+/* Table (GAP ENABLE) */
+.table {
+    width: 100%;
+    background-color:white;
+    border-collapse: separate; /* IMPORTANT */
+    border-spacing: 0 12px; /* ROW GAP */
+}
+
+    /* Header */
+    .table thead th {
+        white-space: nowrap;
+        text-align: left;
+        font-size: 14px;
+        color: #374151;
+        padding: 10px 14px;
+        font-weight: 700;
+    }
+
+    /* Row */
+    .table tbody tr {
+        background: #fff;
+        box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+        border-radius: 10px;
+        transition: 0.2s;
+    }
+
+        /* Hover */
+        .table tbody tr:hover {
+            
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+        }
+
+    /* Cells */
+    .table td {
+        padding: 14px;
+        font-size: 19px; /* bigger font */
+        vertical-align: middle;
+        color: #111827; /* darker */
+    }
+
+    /* Rounded corners (important for gap look) */
+    .table tbody tr td:first-child {
+        border-top-left-radius: 10px;
+        border-bottom-left-radius: 10px;
+    }
+
+    .table tbody tr td:last-child {
+        border-top-right-radius: 10px;
+        border-bottom-right-radius: 10px;
+    }
+
+    /* Title */
+    .table td:first-child {
+        font-weight: 700;
+        font-size: 15px;
+    }
+
+    /* Description */
+    .table td:nth-child(2) {
+        max-width: 260px;
+        color: #4b5563;
+    }
+
+    /* Category */
+    .table td:nth-child(3) {
+        font-size: 13px;
+        font-weight: 600;
+        color: #2563eb;
+    }
+
+    /* Image */
+    .table td img {
+        width: 45px;
+        height: 45px;
+        border-radius: 8px;
+        object-fit: cover;
+        border: 1px solid #e5e7eb;
+    }
+
+    /* Status */
+    .table td:nth-child(5) span {
+        font-size: 13px;
+        padding: 4px 10px;
+        border-radius: 6px;
+        background: #dcfce7;
+        color: #166534;
+        font-weight: 600;
+    }
+
+    /* Date */
+    .table td:nth-child(6) {
+        font-size: 13px;
+        color: #6b7280;
+    }
+
+    /* Actions */
+    .table td:last-child {
+        white-space: nowrap;
+    }
+
+        .table td:last-child a {
+            font-size: 14px;
+            font-weight: 500;
+            color: #1f2937;
+            margin-right: 10px;
+            text-decoration: none;
+        }
+
+            .table td:last-child a:hover {
+                color: #2563eb;
+            }
+
+/* Responsive */
+@media (max-width: 768px) {
+    .table {
+        display: block;
+        overflow-x: auto;
+    }
+}
+
+/*edit delete update btn css................*/
+/* Action buttons base */
+.action-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    margin-right: 6px;
+    text-decoration: none;
+    color: #fff;
+    font-size: 15px;
+    transition: all 0.25s ease;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.08);
+}
+
+    /* Edit button */
+    .action-btn.edit {
+        background: linear-gradient(135deg, #10b981, #059669);
+        
+    }
+
+    /* View button */
+    .action-btn.view {
+        background: linear-gradient(135deg, #3b82f6, #2563eb);
+    }
+
+    /* Delete button */
+    .action-btn.delete {
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+    }
+
+    /* Hover effect (lift + glow) */
+    .action-btn:hover {
+        transform: translateY(-3px) scale(1.08);
+        box-shadow: 0 8px 18px rgba(0,0,0,0.15);
+    }
+
+    /* Active click feel */
+    .action-btn:active {
+        transform: scale(0.95);
+    }
+
+    /* Icon alignment fine tuning */
+    .action-btn i {
+        pointer-events: none;
+    }
+
+    /*search section________________________________*/
+
+
+/* Search bar container */
+.search-bar {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 15px;
+    align-items: center;
+}
+
+    /* Inputs */
+    .search-bar input,
+    .search-bar select {
+        padding: 15px 25px;
+        border-radius: 8px;
+        border: 1px solid #ddd;
+        font-size: 14px;
+        outline: none;
+        transition: 0.2s;
+        min-width: 180px;
+    }
+
+        /* Focus effect */
+        .search-bar input:focus,
+        .search-bar select:focus {
+            border-color: #2563eb;
+            box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+        }
+
+    /* Buttons */
+    .search-bar button {
+        padding: 15px 15px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        transition: 0.2s;
+    }
+
+        /* Search button */
+        .search-bar button:first-of-type {
+            background: #2563eb;
+            color: #fff;
+        }
+
+            .search-bar button:first-of-type:hover {
+                background: #1d4ed8;
+            }
+
+        /* Reset button */
+        .search-bar button:last-of-type {
+            background: #e5e7eb;
+            color: #111827;
+        }
+
+            .search-bar button:last-of-type:hover {
+                background: #d1d5db;
+            }
+
+            /*img preview*____________________________________*/
+.image-preview-container {
+    margin-top: 10px;
+}
+
+#imagePreview {
+    max-width: 150px;
+    max-height: 150px;
+    border: 1px solid white;
+    border-radius: 4px;
+    padding: 5px;
+}
+
+.current-file {
+    margin-top: 10px;
+    padding: 8px;
+    background: #f5f5f5;
+    border-radius: 4px;
+}
+/*Detile page css___________________________*/
+
