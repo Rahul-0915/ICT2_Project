@@ -1,153 +1,154 @@
 ﻿@model List<SVM.Models.Updates>
 
 @{
-    Layout = null;
+	Layout = null;
 }
 
 <html>
 <head>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
-    <link rel="stylesheet" href="~/css/AdminPanel.css" asp-append-version="true" />
-    <style>
-        .notice-list {
-            list-style: none;
-            padding-left: 0;
-        }
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+	<link rel="stylesheet" href="~/css/AdminPanel.css" asp-append-version="true" />
+	<style>
+		.notice-list {
+			list-style: none;
+			padding-left: 0;
+		}
 
-            .notice-list li {
-                margin-bottom: 8px;
-                border-bottom: 1px dashed #eee;
-                padding-bottom: 5px;
-                font-size: 14px;
-            }
+			.notice-list li {
+				margin-bottom: 8px;
+				border-bottom: 1px dashed #eee;
+				padding-bottom: 5px;
+				font-size: 14px;
+			}
 
-                .notice-list li a {
-                    text-decoration: none;
-                    font-weight: normal;
-                }
+				.notice-list li a {
+					text-decoration: none;
+					font-weight: normal;
+				}
 
-                    .notice-list li a:hover {
-                        color: #007bff;
-                        text-decoration: underline;
-                    }
+					.notice-list li a:hover {
+						color: #007bff;
+						text-decoration: underline;
+					}
 
-                .notice-list li:before {
-                    content: "•";
-                    color: #ff6b6b;
-                    font-weight: bold;
-                    font-size: 18px;
-                    margin-right: 8px;
-                    display: inline-block;
-                }
+				.notice-list li:before {
+					content: "•";
+					color: #ff6b6b;
+					font-weight: bold;
+					font-size: 18px;
+					margin-right: 8px;
+					display: inline-block;
+				}
 
-        .show-more {
-            margin-top: 10px;
-            display: inline-block;
-            font-size: 13px;
-            color: #007bff;
-            text-decoration: none;
-        }
+		.show-more {
+			margin-top: 10px;
+			display: inline-block;
+			font-size: 13px;
+			color: #007bff;
+			text-decoration: none;
+		}
 
-            .show-more:hover {
-                text-decoration: underline;
-            }
-    </style>
+			.show-more:hover {
+				text-decoration: underline;
+			}
+	</style>
 </head>
 
 <div class="container">
-    <div class="grid">
-        <div class="panel">
-            <div class="iconBox c1"><i class="fa fa-user-graduate"></i></div>
-            <h2>1200</h2>
-            totalStudents
-        </div>
-        <div class="panel">
-            <div class="iconBox c2"><i class="fa fa-chalkboard-teacher"></i></div>
-            <h2>75</h2>
-            Staf
-        </div>
-        <div class="panel">
-            <div class="iconBox c3"><i class="fa fa-money-bill"></i></div>
-            <h2>₹2,50,000</h2>
-            Fees
-        </div>
-        <div class="panel">
-            <div class="iconBox c4"><i class="fa fa-wallet"></i></div>
-            <h2>₹1,10,000</h2>
-            Expenses
-        </div>
-        <div class="panel">
-            <div class="iconBox c5"><i class="fa fa-calendar-check"></i></div>
-            <h2>92%</h2>
-            Attendance
-        </div>
-        <div class="panel">
-            <div class="iconBox c6"><i class="fa fa-file"></i></div>
-            <h2>25</h2>
-            Exams
-        </div>
-        <div class="panel">
-            <div class="iconBox c7"><i class="fa fa-book"></i></div>
-            <h2>15</h2>
-            Subjects
-        </div>
-        <div class="panel">
-            <div class="iconBox c8"><i class="fa fa-clock"></i></div>
-            <h2>2025-26</h2>
-            Session
-        </div>
-    </div>
+	<div class="grid">
+		<div class="panel">
+			<div class="iconBox c1"><i class="fa fa-user-graduate"></i></div>
+			<h2>@ViewBag.TotalStudents</h2>
+			totalStudents
+		</div>
+		<div class="panel">
+			<div class="iconBox c2"><i class="fa fa-chalkboard-teacher"></i></div>
+			<h2>@ViewBag.TotalStaff</h2>
+			Staff
+		</div>
+		<!-- baki panels jaisa hai waise rakh (Fees, Expenses, Attendance, Exams) -->
+		<div class="panel">
+			<div class="iconBox c3"><i class="fa fa-money-bill"></i></div>
+			<h2>₹2,50,000</h2>
+			Fees
+		</div>
+		<div class="panel">
+			<div class="iconBox c4"><i class="fa fa-wallet"></i></div>
+			<h2>₹1,10,000</h2>
+			Expenses
+		</div>
+		<div class="panel">
+			<div class="iconBox c5"><i class="fa fa-calendar-check"></i></div>
+			<h2>92%</h2>
+			Attendance
+		</div>
+		<div class="panel">
+			<div class="iconBox c6"><i class="fa fa-file"></i></div>
+			<h2>25</h2>
+			Exams
+		</div>
+		<div class="panel">
+			<div class="iconBox c7"><i class="fa fa-book"></i></div>
+			<h2>@ViewBag.TotalSubjects</h2>
+			Subjects
+		</div>
+		<div class="panel">
+			<div class="iconBox c8"><i class="fa fa-clock"></i></div>
+			<h2>@ViewBag.ActiveSessionName</h2>
+			Session
+		</div>
+	</div>
 
-    <div class="bottom">
-        <div class="box">
-            <h3>Recent Activity</h3>
-            <p>New student added</p>
-            <p>Fees submitted</p>
-            <p>Expense added</p>
-        </div>
+	<div class="bottom">
+		<div class="box">
+			<h3>Recent Activity</h3>
+			<p>New student added</p>
+			<p>Fees submitted</p>
+			<p>Expense added</p>
+		</div>
 
-        <div class="box">
-            <h3>Upcoming Exams</h3>
-            <p>Math – 10 April</p>
-            <p>Science – 12 April</p>
-        </div>
+		<div class="box">
+			<h3>Upcoming Exams</h3>
+			<p>Math – 10 April</p>
+			<p>Science – 12 April</p>
+		</div>
 
-        <div class="box">
-            <h3>Notices & Events</h3>
-            @if (Model != null && Model.Count > 0)
-            {
-                var activeItems = Model.Where(u => u.Status == 1).OrderByDescending(u => u.CreatedAt).ToList();
-                if (activeItems.Count > 0)
-                {
-                    // Take only the latest 3
-                    var latestItems = activeItems.Take(3).ToList();
-                    <ul class="notice-list">
-                        @foreach (var item in latestItems)
-                        {
-                            <li>
-                                <a asp-controller="Updates" asp-action="Details" asp-route-id="@item.Id">
-                                    @item.Title
-                                </a>
-                            </li>
-                        }
-                    </ul>
-                    if (activeItems.Count > 3)
-                    {
-                        <a asp-controller="Updates" asp-action="Index" class="show-more">
-                            Show more...
-                        </a>
-                    }
-                }
-                else
-                {
-                    <p>No active notices or events.</p>
-                }
-            }
-            else
-            {
-                <p>No notices or events available.</p>
-            }
-        </div>
-    </div>
+		<div class="box">
+			<h3>Notices & Events</h3>
+			@if (Model != null && Model.Count > 0)
+			{
+				var activeItems = Model.Where(u => u.Status == 1).OrderByDescending(u => u.CreatedAt).ToList();
+				if (activeItems.Count > 0)
+				{
+					// Take only the latest 3
+					var latestItems = activeItems.Take(3).ToList();
+					<ul class="notice-list">
+						@foreach (var item in latestItems)
+						{
+							<li>
+								<a asp-controller="Updates" asp-action="Details" asp-route-id="@item.Id">
+									@item.Title
+								</a>
+							</li>
+						}
+					</ul>
+					if (activeItems.Count > 3)
+					{
+						<a asp-controller="Updates" asp-action="Index" class="show-more">
+							Show more...
+						</a>
+					}
+				}
+				else
+				{
+					<p>No active notices or events.</p>
+				}
+			}
+			else
+			{
+				<p>No notices or events available.</p>
+			}
+		</div>
+	</div>
 </div>
 </html>

@@ -27,8 +27,8 @@ namespace SVM.Controllers
             ViewBag.Username = HttpContext.Session.GetString("Username");
             ViewBag.FullName = HttpContext.Session.GetString("FullName");
 
+            // ----- Existing updates logic (bilkul same) -----
             List<Updates> updatesList = new List<Updates>();
-
             try
             {
                 var response = await _client.GetAsync("Updates");
@@ -45,6 +45,71 @@ namespace SVM.Controllers
             {
                 Console.WriteLine(ex.Message);
             }
+
+            // ----- Naye counts (students, staff, subjects, active session) -----
+            int totalStudents = 0;
+            int totalStaff = 0;
+            int totalSubjects = 0;
+            string activeSessionName = "N/A";
+
+            try
+            {
+                // Students count
+                var studentsResp = await _client.GetAsync("Students");
+                if (studentsResp.IsSuccessStatusCode)
+                {
+                    var studentsJson = await studentsResp.Content.ReadAsStringAsync();
+                    var students = JsonSerializer.Deserialize<List<Student>>(studentsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    totalStudents = students?.Count ?? 0;
+                }
+
+                // Staff count (agar API exist karti hai)
+                var staffResp = await _client.GetAsync("Staffs");
+                if (staffResp.IsSuccessStatusCode)
+                {
+                    var staffJson = await staffResp.Content.ReadAsStringAsync();
+                    var staffList = JsonSerializer.Deserialize<List<Staff>>(staffJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    totalStaff = staffList?.Count ?? 0;
+                }
+
+                // Subjects count
+                var subjectsResp = await _client.GetAsync("Subjects");
+                if (subjectsResp.IsSuccessStatusCode)
+                {
+                    var subjectsJson = await subjectsResp.Content.ReadAsStringAsync();
+                    var subjects = JsonSerializer.Deserialize<List<Subject>>(subjectsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    totalSubjects = subjects?.Count ?? 0;
+                }
+
+                // Active session name
+                // Active session name
+                var sessionsResp = await _client.GetAsync("Sessions");
+                if (sessionsResp.IsSuccessStatusCode)
+                {
+                    var sessionsJson = await sessionsResp.Content.ReadAsStringAsync();
+                    var sessions = JsonSerializer.Deserialize<List<Session>>(sessionsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    var activeSession = sessions?.FirstOrDefault(s => s.IsActive == 1);
+
+                    if (activeSession == null && sessions != null)
+                    {
+                        var today = DateOnly.FromDateTime(DateTime.Today);
+                        activeSession = sessions.FirstOrDefault(s => today >= s.StartDate && today <= s.EndDate);
+                    }
+
+                    if (activeSession != null)
+                        activeSessionName = activeSession.SessionName;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+
+            ViewBag.TotalStudents = totalStudents;
+            ViewBag.TotalStaff = totalStaff;
+            ViewBag.TotalSubjects = totalSubjects;
+            ViewBag.ActiveSessionName = activeSessionName;
 
             return View(updatesList ?? new List<Updates>());
         }

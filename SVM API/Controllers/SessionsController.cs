@@ -20,82 +20,73 @@ namespace SVM_API.Controllers
             _context = context;
         }
 
-        // GET: api/Sessions
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Session>>> GetSessions()
         {
             return await _context.Sessions.ToListAsync();
         }
 
-        // GET: api/Sessions/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Session>> GetSession(int id)
         {
             var session = await _context.Sessions.FindAsync(id);
-
-            if (session == null)
-            {
-                return NotFound();
-            }
-
+            if (session == null) return NotFound();
             return session;
         }
 
-        // PUT: api/Sessions/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSession(int id, Session session)
         {
-            if (id != session.SessionId)
+            if (id != session.SessionId) return BadRequest();
+
+            // Enforce single active session
+            if (session.IsActive == 1)
             {
-                return BadRequest();
+                var otherSessions = await _context.Sessions.Where(s => s.SessionId != id).ToListAsync();
+                foreach (var s in otherSessions)
+                {
+                    s.IsActive = 0;
+                }
             }
 
             _context.Entry(session).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!SessionExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
+            await _context.SaveChangesAsync();
             return NoContent();
         }
 
-        // POST: api/Sessions
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Session>> PostSession(Session session)
         {
+            // Enforce single active session
+            if (session.IsActive == 1)
+            {
+                var allSessions = await _context.Sessions.ToListAsync();
+                foreach (var s in allSessions)
+                {
+                    s.IsActive = 0;
+                }
+            }
+
             _context.Sessions.Add(session);
             await _context.SaveChangesAsync();
-
             return CreatedAtAction("GetSession", new { id = session.SessionId }, session);
         }
 
-        // DELETE: api/Sessions/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteSession(int id)
         {
             var session = await _context.Sessions.FindAsync(id);
-            if (session == null)
-            {
-                return NotFound();
-            }
+            if (session == null) return NotFound();
+
+            // Optional: check for dependents (students, classes) before delete
+            bool hasStudents = await _context.Students.AnyAsync(s => s.SessionId == id);
+            if (hasStudents) return BadRequest("Cannot delete: Students assigned to this session.");
+
+            bool hasClasses = await _context.Classes.AnyAsync(c => c.SessionId == id);
+            if (hasClasses) return BadRequest("Cannot delete: Classes assigned to this session.");
 
             _context.Sessions.Remove(session);
             await _context.SaveChangesAsync();
-
             return NoContent();
         }
 
@@ -103,7 +94,5 @@ namespace SVM_API.Controllers
         {
             return _context.Sessions.Any(e => e.SessionId == id);
         }
-
-
     }
 }
