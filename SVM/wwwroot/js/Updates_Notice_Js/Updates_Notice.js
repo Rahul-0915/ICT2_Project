@@ -9,11 +9,22 @@
 
         let rowTitle = row.cells[0].innerText.toLowerCase();
         let rowCategory = row.cells[2].innerText.toLowerCase();
-        let rowDate = row.cells[5].innerText;
+
+        // raw date from table
+        let rowDateRaw = row.cells[5].innerText.trim();
+
+        // 🔥 IMPORTANT: take only date part
+        // works for: "06/05/2026", "06-05-2026", "2026-05-06 10:30"
+        let rowDateOnly = rowDateRaw.split(" ")[0];
+
+        // normalize slashes to match input format
+        rowDateOnly = rowDateOnly.replace(/\//g, "-");
+
+        let inputDate = date.replace(/\//g, "-");
 
         let matchTitle = rowTitle.includes(title) || title === "";
         let matchCategory = rowCategory.includes(category) || category === "";
-        let matchDate = rowDate.includes(date) || date === "";
+        let matchDate = (rowDateOnly === inputDate || date === "");
 
         if (matchTitle && matchCategory && matchDate) {
             row.style.display = "";
@@ -22,7 +33,6 @@
         }
     });
 }
-
 function resetFilter() {
     document.getElementById("searchTitle").value = "";
     document.getElementById("searchCategory").value = "";
