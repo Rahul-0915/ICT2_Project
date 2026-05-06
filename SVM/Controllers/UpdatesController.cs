@@ -54,7 +54,7 @@ namespace SVM.Controllers
         // GET: Updates/Create
         public IActionResult Create()
         {
-            LoadCategoriesAndStatus(); // optional if you want dynamic
+            LoadCategoriesAndStatus();
             return View();
         }
 
@@ -63,7 +63,6 @@ namespace SVM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Updates updates, IFormFile? UploadFile)
         {
-            // File handling (exactly like StudentsController)
             if (UploadFile != null && UploadFile.Length > 0)
             {
                 if (UploadFile.Length > 5 * 1024 * 1024)
@@ -88,7 +87,6 @@ namespace SVM.Controllers
                 ModelState.AddModelError("UploadFile", "Please upload a file (image or PDF)");
             }
 
-            // Remove validation for auto-set fields (if any)
             ModelState.Remove("CreatedAt");
             ModelState.Remove("FilePath");
 
@@ -135,7 +133,6 @@ namespace SVM.Controllers
         {
             if (id != updates.Id) return NotFound();
 
-            // Handle new file upload if provided
             if (UploadFile != null && UploadFile.Length > 0)
             {
                 if (UploadFile.Length > 5 * 1024 * 1024)
@@ -144,7 +141,6 @@ namespace SVM.Controllers
                 }
                 else
                 {
-                    // Delete old file if exists
                     if (!string.IsNullOrEmpty(updates.FilePath))
                     {
                         string oldPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", updates.FilePath.TrimStart('/'));
@@ -152,7 +148,6 @@ namespace SVM.Controllers
                             System.IO.File.Delete(oldPath);
                     }
 
-                    // Save new file
                     string fileName = Guid.NewGuid().ToString() + Path.GetExtension(UploadFile.FileName);
                     string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "updates");
                     Directory.CreateDirectory(uploadPath);
@@ -165,7 +160,6 @@ namespace SVM.Controllers
                 }
             }
 
-            // Remove validation for fields that should not be re-validated
             ModelState.Remove("CreatedAt");
             ModelState.Remove("FilePath");
 
@@ -199,15 +193,15 @@ namespace SVM.Controllers
         }
 
         // POST: Updates/Delete/5
-        [HttpPost, ActionName("Delete")]
+        [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             // First get the update to delete the physical file
-            var response = await _client.GetAsync($"Updates/{id}");
-            if (response.IsSuccessStatusCode)
+            var getResponse = await _client.GetAsync($"Updates/{id}");
+            if (getResponse.IsSuccessStatusCode)
             {
-                var data = await response.Content.ReadAsStringAsync();
+                var data = await getResponse.Content.ReadAsStringAsync();
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 var updates = JsonSerializer.Deserialize<Updates>(data, options);
 
@@ -215,20 +209,26 @@ namespace SVM.Controllers
                 {
                     string filePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", updates.FilePath.TrimStart('/'));
                     if (System.IO.File.Exists(filePath))
+                    {
                         System.IO.File.Delete(filePath);
+                    }
                 }
             }
 
             var deleteResponse = await _client.DeleteAsync($"Updates/{id}");
             if (deleteResponse.IsSuccessStatusCode)
+            {
                 TempData["Success"] = "Update deleted successfully!";
+            }
             else
-                TempData["Error"] = "Delete failed!";
+            {
+                var errorContent = await deleteResponse.Content.ReadAsStringAsync();
+                TempData["Error"] = $"Delete failed: {deleteResponse.StatusCode} - {errorContent}";
+            }
 
             return RedirectToAction(nameof(Index));
         }
 
-        // Helper: Load static dropdowns (can be extended from DB later)
         private void LoadCategoriesAndStatus(string selectedCategory = null, int? selectedStatus = null)
         {
             var categories = new List<SelectListItem>
