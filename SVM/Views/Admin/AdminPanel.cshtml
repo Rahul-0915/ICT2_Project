@@ -74,11 +74,12 @@
 				<a href="#"><i class="fa fa-book"></i> Academic</a>
 				<div class="submenu">
 					<div class="submenu-item">
-						<a> Classes & Sections</a>
-						<div class="submenu2">
+						@* <a> Classes & Sections</a> *@
+						<a asp-action="Index" asp-controller="Classes" target="mainFrame"> Classes & Sections</a>
+						@* <div class="submenu2">
 							<a asp-action="Index" asp-controller="Classes" target="mainFrame"> Classes</a>
 							<a asp-action="Index" asp-controller="Sections" target="mainFrame"> Division</a>
-						</div>
+						</div> *@
 					</div>
 					<a target="mainFrame" asp-controller="Subjects" asp-action="Index">Subjects</a>
 					<a href="#">Exams</a>

@@ -4,27 +4,45 @@
     ViewData["Title"] = "Index";
 
 }
-<link rel="stylesheet" href="~/css/Updates_Css/Updates_Notice.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/AdminSide_Css/Updates_Notice.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/AdminSide_Css/SearchBar.css" asp-append-version="true" />
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-<p>
-    <a asp-action="Create" class="btn-add">+</a>
-</p>
-<div class="search-bar">
 
-    <input type="text" id="searchTitle" placeholder="Search Title..." />
 
-    <select id="searchCategory">
-        <option value="">All Category</option>
-        <option value="notice">Notice</option>
-        <option value="event">Event</option>
-    </select>
+<div class="top-bar">
 
-    <input type="text" id="searchDate" placeholder="DD-MM-YYYY"  />
+    <div class="left-side">
 
-    <button onclick="filterTable()">Search</button>
-    <button onclick="resetFilter()">Reset</button>
+        <!-- SEARCH -->
+        <input type="text" id="searchTitle" class="search-box" placeholder="Search Title..." />
 
+        <select id="searchCategory" class="search-box">
+            <option value="">All Category</option>
+            <option value="notice">Notice</option>
+            <option value="event">Event</option>
+        </select>
+
+        <input type="text" id="searchDate" placeholder="DD-MM-YYYY" class="search-box" />
+
+        <button onclick="filterTable()" class="search-btn">
+            <i class="fa-solid fa-magnifying-glass"></i>
+            Search
+        </button>
+
+        <button onclick="resetFilter()" class="reset-btn">Reset</button>
+
+    </div>
+
+    <!-- ADD BUTTON -->
+
+    <a asp-action="Create"
+       class="add-btn">
+        <i class="fa-solid fa-plus"></i>
+    </a>
 </div>
+
+
 <table class="table notice-table">
     <thead>
         <tr>
@@ -99,4 +117,4 @@
         }
     </tbody>
 </table>
-<script src="/js/Updates_Notice_js/Updates_Notice.js"></script>
+<script src="/js/AdminSide_Js/Updates_Notice.js"></script>

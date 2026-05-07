@@ -87,10 +87,20 @@ namespace SVM.Controllers
         }
 
         // GET: Sections/Create
-        public async Task<IActionResult> Create()
+        //public async Task<IActionResult> Create()
+        //{
+        //    // Class dropdown initially empty – will be populated by JS after medium selection
+        //    ViewData["ClassId"] = new SelectList(new List<Class>(), "ClassId", "ClassName");   // ← only ClassName
+        //    return View();
+        //}
+
+        public IActionResult Create(int? classId, string medium)
         {
-            // Class dropdown initially empty – will be populated by JS after medium selection
-            ViewData["ClassId"] = new SelectList(new List<Class>(), "ClassId", "ClassName");   // ← only ClassName
+            ViewBag.SelectedClassId = classId;
+            ViewBag.SelectedMedium = medium;
+
+            ViewData["ClassId"] = new SelectList(new List<Class>(), "ClassId", "ClassName");
+
             return View();
         }
 
@@ -120,7 +130,7 @@ namespace SVM.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Classes");
             }
 
             ModelState.AddModelError("", "Create failed!");
@@ -186,7 +196,7 @@ namespace SVM.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                return RedirectToAction(nameof(Index));
+                return RedirectToAction("Index", "Classes");
             }
 
             ModelState.AddModelError("", "Update failed!");
@@ -226,7 +236,7 @@ namespace SVM.Controllers
                 ModelState.AddModelError("", "Delete failed!");
             }
 
-            return RedirectToAction(nameof(Index));
+            return RedirectToAction("Index", "Classes");
         }
         private async Task LoadClasses()
         {
