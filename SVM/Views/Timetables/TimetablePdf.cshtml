@@ -1,0 +1,83 @@
+﻿@{
+	Layout = null;
+	var grid = ViewBag.Grid as Dictionary<string, Dictionary<int, SVM.Models.Timetable>>;
+}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Timetable</title>
+	<style>
+		table, th, td {
+			border: 1px solid black;
+			border-collapse: collapse;
+			padding: 8px;
+			text-align: center;
+		}
+
+		th {
+			background-color: #f2f2f2;
+		}
+	</style>
+</head>
+<body>
+	<h2>Timetable</h2>
+	<p>Session: @ViewBag.SessionId | Class: @ViewBag.ClassId | Section: @ViewBag.SectionId | Medium: @ViewBag.Medium</p>
+	<table style="width:100%">
+		<thead>
+			<tr>
+				<th>Period/Day</th>
+				<th>Monday</th>
+				<th>Tuesday</th>
+				<th>Wednesday</th>
+				<th>Thursday</th>
+				<th>Friday</th>
+				<th>Saturday</th>
+			</tr>
+		</thead>
+		<tbody>
+			@for (int p = 1; p <= 8; p++)
+			{
+				<tr>
+					<th>Period @p</th>
+					@foreach (var day in new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" })
+					{
+						if (day == "Saturday" && p > 5)
+						{
+							<td class="text-muted">-</td>
+						}
+						else
+						{
+							var cell = grid[day].ContainsKey(p) ? grid[day][p] : null;
+							if (cell != null && cell.IsBreak == true)
+							{
+								<td class="bg-warning">
+									BREAK<br />
+									@(cell.StartTime.ToString("hh\\:mm")) - @(cell.EndTime.ToString("hh\\:mm"))
+								</td>
+							}
+							else if (cell != null && cell.SubjectId != null)
+							{
+								var staffDisplay = cell.Staff != null ? cell.Staff.StaffId.ToString() : "";
+								<td>
+									<b>@cell.Subject?.SubjectName</b><br />
+									@staffDisplay<br />
+									@(cell.StartTime.ToString("hh\\:mm")) - @(cell.EndTime.ToString("hh\\:mm"))
+								</td>
+							}
+							else
+							{
+								<td>--</td>
+							}
+
+						}
+
+					}
+				</tr>
+
+
+			}
+	</table>
+	</tbody>
+	</table>
+</body>
+</html>

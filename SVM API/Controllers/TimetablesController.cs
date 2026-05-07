@@ -1,0 +1,97 @@
+﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
+using SVM_API.Models;
+
+namespace SVM_API.Controllers
+{
+    [Route("api/[controller]")]
+    [ApiController]
+    public class TimetablesController : ControllerBase
+    {
+        private readonly SvmContext _context;
+
+        public TimetablesController(SvmContext context)
+        {
+            _context = context;
+        }
+
+        // GET: api/Timetables?sessionId=1&classId=2&sectionId=3
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<Timetable>>> GetTimetables(
+            int? sessionId, int? classId, int? sectionId)
+        {
+            var query = _context.Timetables
+                .Include(t => t.Subject)
+                .Include(t => t.Staff)
+                .Include(t => t.Session)
+                .Include(t => t.Class)
+                .Include(t => t.Section)
+                .AsQueryable();
+
+            if (sessionId.HasValue)
+                query = query.Where(t => t.SessionId == sessionId);
+            if (classId.HasValue)
+                query = query.Where(t => t.ClassId == classId);
+            if (sectionId.HasValue)
+                query = query.Where(t => t.SectionId == sectionId);
+
+            return await query.ToListAsync();
+        }
+
+        // GET: api/Timetables/5
+        [HttpGet("{id}")]
+        public async Task<ActionResult<Timetable>> GetTimetable(int id)
+        {
+            var timetable = await _context.Timetables
+                .Include(t => t.Subject)
+                .Include(t => t.Staff)
+                .FirstOrDefaultAsync(t => t.TimetableId == id);
+
+            if (timetable == null)
+                return NotFound();
+
+            return timetable;
+        }
+
+        // PUT: api/Timetables/5
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutTimetable(int id, Timetable timetable)
+        {
+            if (id != timetable.TimetableId) return BadRequest();
+
+            _context.Entry(timetable).State = EntityState.Modified;
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
+        // POST: api/Timetables
+        [HttpPost]
+        public async Task<ActionResult<Timetable>> PostTimetable(Timetable timetable)
+        {
+            _context.Timetables.Add(timetable);
+            await _context.SaveChangesAsync();
+            return CreatedAtAction("GetTimetable", new { id = timetable.TimetableId }, timetable);
+        }
+
+        // DELETE: api/Timetables/5
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> DeleteTimetable(int id)
+        {
+            var timetable = await _context.Timetables.FindAsync(id);
+            if (timetable == null) return NotFound();
+
+            _context.Timetables.Remove(timetable);
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+        [HttpGet("SectionsByClass/{classId}")]
+        public async Task<ActionResult<IEnumerable<Section>>> GetSectionsByClass(int classId)
+        {
+            var sections = await _context.Sections.Where(s => s.ClassId == classId).ToListAsync();
+            return sections;
+        }
+
+    }
+}

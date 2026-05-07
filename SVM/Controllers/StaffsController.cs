@@ -153,7 +153,51 @@ namespace SVM.Controllers
 
             if (ModelState.IsValid)
             {
-                // Prepare object with DateOnly-compatible JoiningDate
+                // ==============================
+                // STEP 1 : Insert into Users Table
+                // ==============================
+
+                var newUser = new MultipartFormDataContent();
+
+                newUser.Add(new StringContent(staff.Email ?? ""), "Email");
+                newUser.Add(new StringContent(staff.Phone ?? ""), "Phone");
+
+                // username auto generate
+                string username = (staff.FirstName + staff.LastName).Replace(" ", "");
+
+                newUser.Add(new StringContent(username), "Username");
+
+                // default password
+                newUser.Add(new StringContent("123456"), "Password");
+
+                // fullname
+                newUser.Add(new StringContent($"{staff.FirstName} {staff.LastName}"), "FullName");
+
+                // GroupId = 2 for Staff
+                newUser.Add(new StringContent("2"), "GroupId");
+
+                // profile photo blank
+                newUser.Add(new StringContent(staff.StafPhoto ?? ""), "ProfilePhoto");
+
+                var userResponse = await _client.PostAsync("Users", newUser);
+
+                if (!userResponse.IsSuccessStatusCode)
+                {
+                    var userError = await userResponse.Content.ReadAsStringAsync();
+                    ModelState.AddModelError("", $"User Insert Failed : {userError}");
+                    return View(staff);
+                }
+
+                // Get created user data
+                var createdUser = await userResponse.Content.ReadFromJsonAsync<User>();
+
+                // generated user_id
+                staff.UserId = createdUser.UserId;
+
+                // ==============================
+                // STEP 2 : Insert into Staff Table
+                // ==============================
+
                 var staffForApi = new
                 {
                     staff.FirstName,
@@ -171,9 +215,10 @@ namespace SVM.Controllers
                 };
 
                 var response = await _client.PostAsJsonAsync("Staffs", staffForApi);
+
                 if (response.IsSuccessStatusCode)
                 {
-                    TempData["Success"] = $"Staff created successfully!";
+                    TempData["Success"] = "Staff created successfully!";
                     return RedirectToAction(nameof(Index));
                 }
                 else
@@ -270,6 +315,67 @@ namespace SVM.Controllers
                 }
                 existingStaff.StafPhoto = $"/images/staff/{fileName}";
             }
+            // ==============================
+            // UPDATE USER TABLE ALSO
+            // ==============================
+
+            if (existingStaff.UserId.HasValue)
+            {
+                // Get existing user
+                var userGetResponse = await _client.GetAsync($"Users/{existingStaff.UserId}");
+
+                if (userGetResponse.IsSuccessStatusCode)
+                {
+                    var userData = await userGetResponse.Content.ReadAsStringAsync();
+
+                    var userOptions = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+
+                    var existingUser = JsonSerializer.Deserialize<User>(userData, userOptions);
+
+                    if (existingUser != null)
+                    {
+                        // update values
+                        existingUser.FullName = $"{existingStaff.FirstName} {existingStaff.LastName}";
+                        existingUser.Email = existingStaff.Email;
+                        existingUser.Phone = existingStaff.Phone;
+
+                        // username auto update
+                        existingUser.Username =
+                            (existingStaff.FirstName + existingStaff.LastName)
+                            .Replace(" ", "");
+
+                        // update profile photo also
+                        existingUser.ProfilePhoto = existingStaff.StafPhoto;
+
+                        // keep GroupId = 2
+                        existingUser.GroupId = 2;
+
+                        // call PUT API
+                        var userUpdateResponse =
+                            await _client.PutAsJsonAsync(
+                                $"Users/{existingUser.UserId}",
+                                existingUser
+                            );
+
+                        if (!userUpdateResponse.IsSuccessStatusCode)
+                        {
+                            var userError =
+                                await userUpdateResponse.Content.ReadAsStringAsync();
+
+                            ModelState.AddModelError(
+                                "",
+                                $"User update failed : {userError}"
+                            );
+
+                            return View(updatedStaff);
+                        }
+                    }
+                }
+            }
+
 
             // 4. Prepare object with DateOnly-compatible JoiningDate
             var staffForApi = new
@@ -331,21 +437,36 @@ namespace SVM.Controllers
         }
 
         // POST: Staffs/Delete/5
+        // POST: Staffs/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            // First get the staff to delete the photo file
+            Staff? staff = null;
+
+            // First get the staff
             var response = await _client.GetAsync($"Staffs/{id}");
+
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var staff = JsonSerializer.Deserialize<Staff>(data, options);
 
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
+                staff = JsonSerializer.Deserialize<Staff>(data, options);
+
+                // Delete image
                 if (!string.IsNullOrEmpty(staff?.StafPhoto))
                 {
-                    string imagePath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", staff.StafPhoto.TrimStart('/'));
+                    string imagePath = Path.Combine(
+                        Directory.GetCurrentDirectory(),
+                        "wwwroot",
+                        staff.StafPhoto.TrimStart('/')
+                    );
+
                     if (System.IO.File.Exists(imagePath))
                     {
                         System.IO.File.Delete(imagePath);
@@ -353,16 +474,42 @@ namespace SVM.Controllers
                 }
             }
 
+            // ==============================
+            // DELETE STAFF FIRST
+            // ==============================
+
             var deleteResponse = await _client.DeleteAsync($"Staffs/{id}");
+
             if (!deleteResponse.IsSuccessStatusCode)
             {
-                ModelState.AddModelError("", "Delete failed!");
+                ModelState.AddModelError("", "Staff delete failed!");
+                return View();
+            }
+
+            // ==============================
+            // DELETE USER ALSO
+            // ==============================
+
+            if (staff?.UserId != null)
+            {
+                var userDeleteResponse =
+                    await _client.DeleteAsync($"Users/{staff.UserId}");
+
+                if (!userDeleteResponse.IsSuccessStatusCode)
+                {
+                    var userError =
+                        await userDeleteResponse.Content.ReadAsStringAsync();
+
+                    ModelState.AddModelError(
+                        "",
+                        $"User delete failed : {userError}"
+                    );
+                }
             }
 
             TempData["Success"] = "Staff deleted successfully!";
             return RedirectToAction(nameof(Index));
         }
-
         private async Task<bool> StaffExists(int id)
         {
             var response = await _client.GetAsync($"Staffs/{id}");

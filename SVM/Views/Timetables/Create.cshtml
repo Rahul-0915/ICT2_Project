@@ -1,0 +1,83 @@
+﻿@model SVM.Models.Timetable
+
+@{
+	ViewData["Title"] = "Add Timetable Entry";
+}
+
+<h2>Add Timetable Entry</h2>
+<hr />
+
+<form asp-action="Create" method="post">
+	<div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+	<!-- Hidden fields (IDs stored but not displayed) -->
+	<input type="hidden" asp-for="SessionId" />
+	<input type="hidden" asp-for="ClassId" />
+	<input type="hidden" asp-for="SectionId" />
+	<input type="hidden" asp-for="IsBreak" value="false" />
+
+	<!-- Only show Day and Lecture No -->
+	<div class="form-group">
+		<label>Day</label>
+		<input asp-for="DayName" class="form-control" readonly />
+	</div>
+	<div class="form-group">
+		<label>Lecture No</label>
+		<input asp-for="LectureNo" class="form-control" readonly />
+	</div>
+
+	<div class="form-group">
+		<label asp-for="SubjectId">Subject</label>
+		@Html.DropDownList("SubjectId", ViewBag.SubjectList as SelectList, "-- Select --", new { @class = "form-control" })
+		<span asp-validation-for="SubjectId" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label asp-for="StaffId">Teacher</label>
+		<select asp-for="StaffId" class="form-control" asp-items="ViewBag.StaffList">
+			<option value="">-- Select Teacher --</option>
+		</select>
+		<span asp-validation-for="StaffId" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label asp-for="StartTime"></label>
+		<input asp-for="StartTime" type="time" class="form-control" />
+		<span asp-validation-for="StartTime" class="text-danger"></span>
+	</div>
+
+	<div class="form-group">
+		<label asp-for="EndTime"></label>
+		<input asp-for="EndTime" type="time" class="form-control" />
+		<span asp-validation-for="EndTime" class="text-danger"></span>
+	</div>
+
+	<div class="form-group">
+		<input type="submit" value="Save" class="btn btn-primary" />
+		<a asp-action="Index"
+		   asp-route-sessionId="@ViewBag.ReturnSessionId"
+		   asp-route-classId="@ViewBag.ReturnClassId"
+		   asp-route-sectionId="@ViewBag.ReturnSectionId"
+		   asp-route-medium="@ViewBag.ReturnMedium"
+		   class="btn btn-secondary">Cancel</a>
+	</div>
+</form>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	$(document).ready(function() {
+		$('#SubjectId').change(function() {
+			var subjectId = $(this).val();
+			var classId = @Model.ClassId;
+			var sessionId = @Model.SessionId;
+			if (subjectId) {
+				$.get('/Timetables/GetTeachersForSubjectDropdown', { subjectId: subjectId, classId: classId, sessionId: sessionId }, function(data) {
+					var $teacher = $('#StaffId');
+					$teacher.empty().append('<option value="">-- Select Teacher --</option>');
+					$.each(data, function(i, t) {
+						$teacher.append($('<option></option>').val(t.value).text(t.text));
+					});
+				});
+			} else {
+				$('#StaffId').empty().append('<option value="">-- Select Teacher --</option>');
+			}
+		});
+	});
+</script>

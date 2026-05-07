@@ -1,0 +1,75 @@
+﻿@model SVM.Models.TeacherSubject
+
+@{
+    ViewData["Title"] = "Details";
+}
+<link rel="stylesheet" href="~/css/Detail.css" asp-append-version="true" />
+
+<h1>Details</h1>
+
+<div>
+    <h4>Subject Assignment Details</h4>
+    <hr />
+    <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Staff)
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Staff != null)
+            {
+                @($"{Model.Staff.FirstName} {Model.Staff.LastName}")
+            }
+            else
+            {
+                <span>N/A</span>
+            }
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Subject)
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Subject != null)
+            {
+                @Model.Subject.SubjectName
+            }
+            else
+            {
+                <span>N/A</span>
+            }
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Class)
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Class != null)
+            {
+                @Model.Class.ClassName
+            }
+            else
+            {
+                <span>N/A</span>
+            }
+        </dd>
+
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.Session)
+        </dt>
+        <dd class="col-sm-10">
+            @if (Model.Session != null)
+            {
+                @Model.Session.SessionName
+            }
+            else
+            {
+                <span>N/A</span>
+            }
+        </dd>
+    </dl>
+</div>
+
+<div>
+    <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-warning">Edit</a>
+    <a asp-action="Index" class="btn btn-secondary">Back to List</a>
+</div>

@@ -1,0 +1,190 @@
+﻿@{
+    ViewData["Title"] = "Timetable";
+    var grid = ViewBag.Grid as Dictionary<string, Dictionary<int, SVM.Models.Timetable>>;
+}
+
+<h2>📅 Timetable Management</h2>
+
+<form method="get" id="filterForm" class="row g-3 mb-4">
+    <div class="col-md-2">
+        <label>Session</label>
+        @Html.DropDownList("sessionId", ViewBag.SessionList as SelectList, "-- Select --", new { @class = "form-control", id = "sessionSelect" })
+    </div>
+    <div class="col-md-2">
+        <label>Medium</label>
+        @Html.DropDownList("medium", ViewBag.MediumList as SelectList, "-- Select --", new { @class = "form-control", id = "mediumSelect" })
+    </div>
+    <div class="col-md-2">
+        <label>Class</label>
+        <select name="classId" id="classSelect" class="form-control">
+            <option value="">-- Select Class --</option>
+        </select>
+    </div>
+    <div class="col-md-2">
+        <label>Section</label>
+        <select name="sectionId" id="sectionSelect" class="form-control">
+            <option value="">-- Select Section --</option>
+        </select>
+    </div>
+    <div class="col-md-2 align-self-end">
+        <button type="submit" class="btn btn-primary">Show Timetable</button>
+    </div>
+</form>
+
+@if (grid != null)
+{
+    <div class="table-responsive">
+        <table class="table table-bordered text-center">
+            <thead class="table-dark">
+                <tr>
+                    <th>Period/Day</th>
+                    <th>Monday</th>
+                    <th>Tuesday</th>
+                    <th>Wednesday</th>
+                    <th>Thursday</th>
+                    <th>Friday</th>
+                    <th>Saturday</th>
+                </tr>
+            </thead>
+            <tbody>
+                @for (int p = 1; p <= 8; p++)
+                {
+                    <tr>
+                        <th>Period @p</th>
+                        @{
+                            var days = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+                        }
+                        @foreach (var day in days)
+                        {
+                            if (day == "Saturday" && p > 5)
+                            {
+                                <td class="text-muted">-</td>
+                                continue;
+                            }
+                            var cell = grid[day].ContainsKey(p) ? grid[day][p] : null;
+                            if (cell != null && cell.SubjectId != null)
+                            {
+                                <td>
+                                    <strong>@cell.Subject?.SubjectName</strong><br />
+                                    @cell.StartTime - @cell.EndTime<br />
+                                    @if (cell.Staff != null)
+                                    {
+                                        <span class="text-muted small">📘 @cell.Staff.FirstName @cell.Staff.LastName</span>
+                    
+                                        <br />
+                                    }
+                                    @Html.ActionLink("Edit", "Edit", new {
+                                    id = cell.TimetableId,
+                                        sessionId = ViewBag.SelectedSessionId,
+                                        classId = ViewBag.SelectedClassId,
+                                        sectionId = ViewBag.SelectedSectionId,
+                                        medium = ViewBag.SelectedMedium
+                                        })
+                    @Html.Raw(" | ")
+                    @Html.ActionLink("Delete", "Delete", new {
+                                        id = cell.TimetableId,
+                                        sessionId = ViewBag.SelectedSessionId,
+                                        classId = ViewBag.SelectedClassId,
+                                        sectionId = ViewBag.SelectedSectionId,
+                                        medium = ViewBag.SelectedMedium
+                                        })
+                </td>
+                                }
+                                else
+                {
+                    <td>
+                        @Html.ActionLink("+ Add", "Create", new {
+                        sessionId = ViewBag.SelectedSessionId,
+                                        classId = ViewBag.SelectedClassId,
+                                        sectionId = ViewBag.SelectedSectionId,
+                                        dayName = day,
+                                        lectureNo = p,
+                                        medium = ViewBag.SelectedMedium
+                                        })
+                </td>
+                                }
+                                }
+            </tr>
+                        }
+        </tbody>
+    </table>
+</div>
+
+<div class="mt-3">
+    <div class="btn-group" role="group">
+        <a asp-action="ExportExcel" asp-route-sessionId="@ViewBag.SelectedSessionId" asp-route-classId="@ViewBag.SelectedClassId" asp-route-sectionId="@ViewBag.SelectedSectionId" asp-route-medium="@ViewBag.SelectedMedium" class="btn btn-success">📊 Excel</a>
+        <a asp-action="ExportWord" asp-route-sessionId="@ViewBag.SelectedSessionId" asp-route-classId="@ViewBag.SelectedClassId" asp-route-sectionId="@ViewBag.SelectedSectionId" asp-route-medium="@ViewBag.SelectedMedium" class="btn btn-primary">📝 Word</a>
+        <a asp-action="ExportPdf" asp-route-sessionId="@ViewBag.SelectedSessionId" asp-route-classId="@ViewBag.SelectedClassId" asp-route-sectionId="@ViewBag.SelectedSectionId" asp-route-medium="@ViewBag.SelectedMedium" class="btn btn-danger">📄 PDF</a>
+    </div>
+</div>
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    function getQueryParam(param) {
+        let urlParams = new URLSearchParams(window.location.search);
+        return urlParams.get(param);
+    }
+
+    function loadClasses(medium, selectedClassId) {
+        if (!medium) return;
+        $.get('/Timetables/GetClassesByMedium', { medium: medium }, function(data) {
+            let $classSelect = $('#classSelect');
+            $classSelect.empty().append('<option value="">-- Select Class --</option>');
+            $.each(data, function(i, c) {
+                let option = $('<option></option>').val(c.value).text(c.text);
+                if (selectedClassId && c.value == selectedClassId) option.prop('selected', true);
+                $classSelect.append(option);
+            });
+            if (selectedClassId) {
+                loadSections(selectedClassId, getQueryParam('sectionId'));
+            }
+        });
+    }
+
+    function loadSections(classId, selectedSectionId) {
+        if (!classId) return;
+        $.get('/Timetables/GetSectionsByClass', { classId: classId }, function(data) {
+            let $sectionSelect = $('#sectionSelect');
+            $sectionSelect.empty().append('<option value="">-- Select Section --</option>');
+            $.each(data, function(i, s) {
+                let option = $('<option></option>').val(s.value).text(s.text);
+                if (selectedSectionId && s.value == selectedSectionId) option.prop('selected', true);
+                $sectionSelect.append(option);
+            });
+        });
+    }
+
+    $(document).ready(function() {
+        let sessionId = getQueryParam('sessionId');
+        let medium = getQueryParam('medium');
+        let classId = getQueryParam('classId');
+        let sectionId = getQueryParam('sectionId');
+
+        if (sessionId) $('#sessionSelect').val(sessionId);
+        if (medium) $('#mediumSelect').val(medium);
+        if (medium) {
+            loadClasses(medium, classId);
+        }
+    });
+
+    $('#mediumSelect').change(function() {
+        var medium = $(this).val();
+        if (medium) {
+            loadClasses(medium, null);
+            $('#sectionSelect').empty().append('<option value="">-- Select Section --</option>');
+        } else {
+            $('#classSelect').empty().append('<option value="">-- Select Class --</option>');
+            $('#sectionSelect').empty().append('<option value="">-- Select Section --</option>');
+        }
+    });
+
+    $('#classSelect').change(function() {
+        var classId = $(this).val();
+        if (classId) {
+            loadSections(classId, null);
+        } else {
+            $('#sectionSelect').empty().append('<option value="">-- Select Section --</option>');
+        }
+    });
+</script>

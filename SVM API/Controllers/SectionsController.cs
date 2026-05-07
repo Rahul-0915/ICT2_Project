@@ -24,7 +24,7 @@ namespace SVM_API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Section>>> GetSections()
         {
-            return await _context.Sections.Include(s=>s.Class).ToListAsync();
+            return await _context.Sections.Include(s => s.Class).ToListAsync();
         }
 
         // GET: api/Sections/5
@@ -103,6 +103,14 @@ namespace SVM_API.Controllers
         private bool SectionExists(int id)
         {
             return _context.Sections.Any(e => e.SectionId == id);
+        }
+        [HttpGet("ByClass/{classId}")]
+        public async Task<ActionResult<IEnumerable<Section>>> GetSectionsByClass(int classId)
+        {
+            return await _context.Sections
+                .Include(s => s.Class)
+                .Where(s => s.ClassId == classId)
+                .ToListAsync();
         }
     }
 }
