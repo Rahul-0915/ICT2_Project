@@ -1,0 +1,90 @@
+﻿@model SVM.Models.Timetable
+@{
+    ViewData["Title"] = "Edit Timetable Entry";
+}
+
+<h2>Edit Timetable Entry</h2>
+<hr />
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="TimetableId" />
+    <input type="hidden" asp-for="SessionId" />
+    <input type="hidden" asp-for="ClassId" />
+    <input type="hidden" asp-for="SectionId" />
+    <input type="hidden" asp-for="DayName" />
+    <input type="hidden" asp-for="LectureNo" />
+    <!-- Do NOT use hidden for StaffId, let the dropdown handle it -->
+    <input type="hidden" asp-for="IsBreak" value="false" />
+
+    <div class="form-group">
+        <label>Day</label>
+        <input value="@Model.DayName" class="form-control" readonly />
+    </div>
+    <div class="form-group">
+        <label>Period</label>
+        <input value="@Model.LectureNo" class="form-control" readonly />
+    </div>
+    <div class="form-group">
+        <label asp-for="SubjectId">Subject</label>
+        @Html.DropDownList("SubjectId", ViewBag.SubjectList as SelectList, "-- Select --", new { @class = "form-control" })
+        <span asp-validation-for="SubjectId" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="StaffId">Teacher</label>
+        <select asp-for="StaffId" class="form-control" asp-items="ViewBag.StaffList">
+            <option value="">-- Select Teacher --</option>
+        </select>
+        <span asp-validation-for="StaffId" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="StartTime"></label>
+        <input asp-for="StartTime" class="form-control" type="time" />
+        <span asp-validation-for="StartTime" class="text-danger"></span>
+    </div>
+    <div class="form-group">
+        <label asp-for="EndTime"></label>
+        <input asp-for="EndTime" class="form-control" type="time" />
+        <span asp-validation-for="EndTime" class="text-danger"></span>
+    </div>
+
+    <a asp-action="Index"
+       asp-route-sessionId="@ViewBag.ReturnSessionId"
+       asp-route-classId="@ViewBag.ReturnClassId"
+       asp-route-sectionId="@ViewBag.ReturnSectionId"
+       asp-route-medium="@ViewBag.ReturnMedium"
+       class="btn btn-secondary">Cancel</a>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+</form>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(function() {
+        // Store original StaffId to preserve selection if possible after reload
+        var originalStaffId = '@Model.StaffId';
+
+        $('#SubjectId').change(function() {
+            var subjectId = $(this).val();
+            var classId = @Model.ClassId;
+            var sessionId = @Model.SessionId;
+            if (subjectId) {
+                $.get('/Timetables/GetTeachersForSubjectDropdown', { subjectId: subjectId, classId: classId, sessionId: sessionId }, function(data) {
+                    var $teacher = $('#StaffId');
+                    $teacher.empty().append('<option value="">-- Select Teacher --</option>');
+                    $.each(data, function(i, t) {
+                        var selected = (t.value == originalStaffId) ? 'selected' : '';
+                        $teacher.append($('<option></option>').val(t.value).text(t.text).prop('selected', selected));
+                    });
+                    // If originalStaffId not found in new list, clear selection and store new original if needed
+                    if (originalStaffId && $teacher.val() !== originalStaffId) {
+                        // Optionally show a warning
+                        console.log('Previously selected teacher not available for this subject');
+                    }
+                });
+            } else {
+                $('#StaffId').empty().append('<option value="">-- Select Teacher --</option>');
+            }
+        });
+    });
+</script>

@@ -1,6 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
+using Rotativa.AspNetCore;
 using SVM.Models;
+using QuestPDF.Infrastructure;
+
 
 namespace SVM
 {
@@ -10,6 +13,7 @@ namespace SVM
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddHttpClient();
+            QuestPDF.Settings.License = LicenseType.Community;
 
             // Add services to the container.
             builder.Services.AddControllersWithViews();
@@ -27,7 +31,6 @@ namespace SVM
             });
             var app = builder.Build();
             app.UseStaticFiles(); // This should be there
-
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
