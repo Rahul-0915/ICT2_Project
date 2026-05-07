@@ -161,7 +161,7 @@ body {
 /* display notice css* Index page ............................../
 /* Page */
 body {
-    margin-top:10px;
+    margin-top:15px;
     background: #f5f7fa;
     font-family: 'Segoe UI', sans-serif;
     color: #111827;
@@ -205,7 +205,7 @@ body {
 /* Table (GAP ENABLE) */
 .table {
     width: 100%;
-    background-color:white;
+    
     border-collapse: separate; /* IMPORTANT */
     border-spacing: 0 12px; /* ROW GAP */
 }

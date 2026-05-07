@@ -1,75 +1,281 @@
 ﻿@model IEnumerable<SVM.Models.Class>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Classes";
 }
 
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="~/css/Index.css" asp-append-version="true" />
+
+    <title>Classes</title>
+
+    <link rel="stylesheet"
+          href="~/css/AdminSide_Css/ClassesDisplay.css"
+          asp-append-version="true" />
+
+    <link rel="stylesheet"
+          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 </head>
+
 <body>
-    <h1>Classes</h1>
 
-    <!-- Medium Filter Dropdown -->
-    <div class="filter-container">
-        <label for="mediumFilter">Filter by Medium:</label>
-        <select id="mediumFilter" class="filter-dropdown">
-            <option value="all">-- All Mediums --</option>
-            <option value="Gujarati">Gujarati</option>
-            <option value="English">English</option>
-        </select>
+    <div class="class-page">
+
+        <!-- TOP BAR -->
+
+        <div class="top-bar">
+
+            <div class="left-side">
+
+                <!-- SEARCH -->
+
+                <select id="searchInput" class="search-box">
+
+    <option value="">All Classes</option>
+
+    <option value="JR KG">JR KG</option>
+    <option value="SR KG">SR KG</option>
+
+    <option value="1">Class 1</option>
+    <option value="2">Class 2</option>
+    <option value="3">Class 3</option>
+    <option value="4">Class 4</option>
+    <option value="5">Class 5</option>
+
+    <option value="6">Class 6</option>
+    <option value="7">Class 7</option>
+    <option value="8">Class 8</option>
+    <option value="9">Class 9</option>
+    <option value="10">Class 10</option>
+
+    <option value="11">Class 11</option>
+    <option value="12">Class 12</option>
+
+</select>
+
+
+                <!-- FILTER -->
+
+                <select id="mediumFilter"
+                        class="filter-dropdown">
+
+                    <option value="all">All Mediums</option>
+
+                    <option value="Gujarati">Gujarati</option>
+
+                    <option value="English">English</option>
+
+                </select>
+
+                <!-- SEARCH BUTTON -->
+
+                <button class="search-btn"
+                        onclick="filterClasses()">
+
+                    <i class="fa-solid fa-magnifying-glass"></i>
+                    Search
+                    
+
+
+                </button>
+
+                <!-- RESET BUTTON -->
+
+                <button class="reset-btn"
+                        onclick="resetFilter()">
+
+                    Reset
+
+                </button>
+
+            </div>
+
+            <!-- ADD BUTTON -->
+
+            <a asp-action="Create"
+               class="add-btn">
+
+                <i class="fa-solid fa-plus"></i>
+
+            </a>
+
+        </div>
+
+        <!-- PAGE TITLE -->
+
+        <h1 class="page-title">
+
+            Class Management
+
+        </h1>
+
+        <!-- NO DATA -->
+
+        <div id="noDataMessage"
+             class="no-data">
+
+            No Class Found
+
+        </div>
+
+        <!-- CLASS CONTAINER -->
+
+        <div class="class-container">
+
+            @foreach (var item in Model)
+            {
+                <div class="class-card"
+                     data-medium="@item.Medium">
+
+                    <!-- CARD HEADER -->
+
+                    <div class="card-header">
+
+                        <!-- LEFT -->
+
+                        <div>
+
+                            <h2 class="class-name">
+                                @item.ClassName
+                            </h2>
+
+                            <p class="medium-text">
+
+                                @item.Medium Medium
+
+                            </p>
+
+                        </div>
+
+                        <!-- RIGHT -->
+
+                        <div class="right-info">
+
+                            <div class="session-badge">
+
+                                @item.Session?.SessionName
+
+                            </div>
+
+                            <div class="count-info">
+
+                                @item.Students.Count Students |
+                                @item.Sections.Count Sections
+
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <!-- SECTION LIST -->
+
+                    <div class="section-list">
+
+    @foreach (var sec in item.Sections)
+    {
+        <div class="section-row">
+
+            <!-- LEFT: SECTION INFO -->
+            <div class="section-name">
+                Section @sec.SectionName
+            </div>
+
+            <!-- RIGHT: ACTIONS -->
+            <div class="section-actions">
+
+                <!-- EDIT SECTION -->
+                                    <a asp-controller="Sections"
+                                       asp-action="Edit"
+                                       asp-route-id="@sec.SectionId"
+                                       class="sec-icon edit"
+                                       title="Edit Section">
+
+                                        <i class="fa-solid fa-pen"></i>
+
+                                    </a>
+
+                <!-- DELETE SECTION -->
+                                    <a asp-controller="Sections"
+                                       asp-action="Delete"
+                                       asp-route-id="@sec.SectionId"
+                                       class="sec-icon delete"
+                                       title="Delete Section"
+                                       onclick="return confirm('Delete this section?');">
+
+                                        <i class="fa-solid fa-trash"></i>
+
+                                    </a>
+
+            </div>
+
+        </div>
+    }
+
+    <!-- ADD NEW SECTION (INSIDE CLASS) -->
+                        <div class="section-add">
+
+                            <a asp-controller="Sections"
+                               asp-action="Create"
+                               asp-route-classId="@item.ClassId"
+                               asp-route-medium="@item.Medium"
+                               class="add-section-btn">
+
+                                <i class="fa-solid fa-plus"></i>
+                                Add Section
+
+                            </a>
+
+                        </div>
+
+</div>
+
+                    <!-- ACTION BUTTONS -->
+
+                    <div class="action-buttons">
+
+                        <a asp-action="Edit"
+                           asp-route-id="@item.ClassId"
+                           class="edit-btn">
+
+                            <i class="fa-solid fa-pen"></i>
+
+                            Edit
+
+                        </a>
+
+                        <a asp-action="Details"
+                           asp-route-id="@item.ClassId"
+                           class="details-btn">
+
+                            <i class="fa-solid fa-eye"></i>
+
+                            Details
+
+                        </a>
+
+                        <a asp-action="Delete"
+                           asp-route-id="@item.ClassId"
+                           class="delete-btn">
+
+                            <i class="fa-solid fa-trash"></i>
+
+                            Delete
+
+                        </a>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+
     </div>
 
-    <p>
-        <a asp-action="Create">+</a>
-    </p>
 
-    <div id="classesContainer">
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>@Html.DisplayNameFor(model => model.ClassName)</th>
-                    <th>@Html.DisplayNameFor(model => model.Medium)</th>
-                    <th>@Html.DisplayNameFor(model => model.Session.SessionName)</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody id="classesTableBody">
-                @foreach (var item in Model)
-                {
-                    <tr data-medium="@item.Medium">
-                        <td>@Html.DisplayFor(modelItem => item.ClassName)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Medium)</td>
-                        <td>@Html.DisplayFor(modelItem => item.Session.SessionName)</td>
-                        <td>
-                            <a asp-action="Edit" asp-route-id="@item.ClassId">Edit</a> |
-                            <a asp-action="Details" asp-route-id="@item.ClassId">Details</a> |
-                            <a asp-action="Delete" asp-route-id="@item.ClassId">Delete</a>
-                        </td>
-                    </tr>
-                }
-            </tbody>
-        </table>
-    </div>
-
-    <script>
-        // Filter functionality
-        document.getElementById('mediumFilter').addEventListener('change', function() {
-            var selectedMedium = this.value;
-            var rows = document.querySelectorAll('#classesTableBody tr');
-
-            rows.forEach(function(row) {
-                var rowMedium = row.getAttribute('data-medium');
-
-                if (selectedMedium === 'all' || rowMedium === selectedMedium) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        });
-    </script>
+    <script src="/js/AdminSide_Js/Classes.js"></script>
 </body>
 </html>

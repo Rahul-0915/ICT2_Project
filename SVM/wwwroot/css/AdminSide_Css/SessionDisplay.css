@@ -1,0 +1,176 @@
+﻿/* PAGE */
+
+body {
+    margin: 0;
+    padding: 25px;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #efeae2;
+    background-image: url('/images/AdminDashboardBGImg.png');
+    background-repeat: repeat;
+}
+
+/* TABLE */
+
+.table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0 18px;
+}
+
+    /* TABLE HEAD */
+
+    .table thead th {
+        background: transparent;
+        color: #000;
+        font-size: 22px;
+        font-weight: 700;
+        padding: 18px;
+        text-align: left;
+    }
+
+    /* TABLE ROW */
+
+    .table tbody tr {
+        background: rgba(255,255,255,0.92);
+        backdrop-filter: blur(10px);
+        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+        transition: 0.3s;
+    }
+
+        .table tbody tr:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+
+    /* TABLE TD */
+
+    .table tbody td {
+        padding: 24px 18px;
+        font-size: 19px;
+        color: #444;
+    }
+
+    /* FIRST COLUMN */
+
+    .table tbody tr td:first-child {
+        border-radius: 18px 0 0 18px;
+        border-left: 6px solid #22c55e;
+        font-weight: 700;
+        font-size: 28px;
+        color: #000;
+    }
+
+    /* LAST COLUMN */
+
+    .table tbody tr td:last-child {
+        border-radius: 0 18px 18px 0;
+    }
+
+/* STATUS */
+
+.status-active,
+.status-upcoming,
+.status-expired {
+    padding: 8px 16px;
+    border-radius: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    display: inline-block;
+}
+
+/* ACTIVE */
+
+.status-active {
+    background: #dcfce7;
+    color: #16a34a;
+}
+
+/* UPCOMING */
+
+.status-upcoming {
+    background: #fef3c7;
+    color: #d97706;
+}
+
+/* EXPIRED */
+
+.status-expired {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+/* ACTION LINKS */
+
+.table a {
+    text-decoration: none;
+    font-weight: 600;
+    margin-right: 12px;
+    transition: 0.3s;
+}
+
+    /* EDIT */
+
+    .table a[href*="Edit"] {
+        color: #2563eb;
+    }
+
+    /* DETAILS */
+
+    .table a[href*="Details"] {
+        color: #0891b2;
+    }
+
+    /* DELETE */
+
+    .table a[href*="Delete"] {
+        color: #dc2626;
+    }
+
+    .table a:hover {
+        opacity: 0.7;
+    }
+
+/* RESPONSIVE */
+
+@media (max-width: 992px) {
+
+    .table {
+        display: block;
+        overflow-x: auto;
+    }
+
+        .table thead th {
+            font-size: 18px;
+        }
+
+        .table tbody td {
+            font-size: 16px;
+        }
+
+        .table tbody tr td:first-child {
+            font-size: 22px;
+        }
+}
+
+
+@media (max-width: 768px) {
+
+    .top-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .search-section {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .search-box,
+    .status-filter {
+        width: 100%;
+    }
+
+    .btn-add {
+        align-self: flex-end;
+    }
+}

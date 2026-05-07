@@ -4,10 +4,61 @@
     ViewData["Title"] = "Index";
 }
 
-<link rel="stylesheet" href="~/css/List.css" asp-append-version="true" />
-<p>
-    <a class="btn-add" asp-action="Create">+</a>
-</p>
+<link rel="stylesheet" href="~/css/AdminSide_Css/SessionDisplay.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/AdminSide_Css/SearchBar.css" asp-append-version="true" />
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<div class="top-bar">
+
+    <div class="left-side">
+
+        <input type="text"
+               id="searchInput"
+               placeholder="Search session..."
+               class="search-box" />
+
+        <!-- STATUS FILTER -->
+
+        <select id="statusFilter" class="search-box">
+
+            <option value="">All Status</option>
+
+            <option value="active">Active</option>
+
+            <option value="upcoming">Upcoming</option>
+
+            <option value="expired">Expired</option>
+
+        </select>
+        <button type="button"
+                class="search-btn"
+                onclick="filterTable()">
+
+            <i class="fa-solid fa-magnifying-glass"></i>
+            Search
+
+
+        </button>
+        <button type="button"
+                class="reset-btn"
+                onclick="resetFilter()">
+
+            Reset
+
+        </button>
+    </div>
+        <a asp-action="Create"
+           class="add-btn">
+            <i class="fa-solid fa-plus"></i>
+        </a>
+
+       
+</div>
+
+
+
 <table class="table">
     <thead>
         <tr>
@@ -71,4 +122,16 @@
             </tr>
         }
     </tbody>
+    
 </table>
+<p id="noDataMessage"
+   style="display:none;
+        text-align:center;
+          color:black;
+          font-weight:900;
+          margin-top:15px;">
+
+    Data not found
+
+</p>
+<script src="/js/AdminSide_Js/Session.js"></script>

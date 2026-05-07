@@ -23,23 +23,102 @@ namespace SVM.Controllers
         }
 
         // GET: Classes
+        //public async Task<IActionResult> Index()
+        //{
+        //    List<Class> classList = new List<Class>();
+        //    var response = await _client.GetAsync("Classes");
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        var data = await response.Content.ReadAsStringAsync();
+        //        var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        //        classList = JsonSerializer.Deserialize<List<Class>>(data, option);
+
+        //    }
+        //    if (!response.IsSuccessStatusCode)
+        //    {
+        //        ModelState.AddModelError("", "Failed to load classes");
+        //    }
+        //    return View(classList);
+
+        //}
+
+        //RAHUL .....INDEX 
         public async Task<IActionResult> Index()
         {
             List<Class> classList = new List<Class>();
-            var response = await _client.GetAsync("Classes");
-            if (response.IsSuccessStatusCode)
-            {
-                var data = await response.Content.ReadAsStringAsync();
-                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                classList = JsonSerializer.Deserialize<List<Class>>(data, option);
 
-            }
-            if (!response.IsSuccessStatusCode)
+            // CLASSES
+            var classResponse = await _client.GetAsync("Classes");
+
+            // SECTIONS
+            var sectionResponse = await _client.GetAsync("Sections");
+
+            // STUDENTS
+            var studentResponse = await _client.GetAsync("Students");
+
+            var option = new JsonSerializerOptions
             {
-                ModelState.AddModelError("", "Failed to load classes");
+                PropertyNameCaseInsensitive = true
+            };
+
+            // GET CLASS DATA
+
+            if (classResponse.IsSuccessStatusCode)
+            {
+                var classData = await classResponse.Content.ReadAsStringAsync();
+
+                classList = JsonSerializer.Deserialize<List<Class>>(classData, option);
             }
+
+            // GET SECTION DATA
+
+            List<Section> sections = new();
+
+            if (sectionResponse.IsSuccessStatusCode)
+            {
+                var sectionData = await sectionResponse.Content.ReadAsStringAsync();
+
+                sections = JsonSerializer.Deserialize<List<Section>>(sectionData, option);
+            }
+
+            // GET STUDENT DATA
+
+            List<Student> students = new();
+
+            if (studentResponse.IsSuccessStatusCode)
+            {
+                var studentData = await studentResponse.Content.ReadAsStringAsync();
+
+                students = JsonSerializer.Deserialize<List<Student>>(studentData, option);
+            }
+
+            // MANUAL BINDING
+
+            foreach (var cls in classList)
+            {
+                // CLASS SECTIONS
+
+                cls.Sections = sections
+                    .Where(s => s.ClassId == cls.ClassId)
+                    .ToList();
+
+                // CLASS STUDENTS
+
+                cls.Students = students
+                    .Where(s => s.ClassId == cls.ClassId)
+                    .ToList();
+
+                // SECTION STUDENTS
+
+                foreach (var sec in cls.Sections)
+                {
+                    sec.Students = students
+                        .Where(s => s.SectionId == sec.SectionId)
+                        .ToList();
+                }
+            }
+
             return View(classList);
-
         }
 
         // GET: Classes/Details/5

@@ -1,34 +1,36 @@
 ﻿@model SVM.Models.Section
 
 @{
-    ViewData["Title"] = "Edit";
+    ViewData["Title"] = "Edit Section";
 }
 
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="~/css/CreateForm.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/AdminSide_Css/Forms.css" asp-append-version="true" />
     <title>Edit Section</title>
-    <style>
-        .form-group {
-            margin-bottom: 1rem;
-        }
-    </style>
 </head>
+
 <body>
-    <div class="container">
-        <h4>Edit Section/Division</h4>
-        <hr />
 
-        <div class="row">
-            <div class="col-md-4">
-                <form asp-action="Edit">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <input type="hidden" asp-for="SectionId" />
+    <div class="session-page">
 
-                    <!-- Medium Selection -->
+        <div class="session-card">
+
+            <h3 class="card-title">Edit Section</h3>
+
+            <form asp-action="Edit">
+
+                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+                <input type="hidden" asp-for="SectionId" />
+
+                <div class="form-grid">
+
+                    <!-- MEDIUM -->
                     <div class="form-group">
-                        <label class="control-label">Medium</label>
+                        <label>Medium</label>
+
                         <select id="Medium" class="form-control">
                             <option value="">-- Select Medium --</option>
                             <option value="Gujarati">Gujarati</option>
@@ -36,82 +38,107 @@
                         </select>
                     </div>
 
-                    <!-- Class Dropdown (loaded dynamically) -->
+                    <!-- CLASS -->
                     <div class="form-group">
-                        <label asp-for="Class.ClassName" class="control-label">Select Class</label>
-                        <select asp-for="ClassId" class="form-control">
-                            <option value="">-- First select Medium --</option>
+                        <label>Select Class</label>
+
+                        <select asp-for="ClassId"
+                                id="ClassId"
+                                class="form-control">
+
+                            <option value="">-- Select Class --</option>
+
                         </select>
+
                         <span asp-validation-for="ClassId" class="text-danger"></span>
                     </div>
 
-                    <!-- Section Name -->
+                    <!-- SECTION NAME -->
                     <div class="form-group">
-                        <label asp-for="SectionName" class="control-label">Division</label>
-                        <input asp-for="SectionName" class="form-control" />
+                        <label>Section Name</label>
+
+                        <input asp-for="SectionName"
+                               class="form-control"
+                               placeholder="Enter A, B, C..." />
+
                         <span asp-validation-for="SectionName" class="text-danger"></span>
                     </div>
 
-                    <div class="form-group">
-                        <input type="submit" value="Save" class="btn btn-primary" />
-                    </div>
-                </form>
-
-                <div class="back-link">
-                    <a asp-action="Index">← Back to List</a>
                 </div>
-            </div>
+
+                <!-- BUTTONS -->
+                <div style="display:flex; gap:15px; flex-wrap:wrap;">
+
+                    <input type="submit" value="Save Changes" class="create-btn" />
+
+                    <a asp-controller="Classes" asp-action="Index">
+                        <button type="button" class="Back-btn">← Back to List</button>
+                    </a>
+
+                </div>
+
+            </form>
+
         </div>
+
     </div>
 
+    <!-- JS -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
     <script>
-        $(document).ready(function() {
+        $(document).ready(function () {
+
             var currentMedium = '@ViewBag.CurrentMedium';
             var currentClassId = '@ViewBag.CurrentClassId';
 
-            // Set selected medium in dropdown
             if (currentMedium) {
                 $('#Medium').val(currentMedium);
                 loadClasses(currentMedium, currentClassId);
             }
 
-            // When Medium changes, load classes
-            $('#Medium').change(function() {
-                var selectedMedium = $(this).val();
-                if (selectedMedium === '') {
-                    $('#ClassId').html('<option value="">-- First select Medium --</option>');
+            $('#Medium').change(function () {
+                var medium = $(this).val();
+
+                if (medium === '') {
+                    $('#ClassId').html('<option value="">-- Select Class --</option>');
                     return;
                 }
-                loadClasses(selectedMedium, null);
+
+                loadClasses(medium, null);
             });
 
             function loadClasses(medium, selectedClassId) {
-                var classDropdown = $('#ClassId');
-                classDropdown.html('<option value="">Loading classes...</option>');
+
+                var ddl = $('#ClassId');
+                ddl.html('<option>Loading...</option>');
 
                 $.ajax({
-                    url: '@Url.Action("GetClassesByMedium", "Sections")',
+                    url: '/Sections/GetClassesByMedium',
                     type: 'GET',
                     data: { medium: medium },
-                    success: function(data) {
-                        classDropdown.empty();
-                        classDropdown.append('<option value="">-- Select Class --</option>');
-                        $.each(data, function(index, item) {
-                            var option = $('<option></option>').val(item.value).text(item.text);
-                            if (selectedClassId && selectedClassId == item.value) {
-                                option.attr('selected', 'selected');
-                            }
-                            classDropdown.append(option);
+
+                    success: function (data) {
+
+                        ddl.empty();
+                        ddl.append('<option value="">-- Select Class --</option>');
+
+                        $.each(data, function (i, item) {
+
+                            var selected = selectedClassId == item.value ? 'selected' : '';
+
+                            ddl.append('<option value="' + item.value + '" ' + selected + '>' + item.text + '</option>');
                         });
                     },
-                    error: function() {
-                        classDropdown.html('<option value="">Error loading classes</option>');
-                        alert('Failed to load classes. Please try again.');
+
+                    error: function () {
+                        ddl.html('<option>Error loading classes</option>');
                     }
                 });
             }
+
         });
     </script>
+
 </body>
 </html>
