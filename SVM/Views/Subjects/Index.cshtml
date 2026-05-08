@@ -1,46 +1,313 @@
 ﻿@model IEnumerable<SVM.Models.Subject>
 
 @{
-    ViewData["Title"] = "Index";
+    ViewData["Title"] = "Subjects";
 }
 
-<link rel="stylesheet" href="~/css/List.css" asp-append-version="true" />
-<p>
-    <a class="btn-add" asp-action="Create">+</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.SubjectName)
-            </th>
-            <th>Class & Medium</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
+<link rel="stylesheet"
+      href="~/css/AdminSide_Css/SubjectsDisplay.css"
+      asp-append-version="true" />
+
+<link rel="stylesheet"
+      href="~/css/AdminSide_Css/SearchBar.css"
+      asp-append-version="true" />
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+@{
+    var groupedSubjects = Model
+        .Where(x => x.Class != null)
+        .GroupBy(x => new
         {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.SubjectName)
-                </td>
-                <td>
-                    @if (item.Class != null)
+            x.Class.ClassId,
+            x.Class.ClassName,
+            x.Class.Medium
+        });
+}
+
+<div class="subject-page">
+
+    <!-- TOP BAR -->
+
+    <div class="top-bar">
+
+        <div class="left-side">
+
+            <!-- MEDIUM -->
+
+            <select id="mediumFilter"
+                    class="search-box">
+
+                <option value="all">All Mediums</option>
+
+                <option value="Gujarati">Gujarati</option>
+
+                <option value="English">English</option>
+
+            </select>
+
+            <!-- CLASS FILTER -->
+
+            <select id="classFilter"
+                    class="search-box">
+
+                <option value="">Select Class</option>
+
+                <option value="JR KG">JR KG</option>
+                <option value="SR KG">SR KG</option>
+
+                <option value="1">Class 1</option>
+                <option value="2">Class 2</option>
+                <option value="3">Class 3</option>
+                <option value="4">Class 4</option>
+                <option value="5">Class 5</option>
+
+                <option value="6">Class 6</option>
+                <option value="7">Class 7</option>
+                <option value="8">Class 8</option>
+                <option value="9">Class 9</option>
+                <option value="10">Class 10</option>
+
+                <option value="11">Class 11</option>
+                <option value="12">Class 12</option>
+
+            </select>
+
+            <!-- SEARCH BUTTON -->
+
+            <button type="button"
+                    class="search-btn"
+                    onclick="filterSubjects()">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Search
+
+            </button>
+
+            <!-- RESET -->
+
+            <button type="button"
+                    class="reset-btn"
+                    onclick="resetFilter()">
+
+                Reset
+
+            </button>
+
+        </div>
+
+        <!-- ADD -->
+
+        <a asp-action="Create"
+           class="add-btn">
+
+            <i class="fa-solid fa-plus"></i>
+
+        </a>
+
+    </div>
+
+    <!-- TITLE -->
+
+    <h1 class="page-title">
+
+        Subject Management
+
+    </h1>
+
+    <!-- NO DATA -->
+
+    <div id="noDataMessage"
+         class="no-data">
+
+        Search to view class wise subjects
+
+    </div>
+
+    <!-- SUBJECT CONTAINER -->
+
+    <div class="subject-container">
+
+        @foreach (var group in groupedSubjects)
+        {
+            <div class="subject-card"
+                 data-medium="@group.Key.Medium"
+                 data-class="@group.Key.ClassName"
+                 style="display:none;">
+
+                <!-- HEADER -->
+
+                <div class="card-header">
+
+                    <div>
+
+                        <div class="class-badge">
+
+                            Class @group.Key.ClassName
+
+                        </div>
+
+                        <p class="medium-text">
+
+                            @group.Key.Medium Medium
+
+                        </p>
+
+                    </div>
+
+                    <div class="subject-count">
+
+                        @group.Count() Subjects
+
+                    </div>
+
+                </div>
+
+                <!-- SUBJECT LIST -->
+
+                <div class="subject-book-list">
+
+                    @foreach (var item in group)
                     {
-                        @($"{item.Class.ClassName} - {item.Class.Medium}")
+                        <div class="subject-book">
+
+                            <div class="book-icon">
+
+                                <i class="fa-solid fa-book"></i>
+
+                            </div>
+
+                            <div class="subject-info">
+
+                                <h3 class="subject-name">
+
+                                    @item.SubjectName
+
+                                </h3>
+
+                            </div>
+
+                            <div class="subject-actions">
+
+                                <a asp-action="Edit"
+                                   asp-route-id="@item.SubjectId"
+                                   class="sub-action edit">
+
+                                    <i class="fa-solid fa-pen"></i>
+
+                                </a>
+
+                                <a asp-action="Details"
+                                   asp-route-id="@item.SubjectId"
+                                   class="sub-action details">
+
+                                    <i class="fa-solid fa-eye"></i>
+
+                                </a>
+
+                                <a asp-action="Delete"
+                                   asp-route-id="@item.SubjectId"
+                                   class="sub-action delete">
+
+                                    <i class="fa-solid fa-trash"></i>
+
+                                </a>
+
+                            </div>
+
+                        </div>
                     }
-                    else
-                    {
-                        <span class="text-muted">N/A</span>
-                    }
-                </td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.SubjectId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.SubjectId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.SubjectId">Delete</a>
-                </td>
-            </tr>
+
+                </div>
+
+            </div>
         }
-    </tbody>
-</table>
+
+    </div>
+
+</div>
+
+<script>
+
+    // DEFAULT MESSAGE
+    document.getElementById("noDataMessage").style.display = "block";
+    document.getElementById("noDataMessage").style.color = "#6b7280";
+
+    function filterSubjects() {
+
+        let medium =
+            document.getElementById("mediumFilter")
+                .value.toLowerCase();
+
+        let className =
+            document.getElementById("classFilter")
+                .value.toLowerCase();
+
+        let cards =
+            document.querySelectorAll(".subject-card");
+
+        let visible = 0;
+
+        cards.forEach(card => {
+
+            let cardMedium =
+                card.dataset.medium.toLowerCase();
+
+            let cardClass =
+                card.dataset.class.toLowerCase();
+
+            let matchMedium =
+                medium === "all" || cardMedium === medium;
+
+            let matchClass =
+                className === "" || cardClass === className;
+
+            if (matchMedium && matchClass) {
+
+                card.style.display = "block";
+                visible++;
+
+            }
+            else {
+
+                card.style.display = "none";
+
+            }
+
+        });
+
+        if (visible === 0) {
+
+            document.getElementById("noDataMessage").style.display = "block";
+            document.getElementById("noDataMessage").style.color = "red";
+            document.getElementById("noDataMessage").innerText = "No Subjects Found";
+
+        }
+        else {
+
+            document.getElementById("noDataMessage").style.display = "none";
+
+        }
+    }
+
+    function resetFilter() {
+
+        document.getElementById("mediumFilter").value = "all";
+        document.getElementById("classFilter").value = "";
+
+        let cards =
+            document.querySelectorAll(".subject-card");
+
+        cards.forEach(card => {
+
+            card.style.display = "none";
+
+        });
+
+        document.getElementById("noDataMessage").style.display = "block";
+        document.getElementById("noDataMessage").style.color = "#6b7280";
+        document.getElementById("noDataMessage").innerText = "Search to view class wise subjects";
+    }
+
+</script>

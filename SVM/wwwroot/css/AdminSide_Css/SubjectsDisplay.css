@@ -1,0 +1,245 @@
+﻿/* PAGE */
+body {
+    background-color: #efeae2;
+    background-image: url('/images/AdminDashboardBGImg.png');
+    background-repeat: repeat;
+}
+.subject-page {
+    margin-top:15px;
+    width: 100%;
+    
+
+/* TITLE */
+
+.page-title {
+    font-size: 42px;
+    margin-bottom: 28px;
+    color: #111827;
+    font-weight: 700;
+}
+
+/* SUBJECT CONTAINER */
+
+.subject-container {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 25px;
+}
+
+/* CARD */
+
+.subject-card {
+    background: rgba(255,255,255,0.92);
+    backdrop-filter: blur(10px);
+    
+    overflow: hidden;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    transition: 0.3s;
+}
+
+    .subject-card:hover {
+        box-shadow: 0 14px 28px rgba(0,0,0,0.12);
+    }
+
+/* CARD HEADER */
+
+.card-header {
+    background: linear-gradient(to right,#dfe6ef,#edf2f7);
+    padding: 24px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+/* CLASS BADGE */
+
+.class-badge {
+    
+    background-color:orange;
+    color: white;
+    display: inline-block;
+    padding: 10px 18px;
+    border-radius: 50px;
+    font-size: 22px;
+    font-weight: 700;
+    box-shadow: 0 5px 12px rgba(37,99,235,0.25);
+}
+
+/* MEDIUM */
+
+.medium-text {
+    margin-top: 10px;
+    color: #475569;
+    font-size: 15px;
+    font-weight: 600;
+}
+
+/* SUBJECT COUNT */
+
+.subject-count {
+    background: #dbeafe;
+    color: #2563eb;
+    padding: 10px 16px;
+    border-radius: 12px;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+/* BOOK LIST */
+
+.subject-book-list {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* BOOK ITEM */
+
+.subject-book {
+    background: #f8fafc;
+    border: 1px solid #e2e8f0;
+    border-left: 6px solid #2563eb;
+    border-radius: 18px;
+    padding: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    transition: 0.3s;
+}
+
+    .subject-book:hover {
+        transform: translateY(-3px);
+        background: #eff6ff;
+    }
+
+/* BOOK ICON */
+
+.book-icon {
+    width: 55px;
+    height: 55px;
+    min-width: 55px;
+    border-radius: 16px;
+    background: linear-gradient(135deg,#2563eb,#1d4ed8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    font-size: 22px;
+    box-shadow: 0 6px 14px rgba(37,99,235,0.25);
+}
+
+/* SUBJECT INFO */
+
+.subject-info {
+    flex: 1;
+}
+
+/* SUBJECT NAME */
+
+.subject-name {
+    margin: 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: #111827;
+}
+
+/* ACTIONS */
+
+.subject-actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* ACTION BUTTON */
+
+.sub-action {
+    width: 38px;
+    height: 38px;
+    border-radius: 12px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    transition: 0.3s;
+    font-size: 14px;
+}
+
+    /* EDIT */
+
+    .sub-action.edit {
+        background: #dbeafe;
+        color: #2563eb;
+    }
+
+    /* DETAILS */
+
+    .sub-action.details {
+        background: #cffafe;
+        color: #0891b2;
+    }
+
+    /* DELETE */
+
+    .sub-action.delete {
+        background: #fee2e2;
+        color: #dc2626;
+    }
+
+    /* HOVER */
+
+    .sub-action:hover {
+        transform: translateY(-2px);
+    }
+
+/* NO DATA */
+
+.no-data {
+    display: none;
+    text-align: center;
+    font-size: 22px;
+    font-weight: 700;
+    color: red;
+    margin-top: 30px;
+}
+
+/* RESPONSIVE */
+
+@media (max-width: 1200px) {
+
+    .subject-container {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .page-title {
+        font-size: 32px;
+    }
+
+    .card-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+
+    .subject-book {
+        flex-wrap: wrap;
+    }
+
+    .subject-actions {
+        width: 100%;
+        justify-content: flex-end;
+    }
+
+    .subject-name {
+        font-size: 18px;
+    }
+
+    .class-badge {
+        font-size: 18px;
+    }
+}

@@ -153,12 +153,21 @@ body {
     overflow: hidden;
     box-shadow: 0 6px 18px rgba(0,0,0,0.08);
     transition: 0.3s;
+    
 }
 
     .class-card:hover {
         
         box-shadow: 0 14px 28px rgba(0,0,0,0.12);
     }
+
+.page-info {
+    text-align: center;
+    color: #6b7280;
+    margin-bottom: 28px;
+    font-size: 22px;
+    font: bold;
+}
 
 /* HEADER */
 

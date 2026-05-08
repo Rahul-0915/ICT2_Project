@@ -3,12 +3,12 @@
 @{
     ViewData["Title"] = "Assign Subject to Teacher";
 }
-<link rel="stylesheet" href="~/css/CreateForm.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/AdminSide_Css/SubjectAllocationForm.css" asp-append-version="true" />
 
 <div class="container mt-4">
     <div class="card shadow border-0 rounded-4">
         <div class="card-header bg-primary text-white rounded-top-4">
-            <h3 class="mb-0"><i class="fas fa-chalkboard-teacher"></i> Assign Subject to Teacher</h3>
+            <h3 class="mb-0"><i class="fas fa-chalkboard-teacher"></i> Subject Allocation</h3>
         </div>
         <div class="card-body">
             <form asp-action="Create">
@@ -18,7 +18,7 @@
                     <!-- Staff Dropdown -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="StaffId" class="form-label fw-semibold">👨‍🏫 Teacher</label>
+                            <label asp-for="StaffId" class="form-label fw-semibold">Teacher</label>
                             <select asp-for="StaffId" class="form-select" asp-items="ViewBag.StaffId">
                                 <option value="">-- Select Teacher --</option>
                             </select>
@@ -29,7 +29,7 @@
                     <!-- Subject Dropdown -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="SubjectId" class="form-label fw-semibold">📖 Subject</label>
+                            <label asp-for="SubjectId" class="form-label fw-semibold">Subject</label>
                             <select asp-for="SubjectId" class="form-select" asp-items="ViewBag.SubjectId">
                                 <option value="">-- Select Subject --</option>
                             </select>
@@ -40,7 +40,7 @@
                     <!-- Class Dropdown -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="ClassId" class="form-label fw-semibold">🏫 Class</label>
+                            <label asp-for="ClassId" class="form-label fw-semibold">Class</label>
                             <select asp-for="ClassId" class="form-select" asp-items="ViewBag.ClassId">
                                 <option value="">-- Select Class --</option>
                             </select>
@@ -51,7 +51,7 @@
                     <!-- Session Dropdown -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="SessionId" class="form-label fw-semibold">📅 Session</label>
+                            <label asp-for="SessionId" class="form-label fw-semibold">Session</label>
                             <select asp-for="SessionId" class="form-select" asp-items="ViewBag.SessionId">
                                 <option value="">-- Select Session --</option>
                             </select>

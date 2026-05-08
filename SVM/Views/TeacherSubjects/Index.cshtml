@@ -1,76 +1,377 @@
 ﻿@model IEnumerable<SVM.Models.TeacherSubject>
 
 @{
-	ViewData["Title"] = "Subject Assignments";
+    ViewData["Title"] = "Teacher Subject Assignments";
+
+    var groupedTeachers = Model
+        .GroupBy(x => new
+        {
+            x.StaffId,
+            TeacherName = x.Staff != null
+                ? x.Staff.FirstName + " " + x.Staff.LastName
+                : "N/A"
+        });
 }
-<link rel="stylesheet" href="~/css/List.css" asp-append-version="true" />
 
-<h1>Subject Assignments</h1>
+<link rel="stylesheet"
+      href="~/css/AdminSide_Css/TeacherSubject.css"
+      asp-append-version="true" />
 
-<p>
-	<a asp-action="Create" class="btn btn-primary">Create New Assignment</a>
-</p>
+<link rel="stylesheet"
+      href="~/css/AdminSide_Css/SearchBar.css"
+      asp-append-version="true" />
 
-<table class="table table-striped table-hover">
-	<thead>
-		<tr>
-			<th>Teacher</th>
-			<th>Subject</th>
-			<th>Class</th>
-			<th>Session</th>
-			<th>Actions</th>
-		</tr>
-	</thead>
-	<tbody>
-		@foreach (var item in Model)
-		{
-			<tr>
-				<td>
-					@if (item.Staff != null)
-					{
-						@($"{item.Staff.FirstName} {item.Staff.LastName}")
-					}
-					else
-					{
-						<span class="text-muted">N/A</span>
-					}
-				</td>
-				<td>
-					@if (item.Subject != null)
-					{
-						@item.Subject.SubjectName
-					}
-					else
-					{
-						<span class="text-muted">N/A</span>
-					}
-				</td>
-				<td>
-					@if (item.Class != null)
-					{
-						@item.Class.ClassName
-					}
-					else
-					{
-						<span class="text-muted">N/A</span>
-					}
-				</td>
-				<td>
-					@if (item.Session != null)
-					{
-						@item.Session.SessionName
-					}
-					else
-					{
-						<span class="text-muted">N/A</span>
-					}
-				</td>
-				<td>
-					<a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-sm btn-warning">Edit</a>
-					<a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-info">Details</a>
-					<a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Delete</a>
-				</td>
-			</tr>
-		}
-	</tbody>
-</table>
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<div class="assignment-page">
+
+    <!-- TOP BAR -->
+
+    <div class="top-bar">
+
+        <div class="left-side">
+
+            <!-- SEARCH -->
+
+            <input type="text"
+                   id="searchInput"
+                   placeholder="Search teacher..."
+                   class="search-box" />
+
+            <!-- CLASS FILTER -->
+
+            <select id="classFilter"
+                    class="search-box">
+
+                <option value="">All Classes</option>
+
+                <option value="JR KG">JR KG</option>
+                <option value="SR KG">SR KG</option>
+
+                <option value="1">Class 1</option>
+                <option value="2">Class 2</option>
+                <option value="3">Class 3</option>
+                <option value="4">Class 4</option>
+                <option value="5">Class 5</option>
+
+                <option value="6">Class 6</option>
+                <option value="7">Class 7</option>
+                <option value="8">Class 8</option>
+                <option value="9">Class 9</option>
+                <option value="10">Class 10</option>
+
+                <option value="11">Class 11</option>
+                <option value="12">Class 12</option>
+
+            </select>
+
+            <!-- BUTTON -->
+
+            <button type="button"
+                    class="search-btn"
+                    onclick="filterTeachers()">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Search
+
+            </button>
+
+            <!-- RESET -->
+
+            <button type="button"
+                    class="reset-btn"
+                    onclick="resetFilter()">
+
+                Reset
+
+            </button>
+
+        </div>
+
+        <!-- ADD -->
+
+        <a asp-action="Create"
+           class="add-btn">
+
+            <i class="fa-solid fa-plus"></i>
+
+        </a>
+
+    </div>
+
+    <!-- TITLE -->
+
+    <h1>
+
+        Teacher Subject Allocation
+
+    </h1>
+
+    <!-- INFO -->
+
+    <h2 id="page-info" class="page-info">
+
+        Search teacher or select class to view Subject Allocation
+
+    </h2>
+
+    <!-- CONTAINER -->
+
+    <div class="teacher-container">
+
+        @foreach (var teacher in groupedTeachers)
+        {
+            <div class="teacher-card">
+
+                <!-- HEADER -->
+
+                <div class="teacher-header">
+
+                    <div class="teacher-left">
+
+                        <div class="teacher-icon">
+
+                            @if (!string.IsNullOrEmpty(
+                           teacher.FirstOrDefault()?.Staff?.StafPhoto))
+                            {
+                                <img src="@teacher.FirstOrDefault()?.Staff?.StafPhoto"
+                                     alt="Teacher Photo" />
+                            }
+                            else
+                            {
+                                <i class="fa-solid fa-user"></i>
+                            }
+
+                        </div>
+
+                        <div>
+
+                            <h2 class="teacher-name">
+
+                                @teacher.Key.TeacherName
+
+                            </h2>
+
+                            <p class="teacher-count">
+
+                                @teacher.Count() Subject Assigned
+
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <!-- SUBJECT TABLE -->
+
+                <div class="subject-table-wrapper">
+
+                    <table class="subject-table">
+
+                        <thead>
+
+                            <tr>
+                                <th>Subject</th>
+                                <th>Class & Medium </th>
+                                <th>Session</th>
+                                <th>Action</th>
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var item in teacher)
+                            {
+                                <tr>
+
+                                    <td>
+
+                                        @(item.Subject?.SubjectName ?? "N/A")
+
+                                    </td>
+
+                                    <td class="class-cell">
+
+                                        <div class="class-medium-wrap">
+
+                                            <span class="class-badge">
+
+                                                @(item.Class?.ClassName ?? "N/A")
+
+                                            </span>
+
+                                            <span class="medium-badge">
+
+                                                @(item.Class?.Medium ?? "N/A")
+
+                                            </span>
+
+                                        </div>
+
+                                    </td>
+
+                                    <td>
+
+                                        @(item.Session?.SessionName ?? "N/A")
+
+                                    </td>
+
+                                    <td>
+
+                                        <div class="action-group">
+
+                                            <a asp-action="Edit"
+                                               asp-route-id="@item.Id"
+                                               class="action-btn edit-btn">
+
+                                                <i class="fa-solid fa-pen"></i>
+
+                                            </a>
+
+                                            @* <a asp-action="Details"
+                                               asp-route-id="@item.Id"
+                                               class="action-btn details-btn">
+
+                                                <i class="fa-solid fa-eye"></i>
+
+                                            </a> *@
+
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.Id"
+                                               class="action-btn delete-btn">
+
+                                                <i class="fa-solid fa-trash"></i>
+
+                                            </a>
+
+                                        </div>
+
+                                    </td>
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+    <!-- NO DATA -->
+
+    <div id="noDataMessage"
+         class="no-data">
+
+        No Subject Allocation Found
+
+    </div>
+
+</div>
+
+<script>
+
+    // DEFAULT HIDE
+    document.querySelectorAll(".teacher-card")
+        .forEach(card => {
+            card.style.display = "none";
+        });
+
+    function filterTeachers() {
+
+        let search =
+            document.getElementById("searchInput")
+                .value.toLowerCase().trim();
+
+        let selectedClass =
+            document.getElementById("classFilter")
+                .value.toLowerCase();
+
+        let cards =
+            document.querySelectorAll(".teacher-card");
+
+        let visible = 0;
+
+        cards.forEach(card => {
+
+            let teacherName =
+                card.querySelector(".teacher-name")
+                    .innerText.toLowerCase();
+
+            let classBadges =
+                card.querySelectorAll(".class-badge");
+
+            let classMatch = false;
+
+            // ALL CLASSES
+            if (selectedClass === "") {
+
+                classMatch = true;
+
+            }
+            else {
+
+                classBadges.forEach(badge => {
+
+                    let className =
+                        badge.innerText.toLowerCase();
+
+                    if (className.includes(selectedClass)) {
+
+                        classMatch = true;
+
+                    }
+
+                });
+
+            }
+
+            // TEACHER SEARCH
+            let searchMatch =
+                search === "" ||
+                teacherName.includes(search);
+
+            // SHOW CONDITION
+            if (searchMatch && classMatch) {
+
+                card.style.display = "block";
+                visible++;
+                document.getElementById("page-info").style.display = "none";
+
+            }
+            else {
+
+                card.style.display = "none";
+
+            }
+
+        });
+
+        // NO DATA
+        document.getElementById("noDataMessage").style.display =
+            visible === 0 ? "block" : "none";
+        document.getElementById("noDataMessage").style.color = "red";
+    }
+
+    function resetFilter() {
+        document.getElementById("page-info").style.display = "block";
+        document.getElementById("searchInput").value = "";
+        document.getElementById("classFilter").value = "";
+
+        document.querySelectorAll(".teacher-card")
+            .forEach(card => {
+                card.style.display = "none";
+            });
+
+        document.getElementById("noDataMessage").style.display = "none";
+    }
+
+</script>
