@@ -9,8 +9,10 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <_ContentIncludedByDefault Remove="wwwroot\css\AdminSide_Css\StaffDisplay.css" />
 	  <_ContentIncludedByDefault Remove="wwwroot\css\AdminSide_Css\SubjectsDisplay.css" />
 	  <_ContentIncludedByDefault Remove="wwwroot\css\AdminSide_Css\TimeTable.css" />
+	  <_ContentIncludedByDefault Remove="wwwroot\css\AdminSide_Css\TimeTableForms.css" />
 	</ItemGroup>
 
 	<ItemGroup>

@@ -5,7 +5,7 @@
 
 <h2>Edit Timetable Entry</h2>
 <hr />
-
+<link rel="stylesheet" href="~/css/AdminSide_Css/TimeTableForms.css" asp-append-version="true" />
 <form asp-action="Edit" method="post">
     <input type="hidden" asp-for="TimetableId" />
     <input type="hidden" asp-for="SessionId" />
@@ -48,14 +48,16 @@
         <span asp-validation-for="EndTime" class="text-danger"></span>
     </div>
 
+  
+
+    <button type="submit" class="btn btn-primary">Save</button>
+
     <a asp-action="Index"
        asp-route-sessionId="@ViewBag.ReturnSessionId"
        asp-route-classId="@ViewBag.ReturnClassId"
        asp-route-sectionId="@ViewBag.ReturnSectionId"
        asp-route-medium="@ViewBag.ReturnMedium"
        class="btn btn-secondary">Cancel</a>
-
-    <button type="submit" class="btn btn-primary">Save</button>
 </form>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

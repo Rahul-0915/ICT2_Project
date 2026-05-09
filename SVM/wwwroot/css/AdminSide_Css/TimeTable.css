@@ -3,7 +3,9 @@
     background: #f4f6fb;
     margin: 0;
     padding: 20px;
-
+    background-color: #efeae2;
+    background-image: url('/images/AdminDashboardBGImg.png');
+    background-repeat: repeat;
 }
 
 /* TITLE */

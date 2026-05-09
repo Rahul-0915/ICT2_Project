@@ -4,61 +4,178 @@
     ViewData["Title"] = "Staff List";
 }
 
-@if (TempData["Error"] != null)
-{
-    <div class="alert alert-danger">@TempData["Error"]</div>
-}
-@* @if (TempData["Success"] != null)
-{
-    <div class="alert alert-success">@TempData["Success"]</div>
-} *@
+<link rel="stylesheet" href="~/css/AdminSide_Css/StaffDisplay.css" asp-append-version="true" />
+<link rel="stylesheet" href="/css/AdminSide_Css/SearchBar.css" asp-append-version="true" />
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
-<link rel="stylesheet" href="~/css/List.css" asp-append-version="true" />
+<div class="staff-page">
 
-<p>
-    <a asp-action="Create" class="btn-add">+</a>
-</p>
+    <!-- HEADER -->
+    <div class="page-header">
+        <h2>Staff Management</h2>
+        
+    </div>
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Photo</th>
-            <th>Full Name</th>
-            <th>Designation</th>
-            <th>Phone</th>
-            <th>Joining Date</th>
-            <th>Actions</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <!-- Circular staff photo -->
-                <td>
-                    @if (!string.IsNullOrEmpty(item.StafPhoto))
-                    {
-                        <img src="@item.StafPhoto" alt="Staff Photo"
-                             style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%; border: 1px solid #ddd;" />
-                    }
-                    else
-                    {
-                        <div style="width: 50px; height: 50px; background-color: #f0f0f0; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #aaa;">
-                            📷
-                        </div>
-                    }
-                </td>
-                <!-- Full name (combined) -->
-                <td>@Html.DisplayFor(modelItem => item.FirstName) @Html.DisplayFor(modelItem => item.LastName)</td>
-                <td>@Html.DisplayFor(modelItem => item.Designation)</td>
-                <td>@Html.DisplayFor(modelItem => item.Phone)</td>
-                <td>@(item.JoiningDate.HasValue? item.JoiningDate.Value.ToString("dd-MM-yyyy") : "")</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.StaffId">Edit</a> |
-                    <a asp-action="Details" asp-route-id="@item.StaffId">Details</a> |
-                    <a asp-action="Delete" asp-route-id="@item.StaffId">Delete</a>
-                </td>
-            </tr>
-        }
-    </tbody>
-</table>
+    <!-- SEARCH BAR -->
+    <!-- SEARCH BAR -->
+    <div class="top-bar">
+
+        <div class="left-side">
+
+            <!-- NAME SEARCH -->
+            <input type="text"
+                   id="nameSearch"
+                   class="search-box"
+                   placeholder="Search name..." />
+
+            <!-- DESIGNATION -->
+            <select id="designationFilter"
+                    class="search-box">
+
+                <option value="all">All Designation</option>
+                <option value="Teacher">Teacher</option>
+                <option value="Clerk">Clerk</option>
+                <option value="Peon">Peon</option>
+                <option value="Principal">Principal</option>
+
+            </select>
+
+            <!-- JOINING DATE -->
+            <input type="date"
+                   id="joinDate"
+                   class="search-box" />
+
+            <!-- SEARCH -->
+            <button type="button"
+                    class="search-btn"
+                    onclick="filterStaff()">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Search
+
+            </button>
+            
+
+            <!-- RESET -->
+            <button type="button"
+                    class="reset-btn"
+                    onclick="resetFilter()">
+
+                Reset
+
+            </button>
+
+        </div>
+        <a asp-action="Create"
+           class="add-btn">
+
+            <i class="fa-solid fa-plus"></i>
+
+        </a>
+
+    </div>
+
+    <!-- NO DATA -->
+    <div id="noData" class="no-data">
+        No staff found
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Photo</th>
+                    <th>Name</th>
+                    <th>Designation</th>
+                    <th>Phone</th>
+                    <th>Joining Date</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                @foreach (var item in Model)
+                {
+                    <tr class="staff-row"
+                        data-designation="@item.Designation"
+                        data-date="@(item.JoiningDate?.ToString("yyyy-MM-dd"))">
+
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.StafPhoto))
+                            {
+                                <img src="@item.StafPhoto" />
+                            }
+                            else
+                            {
+                                <div class="no-img">📷</div>
+                            }
+                        </td>
+
+                        <td>@item.FirstName @item.LastName</td>
+                        <td>@item.Designation</td>
+                        <td>@item.Phone</td>
+                        <td>@item.JoiningDate?.ToString("dd-MM-yyyy")</td>
+
+                        <td class="actions">
+                            <a asp-action="Edit" class="edit" asp-route-id="@item.StaffId">Edit</a>
+                            <a asp-action="Details" class="details"  asp-route-id="@item.StaffId">View</a>
+                            <a asp-action="Delete" class="delete" asp-route-id="@item.StaffId">Delete</a>
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+        </table>
+    </div>
+</div>
+<script>
+
+    function filterStaff() {
+
+        let name = document.getElementById("nameSearch").value.toLowerCase();
+        let desig = document.getElementById("designationFilter").value.toLowerCase();
+        let date = document.getElementById("joinDate").value;
+
+        let rows = document.querySelectorAll(".staff-row");
+
+        let visible = 0;
+
+        rows.forEach(r => {
+
+            let rowName = r.innerText.toLowerCase();
+            let rowDesig = r.dataset.designation.toLowerCase();
+            let rowDate = r.dataset.date;
+
+            let matchName = name === "" || rowName.includes(name);
+            let matchDesig = desig === "all" || rowDesig === desig;
+            let matchDate = !date || rowDate === date;
+
+            if (matchName && matchDesig && matchDate) {
+                r.style.display = "";
+                visible++;
+            } else {
+                r.style.display = "none";
+            }
+
+        });
+
+        document.getElementById("noData").style.display =
+            visible === 0 ? "block" : "none";
+    }
+
+    function resetFilter() {
+
+        document.getElementById("nameSearch").value = "";
+        document.getElementById("designationFilter").value = "all";
+        document.getElementById("joinDate").value = "";
+
+        document.querySelectorAll(".staff-row")
+            .forEach(r => r.style.display = "");
+
+        document.getElementById("noData").style.display = "none";
+    }
+
+</script>
