@@ -1,0 +1,266 @@
+﻿/* PAGE */
+
+body {
+    margin: 0;
+    padding: 30px;
+    font-family: "Segoe UI", sans-serif;
+    background: #eef1f5;
+}
+
+/* BUTTONS */
+
+.top-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 25px;
+}
+
+.back-btn,
+.print-btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    text-decoration: none;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.back-btn {
+    background: #343a40;
+    color: white;
+}
+
+.print-btn {
+    background: #0d6efd;
+    color: white;
+}
+
+    .back-btn:hover,
+    .print-btn:hover {
+        transform: translateY(-2px);
+    }
+
+/* MAIN FORM */
+
+.admission-form {
+    background: white;
+    max-width: 1100px;
+    margin: auto;
+    padding: 45px;
+    border-radius: 18px;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+    border: 1px solid #ddd;
+}
+
+/* HEADER */
+
+.form-header {
+    display: flex;
+    align-items: center;
+    border-bottom: 4px solid #0d6efd;
+    padding-bottom: 20px;
+}
+
+.logo-box img {
+    width: 120px;
+    height: 120px;
+    object-fit: contain;
+}
+
+.school-details {
+    flex: 1;
+    text-align: center;
+}
+
+    .school-details h1 {
+        margin: 0;
+        font-size: 65px;
+        color:red;
+        font-weight: 800;
+        letter-spacing: 1px;
+    }
+
+    .school-details p {
+        margin: 5px 0;
+        font-size: 14px;
+        color: #666;
+    }
+
+/* TITLE */
+
+.form-title {
+    width: fit-content;
+    margin: 30px auto;
+    padding: 12px 40px;
+    background: #0d6efd;
+    color: white;
+    border-radius: 50px;
+    font-size: 22px;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+/* TOP HEADER */
+
+.top-student-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 40px;
+    margin-bottom: 35px;
+}
+
+.top-basic-details {
+    flex: 1;
+}
+
+/* PHOTO */
+
+.photo-box {
+    width: 220px;
+}
+
+.student-photo {
+    width: 100%;
+    height: 260px;
+    object-fit: cover;
+    border: 4px solid gray;
+    border-radius: 10px;
+    box-shadow: 0 6px 20px rgba(0,0,0,0.12);
+}
+
+/* SECTION TITLES */
+
+.section-title {
+    margin-top: 35px;
+    margin-bottom: 20px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #0d6efd;
+    font-size: 20px;
+    font-weight: 700;
+    color: #0d2c54;
+    letter-spacing: 1px;
+}
+
+/* FORM STYLE */
+
+.classic-form {
+    width: 100%;
+}
+
+.form-row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    margin-bottom: 20px;
+    font-size: 16px;
+    line-height: 1.9;
+}
+
+.label {
+    font-weight: 700;
+    color: #222;
+    margin-right: 8px;
+}
+
+.small-gap {
+    margin-left: 40px;
+}
+
+.value {
+    flex: 1;
+    border-bottom: 2px dotted #555;
+    padding: 2px 6px;
+    min-width: 140px;
+    color: #111;
+}
+
+    .value.long {
+        min-width: 320px;
+    }
+
+.address-row {
+    align-items: flex-start;
+}
+
+    .address-row .value {
+        min-height: 65px;
+    }
+
+/* FOOTER */
+
+.form-footer {
+    margin-top: 90px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.signature-box {
+    width: 240px;
+    text-align: center;
+    border-top: 2px solid #333;
+    padding-top: 10px;
+    font-weight: 600;
+    color: #333;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:900px) {
+
+    .top-student-header {
+        flex-direction: column-reverse;
+    }
+
+    .photo-box {
+        width: 220px;
+        margin: auto;
+    }
+
+    .form-row {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .small-gap {
+        margin-left: 0;
+        margin-top: 10px;
+    }
+
+    .value {
+        width: 100%;
+    }
+
+    .school-details h1 {
+        font-size: 24px;
+    }
+}
+
+/* PRINT */
+
+@media print {
+
+    body {
+        background: white;
+        padding: 0;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .admission-form {
+        box-shadow: none;
+        border: none;
+        border-radius: 0;
+        width: 100%;
+        max-width: 100%;
+        margin: 0;
+    }
+
+    .value {
+        border-bottom: 1px dotted #000;
+    }
+}

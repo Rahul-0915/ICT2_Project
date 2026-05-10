@@ -173,6 +173,7 @@
             : "/images/SVMGuj_logo.png";
 
             <div class="id-card student-card"
+                 data-id="@item.StudentId"
                  data-session="@item.SessionId"
                  data-medium="@medium"
                  data-class="@item.ClassId"
@@ -619,6 +620,8 @@
 
     }
 
+
+
     function buildTable() {
 
         let html = "";
@@ -626,6 +629,10 @@
         $(".student-card").each(function () {
 
             if ($(this).css("display") != "none") {
+
+                // DATA
+                let id =
+                    $(this).data("id");
 
                 let name =
                     $(this).data("name");
@@ -650,44 +657,44 @@
 
                 html += `
 
-                        <tr>
+                    <tr>
 
-                            <td>${roll}</td>
+                        <td>${roll}</td>
 
-                            <td>
-                                <img src="${photo}"
-                                     class="table-photo">
-                            </td>
+                        <td>
+                            <img src="${photo}"
+                                 class="table-photo">
+                        </td>
 
-                            <td>${name}</td>
+                        <td>${name}</td>
 
-                            <td>${gr}</td>
+                        <td>${gr}</td>
 
-                            <td>${phone}</td>
+                        <td>${phone}</td>
 
-                            <td>${cls}</td>
+                        <td>${cls}</td>
 
-                            <td>${sec}</td>
+                        <td>${sec}</td>
 
-                            <td class="table-actions">
+                        <td class="table-actions">
 
-                                <a href="/Students/Edit/${roll}">
-                                    Edit
-                                </a>
+                            <a href="/Students/Edit/${id}">
+                                Edit
+                            </a>
 
-                                <a href="/Students/Details/${roll}">
-                                    View
-                                </a>
+                            <a href="/Students/Details/${id}">
+                                View
+                            </a>
 
-                                <a href="/Students/Delete/${roll}">
-                                    Delete
-                                </a>
+                            <a href="/Students/Delete/${id}">
+                                Delete
+                            </a>
 
-                            </td>
+                        </td>
 
-                        </tr>
+                    </tr>
 
-                        `;
+                `;
 
             }
 
