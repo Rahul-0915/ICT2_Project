@@ -4,7 +4,7 @@
     ViewData["Title"] = "Edit Staff";
 }
 
-<link rel="stylesheet" href="~/css/EditForm.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/AdminSide_Css/StaffForms.css" asp-append-version="true" />
 
 <!DOCTYPE html>
 <html>
@@ -29,108 +29,112 @@
     </style>
 </head>
 <body>
-    <div class="container">
-        <h4>Edit Staff</h4>
+    
+   
+    
+    <div class="staff-form-container">
+
+        <h4>Add Staff </h4>
         <hr />
-        <div class="row">
-            <div class="col-md-4">
-                <form asp-action="Edit" method="post" enctype="multipart/form-data">
-                    <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-                    <input type="hidden" asp-for="StaffId" />
-                    <input type="hidden" asp-for="UserId" />
-                    <input type="hidden" asp-for="StafPhoto" />
 
-                    <!-- PERSONAL INFORMATION -->
-                    <h5>Personal Information</h5>
-                    <div class="form-group">
-                        <label asp-for="FirstName" class="control-label">First Name</label>
-                        <input asp-for="FirstName" class="form-control" />
-                        <span asp-validation-for="FirstName" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="LastName" class="control-label">Last Name</label>
-                        <input asp-for="LastName" class="form-control" />
-                        <span asp-validation-for="LastName" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Designation" class="control-label">Designation</label>
-                        <input asp-for="Designation" class="form-control" />
-                        <span asp-validation-for="Designation" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Qualification" class="control-label">Qualification</label>
-                        <input asp-for="Qualification" class="form-control" />
-                        <span asp-validation-for="Qualification" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="ExperienceYears" class="control-label">Experience (Years)</label>
-                        <input asp-for="ExperienceYears" class="form-control" />
-                        <span asp-validation-for="ExperienceYears" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="JoiningDate" class="control-label">Joining Date</label>
-                        <input asp-for="JoiningDate" type="date" class="form-control" />
-                        <span asp-validation-for="JoiningDate" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Salary" class="control-label">Salary</label>
-                        <input asp-for="Salary" class="form-control" />
-                        <span asp-validation-for="Salary" class="text-danger"></span>
-                    </div>
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
 
-                    <!-- CONTACT INFORMATION -->
-                    <h5>Contact Information</h5>
-                    <div class="form-group">
-                        <label asp-for="Phone" class="control-label">Phone</label>
-                        <input asp-for="Phone" class="form-control" />
-                        <span asp-validation-for="Phone" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Email" class="control-label">Email</label>
-                        <input asp-for="Email" class="form-control" />
-                        <span asp-validation-for="Email" class="text-danger"></span>
-                    </div>
-                    <div class="form-group">
-                        <label asp-for="Address" class="control-label">Address</label>
-                        <input asp-for="Address" class="form-control" />
-                        <span asp-validation-for="Address" class="text-danger"></span>
-                    </div>
+            <!-- fields -->
+            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <input type="hidden" asp-for="StaffId" />
+            <input type="hidden" asp-for="UserId" />
+            <input type="hidden" asp-for="StafPhoto" />
 
-                    <!-- STAFF PHOTO -->
-                    <div class="form-group">
-                        <label class="control-label">Staff Photo</label>
-                        @if (!string.IsNullOrEmpty(Model.StafPhoto))
-                        {
-                            <div class="current-image">
-                                <p>Current Photo:</p>
-                                <img src="@Model.StafPhoto" style="max-width: 150px; max-height: 150px; border: 1px solid #ddd; border-radius: 4px; padding: 5px;" />
-                            </div>
-                        }
-                        <input type="file" id="ImageFile" name="photoFile" class="form-control" accept="image/*" onchange="previewImage(event)" />
-                        <span class="help-text" style="font-size:12px; color:#666;">Leave empty to keep current photo</span>
-                        <span asp-validation-for="StafPhoto" class="text-danger"></span>
-                        <div id="imagePreviewContainer" class="image-preview-container" style="display:none;">
-                            <p>New Photo Preview:</p>
-                            <img id="imagePreview" src="#" alt="Preview" />
-                        </div>
-                    </div>
+            <!-- PERSONAL INFORMATION -->
+            <h5>Personal Information</h5>
+            <div class="form-group">
+                <label asp-for="FirstName" class="control-label">First Name</label>
+                <input asp-for="FirstName" class="form-control" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="LastName" class="control-label">Last Name</label>
+                <input asp-for="LastName" class="form-control" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Designation" class="control-label">Designation</label>
+                <input asp-for="Designation" class="form-control" />
+                <span asp-validation-for="Designation" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Qualification" class="control-label">Qualification</label>
+                <input asp-for="Qualification" class="form-control" />
+                <span asp-validation-for="Qualification" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ExperienceYears" class="control-label">Experience (Years)</label>
+                <input asp-for="ExperienceYears" class="form-control" />
+                <span asp-validation-for="ExperienceYears" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="JoiningDate" class="control-label">Joining Date</label>
+                <input asp-for="JoiningDate" type="date" class="form-control" />
+                <span asp-validation-for="JoiningDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Salary" class="control-label">Salary</label>
+                <input asp-for="Salary" class="form-control" />
+                <span asp-validation-for="Salary" class="text-danger"></span>
+            </div>
 
-                    <!-- ADDED BY FIELD (original creator) -->
-                    <div class="form-group">
-                        <label asp-for="UserId" class="control-label">Added By</label>
-                        <input type="text" class="form-control" value="@(ViewBag.AddedByName ?? "Unknown")" readonly disabled />
-                        <span asp-validation-for="UserId" class="text-danger"></span>
-                    </div>
+            <div class="form-group">
+                <label asp-for="Phone" class="control-label">Phone</label>
+                <input asp-for="Phone" class="form-control" />
+                <span asp-validation-for="Phone" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Email" class="control-label">Email</label>
+                <input asp-for="Email" class="form-control" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Address" class="control-label">Address</label>
+                <input asp-for="Address" class="form-control" />
+                <span asp-validation-for="Address" class="text-danger"></span>
+            </div>
 
-                    <div class="form-group">
-                        <input type="submit" value="Save Changes" class="btn btn-primary" />
+            <!-- STAFF PHOTO -->
+            <div class="form-group">
+                <label class="control-label">Staff Photo</label>
+                @if (!string.IsNullOrEmpty(Model.StafPhoto))
+                {
+                    <div class="current-image">
+                        <p>Current Photo:</p>
+                        <img src="@Model.StafPhoto" style="max-width: 150px; max-height: 150px; border: 1px solid #ddd; border-radius: 4px; padding: 5px;" />
                     </div>
-                </form>
-                <div class="back-link">
-                    <a asp-action="Index">← Back to List</a>
+                }
+                <input type="file" id="ImageFile" name="photoFile" class="form-control" accept="image/*" onchange="previewImage(event)" />
+                <span class="help-text" style="font-size:12px; color:#666;">Leave empty to keep current photo</span>
+                <span asp-validation-for="StafPhoto" class="text-danger"></span>
+                <div id="imagePreviewContainer" class="image-preview-container" style="display:none;">
+                    <p>New Photo Preview:</p>
+                    <img id="imagePreview" src="#" alt="Preview" />
                 </div>
             </div>
-        </div>
+
+            <!-- ADDED BY FIELD (original creator) -->
+            <div class="form-group">
+                <label asp-for="UserId" class="control-label">Added By</label>
+                <input type="text" class="form-control" value="@(ViewBag.AddedByName ?? "Unknown")" readonly disabled />
+                <span asp-validation-for="UserId" class="text-danger"></span>
+            </div>
+
+            <div class="button-group">
+                <input type="submit" value="Add Staff" class="btn btn-primary" />
+
+                <a asp-action="Index" class="back-link">
+                    <button type="button" class="Back-btn">← Back to List</button>
+                </a>
+            </div>
+
+        </form>
+
     </div>
 
     <script>

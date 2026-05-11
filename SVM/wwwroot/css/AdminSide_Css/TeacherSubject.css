@@ -1,0 +1,273 @@
+﻿body {
+    background-color: #efeae2;
+    background-image: url('/images/AdminDashboardBGImg.png');
+    background-repeat: repeat;
+    font-family: "Segoe UI", sans-serif;
+    margin: 0;
+    padding: 15px;
+}
+
+/* PAGE */
+.assignment-page {
+    width: 100%;
+}
+
+/* TITLE */
+.page-title {
+    text-align: center;
+    font-size: 28px;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 10px 0 8px;
+}
+
+.page-info {
+    text-align: center;
+    color: #6b7280;
+    margin-bottom: 20px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* CONTAINER */
+.teacher-container {
+    width:80%;
+    margin:auto;
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
+/* CARD */
+.teacher-card {
+    background: rgba(255,255,255,0.92);
+    border-radius: 20px;
+    padding: 18px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    backdrop-filter: blur(10px);
+    display: none;
+}
+
+/* HEADER */
+.teacher-header {
+    margin-bottom: 15px;
+}
+
+.teacher-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+/* ICON */
+.teacher-icon {
+    width: 50px;
+    height: 50px;
+    min-width: 50px;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 2px solid #e5e7eb;
+    background: #f3f4f6;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+    .teacher-icon img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    .teacher-icon i {
+        font-size: 22px;
+        color: #6b7280;
+    }
+
+/* NAME */
+.teacher-name {
+    margin: 0;
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.teacher-count {
+    margin-top: 3px;
+    color: #6b7280;
+    font-size: 12px;
+}
+
+/* TABLE */
+.subject-table-wrapper {
+    overflow-x: auto;
+}
+
+.subject-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .subject-table thead {
+        background: #f3f4f6;
+    }
+
+    .subject-table th {
+        padding: 12px;
+        text-align: left;
+        font-size: 13px;
+        color: #374151;
+    }
+
+    .subject-table td {
+        padding: 10px;
+        border-bottom: 1px solid #ececec;
+        font-size: 13px;
+        color: #1f2937;
+    }
+
+/* CLASS */
+.class-cell {
+    font-weight: 700;
+    color: #2563eb;
+}
+
+/* ACTIONS */
+.action-group {
+    display: flex;
+    gap: 8px;
+}
+
+.action-btn {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: 0.2s ease;
+    font-size: 12px;
+}
+
+/* EDIT */
+.edit-btn {
+    background: #e0edff;
+    color: #2563eb;
+}
+
+    .edit-btn:hover {
+        background: #2563eb;
+        color: white;
+    }
+
+/* DETAILS */
+.details-btn {
+    background: #e0f7fa;
+    color: #0891b2;
+}
+
+    .details-btn:hover {
+        background: #0891b2;
+        color: white;
+    }
+
+/* DELETE */
+.delete-btn {
+    background: #ffe4e6;
+    color: #e11d48;
+}
+
+    .delete-btn:hover {
+        background: #e11d48;
+        color: white;
+    }
+
+/* NO DATA */
+.no-data {
+    display: none;
+    text-align: center;
+    font-size: 18px;
+    font-weight: 700;
+    margin-top: 20px;
+    color: #374151;
+}
+
+.class-medium-wrap {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.class-badge {
+    background: #e0edff;
+    color: #2563eb;
+    padding: 4px 10px;
+    border-radius: 40px;
+    font-weight: 700;
+    font-size: 11px;
+}
+
+.medium-badge {
+    background: #ecfeff;
+    color: #0891b2;
+    padding: 4px 10px;
+    border-radius: 40px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    .page-title {
+        font-size: 22px;
+        margin: 8px 0;
+    }
+
+    .page-info {
+        font-size: 12px;
+        margin-bottom: 15px;
+    }
+
+    .teacher-card {
+        padding: 14px;
+    }
+
+    .teacher-name {
+        font-size: 18px;
+    }
+
+    .teacher-icon {
+        width: 45px;
+        height: 45px;
+        min-width: 45px;
+    }
+
+        .teacher-icon i {
+            font-size: 20px;
+        }
+
+    .subject-table th,
+    .subject-table td {
+        padding: 8px;
+        font-size: 12px;
+    }
+
+    .action-btn {
+        width: 28px;
+        height: 28px;
+        font-size: 11px;
+    }
+
+    .class-badge,
+    .medium-badge {
+        padding: 3px 8px;
+        font-size: 10px;
+    }
+}

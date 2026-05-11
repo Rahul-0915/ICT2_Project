@@ -9,6 +9,15 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <_ContentIncludedByDefault Remove="wwwroot\css\AdminSide_Css\StaffDisplay.css" />
+	  <_ContentIncludedByDefault Remove="wwwroot\css\AdminSide_Css\StudentsDetail.css" />
+	  <_ContentIncludedByDefault Remove="wwwroot\css\AdminSide_Css\SubjectsDisplay.css" />
+	  <_ContentIncludedByDefault Remove="wwwroot\css\AdminSide_Css\TimeTable.css" />
+	  <_ContentIncludedByDefault Remove="wwwroot\css\AdminSide_Css\TimeTableForms.css" />
+	  <_ContentIncludedByDefault Remove="wwwroot\css\Preloader.css" />
+	</ItemGroup>
+
+	<ItemGroup>
 		<PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.23" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.23" />

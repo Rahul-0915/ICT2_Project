@@ -16,10 +16,21 @@
 	<!-- HEADER -->
 	<div class="header">
 
-		<div class="logo">SVM Admin Panel</div>
+		<div class="logo">
+
+			<img src="/images/svmGuj_Logo.png"
+				 alt="SVM Logo"
+				 class="logo-img">
+
+			<div class="logo-text">
+				<h2>S.V.M</h2>
+				<span>Admin Panel</span>
+			</div>
+
+		</div>
 
 		<!-- Admin Dropdown - exactly like submenu-item -->
-		<div class="admin-dropdown">
+		<div class="admin-dropdown" tabindex="0">
 			<a href="javascript:void(0)">Admin <i class="fa fa-chevron-down"></i></a>
 			<div class="admin-dropdown-menu">
 				<a asp-action="CreateWithGroup" asp-controller="Users" asp-route-groupId="1">
@@ -41,21 +52,55 @@
 				</a>
 			</li>
 
-			<!-- student -->
+			<!-- STUDENT MANAGEMENT -->
+
 			<li>
-				<a href="#"><i class="fa fa-user-graduate"></i> Students</a>
+				<a href="#">
+					<i class="fa fa-user-graduate"></i>
+					Student Management
+				</a>
+
 				<div class="submenu">
 
-					<a asp-controller="Students" asp-action="Index" target="mainFrame">Student</a>
+					<a asp-controller="Students"
+					   asp-action="Create"
+					   target="mainFrame">
+						New Admission
+					</a>
+
+					<a asp-controller="Students"
+					   asp-action="Index"
+					   target="mainFrame">
+						Student List
+					</a>
+
+					<a href="#">
+						Promotion
+					</a>
+
 					<div class="submenu-item">
-						<a href="#">Student Fees</a>
+
+						<a href="#">
+							Student Fees
+						</a>
+
 						<div class="submenu2">
-							<a href="#">Pay Fees</a>
-							<a href="#">Installments</a>
-							<a href="#">Receipts</a>
+
+							<a href="#">
+								Pay Fees
+							</a>
+
+							<a href="#">
+								Fees Reports
+							</a>
 						</div>
+
 					</div>
-					<a href="#">Attendance</a>
+
+					<a href="#">
+						Attendance
+					</a>
+
 				</div>
 			</li>
 
@@ -82,6 +127,7 @@
 						</div> *@
 					</div>
 					<a target="mainFrame" asp-controller="Subjects" asp-action="Index">Subjects</a>
+					<a target="mainFrame" asp-controller="TeacherSubjects" asp-action="Index">Subject Allocation</a>
 					<a target="mainFrame" asp-controller="TeacherSubjects" asp-action="Index">Subject Assignment</a>
 					<a target="mainFrame" asp-controller="FeesStructures" asp-action="Index">Fee Structure</a>
 

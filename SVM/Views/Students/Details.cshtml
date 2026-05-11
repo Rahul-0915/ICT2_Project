@@ -1,164 +1,448 @@
-﻿@model SVM.Models.Student
+﻿
+
+
+      @model SVM.Models.Student
 
 @{
-	ViewData["Title"] = "Details";
+    ViewData["Title"] = "Student Details";
+
+    var medium = Model.Class?.Medium ?? "";
+
+    var schoolName =
+        medium == "English"
+        ? "S.V.M ENGLISH MEDIUM "
+        : "શારદા વિદ્યામંદિર";
+
+    var logo =
+        medium == "English"
+        ? "/images/SVMEng_logo.png"
+        : "/images/SVMGuj_logo.png";
 }
-<link rel="stylesheet" href="~/css/Detail.css" asp-append-version="true" />
 
-<h1>Details</h1>
+<link rel="stylesheet"
+      href="/css//AdminSide_Css/StudentsDetail.css"
+      asp-append-version="true" />
 
-<div>
-	<h4>Student</h4>
-	<hr />
-	<dl class="row">
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.AdmissionNo)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.AdmissionNo)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.AdmissionDate)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.AdmissionDate)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.RollNo)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.RollNo)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.FirstName)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.FirstName)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.LastName)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.LastName)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.FatherName)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.FatherName)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Dob)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Dob)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Gender)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Gender)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Grno)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Grno)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.BloodGroup)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.BloodGroup)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.AadharNo)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.AadharNo)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Address)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Address)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.City)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.City)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.State)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.State)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Pincode)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Pincode)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Phone)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Phone)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.MotherPhone)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.MotherPhone)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.PreviousSchool)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.PreviousSchool)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.StudentPhoto)
-		</dt>
-		<dd class="col-sm-10">
-			@if (!string.IsNullOrEmpty(Model.StudentPhoto))
-			{
-				<img src="@Model.StudentPhoto" alt="Student Photo" style="max-width:200px; max-height:200px; border:1px solid #ddd; border-radius:4px; padding:5px;" />
-			}
-			else
-			{
-				<span>No photo available</span>
-			}
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Class)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Class.ClassName)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Section)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Section.SectionName)
-		</dd>
-		<dt class="col-sm-2">
-			@Html.DisplayNameFor(model => model.Session)
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.Session.SessionName)
-		</dd>
-		<dt class="col-sm-2">
-			<label>Added By</label>
-		</dt>
-		<dd class="col-sm-10">
-			@Html.DisplayFor(model => model.User.FullName)
-		</dd>
-	</dl>
+<div class="details-page">
+
+    <!-- TOP BUTTONS -->
+
+    <div class="top-actions no-print">
+
+        <a asp-action="Index"
+           class="back-btn">
+
+            ← Back
+
+        </a>
+
+        <button onclick="printPage()"
+                class="print-btn">
+
+            🖨 Print Form
+
+        </button>
+
+    </div>
+
+    <!-- MAIN FORM -->
+
+    <div class="admission-form"
+         id="printArea">
+
+        <!-- HEADER -->
+
+        <div class="form-header">
+
+            <div class="logo-box">
+
+                <img src="@logo"
+                     alt="School Logo" />
+
+            </div>
+
+            <div class="school-details">
+
+                <h1 class="schoolname">
+
+                    @schoolName
+
+                </h1>
+
+                <p>
+
+                    Gujarat Housing Board,
+                    Pandesara, Surat - 394221
+
+                </p>
+
+                <p>
+
+                    +91 9876543210 |
+                    shardavidhyamandir@gmail.com
+
+                </p>
+
+            </div>
+
+        </div>
+
+        <!-- TITLE -->
+
+        <div class="form-title">
+
+            ADMISSION CONFIRMATION FORM
+
+        </div>
+
+        <!-- TOP HEADER AREA -->
+
+        <div class="top-student-header">
+
+            <!-- LEFT DETAILS -->
+
+            <div class="top-basic-details">
+
+                <!-- PERSONAL DETAILS -->
+
+                <div class="section-title">
+
+                    PERSONAL DETAILS
+
+                </div>
+
+                <div class="form-row">
+
+                    <span class="label">
+
+                        Student Name :
+
+                    </span>
+
+                    <span class="value">
+
+                        @Model.FirstName
+                        @Model.LastName
+
+                    </span>
+
+                </div>
+
+                <div class="form-row">
+
+                    <span class="label">
+
+                        Father's Name :
+
+                    </span>
+
+                    <span class="value">
+
+                        @Model.FatherName
+
+                    </span>
+
+                </div>
+
+                <div class="form-row">
+
+                    <span class="label">
+
+                        Date of Birth :
+
+                    </span>
+
+                    <span class="value">
+
+                        @(Model.Dob?.ToString("dd-MM-yyyy"))
+
+                    </span>
+
+                </div>
+
+                <div class="form-row">
+
+                    <span class="label">
+
+                        Gender :
+
+                    </span>
+
+                    <span class="value">
+
+                        @Model.Gender
+
+                    </span>
+
+                </div>
+
+            </div>
+
+            <!-- PHOTO -->
+
+            <div class="photo-box">
+
+                @if (!string.IsNullOrEmpty(Model.StudentPhoto))
+                {
+                    <img src="@Model.StudentPhoto"
+                         class="student-photo"
+                         alt="Student Photo" />
+                }
+                else
+                {
+                    <img src="/images/default-user.png"
+                         class="student-photo"
+                         alt="Default Photo" />
+                }
+
+            </div>
+
+        </div>
+
+
+        <div class="classic-form">
+
+            <div class="form-row">
+
+                <span class="label">
+
+                    Blood Group :
+
+                </span>
+
+                <span class="value">
+
+                    @Model.BloodGroup
+
+                </span>
+
+                <span class="label small-gap">
+
+                    Aadhar No :
+
+                </span>
+
+                <span class="value">
+
+                    @Model.AadharNo
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <!-- ACADEMIC DETAILS -->
+
+        <div class="section-title">
+
+            ACADEMIC DETAILS
+
+        </div>
+
+        <div class="classic-form">
+
+            <div class="form-row">
+
+                <span class="label">
+
+                    Admission No :
+
+                </span>
+
+                <span class="value">
+
+                    @Model.AdmissionNo
+
+                </span>
+
+                <span class="label small-gap">
+
+                    Roll No :
+
+                </span>
+
+                <span class="value">
+
+                    @Model.RollNo
+
+                </span>
+
+            </div>
+
+            <div class="form-row">
+
+                <span class="label">
+
+                    Class :
+
+                </span>
+
+                <span class="value">
+
+                    @Model.Class?.ClassName
+
+                </span>
+
+                <span class="label small-gap">
+
+                    Division :
+
+                </span>
+
+                <span class="value">
+
+                    @Model.Section?.SectionName
+
+                </span>
+
+            </div>
+
+            <div class="form-row">
+
+                <span class="label">
+
+                    GR No :
+
+                </span>
+
+                <span class="value">
+
+                    @Model.Grno
+
+                </span>
+
+                <span class="label small-gap">
+
+                    Session :
+
+                </span>
+
+                <span class="value">
+
+                    @Model.Session?.SessionName
+
+                </span>
+
+            </div>
+
+            <div class="form-row">
+
+                <span class="label">
+
+                    Previous School :
+
+                </span>
+
+                <span class="value long">
+
+                    @Model.PreviousSchool
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <!-- CONTACT DETAILS -->
+
+        <div class="section-title">
+
+            CONTACT DETAILS
+
+        </div>
+
+        <div class="classic-form">
+
+            <div class="form-row">
+
+                <span class="label">
+
+                    Phone :
+
+                </span>
+
+                <span class="value">
+
+                    @Model.Phone
+
+                </span>
+
+                <span class="label small-gap">
+
+                    Mother Phone :
+
+                </span>
+
+                <span class="value">
+
+                    @Model.MotherPhone
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <!-- ADDRESS DETAILS -->
+
+        <div class="section-title">
+
+            ADDRESS DETAILS
+
+        </div>
+
+        <div class="classic-form">
+
+            <div class="form-row address-row">
+
+                <span class="label">
+
+                    Address :
+
+                </span>
+
+                <span class="value long">
+
+                    @Model.Address,
+                    @Model.City,
+                    @Model.State -
+                    @Model.Pincode
+
+                </span>
+
+            </div>
+
+        </div>
+
+        <!-- FOOTER -->
+
+        <div class="form-footer">
+
+            <div class="signature-box">
+
+                Clerk Signature
+
+            </div>
+
+            <div class="signature-box">
+
+                Principal Signature
+
+            </div>
+
+        </div>
+
+    </div>
+
 </div>
-<div>
-	<a asp-action="Edit" asp-route-id="@Model?.StudentId">Edit</a> |
-	<a asp-action="Index">Back to List</a>
-</div>
+
+<script>
+
+    function printPage() {
+
+        window.print();
+
+    }
+
+</script>

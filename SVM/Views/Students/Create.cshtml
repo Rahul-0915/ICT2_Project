@@ -7,29 +7,13 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="~/css/CreateForm.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/css/AdminSide_Css/StudentsAdmissionForm.css" asp-append-version="true" />
     <title>Create Student</title>
-    <style>
-        .hidden-field {
-            display: none;
-        }
 
-        .image-preview-container {
-            margin-top: 10px;
-        }
-
-        #imagePreview {
-            max-width: 150px;
-            max-height: 150px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            padding: 5px;
-        }
-    </style>
 </head>
 <body>
-    <div class="container">
-        <h4>Add Student</h4>
+    <div class="stud-container">
+        <h4>Admission Form</h4>
         <hr />
         <div class="row">
             <div class="col-md-4">
@@ -193,15 +177,22 @@
                         <span asp-validation-for="UserId" class="text-danger"></span>
                     </div>
 
-                    <div class="form-group">
-                        <input type="submit" value="Create Student" class="btn btn-primary" />
+                    <div class="button-group">
+
+                        <input type="submit"
+                               value="Submit"
+                               class="btn btn-primary" />
+
+                        <div class="back-link">
+                            <a asp-action="AdminDashboard" asp-controller="Admin">← Back to Home</a>
+                        </div>
+
                     </div>
                 </form>
-                <div class="back-link">
-                    <a asp-action="Index">← Back to List</a>
-                </div>
+               
             </div>
         </div>
+       
     </div>
 
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>

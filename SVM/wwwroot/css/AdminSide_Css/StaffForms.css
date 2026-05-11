@@ -1,0 +1,154 @@
+﻿/* =========================
+   FIXED 3 COLUMN FORM SYSTEM (COMPACT)
+========================= */
+
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #efeae2;
+    background-image: url('/images/AdminDashboardBGImg.png');
+    background-repeat: repeat;
+}
+
+/* CONTAINER */
+
+.container {
+    max-width: 1000px;
+    margin: 24px auto;
+    background: #fff;
+    padding: 18px;
+    border-radius: 14px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* FORM GRID */
+
+form {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 14px;
+}
+
+/* FORM GROUP */
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+    /* LABEL */
+
+    .form-group label {
+        font-size: 12px;
+        font-weight: 600;
+        margin-bottom: 5px;
+        color: #374151;
+    }
+
+/* INPUT */
+
+.form-control {
+    height: 40px;
+    border: 1px solid #d1d5db;
+    border-radius: 8px;
+    padding: 0 10px;
+    font-size: 14px;
+    outline: none;
+    transition: 0.2s;
+    box-sizing: border-box;
+}
+
+    /* FOCUS */
+
+    .form-control:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 2px rgba(37,99,235,0.12);
+    }
+
+/* FULL WIDTH ELEMENTS */
+
+h4, h5,
+.btn-primary,
+.back-link,
+.form-group:last-child {
+    grid-column: span 3;
+}
+
+/* BUTTON */
+
+.btn-primary {
+    height: 42px;
+    border: none;
+    border-radius: 10px;
+    background: #2d63ea;
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+    .btn-primary:hover {
+        background: #1749c6;
+    }
+
+/* IMAGE PREVIEW */
+
+#imagePreview {
+    max-width: 100px;
+    border-radius: 8px;
+}
+
+/* BACK BUTTON */
+
+.Back-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    border-radius: 10px;
+    background: #64748b;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 600;
+    text-decoration: none;
+    border: none;
+    cursor: pointer;
+    transition: 0.2s;
+    margin-top: 12px;
+}
+
+    .Back-btn:hover {
+        background: #475569;
+    }
+
+    .Back-btn:active {
+        transform: scale(0.98);
+    }
+
+/* RESPONSIVE */
+
+@media (max-width: 992px) {
+    form {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    h4, h5,
+    .btn-primary,
+    .back-link,
+    .form-group:last-child {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 600px) {
+    form {
+        grid-template-columns: 1fr;
+    }
+
+    h4, h5,
+    .btn-primary,
+    .back-link,
+    .form-group:last-child {
+        grid-column: span 1;
+    }
+}

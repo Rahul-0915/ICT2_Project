@@ -1,8 +1,9 @@
 ﻿@model SVM.Models.LoginViewModel
 
 @{
-    Layout = null;
+    
     ViewData["Title"] = "Login";
+    ViewBag.ShowPreloader = true;
 }
 
 <!DOCTYPE html>
@@ -16,8 +17,8 @@
 <body>
     <div class="login-container">
         <div class="login-box">
-            <h2>SVM School</h2>
-            <h4>Admin Login</h4>
+            <h2>Log-in</h2>
+            <h4>S.V.M</h4>
 
             @if (ViewBag.Error != null)
             {

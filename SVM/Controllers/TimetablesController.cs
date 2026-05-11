@@ -303,116 +303,237 @@ namespace SVM.Controllers
         }
         // -------------------------- HELPER METHODS --------------------------
 
-        private string GenerateHtmlTable(Dictionary<string, Dictionary<int, Timetable>> grid, string sessionName, string className, string sectionName, string medium)
-        {
-            var days = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
-            var html = $@"
-        <html>
-        <head><title>Timetable</title>
-        <style>
-            table, th, td {{ border: 1px solid black; border-collapse: collapse; padding: 8px; text-align: center; }}
-            th {{ background-color: #f2f2f2; }}
-        </style>
-        </head>
-        <body>
-        <h2>Timetable</h2>
-        <p>Session: {sessionName} | Class: {className} | Section: {sectionName} | Medium: {medium}</p>
-        <table style='width:100%'>
-            <thead><tr><th>Period/Day</th>{(string.Join("", days.Select(d => $"<th>{d}</th>")))}</thead>
-            <tbody>";
+        private string GenerateHtmlTable(Dictionary<string, Dictionary<int, Timetable>> grid,
+    string sessionName, string className, string sectionName, string medium)
+{
+    var days = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 
-            for (int p = 1; p <= 8; p++)
+    string schoolName = medium?.ToLower() == "gujarati"
+        ? "શારદા વિદ્યામંદિર"
+        : "S.V.M English Medium School";
+
+    var html = $@"
+<html>
+<head>
+<meta charset='utf-8'/>
+<style>
+body {{
+    font-family: Arial;
+    text-align: center;
+}}
+
+h1 {{
+    margin: 5px;
+}}
+
+.table {{
+    width: 100%;
+    border-collapse: collapse;
+}}
+
+.table th, .table td {{
+    border: 1px solid black;
+    padding: 6px;
+    text-align: center;
+    vertical-align: middle;
+}}
+
+.header {{
+    margin-bottom: 10px;
+}}
+
+.small {{
+    font-size: 12px;
+}}
+
+.footer {{
+    margin-top: 30px;
+    text-align: right;
+}}
+</style>
+</head>
+
+<body>
+
+<h1>{schoolName}</h1>
+<h2>TIME TABLE</h2>
+
+<div class='header'>
+<b>Class:</b> {className} &nbsp;&nbsp;
+<b>Section:</b> {sectionName} &nbsp;&nbsp;
+<b>Medium:</b> {medium}
+<br/>
+<b>Session:</b> {sessionName}
+</div>
+
+<table class='table'>
+<thead>
+<tr>
+<th>Period/Day</th>";
+
+    foreach (var d in days)
+        html += $"<th>{d}</th>";
+
+    html += "</tr></thead><tbody>";
+
+    for (int p = 1; p <= 8; p++)
+    {
+        html += $"<tr><th>Period {p}</th>";
+
+        foreach (var day in days)
+        {
+            if (day == "Saturday" && p > 5)
             {
-                html += $"<tr><th>Period {p}</th>";
-                foreach (var day in days)
-                {
-                    if (day == "Saturday" && p > 5)
-                    {
-                        html += "<td>-</td>";
-                        continue;
-                    }
-                    var cell = grid[day].ContainsKey(p) ? grid[day][p] : null;
-                    if (cell != null && cell.SubjectId != null)
-                    {
-                        var teacherName = cell.Staff != null ? $"{cell.Staff.FirstName} {cell.Staff.LastName}" : "";
-                        html += $"<td><b>{cell.Subject?.SubjectName}</b><br/>{cell.StartTime} - {cell.EndTime}<br/><span style='font-size:small'>{teacherName}</span></td>";
-                    }
-                    else
-                    {
-                        html += "<td>--</td>";
-                    }
-                }
-                html += "</tr>";
+                html += "<td>-</td>";
+                continue;
             }
-            html += @"
-            </tbody>
-        </table>
-        </body></html>";
-            return html;
-        }
-        private IDocument CreatePdfDocument(Dictionary<string, Dictionary<int, Timetable>> grid, string sessionName, string className, string sectionName, string medium)
-        {
-            var days = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
-            return Document.Create(container =>
+
+            var cell = grid[day].ContainsKey(p) ? grid[day][p] : null;
+
+            if (cell != null && cell.SubjectId != null)
             {
-                container.Page(page =>
-                {
-                    page.Size(PageSizes.A4.Landscape());
-                    page.Margin(20);
-                    page.DefaultTextStyle(x => x.FontSize(10));
-                    page.Header().Text($"Timetable - {sessionName}, {className} - {sectionName} ({medium})")
-                        .SemiBold().FontSize(14).AlignCenter();
+                var teacher = cell.Staff != null ? $"{cell.Staff.FirstName} {cell.Staff.LastName}" : "";
 
-                    page.Content().Table(table =>
-                    {
-                        table.ColumnsDefinition(columns =>
-                        {
-                            columns.ConstantColumn(50);
-                            for (int i = 0; i < 6; i++) columns.RelativeColumn();
-                        });
+                html += $@"
+<td>
+<b>{cell.Subject?.SubjectName}</b><br/>
+{cell.StartTime} - {cell.EndTime}<br/>
+<span class='small'>{teacher}</span>
+</td>";
+            }
+            else if (cell?.IsBreak == true)
 
-                        table.Header(header =>
-                        {
-                            header.Cell().Background(Colors.Blue.Medium).Padding(5).Text("Period/Day");
-                            foreach (var day in days)
-                                header.Cell().Background(Colors.Blue.Medium).Padding(5).Text(day);
-                        });
-
-                        for (int p = 1; p <= 8; p++)
-                        {
-                            table.Cell().Border(1).Padding(5).AlignCenter().Text($"Period {p}");
-                            foreach (var day in days)
-                            {
-                                if (day == "Saturday" && p > 5)
-                                {
-                                    table.Cell().Border(1).Padding(5).AlignCenter().Text("-");
-                                    continue;
-                                }
-                                var cell = grid[day].ContainsKey(p) ? grid[day][p] : null;
-                                if (cell != null && cell.SubjectId != null)
-                                {
-                                    var teacherName = cell.Staff != null ? $"{cell.Staff.FirstName} {cell.Staff.LastName}" : "";
-                                    table.Cell().Border(1).Padding(5).AlignCenter().Column(col =>
-                                    {
-                                        col.Item().Text(cell.Subject?.SubjectName).Bold();
-                                        col.Item().Text($"{cell.StartTime} - {cell.EndTime}");
-                                        if (!string.IsNullOrEmpty(teacherName))
-                                            col.Item().Text(teacherName).FontSize(8);
-                                    });
-                                }
-                                else
-                                {
-                                    table.Cell().Border(1).Padding(5).AlignCenter().Text("--");
-                                }
-                            }
-                        }
-                    });
-                });
-            });
+			{
+                html += $"<td><b>BREAK</b><br/>{cell.StartTime}-{cell.EndTime}</td>";
+            }
+            else
+            {
+                html += "<td>--</td>";
+            }
         }
-        // -------------------------- NAME FETCHING HELPERS --------------------------
 
-        private async Task<string> GetSessionName(int sessionId)
+        html += "</tr>";
+    }
+
+    html += $@"
+</tbody>
+</table>
+
+<div class='footer'>
+Principal Sign: ____________________
+</div>
+
+</body>
+</html>";
+
+    return html;
+}
+		// pdf create
+		private IDocument CreatePdfDocument(
+	 Dictionary<string, Dictionary<int, Timetable>> grid,
+	 string sessionName,
+	 string className,
+	 string sectionName,
+	 string medium)
+		{
+			var days = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+
+			string schoolName = medium?.ToLower() == "gujarati"
+				? "શારદા વિદ્યામંદિર"
+				: "S.V.M English Medium School";
+
+			return Document.Create(container =>
+			{
+				container.Page(page =>
+				{
+					page.Size(PageSizes.A4.Landscape());
+					page.Margin(20);
+					page.DefaultTextStyle(x => x.FontSize(10));
+
+					// HEADER (SCHOOL NAME)
+					page.Header().Column(col =>
+					{
+						col.Item().AlignCenter().Text(schoolName).FontSize(18).Bold();
+						col.Item().AlignCenter().Text("TIME TABLE").FontSize(14).Bold();
+
+						col.Item().AlignCenter().Text(
+							$"Class: {className}   |   Section: {sectionName}   |   Medium: {medium}"
+						);
+
+						col.Item().AlignCenter().Text($"Session: {sessionName}");
+					});
+
+					// TABLE
+					page.Content().PaddingTop(10).Table(table =>
+					{
+						table.ColumnsDefinition(columns =>
+						{
+							columns.ConstantColumn(60);
+							foreach (var _ in days)
+								columns.RelativeColumn();
+						});
+
+						// HEADER ROW
+						table.Header(header =>
+						{
+							header.Cell().Border(1).Padding(5).AlignCenter().Text("Period/Day");
+
+							foreach (var day in days)
+								header.Cell().Border(1).Padding(5).AlignCenter().Text(day);
+						});
+
+						// DATA ROWS
+						for (int p = 1; p <= 8; p++)
+						{
+							table.Cell().Border(1).Padding(5).AlignCenter().Text($"Period {p}");
+
+							foreach (var day in days)
+							{
+								if (day == "Saturday" && p > 5)
+								{
+									table.Cell().Border(1).Padding(5).AlignCenter().Text("-");
+									continue;
+								}
+
+								var cell = grid[day].ContainsKey(p) ? grid[day][p] : null;
+
+								if (cell != null && cell.SubjectId != null)
+								{
+									var teacherName = cell.Staff != null
+										? $"{cell.Staff.FirstName} {cell.Staff.LastName}"
+										: "";
+
+									table.Cell().Border(1).Padding(5).AlignCenter().Column(col =>
+									{
+										col.Item().Text(cell.Subject?.SubjectName).Bold();
+										col.Item().Text($"{cell.StartTime} - {cell.EndTime}");
+										col.Item().Text(teacherName);
+									});
+								}
+								else if (cell != null && cell.IsBreak == true)
+								{
+									table.Cell().Border(1).Padding(5).AlignCenter().Column(col =>
+									{
+										col.Item().Text("BREAK").Bold();
+										col.Item().Text($"{cell.StartTime} - {cell.EndTime}");
+									});
+								}
+								else
+								{
+									table.Cell().Border(1).Padding(5).AlignCenter().Text("--");
+								}
+							}
+						}
+					});
+
+					// FOOTER
+					page.Footer().PaddingTop(3).AlignRight().Text("Principal Sign: ____________________");
+				});
+			});
+		}
+		// -------------------------- NAME FETCHING HELPERS --------------------------
+
+		private async Task<string> GetSessionName(int sessionId)
         {
             var sessions = await GetSessions();
             var session = sessions.FirstOrDefault(s => s.SessionId == sessionId);

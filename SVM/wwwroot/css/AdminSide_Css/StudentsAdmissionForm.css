@@ -1,0 +1,248 @@
+﻿/* =========================
+   STUDENT ADMISSION FORM
+========================= */
+
+body {
+    margin: 0;
+    padding: 25px;
+    background-image: url('/images/AdminDashboardBGImg.png');
+    background-repeat: repeat;
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* MAIN CONTAINER */
+.stud-container {
+    max-width: 1100px;
+    margin: auto;
+    background: #ffffff;
+    border-radius: 20px;
+    padding: 28px;
+    box-shadow: 0 10px 35px rgba(0,0,0,0.08);
+}
+
+/* REMOVE BOOTSTRAP WIDTH ISSUE */
+.row,
+.col-md-4 {
+    width: 100%;
+    max-width: 100%;
+    flex: 100%;
+}
+
+/* TITLE */
+h4 {
+    font-size: 24px;
+    color: #1e293b;
+    margin-bottom: 10px;
+    font-weight: 700;
+}
+
+hr {
+    border: none;
+    height: 1px;
+    background: #e5e7eb;
+    margin-bottom: 20px;
+}
+span
+{
+    color:red;
+}
+
+/* SECTION TITLE PREMIUM */
+h5 {
+    grid-column: span 3;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 16px;
+    font-weight: 700;
+    color: #1e3a8a;
+    margin: 12px 0 8px;
+}
+
+h5::before {
+    content: "";
+    width: 5px;
+    height: 18px;
+    background: #2563eb;
+    border-radius: 20px;
+}
+
+h5::after {
+    content: "";
+    flex: 1;
+    height: 2px;
+    background: linear-gradient(to right, #bfdbfe, transparent);
+}
+
+/* FORM GRID */
+form {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+}
+
+/* FORM GROUP */
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+/* LABEL */
+.form-group label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #374151;
+    margin-bottom: 6px;
+}
+
+/* INPUT */
+.form-control {
+    height: 42px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    padding: 0 12px;
+    font-size: 13px;
+    background: #fff;
+    transition: 0.2s;
+    outline: none;
+}
+
+/* SELECT */
+select.form-control {
+    cursor: pointer;
+}
+
+/* FOCUS */
+.form-control:focus {
+    border-color: #2563eb;
+    box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+}
+
+/* VALIDATION */
+.text-danger {
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* FULL WIDTH */
+h4,
+hr,
+h5,
+.button-group {
+    grid-column: span 3;
+}
+
+/* IMAGE PREVIEW */
+.image-preview-container {
+    margin-top: 10px;
+}
+
+#imagePreview {
+    max-width: 110px;
+    max-height: 110px;
+    border-radius: 10px;
+    border: 1px solid #d1d5db;
+    padding: 4px;
+}
+
+/* BUTTON GROUP */
+.button-group {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 12px;
+    margin-top: 15px;
+    flex-wrap: wrap;
+}
+
+/* SUBMIT BUTTON */
+.btn-primary {
+    min-width: 160px;
+    height: 44px;
+    border: none;
+    border-radius: 10px;
+    background: #2563eb;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.btn-primary:hover {
+    background: #1749c6;
+}
+
+/* BACK BUTTON */
+.back-link a {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 160px;
+    height: 44px;
+    border-radius: 10px;
+    background: #64748b;
+    color: white;
+    text-decoration: none;
+    font-size: 14px;
+    font-weight: 600;
+    transition: 0.3s;
+}
+
+.back-link a:hover {
+    background: #475569;
+}
+
+/* FILE INPUT */
+input[type="file"] {
+    padding: 8px;
+}
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 992px) {
+
+    .stud-container {
+        max-width: 95%;
+    }
+
+    form {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    h5,
+    .button-group {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 650px) {
+
+    body {
+        padding: 12px;
+    }
+
+    .stud-container {
+        padding: 20px;
+    }
+
+    form {
+        grid-template-columns: 1fr;
+    }
+
+    h5,
+    .button-group {
+        grid-column: span 1;
+    }
+
+    .button-group {
+        flex-direction: column;
+    }
+
+    .btn-primary,
+    .back-link a {
+        width: 100%;
+    }
+}

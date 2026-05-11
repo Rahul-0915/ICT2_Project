@@ -11,6 +11,19 @@
     <h4>Staff</h4>
     <hr />
     <dl class="row">
+        <dt class="col-sm-2">
+            @Html.DisplayNameFor(model => model.StafPhoto)
+        </dt>
+        <dd class="col-sm-10">
+            @if (!string.IsNullOrEmpty(Model.StafPhoto))
+            {
+                <img src="@Model.StafPhoto" alt="Staff Photo" style="max-width: 150px; max-height: 150px; border: 1px solid #ddd; border-radius: 4px; padding: 5px;" />
+            }
+            else
+            {
+                <span>No photo uploaded</span>
+            }
+        </dd>
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.FirstName)
         </dt>
@@ -35,10 +48,11 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Qualification)
         </dd>
-        <dt class = "col-sm-2">
+        <dt class="col-sm-2 mb-2 pe-4">
             @Html.DisplayNameFor(model => model.ExperienceYears)
         </dt>
-        <dd class = "col-sm-10">
+
+        <dd class="col-sm-10 mb-2">
             @Html.DisplayFor(model => model.ExperienceYears)
         </dd>
         <dt class = "col-sm-2">
@@ -71,19 +85,7 @@
         <dd class = "col-sm-10">
             @Html.DisplayFor(model => model.Address)
         </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.StafPhoto)
-        </dt>
-        <dd class="col-sm-10">
-            @if (!string.IsNullOrEmpty(Model.StafPhoto))
-            {
-                <img src="@Model.StafPhoto" alt="Staff Photo" style="max-width: 150px; max-height: 150px; border: 1px solid #ddd; border-radius: 4px; padding: 5px;" />
-            }
-            else
-            {
-                <span>No photo uploaded</span>
-            }
-        </dd>
+       
         <dt class = "col-sm-2">
             @Html.DisplayNameFor(model => model.User)
         </dt>
