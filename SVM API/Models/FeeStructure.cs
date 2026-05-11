@@ -1,25 +1,42 @@
-﻿using System;
+﻿using SVM_API.Models;
+using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SVM_API.Models;
-
-public partial class FeeStructure
+namespace SVM_API.Models
 {
-    public int FeeId { get; set; }
+    [Table("fee_structure")]
+    public partial class FeeStructure
+    {
+        [Key]
+        [Column("fee_id")]
+        public int FeeId { get; set; }
 
-    public int? ClassId { get; set; }
+        [Column("class_id")]
+        public int? ClassId { get; set; }
 
-    public int? SectionId { get; set; }
+        [Column("admission_fees")]
+        public decimal? AdmissionFees { get; set; }
 
-    public string? FeeType { get; set; }
+        [Column("monthly_fees")]
+        public decimal? MonthlyFees { get; set; }
 
-    public decimal? TotalAmount { get; set; }
+        [Column("other_activity_fees")]   // new column
+        public decimal? OtherActivityFees { get; set; }
 
-    public DateOnly? DueDate { get; set; }
+        [Column("computer_fees")]          // new column
+        public decimal? ComputerFees { get; set; }
 
-    public virtual Class? Class { get; set; }
+        [Column("total_amount")]
+        public decimal? TotalAmount { get; set; }
 
-    public virtual ICollection<FeePayment> FeePayments { get; set; } = new List<FeePayment>();
+        [Column("session_id")]
+        public int? SessionId { get; set; }
 
-    public virtual Section? Section { get; set; }
+        [ForeignKey("ClassId")]
+        public virtual Class? Class { get; set; }
+
+       
+    }
 }

@@ -21,7 +21,8 @@ public partial class User
     public string? Phone { get; set; }
 
     public string? ProfilePhoto { get; set; }
-
+    public string? ResetOTP { get; set; }
+    public DateTime? ResetOTPExpiry { get; set; }
     public virtual Groupmaster? Group { get; set; }
     [JsonIgnore]
     public virtual ICollection<Staff> Staff { get; set; } = new List<Staff>();
