@@ -16,10 +16,21 @@
 	<!-- HEADER -->
 	<div class="header">
 
-		<div class="logo">SVM Admin Panel</div>
+		<div class="logo">
+
+			<img src="/images/svmGuj_Logo.png"
+				 alt="SVM Logo"
+				 class="logo-img">
+
+			<div class="logo-text">
+				<h2>S.V.M</h2>
+				<span>Admin Panel</span>
+			</div>
+
+		</div>
 
 		<!-- Admin Dropdown - exactly like submenu-item -->
-		<div class="admin-dropdown">
+		<div class="admin-dropdown" tabindex="0">
 			<a href="javascript:void(0)">Admin <i class="fa fa-chevron-down"></i></a>
 			<div class="admin-dropdown-menu">
 				<a asp-action="CreateWithGroup" asp-controller="Users" asp-route-groupId="1">

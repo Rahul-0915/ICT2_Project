@@ -15,6 +15,15 @@
 <link rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
+<link rel="preconnect" href="https://fonts.googleapis.com">
+
+<link rel="preconnect"
+      href="https://fonts.gstatic.com"
+      crossorigin>
+
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Gujarati:wght@400;500;700;800&display=swap"
+      rel="stylesheet">
+
 <div class="id-page">
 
     <!-- TOP SEARCH BAR -->
@@ -703,24 +712,34 @@
         $("#tableBody").html(html);
 
     }
+    async function downloadPDF() {
 
-    function downloadPDF() {
+        await document.fonts.ready;
 
-        let cards =
-            [...document.querySelectorAll(".student-card")]
-                .filter(x => x.style.display != "none");
+        let cards = [...document.querySelectorAll(".student-card")]
+            .filter(x => x.style.display != "none");
 
         if (cards.length == 0) {
 
             alert("No cards found");
-
             return;
         }
 
-        let printArea =
-            document.createElement("div");
+        // MAIN PDF AREA
+        let printArea = document.createElement("div");
 
-        printArea.classList.add("pdf-grid");
+        printArea.style.width = "100%";
+        printArea.style.display = "grid";
+
+        // 2 CARDS PER ROW
+        printArea.style.gridTemplateColumns = "repeat(2, 1fr)";
+
+        // VERY SMALL GAP
+        printArea.style.columnGap = "2px";
+        printArea.style.rowGap = "2px";
+
+        printArea.style.padding = "2px";
+        printArea.style.background = "white";
 
         cards.forEach(card => {
 
@@ -728,30 +747,132 @@
 
             clone.style.display = "flex";
 
+            // CARD SIZE
+            clone.style.width = "370px";
+            clone.style.minHeight = "215px";
+
+            clone.style.margin = "0 auto";
+
+            clone.style.borderRadius = "10px";
+            clone.style.border = "1px solid #ddd";
+
+            clone.style.boxShadow = "none";
+            clone.style.overflow = "hidden";
+
+            // HEADER
+            let top = clone.querySelector(".card-top");
+
+            top.style.padding = "7px";
+            top.style.gap = "7px";
+
+            // LOGO
+            let logo = clone.querySelector(".school-logo");
+
+            logo.style.width = "38px";
+            logo.style.height = "38px";
+
+            // SCHOOL NAME
+            let schoolName = clone.querySelector(".school-name");
+
+            schoolName.style.fontSize = "14px";
+            schoolName.style.fontWeight = "800";
+            schoolName.style.lineHeight = "1.1";
+
+            // IMPORTANT FOR GUJARATI
+            schoolName.style.fontFamily =
+                "'Noto Sans Gujarati','Arial Unicode MS',sans-serif";
+
+            // TAG
+            let tag = clone.querySelector(".school-tag");
+
+            tag.style.fontSize = "8px";
+
+            // BODY
+            let body = clone.querySelector(".card-body");
+
+            body.style.padding = "8px";
+            body.style.gap = "8px";
+
+            // PHOTO
+            let photo = clone.querySelector(".student-photo");
+
+            photo.style.width = "75px";
+            photo.style.height = "90px";
+
+            // PHOTO BOX
+            let photoBox = clone.querySelector(".student-photo-box");
+
+            photoBox.style.width = "75px";
+            photoBox.style.minWidth = "75px";
+
+            // NAME
+            let studentName = clone.querySelector(".student-details h2");
+
+            studentName.style.fontSize = "14px";
+            studentName.style.marginBottom = "5px";
+
+            // DETAILS
+            clone.querySelectorAll(".detail-row").forEach(row => {
+
+                row.style.marginBottom = "2px";
+
+                let span = row.querySelector("span");
+                let p = row.querySelector("p");
+
+                span.style.width = "48px";
+                span.style.fontSize = "8px";
+
+                p.style.fontSize = "9px";
+            });
+
+            // ADDRESS
+            let addressSpan = clone.querySelector(".address-row span");
+            let addressP = clone.querySelector(".address-row p");
+
+            addressSpan.style.fontSize = "8px";
+
+            addressP.style.fontSize = "7px";
+            addressP.style.lineHeight = "1.1";
+
+            // FOOTER
+            let footer = clone.querySelector(".card-footer");
+
+            footer.style.fontSize = "6px";
+            footer.style.padding = "4px 6px";
+
             printArea.appendChild(clone);
 
         });
 
         html2pdf().set({
 
-            margin: 5,
+            margin: 2,
 
             filename: 'Student-ID-Cards.pdf',
 
-            image: { type: 'jpeg', quality: 1 },
+            image: {
+                type: 'jpeg',
+                quality: 1
+            },
 
             html2canvas: {
-                scale: 2
+
+                scale: 4,
+                useCORS: true,
+                letterRendering: true
+
             },
 
             jsPDF: {
+
                 unit: 'mm',
                 format: 'a4',
+
+                // PORTRAIT
                 orientation: 'portrait'
             }
 
         }).from(printArea).save();
-
     }
 
     function downloadExcel() {

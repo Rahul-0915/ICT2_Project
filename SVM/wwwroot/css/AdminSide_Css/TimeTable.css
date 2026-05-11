@@ -2,7 +2,7 @@
     font-family: "Segoe UI", sans-serif;
     background: #f4f6fb;
     margin: 0;
-    padding: 20px;
+    padding: 15px;
     background-color: #efeae2;
     background-image: url('/images/AdminDashboardBGImg.png');
     background-repeat: repeat;
@@ -11,61 +11,88 @@
 /* TITLE */
 h2 {
     text-align: center;
-    font-size: 26px;
-    margin-bottom: 20px;
+    font-size: 22px;
+    margin-bottom: 15px;
     color: #1f2937;
 }
 
-/* FILTER FORM CARD */
-form#filterForm {
+/* ===== FILTER FORM - BOOTSTRAP COLUMN FIX ===== */
+form#filterForm.row {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 0;
+    margin: 0 -8px 20px -8px;
     background: #ffffff;
-    padding: 20px;
-    border-radius: 14px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-    margin-bottom: 25px;
+    padding: 15px;
+    border-radius: 12px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
 }
 
-/* LABEL */
-form label {
-    font-size: 13px;
+form#filterForm .col-md-2 {
+    flex: 1;
+    min-width: 140px;
+    padding: 0 8px;
+}
+
+form#filterForm label {
+    font-size: 12px;
     font-weight: 600;
     color: #374151;
     margin-bottom: 5px;
     display: block;
 }
 
-/* INPUTS */
-.form-control {
+form#filterForm .form-control,
+form#filterForm select.form-control {
+    width: 100%;
+    height: 40px;
+    padding: 8px 10px;
+    font-size: 13px;
     border-radius: 10px;
-    padding: 10px;
     border: 1px solid #d1d5db;
+    background: #fff;
     transition: 0.3s;
 }
 
-    .form-control:focus {
-        border-color: #3b82f6;
-        box-shadow: 0 0 0 3px rgba(59,130,246,0.2);
+    form#filterForm .form-control:focus,
+    form#filterForm select.form-control:focus {
+        border-color: #2563eb;
+        box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+        outline: none;
     }
 
-/* BUTTON */
-.btn-primary {
-    background: linear-gradient(135deg, #2563eb, #4f46e5);
-    border: none;
-    padding: 10px 16px;
-    border-radius: 10px;
-    font-weight: 600;
+form#filterForm .align-self-end {
+    display: flex;
+    align-items: center;
 }
 
-    .btn-primary:hover {
+form#filterForm .btn-primary {
+    background: linear-gradient(135deg, #2563eb, #4f46e5);
+    border: none;
+    height: 40px;
+    padding: 0 20px;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 13px;
+    color: white;
+    cursor: pointer;
+    white-space: nowrap;
+    width: 100%;
+}
+
+    form#filterForm .btn-primary:hover {
         opacity: 0.9;
+        transform: translateY(-1px);
     }
 
 /* TABLE CARD */
 .table-responsive {
     background: #ffffff;
-    border-radius: 14px;
-    padding: 15px;
-    box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.06);
+    overflow-x: auto;
 }
 
 /* TABLE */
@@ -73,7 +100,8 @@ form label {
     border-collapse: separate;
     border-spacing: 0;
     overflow: hidden;
-    border-radius: 12px;
+    border-radius: 10px;
+    width: 100%;
 }
 
 /* HEADER */
@@ -81,17 +109,17 @@ form label {
     background: linear-gradient(135deg, #1f2937, #111827);
     color: white;
     font-weight: 600;
-    font-size: 14px;
+    font-size: 13px;
+    padding: 10px 12px;
 }
 
 /* CELLS */
 .table td, .table th {
-    padding: 14px;
+    padding: 10px 12px;
     vertical-align: middle;
     border: 1px solid #e5e7eb;
 }
 
-/* TIME TABLE CELLS */
 .table td {
     background: #fafafa;
     transition: 0.2s;
@@ -101,15 +129,14 @@ form label {
         background: #eef2ff;
     }
 
-    /* SUBJECT STYLE */
     .table td strong {
         color: #111827;
-        font-size: 14px;
+        font-size: 13px;
     }
 
 /* SMALL TEXT */
 .small {
-    font-size: 12px;
+    font-size: 11px;
 }
 
 /* ACTION LINKS */
@@ -117,6 +144,7 @@ a {
     text-decoration: none;
     font-weight: 500;
     color: #2563eb;
+    font-size: 13px;
 }
 
     a:hover {
@@ -127,30 +155,29 @@ a {
 .btn-group {
     display: flex;
     justify-content: center;
-    gap: 10px;
-    margin-top: 20px;
+    gap: 8px;
+    margin-top: 15px;
+    flex-wrap: wrap;
 }
 
     .btn-group .btn {
-        border-radius: 10px;
-        padding: 10px 14px;
+        border-radius: 8px;
+        padding: 8px 12px;
         font-weight: 600;
+        font-size: 13px;
+        cursor: pointer;
     }
 
-/* EXCEL PDF WORD BUTTONS */
 .btn-success {
     background: #16a34a;
     border: none;
-}
-
-.btn-primary {
-    background: #2563eb;
-    border: none;
+    color: white;
 }
 
 .btn-danger {
     background: #dc2626;
     border: none;
+    color: white;
 }
 
 .btn:hover {
@@ -158,18 +185,76 @@ a {
 }
 
 /* RESPONSIVE */
-@media (max-width: 768px) {
+@media (max-width: 992px) {
+    form#filterForm.row {
+        flex-direction: column;
+        margin: 0 0 20px 0;
+        gap: 12px;
+        padding: 12px;
+    }
 
-    form#filterForm {
-        padding: 15px;
+    form#filterForm .col-md-2 {
+        width: 100%;
+        padding: 0;
+        min-width: auto;
+    }
+
+    form#filterForm .btn-primary {
+        width: 100%;
+        text-align: center;
+    }
+
+    form#filterForm .align-self-end {
+        width: 100%;
+    }
+}
+
+@media (max-width: 768px) {
+    body {
+        padding: 10px;
+    }
+
+    h2 {
+        font-size: 18px;
+        margin-bottom: 12px;
+    }
+
+    .table-responsive {
+        padding: 8px;
     }
 
     .btn-group {
         flex-direction: column;
+        gap: 6px;
     }
 
+        .btn-group .btn {
+            width: 100%;
+            padding: 7px 12px;
+        }
+
     .table td, .table th {
+        font-size: 11px;
+        padding: 8px 6px;
+    }
+
+        .table td strong {
+            font-size: 11px;
+        }
+
+    .small {
+        font-size: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .table td, .table th {
+        font-size: 10px;
+        padding: 6px 4px;
+    }
+
+    .btn-group .btn {
+        padding: 6px 10px;
         font-size: 12px;
-        padding: 10px;
     }
 }

@@ -7,11 +7,50 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/css//Preloader.css" />
     <title>@ViewData["Title"] - My App</title>
-    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
-    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        body {
+            background: linear-gradient(135deg, #f5f7f0 0%, #e8ede2 100%);
+            font-family: 'Segoe UI', 'Roboto', 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+           
+            justify-content: center;
+            padding: 15px;
+            position: relative;
+        }
+
+            body::before {
+                content: "";
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background-image: repeating-linear-gradient(45deg, rgba(100, 120, 80, 0.02) 0px, rgba(100, 120, 80, 0.02) 2px, transparent 2px, transparent 8px);
+                pointer-events: none;
+                z-index: 0;
+            }
+    </style>
+    
+    
 </head>
 <body>
+       @if (ViewBag.ShowPreloader == true)
+    {
+        <div id="preloader">
+            <div class="loader-content">
+                <div class="coin">
+                    <div class="side front">
+                        <img src="/images/svmGuj_Logo.png" />
+                    </div>
+                    <div class="side back">
+                        <img src="~/images/SVMEng_logo.png" />
+                    </div>
+                </div>
+                <h2>S.V.M</h2>
+            </div>
+        </div>
+    }
     <div class="container">
         <main role="main" class="pb-3">
             @RenderBody()  <!-- Your actual content comes here -->
@@ -19,7 +58,8 @@
     </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
-    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    
     <script src="~/js/site.js" asp-append-version="true"></script>
+    <script src="/js/Preloader.js"></script>
 </body>
 </html>

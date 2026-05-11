@@ -1,4 +1,4 @@
-﻿/* Login.css - Matching Sessions/Classes Theme */
+﻿/* Login.css - Professional Scale Fixed */
 
 * {
     margin: 0;
@@ -7,143 +7,180 @@
 }
 
 body {
-    background: #f4f7fb; /* ✅ Tumhara original background */
-    font-family: "Segoe UI", Tahoma, sans-serif; /* ✅ Tumhara font */
-    height: 100vh;
+    background: linear-gradient(135deg, #f5f7f0 0%, #e8ede2 100%);
+    font-family: 'Segoe UI', 'Roboto', 'Inter', -apple-system, BlinkMacSystemFont, system-ui, sans-serif;
+    min-height: 100vh;
     display: flex;
     align-items: center;
     justify-content: center;
+    padding: 20px;
+    position: relative;
 }
+    body::before {
+        content: "";
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background-image: repeating-linear-gradient(45deg, rgba(100, 120, 80, 0.02) 0px, rgba(100, 120, 80, 0.02) 2px, transparent 2px, transparent 8px);
+        pointer-events: none;
+        z-index: 0;
+    }
+
+/* CONTAINER */
 
 .login-container {
+
     width: 100%;
-    max-width: 420px;
-    padding: 20px;
+    max-width: 380px;
 }
 
+/* LOGIN BOX */
+
 .login-box {
+    
     background: white;
-    border-radius: 16px; /* ✅ Tumhare cards jaisa radius */
-    padding: 40px 35px;
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08); /* ✅ Tumhara shadow */
-    border: 1px solid #eef2f5; /* ✅ Tumhare cards jaisa border */
+    border-radius: 7px;
+    padding: 32px 39px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+    border: 1px solid #eef2f5;
 }
+
+    /* HEADINGS */
 
     .login-box h2 {
         text-align: center;
-        color: #333; /* ✅ Tumhara heading color */
-        margin-bottom: 10px;
-        font-weight: 600; /* ✅ Tumhara font weight */
-        font-size: 32px; /* ✅ Tumhara heading size */
+        color:#3b3b9f;
+        margin-bottom: 8px;
+        font-weight: 600;
+        font-size: 28px;
+        line-height: 1.2;
     }
 
     .login-box h4 {
         text-align: center;
-        color: #555; /* ✅ Tumhara subheading color */
-        margin-bottom: 30px;
+        color: #555;
+        margin-bottom: 24px;
         font-weight: 500;
-        font-size: 18px;
+        font-size: 16px;
     }
 
-/* Form Groups */
+/* FORM GROUP */
+
 .form-group {
-    margin-bottom: 20px;
+    margin-bottom: 18px;
 }
 
     .form-group label {
         display: block;
-        margin-bottom: 8px;
-        font-weight: 600; /* ✅ Tumhara label weight */
-        color: #555; /* ✅ Tumhara label color */
-        font-size: 14px;
+        margin-bottom: 7px;
+        font-weight: 600;
+        color: #555;
+        font-size: 13px;
     }
 
-/* Input Fields - Matching CreateForm.css */
+/* INPUT FIELD */
+
 .form-control {
-    width: 100%;
-    padding: 12px 14px;
+    width: 250px;
+    height: 44px;
+    padding: 0 14px;
     border: 1px solid #ccc;
-    border-radius: 8px;
-    font-size: 15px;
+    border-radius: 4px;
+    font-size: 14px;
     font-weight: 500;
     transition: 0.3s;
     font-family: inherit;
+    background: #fff;
 }
 
     .form-control:focus {
-        border-color: #4CAF50; /* ✅ Tumhara green focus color */
+        border-color:darkblue;
         outline: none;
-        box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.15);
+        
     }
 
-/* Login Button - Tumhare Create Button Jaisa */
+/* LOGIN BUTTON */
+
 .btn-login {
     width: 100%;
-    padding: 12px 22px;
-    background-color: #4CAF50; /* ✅ Tumhara green button */
+    height: 46px;
+    background:#4e4e94;
     border: none;
-    border-radius: 50px; /* ✅ Tumhare buttons jaisa rounded */
+    border-radius: 5px;
     color: white;
-    font-size: 16px;
+    font-size: 15px;
     font-weight: 600;
     transition: 0.3s ease;
     cursor: pointer;
-    display: inline-block;
-    text-align: center;
-    margin-top: 10px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 8px;
 }
 
     .btn-login:hover {
-        background-color: #2e7d32; /* ✅ Tumhara hover color */
+        background-color: #3b3b9f;
         box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
         transform: translateY(-1px);
     }
 
-/* Alert Messages */
+/* ALERT */
+
 .alert {
     background: #f8d7da;
     color: #721c24;
-    padding: 12px;
+    padding: 11px 12px;
     border-radius: 8px;
-    margin-bottom: 20px;
+    margin-bottom: 18px;
     text-align: center;
-    font-size: 14px;
+    font-size: 13px;
     border: 1px solid #f5c6cb;
 }
 
-/* Validation Errors - Tumhara same style */
+/* VALIDATION */
+
 .text-danger {
-    font-size: 12px;
+    font-size: 11px;
     color: #dc3545;
     margin-top: 5px;
     display: block;
 }
 
-/* Responsive - Tumhare theme ke hisaab se */
+/* RESPONSIVE */
+
 @media (max-width: 768px) {
+
+    body {
+        padding: 14px;
+    }
+
     .login-container {
-        padding: 15px;
+        max-width: 100%;
     }
 
     .login-box {
-        padding: 30px 25px;
+        padding: 26px 22px;
+        border-radius: 12px;
     }
 
         .login-box h2 {
-            font-size: 28px;
+            font-size: 24px;
         }
 
         .login-box h4 {
-            font-size: 16px;
+            font-size: 15px;
+            margin-bottom: 22px;
         }
 
     .form-control {
+        height: 42px;
         font-size: 14px;
-        padding: 10px 12px;
     }
 
     .btn-login {
-        font-size: 15px;
-        padding: 10px 20px;
+        height: 44px;
+        font-size: 14px;
     }
 }

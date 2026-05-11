@@ -2,7 +2,7 @@
 
 body {
     margin: 0;
-    padding: 25px;
+    padding: 18px;
     font-family: "Segoe UI", sans-serif;
     background-color: #efeae2;
     background-image: url('/images/AdminDashboardBGImg.png');
@@ -12,9 +12,10 @@ body {
 /* TABLE */
 
 .table {
-    width: 100%;
+    margin:auto;
+    width: 80%;
     border-collapse: separate;
-    border-spacing: 0 18px;
+    border-spacing: 0 12px;
 }
 
     /* TABLE HEAD */
@@ -22,9 +23,9 @@ body {
     .table thead th {
         background: transparent;
         color: #000;
-        font-size: 22px;
+        font-size: 18px;
         font-weight: 700;
-        padding: 18px;
+        padding: 14px;
         text-align: left;
     }
 
@@ -33,37 +34,37 @@ body {
     .table tbody tr {
         background: rgba(255,255,255,0.92);
         backdrop-filter: blur(10px);
-        box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-        transition: 0.3s;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        transition: 0.25s;
     }
 
         .table tbody tr:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.12);
         }
 
     /* TABLE TD */
 
     .table tbody td {
-        padding: 24px 18px;
-        font-size: 19px;
+        padding: 18px 14px;
+        font-size: 15px;
         color: #444;
     }
 
     /* FIRST COLUMN */
 
     .table tbody tr td:first-child {
-        border-radius: 18px 0 0 18px;
-        border-left: 6px solid #22c55e;
+        border-radius: 14px 0 0 14px;
+        border-left: 5px solid #22c55e;
         font-weight: 700;
-        font-size: 28px;
+        font-size: 20px;
         color: #000;
     }
 
     /* LAST COLUMN */
 
     .table tbody tr td:last-child {
-        border-radius: 0 18px 18px 0;
+        border-radius: 0 14px 14px 0;
     }
 
 /* STATUS */
@@ -71,9 +72,9 @@ body {
 .status-active,
 .status-upcoming,
 .status-expired {
-    padding: 8px 16px;
-    border-radius: 10px;
-    font-size: 15px;
+    padding: 6px 12px;
+    border-radius: 8px;
+    font-size: 13px;
     font-weight: 600;
     display: inline-block;
 }
@@ -104,8 +105,9 @@ body {
 .table a {
     text-decoration: none;
     font-weight: 600;
-    margin-right: 12px;
-    transition: 0.3s;
+    margin-right: 10px;
+    font-size: 14px;
+    transition: 0.2s;
 }
 
     /* EDIT */
@@ -140,37 +142,25 @@ body {
     }
 
         .table thead th {
-            font-size: 18px;
-        }
-
-        .table tbody td {
             font-size: 16px;
         }
 
+        .table tbody td {
+            font-size: 14px;
+        }
+
         .table tbody tr td:first-child {
-            font-size: 22px;
+            font-size: 18px;
         }
 }
 
-
 @media (max-width: 768px) {
 
-    .top-bar {
-        flex-direction: column;
-        align-items: stretch;
+    body {
+        padding: 12px;
     }
 
-    .search-section {
-        width: 100%;
-        flex-direction: column;
-    }
-
-    .search-box,
-    .status-filter {
-        width: 100%;
-    }
-
-    .btn-add {
-        align-self: flex-end;
+    .table tbody td {
+        padding: 14px 10px;
     }
 }
