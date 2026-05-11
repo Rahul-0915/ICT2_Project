@@ -92,6 +92,28 @@ namespace SVM_API.Controllers
             var sections = await _context.Sections.Where(s => s.ClassId == classId).ToListAsync();
             return sections;
         }
+        [HttpGet("GetClassesByMedium")]
+        public async Task<ActionResult<IEnumerable<Class>>> GetClassesByMedium(string medium)
+        {
+            var classes = await _context.Classes
+                .Where(c => c.Medium == medium)
+                .ToListAsync();
+            return classes;
+        }
+        [HttpGet("GetTeacherMapping")]
+        public async Task<ActionResult<Dictionary<int, Staff>>> GetTeacherMapping(int sessionId, int classId)
+        {
+            var teacherSubjects = await _context.TeacherSubjects
+                .Where(ts => ts.SessionId == sessionId && ts.ClassId == classId)
+                .Include(ts => ts.Staff)
+                .ToListAsync();
+
+            var mapping = teacherSubjects
+                .Where(ts => ts.SubjectId.HasValue && ts.Staff != null)
+                .ToDictionary(ts => ts.SubjectId.Value, ts => ts.Staff);
+
+            return mapping;
+        }
 
     }
 }

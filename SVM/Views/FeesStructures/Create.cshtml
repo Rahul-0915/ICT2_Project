@@ -1,0 +1,60 @@
+﻿@model SVM.Models.FeeStructure
+@{
+	ViewData["Title"] = "Create Fee Structure";
+}
+<link rel="stylesheet" href="~/css/CreateForm.css" asp-append-version="true" />
+
+<h2>Create Fee Structure</h2>
+
+@if (TempData["Error"] != null)
+{
+	<div class="alert alert-danger">@TempData["Error"]</div>
+}
+
+<div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+<form asp-action="Create" method="post">
+	<input type="hidden" asp-for="SessionId" />
+	<input type="hidden" asp-for="ClassId" />
+	<input type="hidden" name="medium" value="@ViewBag.Medium" />
+
+	<div class="form-group">
+		<label asp-for="AdmissionFees"></label>
+		<input asp-for="AdmissionFees" class="form-control" />
+		<span asp-validation-for="AdmissionFees" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label asp-for="MonthlyFees">Monthly Fees (per month)</label>
+		<input asp-for="MonthlyFees" class="form-control" />
+		<small class="text-muted">× 12 months = total</small>
+		<span asp-validation-for="MonthlyFees" class="text-danger"></span>
+	</div>
+	<div class="form-group">
+		<label asp-for="OtherActivityFees">Other Activity Fees (optional)</label>
+		<input asp-for="OtherActivityFees" class="form-control" />
+	</div>
+	<div class="form-group">
+		<label asp-for="ComputerFees">Computer Fees (optional)</label>
+		<input asp-for="ComputerFees" class="form-control" />
+	</div>
+
+	
+
+	<button type="submit" class="btn btn-primary">Create</button>
+	<a asp-action="Index" asp-route-sessionId="@Model.SessionId" asp-route-medium="@ViewBag.Medium" asp-route-classId="@Model.ClassId" class="btn btn-secondary">Cancel</a>
+</form>
+
+
+	<partial name="_ValidationScriptsPartial" />
+	<script>
+		function calculateTotal() {
+			let admission = parseFloat($('#AdmissionFees').val()) || 0;
+			let monthly = parseFloat($('#MonthlyFees').val()) || 0;
+			let other = parseFloat($('#OtherActivityFees').val()) || 0;
+			let computer = parseFloat($('#ComputerFees').val()) || 0;
+			let total = admission + (monthly * 12) + other + computer;
+			$('#totalDisplay').text(total.toFixed(2));
+		}
+		$('#AdmissionFees, #MonthlyFees, #OtherActivityFees, #ComputerFees').on('input', calculateTotal);
+		calculateTotal();
+	</script>

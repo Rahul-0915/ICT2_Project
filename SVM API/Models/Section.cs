@@ -13,7 +13,7 @@ public partial class Section
 
     public virtual Class? Class { get; set; }
 
-    public virtual ICollection<FeeStructure> FeeStructures { get; set; } = new List<FeeStructure>();
+    //public virtual ICollection<FeeStructure> FeeStructures { get; set; } = new List<FeeStructure>();
 
     public virtual ICollection<Student> Students { get; set; } = new List<Student>();
 }
