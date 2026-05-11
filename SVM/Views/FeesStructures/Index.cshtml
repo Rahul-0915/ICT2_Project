@@ -1,0 +1,116 @@
+﻿@{
+	ViewData["Title"] = "Fee Structures";
+	var list = ViewBag.FeeStructures as List<SVM.Models.FeeStructure>;
+}
+@if (TempData["Error"] != null)
+{
+	<div class="alert alert-danger alert-dismissible fade show" role="alert">
+		@TempData["Error"]
+		<button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+	</div>
+}	
+<link rel="stylesheet" href="~/css/List.css" asp-append-version="true" />
+
+<h2>Fee Structures</h2>
+<form method="get" class="row g-3 mb-4">
+	<div class="col-md-3">
+		<label>Session</label>
+		@Html.DropDownList("sessionId", ViewBag.SessionList as SelectList, "-- Select --", new { @class = "form-control", id = "sessionSelect" })
+	</div>
+	<div class="col-md-3">
+		<label>Medium</label>
+		@Html.DropDownList("medium", ViewBag.MediumList as SelectList, "-- Select --", new { @class = "form-control", id = "mediumSelect" })
+	</div>
+	<div class="col-md-3">
+		<label>Class</label>
+		<select name="classId" id="classSelect" class="form-control"><option value="">-- Select --</option></select>
+	</div>
+	<div class="col-md-2 align-self-end"><button type="submit" class="btn btn-primary">Show</button></div>
+</form>
+
+@if (list != null && list.Any())
+{
+	<div class="table-responsive">
+		<table class="table table-bordered">
+			<thead>
+				<tr>
+					<th>Admission Fees</th>
+					<th>Monthly Fees (per month)</th>
+					<th>Other Activity Fees</th>
+					<th>Computer Fees</th>
+					<th>Total Amount</th>
+					<th>Actions</th>
+				</tr>
+			</thead>
+			<tbody>
+				@foreach (var fs in list)
+				{
+					<tr>
+						<td>@fs.AdmissionFees?.ToString("C")</td>
+						<td>@fs.MonthlyFees?.ToString("C")</td>
+						<td>@fs.OtherActivityFees?.ToString("C")</td>
+						<td>@fs.ComputerFees?.ToString("C")</td>
+						<td>@fs.TotalAmount?.ToString("C")</td>
+						<td>
+							<a asp-action="Edit"
+							   asp-route-id="@fs.FeeId"
+							   asp-route-sessionId="@ViewBag.SelectedSessionId"
+							   asp-route-medium="@ViewBag.SelectedMedium"
+							   asp-route-classId="@ViewBag.SelectedClassId">Edit</a> |
+
+							<a asp-action="Delete"
+							   asp-route-id="@fs.FeeId"
+							   asp-route-sessionId="@ViewBag.SelectedSessionId"
+							   asp-route-medium="@ViewBag.SelectedMedium"
+							   asp-route-classId="@ViewBag.SelectedClassId">Delete</a>
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+	</div>
+	<a asp-action="Create" asp-route-sessionId="@ViewBag.SelectedSessionId" asp-route-medium="@ViewBag.SelectedMedium" asp-route-classId="@ViewBag.SelectedClassId" class="btn btn-success">Create New</a>
+	<!-- NEW: Download PDF button -->
+	<a asp-action="DownloadPdf"
+	   asp-route-sessionId="@ViewBag.SelectedSessionId"
+	   asp-route-medium="@ViewBag.SelectedMedium"
+	   asp-route-classId="@ViewBag.SelectedClassId"
+	   class="btn btn-danger ms-2">
+		<i class="fas fa-file-pdf"></i> Download PDF
+	</a>
+}
+else if (ViewBag.SelectedClassId != null)
+{
+	<p>No fee structure. <a asp-action="Create" asp-route-sessionId="@ViewBag.SelectedSessionId" asp-route-medium="@ViewBag.SelectedMedium" asp-route-classId="@ViewBag.SelectedClassId">Create one</a></p>
+}
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	function getParam(p) { return new URLSearchParams(window.location.search).get(p); }
+	$(document).ready(function() {
+		let session = getParam('sessionId'), medium = getParam('medium'), classId = getParam('classId');
+		if (session) $('#sessionSelect').val(session);
+		if (medium) $('#mediumSelect').val(medium);
+		if (medium) {
+			$.get('/FeesStructures/GetClassesByMedium', { medium: medium }, function(data) {
+				let $class = $('#classSelect');
+				$class.empty().append('<option value="">-- Select Class --</option>');
+				$.each(data, function(i, c) {
+					let opt = $('<option>').val(c.value).text(c.text);
+					if (classId && c.value == classId) opt.prop('selected', true);
+					$class.append(opt);
+				});
+			});
+		}
+		$('#mediumSelect').change(function() {
+			let med = $(this).val();
+			if (med)
+				$.get('/FeesStructures/GetClassesByMedium', { medium: med }, function(data) {
+					let $class = $('#classSelect');
+					$class.empty().append('<option value="">-- Select Class --</option>');
+					$.each(data, function(i, c) { $class.append($('<option>').val(c.value).text(c.text)); });
+				});
+			else $('#classSelect').empty().append('<option value="">-- Select Class --</option>');
+		});
+	});
+</script>

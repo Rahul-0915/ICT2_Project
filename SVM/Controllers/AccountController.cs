@@ -26,38 +26,28 @@ namespace SVM.Controllers
             return View();
         }
 
-        // POST: Login
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (!ModelState.IsValid)
-            {
-                return View(model);
-            }
+            if (!ModelState.IsValid) return View(model);
 
-            // Get all users from API
-            var response = await _client.GetAsync("Users");
+            // ✅ Call the new login API
+            var loginData = new { Username = model.Username, Password = model.Password };
+            var response = await _client.PostAsJsonAsync("Users/login", loginData);
+
             if (response.IsSuccessStatusCode)
             {
-                var data = await response.Content.ReadAsStringAsync();
-                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var users = JsonSerializer.Deserialize<List<User>>(data, option);
-
-                // Check username and password
-                var user = users.FirstOrDefault(u =>
-                    u.Username == model.Username &&
-                    u.Password == model.Password);
+                var json = await response.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var user = JsonSerializer.Deserialize<User>(json, options);
 
                 if (user != null)
                 {
-                    // Store in Session
                     HttpContext.Session.SetString("UserId", user.UserId.ToString());
                     HttpContext.Session.SetString("Username", user.Username);
                     HttpContext.Session.SetString("FullName", user.FullName ?? user.Username);
                     HttpContext.Session.SetString("GroupId", user.GroupId?.ToString() ?? "");
-
-                    // Redirect to Admin Panel
                     return RedirectToAction("AdminPanel", "Admin");
                 }
             }
@@ -65,7 +55,6 @@ namespace SVM.Controllers
             ViewBag.Error = "Invalid username or password";
             return View(model);
         }
-
 
         // Logout
         public IActionResult Logout()

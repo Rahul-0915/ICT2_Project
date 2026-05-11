@@ -126,9 +126,7 @@ public partial class SvmContext : DbContext
                 .HasColumnName("payment_mode");
             entity.Property(e => e.StudentId).HasColumnName("student_id");
 
-            entity.HasOne(d => d.Fee).WithMany(p => p.FeePayments)
-                .HasForeignKey(d => d.FeeId)
-                .HasConstraintName("FK__fee_payme__fee_i__60A75C0F");
+
 
             entity.HasOne(d => d.Student).WithMany(p => p.FeePayments)
                 .HasForeignKey(d => d.StudentId)
@@ -137,31 +135,25 @@ public partial class SvmContext : DbContext
 
         modelBuilder.Entity<FeeStructure>(entity =>
         {
-            entity.HasKey(e => e.FeeId).HasName("PK__fee_stru__A19C8AFB5812160E");
-
             entity.ToTable("fee_structure");
+            entity.HasKey(e => e.FeeId).HasName("PK__fee_struc__A19C8AFB5812160E");
 
             entity.Property(e => e.FeeId).HasColumnName("fee_id");
             entity.Property(e => e.ClassId).HasColumnName("class_id");
-            entity.Property(e => e.DueDate).HasColumnName("due_date");
-            entity.Property(e => e.FeeType)
-                .HasMaxLength(50)
-                .IsUnicode(false)
-                .HasColumnName("fee_type");
-            entity.Property(e => e.SectionId).HasColumnName("section_id");
-            entity.Property(e => e.TotalAmount)
-                .HasColumnType("decimal(10, 2)")
-                .HasColumnName("total_amount");
+            entity.Property(e => e.AdmissionFees).HasColumnName("admission_fees");
+            entity.Property(e => e.MonthlyFees).HasColumnName("monthly_fees");
+            entity.Property(e => e.OtherActivityFees).HasColumnName("other_activity_fees");
+            entity.Property(e => e.ComputerFees).HasColumnName("computer_fees");
+            entity.Property(e => e.TotalAmount).HasColumnName("total_amount");
+            entity.Property(e => e.SessionId).HasColumnName("session_id");
 
-            entity.HasOne(d => d.Class).WithMany(p => p.FeeStructures)
-                .HasForeignKey(d => d.ClassId)
+          
+            // Relationship with Class
+            entity.HasOne(e => e.Class)
+                .WithMany(c => c.FeeStructures)
+                .HasForeignKey(e => e.ClassId)
                 .HasConstraintName("FK__fee_struc__class__59FA5E80");
-
-            entity.HasOne(d => d.Section).WithMany(p => p.FeeStructures)
-                .HasForeignKey(d => d.SectionId)
-                .HasConstraintName("FK__fee_struc__secti__5AEE82B9");
         });
-
         modelBuilder.Entity<Groupmaster>(entity =>
         {
             entity.HasKey(e => e.GId).HasName("PK__groupmas__49FB61C47F60ED59");
