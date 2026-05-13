@@ -61,16 +61,23 @@ namespace SVM_API.Controllers
             catch (DbUpdateConcurrencyException) { if (!UserExists(id)) return NotFound(); else throw; }
             return NoContent();
         }
-
         [HttpPost]
-        public async Task<ActionResult<User>> PostUser([FromForm] User user)
+        public async Task<ActionResult<User>> PostUser([FromBody] User user)
         {
             try
             {
-                if (_context.Users.Any(u => u.Username == user.Username))
+                // Trim and case‑insensitive check
+                string normalisedUsername = user.Username?.Trim();
+                string normalisedEmail = user.Email?.Trim();
+
+                if (_context.Users.Any(u => u.Username.ToLower() == normalisedUsername.ToLower()))
                     return BadRequest(new { error = "Username already exists" });
-                if (_context.Users.Any(u => u.Email == user.Email))
+
+                if (_context.Users.Any(u => u.Email.ToLower() == normalisedEmail.ToLower()))
                     return BadRequest(new { error = "Email already exists" });
+
+                user.Username = normalisedUsername;
+                user.Email = normalisedEmail;
 
                 // Hash password
                 if (!string.IsNullOrEmpty(user.Password))
@@ -84,9 +91,19 @@ namespace SVM_API.Controllers
                 user.Password = null;
                 return CreatedAtAction("GetUser", new { id = user.UserId }, user);
             }
-            catch (Exception ex) { return BadRequest(new { error = ex.Message }); }
+            catch (Exception ex)
+            {
+                return BadRequest(new { error = ex.Message });
+            }
         }
-
+        [HttpGet("check")]
+        public async Task<ActionResult<bool>> CheckExists(string username, string email)
+        {
+            var exists = await _context.Users
+                .AnyAsync(u => u.Username.ToLower() == username.Trim().ToLower() ||
+                               u.Email.ToLower() == email.Trim().ToLower());
+            return Ok(exists);
+        }
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteUser(int id)
         {
@@ -173,7 +190,7 @@ namespace SVM_API.Controllers
         }
 
 
-     
+
         public class ForgotPasswordRequest
         {
             public string Identifier { get; set; }  // username or email

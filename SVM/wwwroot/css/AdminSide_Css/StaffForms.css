@@ -152,3 +152,7 @@ h4, h5,
         grid-column: span 1;
     }
 }
+
+span{
+color:red;
+}
