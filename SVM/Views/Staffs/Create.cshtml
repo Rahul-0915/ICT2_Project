@@ -96,7 +96,7 @@
             <!-- PHOTO UPLOAD -->
             <div class="form-group">
                 <label class="control-label">Staff Photo (Required)</label>
-                <input type="file" id="ImageFile" name="photoFile" class="form-control" accept="image/*" onchange="previewImage(event)" required />
+                <input type="file" id="ImageFile" name="photoFile" class="form-control" accept="image/*" onchange="previewImage(event)"  />
                 <span asp-validation-for="StafPhoto" class="text-danger"></span>
                 <div id="imagePreviewContainer" class="image-preview-container" style="display:none;">
                     <img id="imagePreview" src="#" alt="Preview" />
