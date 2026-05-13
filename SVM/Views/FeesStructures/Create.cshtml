@@ -1,60 +1,361 @@
 ﻿@model SVM.Models.FeeStructure
+
 @{
-	ViewData["Title"] = "Create Fee Structure";
-}
-<link rel="stylesheet" href="~/css/CreateForm.css" asp-append-version="true" />
-
-<h2>Create Fee Structure</h2>
-
-@if (TempData["Error"] != null)
-{
-	<div class="alert alert-danger">@TempData["Error"]</div>
+    ViewData["Title"] = "Create Fee Structure";
 }
 
-<div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+<link rel="stylesheet"
+      href="/css/AdminSide_Css/Fees_Structure_CreateForm.css"
+      asp-append-version="true" />
 
-<form asp-action="Create" method="post">
-	<input type="hidden" asp-for="SessionId" />
-	<input type="hidden" asp-for="ClassId" />
-	<input type="hidden" name="medium" value="@ViewBag.Medium" />
+<div class="fee-page">
 
-	<div class="form-group">
-		<label asp-for="AdmissionFees"></label>
-		<input asp-for="AdmissionFees" class="form-control" />
-		<span asp-validation-for="AdmissionFees" class="text-danger"></span>
-	</div>
-	<div class="form-group">
-		<label asp-for="MonthlyFees">Monthly Fees (per month)</label>
-		<input asp-for="MonthlyFees" class="form-control" />
-		<small class="text-muted">× 12 months = total</small>
-		<span asp-validation-for="MonthlyFees" class="text-danger"></span>
-	</div>
-	<div class="form-group">
-		<label asp-for="OtherActivityFees">Other Activity Fees (optional)</label>
-		<input asp-for="OtherActivityFees" class="form-control" />
-	</div>
-	<div class="form-group">
-		<label asp-for="ComputerFees">Computer Fees (optional)</label>
-		<input asp-for="ComputerFees" class="form-control" />
-	</div>
+    <div class="fee-card">
 
-	
+        <!-- LEFT -->
 
-	<button type="submit" class="btn btn-primary">Create</button>
-	<a asp-action="Index" asp-route-sessionId="@Model.SessionId" asp-route-medium="@ViewBag.Medium" asp-route-classId="@Model.ClassId" class="btn btn-secondary">Cancel</a>
-</form>
+        <div class="left-panel">
 
+            <div class="school-title">
+                S.V.M
+            </div>
 
-	<partial name="_ValidationScriptsPartial" />
-	<script>
-		function calculateTotal() {
-			let admission = parseFloat($('#AdmissionFees').val()) || 0;
-			let monthly = parseFloat($('#MonthlyFees').val()) || 0;
-			let other = parseFloat($('#OtherActivityFees').val()) || 0;
-			let computer = parseFloat($('#ComputerFees').val()) || 0;
-			let total = admission + (monthly * 12) + other + computer;
-			$('#totalDisplay').text(total.toFixed(2));
-		}
-		$('#AdmissionFees, #MonthlyFees, #OtherActivityFees, #ComputerFees').on('input', calculateTotal);
-		calculateTotal();
-	</script>
+            <div class="school-sub">
+                Fee Structures
+            </div>
+
+            <div class="fee-preview">
+
+                <div class="preview-title">
+                    Fee Summary
+                </div>
+
+                <div class="preview-item">
+                    <span>Admission Fees</span>
+                    <span id="admissionPreview">₹0</span>
+                </div>
+
+                <div class="preview-item">
+                    <span>Monthly Fees (Yearly)</span>
+                    <span id="monthlyPreview">₹0</span>
+                </div>
+
+                <div class="preview-item">
+                    <span>Activity Fees</span>
+                    <span id="activityPreview">₹0</span>
+                </div>
+
+                <div class="preview-item">
+                    <span>Computer Fees</span>
+                    <span id="computerPreview">₹0</span>
+                </div>
+
+                <div class="total-box">
+                    <h2>Total</h2>
+                    <span id="totalDisplay">₹0</span>
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- RIGHT -->
+
+        <div class="right-panel">
+
+            <h2 class="form-heading">
+                Create Fee Structure
+            </h2>
+
+            <p class="form-subheading">
+                Fill all fee details carefully.
+            </p>
+
+            @if (TempData["Error"] != null)
+            {
+                <div class="alert alert-danger">
+                    @TempData["Error"]
+                </div>
+            }
+
+            <div asp-validation-summary="ModelOnly"
+                 class="alert alert-danger">
+            </div>
+
+            <form asp-action="Create"
+                  method="post">
+
+                <div class="form-grid">
+
+                    <!-- SESSION -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Session
+                        </label>
+
+                        @Html.DropDownList(
+                                 "SessionId",
+                                 ViewBag.SessionList as SelectList,
+                                 "-- Select Session --",
+                                 new
+                                 {
+                                     @class = "form-control",
+                                     id = "sessionSelect"
+                                 })
+
+                    </div>
+
+                    <!-- MEDIUM -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Medium
+                        </label>
+
+                        @Html.DropDownList(
+                                 "medium",
+                                 ViewBag.MediumList as SelectList,
+                                 "-- Select Medium --",
+                                 new
+                                 {
+                                     @class = "form-control",
+                                     id = "mediumSelect"
+                                 })
+
+                    </div>
+
+                    <!-- CLASS -->
+
+                    <div class="form-group">
+
+                        <label>
+                            Class
+                        </label>
+
+                        <select asp-for="ClassId"
+                                id="classSelect"
+                                class="form-control">
+
+                            <option value="">
+                                -- Select Class --
+                            </option>
+
+                        </select>
+
+                    </div>
+
+                    <!-- ADMISSION -->
+
+                    <div class="form-group">
+
+                        <label asp-for="AdmissionFees">
+                        </label>
+
+                        <input asp-for="AdmissionFees"
+                               class="form-control" />
+
+                    </div>
+
+                    <!-- MONTHLY -->
+
+                    <div class="form-group">
+
+                        <label asp-for="MonthlyFees">
+                            Monthly Fees
+                        </label>
+
+                        <input asp-for="MonthlyFees"
+                               class="form-control" />
+
+                    </div>
+
+                    <!-- ACTIVITY -->
+
+                    <div class="form-group">
+
+                        <label asp-for="OtherActivityFees">
+                            Activity Fees
+                        </label>
+
+                        <input asp-for="OtherActivityFees"
+                               class="form-control" />
+
+                    </div>
+
+                    <!-- COMPUTER -->
+
+                    <div class="form-group">
+
+                        <label asp-for="ComputerFees">
+                            Computer Fees
+                        </label>
+
+                        <input asp-for="ComputerFees"
+                               class="form-control" />
+
+                    </div>
+
+                </div>
+
+                <div class="button-area">
+
+                    <button type="submit"
+                            class="submit-btn">
+
+                        Create Structure
+
+                    </button>
+
+                    <a asp-action="Index"
+                       class="cancel-btn">
+
+                        Cancel
+
+                    </a>
+
+                </div>
+
+            </form>
+
+        </div>
+
+    </div>
+
+</div>
+
+<partial name="_ValidationScriptsPartial" />
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+
+        let selectedClassId =
+            '@Model.ClassId';
+
+        let selectedMedium =
+            '@ViewBag.Medium';
+
+        if (selectedMedium) {
+
+            $('#mediumSelect')
+                .val(selectedMedium);
+
+            loadClasses(selectedMedium);
+        }
+
+        $('#mediumSelect').change(function () {
+
+            let medium =
+                $(this).val();
+
+            loadClasses(medium);
+        });
+
+        function loadClasses(medium) {
+
+            if (medium) {
+
+                $.get(
+                    '/FeesStructures/GetClassesByMedium',
+                    { medium: medium },
+
+                    function (data) {
+
+                        let $class =
+                            $('#classSelect');
+
+                        $class.empty();
+
+                        $class.append(
+                            '<option value="">-- Select Class --</option>'
+                        );
+
+                        $.each(data, function (i, c) {
+
+                            let option =
+                                $('<option>')
+                                    .val(c.value)
+                                    .text(c.text);
+
+                            if (selectedClassId == c.value) {
+
+                                option.prop(
+                                    'selected',
+                                    true
+                                );
+                            }
+
+                            $class.append(option);
+                        });
+                    });
+            }
+        }
+
+        function calculateTotal() {
+
+            let admission =
+                parseFloat($('#AdmissionFees').val()) || 0;
+
+            let monthly =
+                parseFloat($('#MonthlyFees').val()) || 0;
+
+            let activity =
+                parseFloat($('#OtherActivityFees').val()) || 0;
+
+            let computer =
+                parseFloat($('#ComputerFees').val()) || 0;
+
+            let yearlyMonthly =
+                monthly * 12;
+
+            let total =
+                admission +
+                yearlyMonthly +
+                activity +
+                computer;
+
+            $('#admissionPreview')
+                .text('₹' + admission.toFixed(2));
+
+            $('#monthlyPreview')
+                .text('₹' + yearlyMonthly.toFixed(2));
+
+            $('#activityPreview')
+                .text('₹' + activity.toFixed(2));
+
+            $('#computerPreview')
+                .text('₹' + computer.toFixed(2));
+
+            $('#totalDisplay')
+                .text('₹' + total.toFixed(2));
+        }
+
+        $('#AdmissionFees').on(
+            'input',
+            calculateTotal
+        );
+
+        $('#MonthlyFees').on(
+            'input',
+            calculateTotal
+        );
+
+        $('#OtherActivityFees').on(
+            'input',
+            calculateTotal
+        );
+
+        $('#ComputerFees').on(
+            'input',
+            calculateTotal
+        );
+
+        calculateTotal();
+    });
+
+</script>

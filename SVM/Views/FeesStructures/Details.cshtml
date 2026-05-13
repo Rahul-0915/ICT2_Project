@@ -1,48 +1,74 @@
 ﻿@model SVM.Models.FeeStructure
 
 @{
-    ViewData["Title"] = "Details";
+    ViewData["Title"] = "Fee Structure Details";
+    var medium = ViewBag.Medium ?? "";
+    var className = ViewBag.ClassName ?? "Not Available";
+    var sessionName = ViewBag.SessionName ?? "Not Available";
+    var schoolName = medium == "English" ? "S.V.M ENGLISH MEDIUM" : "શારદા વિદ્યામંદિર";
+    var logo = medium == "English" ? "/images/SVMEng_logo.png" : "/images/SVMGuj_logo.png";
+    var monthlyTotal = (Model.MonthlyFees ?? 0) * 12;
+    var totalAmount = Model.TotalAmount ?? 0;
 }
 
-<h1>Details</h1>
+<link rel="stylesheet" href="~/css/AdminSide_Css/FeeStructureDetails.css" />
 
-<div>
-    <h4>FeeStructure</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.AdmissionFees)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.AdmissionFees)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.MonthlyFees)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.MonthlyFees)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.TotalAmount)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.TotalAmount)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.SessionId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.SessionId)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Class)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Class.ClassName)
-        </dd>
-    </dl>
+<div class="details-page">
+    <div class="top-actions no-print">
+        <a asp-action="Index" asp-route-sessionId="@ViewBag.SessionId" asp-route-medium="@ViewBag.Medium" asp-route-classId="@ViewBag.ClassId" class="back-btn">← Back</a>
+        <button type="button" class="print-btn" onclick="printReceipt()">
+            🖨 Print Receipt
+        </button>
+    </div>
+
+    <div class="receipt-container">
+        <div class="receipt-header">
+            <div class="logo-box">
+                <img src="@logo" alt="Logo" />
+            </div>
+            <div class="school-details">
+                <h1 class="school-name">@schoolName</h1>
+                <p>Gujarat Housing Board, Pandesara, Surat - 394221</p>
+                <p>+91 9876543210 | school@gmail.com</p>
+            </div>
+        </div>
+
+        <div class="receipt-title">FEE STRUCTURE DETAILS</div>
+
+        <div class="info-section">
+            
+            <div class="info-row"><span class="label">Session :</span><span class="value">@sessionName</span></div>
+            <div class="info-row"><span class="label">Class :</span><span class="value">@className</span></div>
+            <div class="info-row"><span class="label">Medium :</span><span class="value">@medium</span></div>
+        </div>
+
+        <div class="section-title">FEES BREAKDOWN</div>
+
+        <table class="fees-table">
+            <thead>
+                <tr><th>Fees Type</th><th>Amount (₹)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Admission Fees</td><td>₹ @((Model.AdmissionFees ?? 0).ToString("N2"))</td></tr>
+                <tr><td>Monthly Fees (Per Month)</td><td>₹ @((Model.MonthlyFees ?? 0).ToString("N2"))</td></tr>
+                <tr><td>Yearly Fees</td><td>₹ @(monthlyTotal.ToString("N2"))</td></tr>
+                <tr><td>Other Activity Fees</td><td>₹ @((Model.OtherActivityFees ?? 0).ToString("N2"))</td></tr>
+                <tr><td>Computer Fees</td><td>₹ @((Model.ComputerFees ?? 0).ToString("N2"))</td></tr>
+            </tbody>
+            <tfoot>
+                <tr><td><strong>Total Amount</strong></td><td><strong>₹ @(totalAmount.ToString("N2"))</strong></td></tr>
+            </tfoot>
+        </table>
+
+        <div class="receipt-footer">
+            <div class="signature-box">Accountant Signature</div>
+            <div class="signature-box">Principal Signature</div>
+        </div>
+    </div>
 </div>
-<div>
-    <a asp-action="Edit" asp-route-id="@Model?.FeeId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
-</div>
+<script>
+    function printReceipt() {
+        window.focus();
+        window.print();
+    }
+</script>

@@ -1,0 +1,231 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 20px;
+    background: #eef2f7;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.details-page {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.top-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.back-btn, .print-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.back-btn {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.print-btn {
+    background: #2563eb;
+    color: white;
+}
+
+.receipt-container {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.receipt-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 3px solid #2563eb;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.logo-box img {
+    width: 80px;
+    height: 80px;
+}
+
+.school-details {
+    text-align: center;
+    flex: 1;
+}
+
+.school-name {
+    font-size: 24px;
+    color: #1e3a8a;
+}
+
+.receipt-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 20px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px dashed #cbd5e1;
+}
+
+.info-row {
+    display: flex;
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+    .info-row .label {
+        width: 120px;
+        font-weight: 600;
+    }
+
+    .info-row .value {
+        flex: 1;
+    }
+
+.section-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 20px 0 10px 0;
+    padding-left: 10px;
+    border-left: 4px solid #2563eb;
+}
+
+.fees-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+    .fees-table th {
+        background: #2563eb;
+        color: white;
+        padding: 10px;
+        text-align: left;
+    }
+
+    .fees-table td {
+        padding: 10px;
+        border-bottom: 1px solid #ddd;
+    }
+
+        .fees-table td:last-child {
+            text-align: right;
+        }
+
+    .fees-table tfoot td {
+        background: #eff6ff;
+        padding: 12px;
+        font-weight: bold;
+        border-top: 2px solid #2563eb;
+    }
+
+.receipt-footer {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px dashed #cbd5e1;
+}
+
+.signature-box {
+    width: 200px;
+    text-align: center;
+    padding-top: 20px;
+    border-top: 2px solid #1e293b;
+}
+
+/* ================= PRINT CSS ================= */
+
+@page {
+    size: A4 portrait;
+    margin: 10mm;
+}
+
+@media print {
+
+    html,
+    body {
+        width: 210mm;
+        height: auto;
+        background: #ffffff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+        body * {
+            visibility: hidden;
+        }
+
+    .receipt-container,
+    .receipt-container * {
+        visibility: visible;
+    }
+
+    .receipt-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0 !important;
+        padding: 15px !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        background: white !important;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .fees-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .fees-table th {
+            background: #2563eb !important;
+            color: white !important;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .fees-table th,
+        .fees-table td {
+            border: 1px solid #999 !important;
+            padding: 10px !important;
+        }
+
+    .receipt-header {
+        display: flex !important;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .logo-box img {
+        width: 70px !important;
+        height: 70px !important;
+    }
+
+    .receipt-footer {
+        margin-top: 50px;
+    }
+
+    .signature-box {
+        width: 180px;
+    }
+}

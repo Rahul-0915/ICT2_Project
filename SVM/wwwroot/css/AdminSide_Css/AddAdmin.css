@@ -1,0 +1,417 @@
+﻿/* ============================================
+   COMPACT & CLEAN FORM CSS
+   Perfect at 100% zoom - No oversized elements
+   Works on every browser, no AI
+   ============================================ */
+
+/* ----- RESET ----- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-size: 13px;
+    line-height: 1.4;
+    padding: 15px;
+    background-image: url('/images/AdminDashboardBGImg.png');
+    background-repeat: repeat;
+    overflow-x: hidden;
+}
+
+/* ----- CONTAINER - tighter max-width ----- */
+.container {
+    max-width: 900px;
+    width: 100%;
+    margin: 0 auto;
+    padding: 0 10px;
+}
+
+.mt-4 {
+    margin-top: 1rem;
+}
+
+/* ----- CARD - smaller padding, lighter shadow ----- */
+.card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+    overflow: hidden;
+}
+
+    .card.shadow {
+        box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+    }
+
+/* ----- CARD HEADER - compact ----- */
+.card-header {
+    padding: 10px 16px;
+    background-color: #1e40af;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.bg-primary {
+    background:#2f343f;
+}
+
+.text-white {
+    color: #fff;
+}
+
+.card-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0;
+    letter-spacing: -0.2px;
+}
+
+.mb-0 {
+    margin-bottom: 0;
+
+}
+
+/* ----- CARD BODY - compact spacing ----- */
+.card-body {
+    padding: 16px 18px;
+}
+
+/* ----- FORM ROW & GRID - tighter gutters ----- */
+.row {
+    display: flex;
+    flex-wrap: wrap;
+    margin: 0 -6px;
+}
+
+.col-md-6 {
+    flex: 0 0 50%;
+    max-width: 50%;
+    padding: 0 6px;
+}
+
+/* smaller bottom margin */
+.mb-3 {
+    margin-bottom: 12px;
+    width:35%;
+}
+
+/* ----- LABELS - crisp, not heavy ----- */
+.form-label {
+    display: block;
+    margin-bottom: 4px;
+    font-weight: 600;
+    font-size: 12px;
+    color: #1f2937;
+    letter-spacing: 0.2px;
+}
+
+.fw-bold {
+    font-weight: 600;
+}
+
+.text-danger {
+    color: #dc2626;
+}
+
+.small {
+    font-size: 10px;
+    display: block;
+    margin-top: 3px;
+}
+
+/* ----- INPUTS - compact height, no extra bulk ----- */
+.form-control {
+    display: block;
+    width: 100%;
+    padding: 6px 10px;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 1.4;
+    color: #111827;
+    background-color: #fff;
+    border: 1px solid #cbd5e1;
+    border-radius: 6px;
+    transition: all 0.15s;
+    font-family: inherit;
+}
+
+    .form-control:focus {
+        border-color: #3b82f6;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(59,130,246,0.15);
+    }
+
+/* select dropdown - clean */
+select.form-control {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234b5563' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 8px center;
+    padding-right: 24px;
+}
+
+/* file input - compact */
+input[type="file"].form-control {
+    padding: 4px 8px;
+    font-size: 11px;
+}
+
+/* ----- ALERTS - slim and subtle ----- */
+.alert {
+    padding: 8px 12px;
+    margin-bottom: 14px;
+    border-radius: 8px;
+    font-size: 11px;
+    border-left: 3px solid transparent;
+}
+
+.alert-danger {
+    background-color: #fef2f2;
+    border-color: #fee2e2;
+    color: #991b1b;
+    border-left-color: #ef4444;
+}
+
+.alert-info {
+    background-color: #eff6ff;
+    border-color: #dbeafe;
+    color: #1e40af;
+    border-left-color: #3b82f6;
+}
+
+    .alert-info strong {
+        font-weight: 600;
+    }
+
+    /* simple info icon fallback - no FA required */
+    .alert-info i.fa-info-circle::before {
+        content: "ⓘ";
+        font-style: normal;
+        font-weight: normal;
+        margin-right: 4px;
+        font-size: 11px;
+    }
+
+/* ----- BUTTONS - smaller, rounded, not bulky ----- */
+.btn {
+    width:40%;
+    margin:auto;
+    display: inline-block;
+    font-weight: 500;
+    text-align: center;
+    padding: 10px 18px;
+    font-size: 12px;
+    line-height: 1.4;
+    border-radius: 10px;
+    text-decoration: none;
+    cursor: pointer;
+    border: 1px solid transparent;
+    transition: all 0.15s;
+    
+}
+
+.btn-primary {
+    background-color: #1e40af;
+    border-color: #1e40af;
+    color: white;
+}
+
+    .btn-primary:hover {
+        background-color: #1e3a8a;
+        border-color: #1e3a8a;
+    }
+
+.btn-secondary {
+    background-color: #e5e7eb;
+    border-color: #d1d5db;
+    color: #374151;
+}
+
+    .btn-secondary:hover {
+        background-color: #d1d5db;
+        border-color: #b9c0cc;
+    }
+
+.d-flex {
+    display: flex;
+}
+
+.justify-content-between {
+    justify-content: space-between;
+}
+
+/* ----- IMAGE PREVIEW - compact, controlled size ----- */
+.img-thumbnail {
+    padding: 3px;
+    background-color: #f9fafb;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    max-width: 100%;
+}
+
+#imagePreview {
+    max-width: 110px !important;
+    max-height: 110px !important;
+    width: auto;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+#imagePreviewContainer {
+    margin-top: 8px;
+}
+
+.mt-2 {
+    margin-top: 6px;
+}
+
+/* ----- RESPONSIVE - stays compact on any screen ----- */
+@media (max-width: 640px) {
+    body {
+        padding: 8px;
+    }
+
+    .container {
+        padding: 0 6px;
+    }
+
+    .col-md-6 {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 4px;
+    }
+
+    .row {
+        margin: 0;
+    }
+
+    .col-md-6 {
+        padding: 0;
+    }
+
+    .card-body {
+        padding: 12px;
+    }
+
+    .btn {
+        padding: 5px 12px;
+        font-size: 11px;
+    }
+
+    .form-control {
+        font-size: 12px;
+        padding: 5px 8px;
+    }
+
+    .card-header h3 {
+        font-size: 0.9rem;
+    }
+
+    #imagePreview {
+        max-width: 90px !important;
+        max-height: 90px !important;
+    }
+}
+
+/* Make sure elements don't grow huge on desktop either */
+@media (min-width: 1200px) {
+    .container {
+        max-width: 880px;
+    }
+
+    .form-control {
+        font-size: 12px;
+        padding: 6px 10px;
+    }
+
+    .btn {
+        font-size: 12px;
+        padding: 6px 14px;
+    }
+
+    .card-header h3 {
+        font-size: 1rem;
+    }
+}
+
+/* Accessibility and micro spacing */
+.form-control:focus {
+    outline: none;
+}
+
+button, .btn {
+    cursor: pointer;
+}
+
+.text-danger.small {
+    font-size: 10px;
+    margin-top: 3px;
+}
+
+/* Hidden elements no extra space */
+input[type="hidden"] {
+    display: none;
+}
+
+/* Group alert spacing */
+.alert {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+    .alert i {
+        font-style: normal;
+    }
+
+/* Very tiny adjustments for perfect zoom at 100% */
+* {
+    -webkit-font-smoothing: antialiased;
+}
+
+/* Preview container - subtle */
+#imagePreviewContainer {
+    display: none;
+}
+
+    #imagePreviewContainer[style*="display: block"] {
+        display: block !important;
+    }
+
+/* Ensure file input is not oversized */
+input[type="file"] {
+    font-size: 11px;
+}
+
+/* Remove any extra margin/padding that causes zoom issues */
+fieldset, legend {
+    all: unset;
+}
+
+/* Card border radius nicer */
+.card, .card-header:first-child {
+    border-radius: 14px 14px 0 0;
+}
+
+.card-body:last-child {
+    border-radius: 0 0 14px 14px;
+}
+
+/* Buttons group even spacing */
+.d-flex {
+    margin-top: 6px;
+}
+
+/* input group inside row */
+select:focus, input:focus {
+    outline: none;
+}
+
+/* crisp text labels */
+label {
+    font-size: 12px;
+    font-weight: 500;
+}
