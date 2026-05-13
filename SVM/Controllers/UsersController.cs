@@ -69,19 +69,28 @@ namespace SVM.Controllers
         }
 
         // GET: Users/Create
-        public async Task<IActionResult> Create()
+        // GET: Users/Create
+        public async Task<IActionResult> Create(int? fixedGroupId)  // ← fixedGroupId rakho
         {
-            await LoadGroups();
+            if (fixedGroupId.HasValue)
+            {
+                ViewBag.FixedGroupId = fixedGroupId.Value;
+                ViewBag.GroupName = fixedGroupId.Value == 1 ? "Admin" : "User";
+                ViewData["GroupId"] = new SelectList(new List<Groupmaster>(), "GId", "GName");
+            }
+            else
+            {
+                await LoadGroups();
+            }
             return View();
         }
 
-        public async Task<IActionResult> CreateWithGroup(int groupId)
-        {
-            await LoadGroups();
-            ViewBag.FixedGroupId = groupId;
-            ViewBag.GroupName = groupId == 1 ? "Admin" : "User";
-            return View("Create");
-        }
+        //public async Task<IActionResult> CreateWithGroup(int groupId)
+        //{
+        //    ViewBag.FixedGroupId = groupId;
+        //    ViewBag.GroupName = groupId == 1 ? "Admin" : "User";
+        //    return View("Create");
+        //}
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(User user, int? fixedGroupId, IFormFile? ImageFile)
@@ -102,7 +111,17 @@ namespace SVM.Controllers
                 if (exists)
                 {
                     ModelState.AddModelError("Username", "Username or Email already taken.");
-                    await LoadGroups();
+                    // Restore fixedGroupId on error
+                    if (fixedGroupId.HasValue)
+                    {
+                        ViewBag.FixedGroupId = fixedGroupId.Value;
+                        ViewBag.GroupName = fixedGroupId.Value == 1 ? "Admin" : "User";
+                        ViewData["GroupId"] = new SelectList(new List<Groupmaster>(), "GId", "GName");
+                    }
+                    else
+                    {
+                        await LoadGroups();
+                    }
                     return View(user);
                 }
             }
@@ -139,7 +158,18 @@ namespace SVM.Controllers
                 }
             }
 
-            await LoadGroups();
+            // 🔥 VALIDATION FAILED – Restore fixedGroupId 🔥
+            if (fixedGroupId.HasValue)
+            {
+                ViewBag.FixedGroupId = fixedGroupId.Value;
+                ViewBag.GroupName = fixedGroupId.Value == 1 ? "Admin" : "User";
+                ViewData["GroupId"] = new SelectList(new List<Groupmaster>(), "GId", "GName");
+            }
+            else
+            {
+                await LoadGroups();
+            }
+
             return View(user);
         }
         // GET: Users/Edit/5
