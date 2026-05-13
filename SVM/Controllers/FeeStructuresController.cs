@@ -37,69 +37,177 @@ namespace SVM.Controllers
             return View();
         }
 
-        public async Task<IActionResult> Create(int? sessionId, string medium, int? classId)
+        [HttpGet]
+        public async Task<IActionResult> Create(
+        int? sessionId,
+        string medium,
+        int? classId)
         {
-            if (sessionId == null || classId == null)
-                return RedirectToAction(nameof(Index));
+            var model = new FeeStructure();
 
-            var model = new FeeStructure
-            {
-                SessionId = sessionId,
-                ClassId = classId
-            };
+            if (sessionId != null)
+                model.SessionId = sessionId;
+
+            if (classId != null)
+                model.ClassId = classId;
+
+            // SESSION DROPDOWN
+
+            var sessions = await GetSessions();
+
+            ViewBag.SessionList =
+                new SelectList(
+                    sessions,
+                    "SessionId",
+                    "SessionName",
+                    sessionId
+                );
+
+            // MEDIUM DROPDOWN
+
+            ViewBag.MediumList =
+                new SelectList(
+                    new[] { "Gujarati", "English" },
+                    medium
+                );
+
             ViewBag.Medium = medium;
+
             return View(model);
         }
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create(FeeStructure feeStructure, string medium)
+        public async Task<IActionResult> Create(
+    FeeStructure feeStructure,
+    string medium)
         {
-            // Remove validation for navigation property (Class)
+            // REMOVE NAVIGATION VALIDATION
+
             ModelState.Remove("Class");
+
+            // VALIDATION FAILED
 
             if (!ModelState.IsValid)
             {
-                var errors = ModelState.Values.SelectMany(v => v.Errors);
+                var errors =
+                    ModelState.Values
+                    .SelectMany(v => v.Errors);
+
                 foreach (var error in errors)
                 {
-                    Console.WriteLine($"Model Error: {error.ErrorMessage}");
-                    // Add to TempData to show in view
-                    TempData["Error"] = error.ErrorMessage;
+                    Console.WriteLine(
+                        $"Model Error: {error.ErrorMessage}"
+                    );
+
+                    TempData["Error"] =
+                        error.ErrorMessage;
                 }
+
+                // DROPDOWNS RELOAD
+
+                var sessions = await GetSessions();
+
+                ViewBag.SessionList =
+                    new SelectList(
+                        sessions,
+                        "SessionId",
+                        "SessionName",
+                        feeStructure.SessionId
+                    );
+
+                ViewBag.MediumList =
+                    new SelectList(
+                        new[] { "Gujarati", "English" },
+                        medium
+                    );
+
                 ViewBag.Medium = medium;
+
                 return View(feeStructure);
             }
 
             try
             {
-                var response = await _client.PostAsJsonAsync("FeeStructures", feeStructure);
+                var response =
+                    await _client.PostAsJsonAsync(
+                        "FeeStructures",
+                        feeStructure
+                    );
+
+                // SUCCESS
+
                 if (response.IsSuccessStatusCode)
                 {
-                    return RedirectToAction(nameof(Index), new
-                    {
-                        sessionId = feeStructure.SessionId,
-                        medium,
-                        classId = feeStructure.ClassId
-                    });
+                    return RedirectToAction(
+                        nameof(Index),
+                        new
+                        {
+                            sessionId =
+                                feeStructure.SessionId,
+
+                            medium,
+
+                            classId =
+                                feeStructure.ClassId
+                        });
                 }
-                else if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
+
+                // DUPLICATE
+
+                else if (
+                    response.StatusCode ==
+                    System.Net.HttpStatusCode.Conflict)
                 {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    ModelState.AddModelError("", "Fee structure already exists for this session and class.");
+                    ModelState.AddModelError(
+                        "",
+                        "Fee structure already exists for this session and class."
+                    );
                 }
+
+                // OTHER API ERROR
+
                 else
                 {
-                    var errorContent = await response.Content.ReadAsStringAsync();
-                    ModelState.AddModelError("", $"API Error: {response.StatusCode} - {errorContent}");
+                    var errorContent =
+                        await response.Content
+                        .ReadAsStringAsync();
+
+                    ModelState.AddModelError(
+                        "",
+                        $"API Error: {response.StatusCode} - {errorContent}"
+                    );
                 }
             }
             catch (Exception ex)
             {
-                ModelState.AddModelError("", $"Exception: {ex.Message}");
+                ModelState.AddModelError(
+                    "",
+                    $"Exception: {ex.Message}"
+                );
             }
 
+            // DROPDOWNS RELOAD AGAIN
+
+            var sessionList =
+                await GetSessions();
+
+            ViewBag.SessionList =
+                new SelectList(
+                    sessionList,
+                    "SessionId",
+                    "SessionName",
+                    feeStructure.SessionId
+                );
+
+            ViewBag.MediumList =
+                new SelectList(
+                    new[] { "Gujarati", "English" },
+                    medium
+                );
+
             ViewBag.Medium = medium;
+
             return View(feeStructure);
         }
         [HttpGet]
@@ -230,7 +338,96 @@ namespace SVM.Controllers
 
             return RedirectToAction(nameof(Index), new { sessionId, medium, classId });
         }
+        [HttpGet]
+        public async Task<IActionResult> Details(int id, string medium, int? classId, int? sessionId)
+        {
+            var response = await _client.GetAsync($"FeeStructures/{id}");
 
+            if (!response.IsSuccessStatusCode)
+                return NotFound();
+
+            var data = await response.Content.ReadAsStringAsync();
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var feeStructure = JsonSerializer.Deserialize<FeeStructure>(data, options);
+
+            // Fetch Class Name using ClassId from feeStructure
+            int classIdToFetch = feeStructure.ClassId ?? classId ?? 0;
+            if (classIdToFetch != 0)
+            {
+                try
+                {
+                    var classResponse = await _client.GetAsync($"Classes/{classIdToFetch}");
+                    if (classResponse.IsSuccessStatusCode)
+                    {
+                        var classData = await classResponse.Content.ReadAsStringAsync();
+                        var classObj = JsonSerializer.Deserialize<Class>(classData, options);
+                        ViewBag.ClassName = classObj?.ClassName ?? "Not Found";
+                        // Also get medium from class if not provided
+                        if (string.IsNullOrEmpty(medium) && classObj != null)
+                        {
+                            medium = classObj.Medium;
+                        }
+                    }
+                    else
+                    {
+                        ViewBag.ClassName = "Class not found";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.ClassName = $"Error: {ex.Message}";
+                }
+            }
+            else
+            {
+                ViewBag.ClassName = "No class assigned";
+            }
+
+            // Fetch Session Name
+            int sessionIdToFetch = feeStructure.SessionId ?? sessionId ?? 0;
+            if (sessionIdToFetch != 0)
+            {
+                try
+                {
+                    var sessionResponse = await _client.GetAsync($"Sessions/{sessionIdToFetch}");
+                    if (sessionResponse.IsSuccessStatusCode)
+                    {
+                        var sessionData = await sessionResponse.Content.ReadAsStringAsync();
+                        var sessionObj = JsonSerializer.Deserialize<Session>(sessionData, options);
+                        ViewBag.SessionName = sessionObj?.SessionName ?? "Not Found";
+                    }
+                    else
+                    {
+                        ViewBag.SessionName = "Session not found";
+                    }
+                }
+                catch (Exception ex)
+                {
+                    ViewBag.SessionName = $"Error: {ex.Message}";
+                }
+            }
+            else
+            {
+                ViewBag.SessionName = "No session assigned";
+            }
+
+            // Ensure medium is set
+            if (string.IsNullOrEmpty(medium))
+            {
+                medium = ViewBag.MediumFromClass ?? "Gujarati";
+            }
+
+            ViewBag.Medium = medium;
+            ViewBag.ClassId = classId;
+            ViewBag.SessionId = sessionId;
+
+            return View(feeStructure);
+        }
         // ------------------ HELPERS ------------------
         private async Task<List<Session>> GetSessions()
         {

@@ -50,7 +50,7 @@ public partial class SvmContext : DbContext
     => optionsBuilder.UseSqlServer("Data Source=LAPTOP-4UGH4KDC\\SQLEXPRESS;Initial Catalog=SVM;Integrated Security=True;Encrypt=False");
 
 
-    //=> optionsBuilder.UseSqlServer("Data Source=LAPTOP-0UK50KGM\\SQLEXPRESS;Initial Catalog=SVM;Integrated Security=True;Encrypt=False");
+    ////=> optionsBuilder.UseSqlServer("Data Source=LAPTOP-0UK50KGM\\SQLEXPRESS;Initial Catalog=SVM;Integrated Security=True;Encrypt=False");
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
