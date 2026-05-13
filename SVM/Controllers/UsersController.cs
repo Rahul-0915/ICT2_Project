@@ -86,52 +86,42 @@ namespace SVM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(User user, int? fixedGroupId, IFormFile? ImageFile)
         {
-            // Remove navigation properties from validation
             ModelState.Remove("Group");
             ModelState.Remove("Staff");
             ModelState.Remove("Students");
             ModelState.Remove("GroupId");
 
-            // Agar fixedGroupId hai to use karo
             if (fixedGroupId.HasValue)
-            {
                 user.GroupId = fixedGroupId.Value;
-            }
 
-            if (fixedGroupId.HasValue && user.GroupId == fixedGroupId.Value)
+            // ---- Duplicate check ----
+            var checkResponse = await _client.GetAsync($"Users/check?username={user.Username}&email={user.Email}");
+            if (checkResponse.IsSuccessStatusCode)
             {
-                ModelState.Remove("GroupId");
+                bool exists = await checkResponse.Content.ReadFromJsonAsync<bool>();
+                if (exists)
+                {
+                    ModelState.AddModelError("Username", "Username or Email already taken.");
+                    await LoadGroups();
+                    return View(user);
+                }
             }
 
-            // Handle image upload
+            // Image upload
             if (ImageFile != null && ImageFile.Length > 0)
             {
-                // Create unique filename
                 string fileName = Guid.NewGuid().ToString() + Path.GetExtension(ImageFile.FileName);
-
-                // Save to wwwroot/images/users
                 string uploadPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "images", "users");
-
-                if (!Directory.Exists(uploadPath))
-                {
-                    Directory.CreateDirectory(uploadPath);
-                }
-
+                Directory.CreateDirectory(uploadPath);
                 string filePath = Path.Combine(uploadPath, fileName);
-
                 using (var stream = new FileStream(filePath, FileMode.Create))
-                {
                     await ImageFile.CopyToAsync(stream);
-                }
-
-                // Save relative path to database
                 user.ProfilePhoto = $"/images/users/{fileName}";
             }
 
             if (ModelState.IsValid)
             {
                 var response = await _client.PostAsJsonAsync("Users", user);
-
                 if (response.IsSuccessStatusCode)
                 {
                     TempData["Success"] = "User created successfully!";
@@ -140,7 +130,12 @@ namespace SVM.Controllers
                 else
                 {
                     var errorData = await response.Content.ReadAsStringAsync();
-                    ModelState.AddModelError("", $"Create failed! {errorData}");
+                    if (errorData.Contains("Username already exists", StringComparison.OrdinalIgnoreCase))
+                        ModelState.AddModelError("Username", "Username already taken.");
+                    else if (errorData.Contains("Email already exists", StringComparison.OrdinalIgnoreCase))
+                        ModelState.AddModelError("Email", "Email already registered.");
+                    else
+                        ModelState.AddModelError("", $"Creation failed: {errorData}");
                 }
             }
 
