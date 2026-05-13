@@ -154,32 +154,25 @@ namespace SVM.Controllers
             if (ModelState.IsValid)
             {
                 // ==============================
-                // STEP 1 : Insert into Users Table
+                // STEP 1 : Insert into Users Table (JSON format)
                 // ==============================
 
-                var newUser = new MultipartFormDataContent();
-
-                newUser.Add(new StringContent(staff.Email ?? ""), "Email");
-                newUser.Add(new StringContent(staff.Phone ?? ""), "Phone");
-
-                // username auto generate
+                // Create username (remove spaces)
                 string username = (staff.FirstName + staff.LastName).Replace(" ", "");
 
-                newUser.Add(new StringContent(username), "Username");
+                // Create user object with correct JSON property names (lowercase for API)
+                var userForApi = new
+                {
+                    username = username,
+                    password = "123456",
+                    fullName = $"{staff.FirstName} {staff.LastName}",
+                    email = staff.Email,
+                    phone = staff.Phone,
+                    groupId = 2,  // GroupId 2 for Staff
+                    profilePhoto = staff.StafPhoto ?? ""
+                };
 
-                // default password
-                newUser.Add(new StringContent("123456"), "Password");
-
-                // fullname
-                newUser.Add(new StringContent($"{staff.FirstName} {staff.LastName}"), "FullName");
-
-                // GroupId = 2 for Staff
-                newUser.Add(new StringContent("2"), "GroupId");
-
-                // profile photo blank
-                newUser.Add(new StringContent(staff.StafPhoto ?? ""), "ProfilePhoto");
-
-                var userResponse = await _client.PostAsync("Users", newUser);
+                var userResponse = await _client.PostAsJsonAsync("Users", userForApi);
 
                 if (!userResponse.IsSuccessStatusCode)
                 {
@@ -232,9 +225,8 @@ namespace SVM.Controllers
             ViewBag.AdminId = currentUserId;
             return View(staff);
         }
-
         // GET: Staffs/Edit/5
-        
+
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();

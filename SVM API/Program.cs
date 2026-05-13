@@ -1,4 +1,5 @@
 
+using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
 using SVM_API.Models;
 using SVM_API.Services;
@@ -13,7 +14,11 @@ namespace SVM_API
             builder.Services.AddDbContext<SvmContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStrings")));
             // Add services to the container.
             builder.Services.AddHttpClient();
-
+            builder.Services.Configure<JsonOptions>(options =>
+            {
+                options.SerializerOptions.PropertyNamingPolicy = null;
+                options.SerializerOptions.PropertyNameCaseInsensitive = true;
+            });
             builder.Services.AddControllers();
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
