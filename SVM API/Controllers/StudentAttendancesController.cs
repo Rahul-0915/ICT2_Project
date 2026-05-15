@@ -1,11 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using SVM_API.Models;
+using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace SVM_API.Controllers
 {
@@ -93,7 +94,8 @@ namespace SVM_API.Controllers
             if (sectionId.HasValue)
                 query = query.Where(s => s.SectionId == sectionId.Value);
 
-            var students = await query.Select(s => new {
+            var students = await query.Select(s => new
+            {
                 s.StudentId,
                 s.FirstName,
                 s.LastName,
@@ -181,7 +183,8 @@ namespace SVM_API.Controllers
             if (!string.IsNullOrEmpty(medium))
                 query = query.Where(a => a.Class != null && a.Class.Medium == medium);
 
-            var result = await query.Select(a => new {
+            var result = await query.Select(a => new
+            {
                 a.Id,
                 a.StudentId,
                 StudentName = a.Student.FirstName + " " + a.Student.LastName,
@@ -193,20 +196,120 @@ namespace SVM_API.Controllers
 
             return Ok(result);
         }
-    }
 
-    public class BulkAttendanceRequest
-    {
-        public int ClassId { get; set; }
-        public int SectionId { get; set; }
-        public int SessionId { get; set; }
-        public DateTime AttendanceDate { get; set; }
-        public List<BulkAttendanceItem> Attendances { get; set; } = new();
-    }
+        // GET: api/StudentAttendances/advanced-report
+        // GET: api/StudentAttendances/advanced-report
+        [HttpGet("advanced-report")]
+        public async Task<ActionResult<object>> GetAdvancedAttendanceReport(
+            [FromQuery] int sessionId,
+            [FromQuery] string? medium,
+            [FromQuery] int? classId,
+            [FromQuery] int? sectionId,
+            [FromQuery] string? date)
+        {
+            // Parse date safely
+            DateTime reportDate;
+            if (!string.IsNullOrEmpty(date) && DateTime.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsed))
+            {
+                reportDate = parsed;
+            }
+            else
+            {
+                reportDate = DateTime.Today;
+            }
 
-    public class BulkAttendanceItem
-    {
-        public int StudentId { get; set; }
-        public string Status { get; set; } = "";
+            // 1. Students filter query
+            var studentsQuery = _context.Students
+                .Where(s => s.SessionId == sessionId);
+
+            if (!string.IsNullOrEmpty(medium))
+                studentsQuery = studentsQuery.Where(s => s.Class != null && s.Class.Medium == medium);
+            if (classId.HasValue)
+                studentsQuery = studentsQuery.Where(s => s.ClassId == classId.Value);
+            if (sectionId.HasValue)
+                studentsQuery = studentsQuery.Where(s => s.SectionId == sectionId.Value);
+
+            var students = await studentsQuery
+                .Select(s => new
+                {
+                    s.StudentId,
+                    FullName = s.FirstName + " " + s.LastName,
+                    s.RollNo,
+                    s.Gender
+                })
+                .ToListAsync();
+
+            if (!students.Any())
+                return Ok(new { Students = new List<object>(), Totals = new { }, IsAttendanceMarked = false });
+
+            // 2. Attendance records for the exact date
+            var attendanceQuery = _context.StudentAttendances
+                .Where(a => a.SessionId == sessionId
+                            && a.AttendanceDate.Date == reportDate.Date);
+
+            if (classId.HasValue)
+                attendanceQuery = attendanceQuery.Where(a => a.ClassId == classId.Value);
+            if (sectionId.HasValue)
+                attendanceQuery = attendanceQuery.Where(a => a.SectionId == sectionId.Value);
+            if (!string.IsNullOrEmpty(medium))
+                attendanceQuery = attendanceQuery.Where(a => a.Class != null && a.Class.Medium == medium);
+
+            // ✅ Check if any attendance exists for this date & filters
+            bool anyAttendanceExists = await attendanceQuery.AnyAsync();
+
+            if (!anyAttendanceExists)
+            {
+                return Ok(new
+                {
+                    Students = new List<object>(),
+                    Totals = new { },
+                    IsAttendanceMarked = false
+                });
+            }
+
+            // ✅ Get attendance data including Id
+            var attendanceData = await attendanceQuery
+                .Select(a => new { a.StudentId, a.Id, a.Status })
+                .ToListAsync();
+            var attendanceDict = attendanceData.ToDictionary(a => a.StudentId, a => new { a.Id, a.Status });
+
+            // 3. Build report items with AttendanceId
+            var reportItems = students.Select(s => new
+            {
+                s.StudentId,
+                s.FullName,
+                s.RollNo,
+                s.Gender,
+                Status = attendanceDict.ContainsKey(s.StudentId) ? attendanceDict[s.StudentId].Status : "Absent",
+                AttendanceId = attendanceDict.ContainsKey(s.StudentId) ? attendanceDict[s.StudentId].Id : 0
+            }).ToList();
+
+            // 4. Totals
+            var totals = new
+            {
+                TotalPresent = reportItems.Count(r => r.Status == "Present"),
+                TotalAbsent = reportItems.Count(r => r.Status == "Absent"),
+                GirlsPresent = reportItems.Count(r => r.Gender == "Female" && r.Status == "Present"),
+                GirlsAbsent = reportItems.Count(r => r.Gender == "Female" && r.Status == "Absent"),
+                BoysPresent = reportItems.Count(r => r.Gender == "Male" && r.Status == "Present"),
+                BoysAbsent = reportItems.Count(r => r.Gender == "Male" && r.Status == "Absent")
+            };
+
+            return Ok(new { Students = reportItems, Totals = totals, IsAttendanceMarked = true });
+        }
+        public class BulkAttendanceRequest
+        {
+            public int ClassId { get; set; }
+            public int SectionId { get; set; }
+            public int SessionId { get; set; }
+            public DateTime AttendanceDate { get; set; }
+            public List<BulkAttendanceItem> Attendances { get; set; } = new();
+        }
+
+        public class BulkAttendanceItem
+        {
+            public int StudentId { get; set; }
+            public string Status { get; set; } = "";
+        }
     }
 }

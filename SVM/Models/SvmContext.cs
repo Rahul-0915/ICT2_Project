@@ -367,22 +367,14 @@ public partial class SvmContext : DbContext
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK__students__user_i__4D94879B");
         });
-
         modelBuilder.Entity<StudentAttendance>(entity =>
         {
             entity.HasKey(e => e.Id).HasName("PK__student___3213E83F534D60F1");
-
             entity.ToTable("student_attendance");
 
-            entity.Property(e => e.Id).HasColumnName("id");
-            entity.Property(e => e.AttendanceDate).HasColumnName("attendance_date");
-            entity.Property(e => e.Status)
-                .HasMaxLength(10)
-                .IsUnicode(false)
-                .HasColumnName("status");
-            entity.Property(e => e.StudentId).HasColumnName("student_id");
-
-            entity.HasOne(d => d.Student).WithMany(p => p.StudentAttendances)
+            // No need to map properties again – attributes will handle
+            entity.HasOne(d => d.Student)
+                .WithMany(p => p.StudentAttendances)
                 .HasForeignKey(d => d.StudentId)
                 .HasConstraintName("FK__student_a__stude__5535A963");
         });
