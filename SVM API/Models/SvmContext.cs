@@ -35,7 +35,9 @@ public partial class SvmContext : DbContext
 
     public virtual DbSet<Student> Students { get; set; }
 
-    public virtual DbSet<StudentAttendance> StudentAttendances { get; set; }
+	public DbSet<Expense> Expenses { get; set; }
+
+	public virtual DbSet<StudentAttendance> StudentAttendances { get; set; }
 
     public virtual DbSet<Subject> Subjects { get; set; }
 

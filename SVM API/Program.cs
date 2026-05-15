@@ -38,7 +38,7 @@ namespace SVM_API
 
             app.UseAuthorization();
             app.UseStaticFiles();   // This enables serving files from wwwroot
-
+            
             app.MapControllers();
 
             app.Run();
