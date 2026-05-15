@@ -51,6 +51,7 @@ namespace SVM.Controllers
             int totalStaff = 0;
             int totalSubjects = 0;
             string activeSessionName = "N/A";
+            decimal totalExpense = 0;
 
             try
             {
@@ -80,7 +81,24 @@ namespace SVM.Controllers
                     var subjects = JsonSerializer.Deserialize<List<Subject>>(subjectsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                     totalSubjects = subjects?.Count ?? 0;
                 }
+                // Expenses total
+                var expensesResp = await _client.GetAsync("Expenses");
 
+                if (expensesResp.IsSuccessStatusCode)
+                {
+                    var expensesJson = await expensesResp.Content.ReadAsStringAsync();
+
+                    var expenses = JsonSerializer.Deserialize<List<Expense>>
+                    (
+                        expensesJson,
+                        new JsonSerializerOptions
+                        {
+                            PropertyNameCaseInsensitive = true
+                        }
+                    );
+
+                    totalExpense = expenses?.Sum(e => e.Amount) ?? 0;
+                }
                 // Active session name
                 // Active session name
                 var sessionsResp = await _client.GetAsync("Sessions");
@@ -109,6 +127,7 @@ namespace SVM.Controllers
             ViewBag.TotalStudents = totalStudents;
             ViewBag.TotalStaff = totalStaff;
             ViewBag.TotalSubjects = totalSubjects;
+            ViewBag.TotalExpense = totalExpense;
             ViewBag.ActiveSessionName = activeSessionName;
 
             return View(updatesList ?? new List<Updates>());

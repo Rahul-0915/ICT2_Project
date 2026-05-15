@@ -242,196 +242,234 @@ body {
 
 /* PRINT */
 
+/* ================= PRINT ================= */
+
+@page {
+    size: A4 portrait;
+    margin: 8mm;
+}
+
 @media print {
 
-    body * {
-        visibility: hidden;
+    * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
     }
+
+    html {
+        zoom: 95%;
+    }
+
+    html,
+    body {
+        width: 210mm;
+        height: auto;
+        margin: 0 !important;
+        padding: 0 !important;
+        background: white !important;
+        font-family: "Segoe UI", sans-serif;
+    }
+
+        body * {
+            visibility: hidden;
+        }
 
     #printArea,
     #printArea * {
         visibility: visible;
     }
 
-    body {
-        margin: 0;
-        padding: 0;
-        background: white;
-        -webkit-print-color-adjust: exact;
-        print-color-adjust: exact;
-        font-family: "Segoe UI", sans-serif;
-    }
-
     #printArea {
         position: absolute;
-        top: 0;
         left: 0;
-        right: 0;
+        top: 0;
         width: 100%;
-        height: 100%;
-        background: white;
-        padding: 10mm 15mm;
+        padding: 8mm;
         box-sizing: border-box;
+        background: white;
     }
 
     .no-print {
         display: none !important;
     }
 
+    /* MAIN FORM */
+
     .admission-form {
-        width: 100%;
-        max-width: 100%;
-        margin: 0;
-        padding: 0;
-        border: none;
-        border-radius: 0;
-        box-shadow: none;
-        background: white;
-        height: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
+        width: 100% !important;
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 14px !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        background: white !important;
     }
 
+    /* HEADER */
+
     .form-header {
-        display: flex;
-        align-items: center;
-        border-bottom: 2px solid #0d6efd;
-        padding-bottom: 12px;
-        margin-bottom: 12px;
+        display: flex !important;
+        align-items: center !important;
+        border-bottom: 2px solid #0d6efd !important;
+        padding-bottom: 8px !important;
+        margin-bottom: 10px !important;
     }
 
     .logo-box img {
-        width: 80px;
-        height: 80px;
+        width: 65px !important;
+        height: 65px !important;
         object-fit: contain;
     }
 
     .school-details {
-        flex: 1;
-        text-align: center;
+        flex: 1 !important;
+        text-align: center !important;
     }
 
         .school-details h1 {
-            margin: 0;
-            font-size: 32px;
-            font-weight: 800;
-            color: red;
-            line-height: 1.2;
+            margin: 0 !important;
+            font-size: 26px !important;
+            line-height: 1.1 !important;
+            color: red !important;
+            font-weight: 800 !important;
         }
 
         .school-details p {
-            margin: 4px 0;
-            font-size: 12px;
-            color: #555;
+            margin: 2px 0 !important;
+            font-size: 10px !important;
+            color: #555 !important;
         }
 
+    /* TITLE */
+
     .form-title {
-        width: fit-content;
-        margin: 12px auto;
-        padding: 8px 30px;
-        background: #0d6efd;
-        color: white;
-        border-radius: 40px;
-        font-size: 16px;
-        font-weight: 700;
-        letter-spacing: 1px;
+        width: fit-content !important;
+        margin: 10px auto !important;
+        padding: 5px 20px !important;
+        background: #0d6efd !important;
+        color: white !important;
+        border-radius: 30px !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
     }
 
+    /* TOP SECTION */
+
     .top-student-header {
-        display: flex;
-        justify-content: space-between;
-        align-items: flex-start;
-        gap: 20px;
-        margin-bottom: 15px;
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: flex-start !important;
+        gap: 15px !important;
+        margin-bottom: 10px !important;
     }
 
     .top-basic-details {
-        flex: 1;
+        flex: 1 !important;
     }
 
     .photo-box {
-        width: 130px;
+        width: 110px !important;
+        flex-shrink: 0 !important;
     }
 
     .student-photo {
-        width: 100%;
-        height: 160px;
-        object-fit: cover;
-        border: 2px solid #777;
-        border-radius: 8px;
+        width: 100% !important;
+        height: 130px !important;
+        object-fit: cover !important;
+        border: 2px solid #777 !important;
+        border-radius: 6px !important;
     }
 
+    /* SECTION TITLE */
+
     .section-title {
-        margin-top: 16px;
-        margin-bottom: 8px;
-        padding-bottom: 5px;
-        border-bottom: 2px solid #0d6efd;
-        font-size: 16px;
-        font-weight: 700;
-        color: #0d2c54;
+        margin-top: 12px !important;
+        margin-bottom: 6px !important;
+        padding-bottom: 3px !important;
+        border-bottom: 1.5px solid #0d6efd !important;
+        font-size: 14px !important;
+        font-weight: 700 !important;
+        color: #0d2c54 !important;
+    }
+
+    /* FORM */
+
+    .classic-form {
+        width: 100% !important;
     }
 
     .form-row {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: baseline;
-        margin-bottom: 10px;
-        font-size: 14px;
-        line-height: 1.5;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        flex-wrap: nowrap !important;
+        width: 100% !important;
+        margin-bottom: 7px !important;
+        line-height: 1.4 !important;
+        gap: 6px !important;
     }
 
     .label {
-        font-weight: 700;
-        color: #111;
-        margin-right: 10px;
-        font-size: 14px;
-        min-width: 120px;
-        flex-shrink: 0;
-    }
-
-    .small-gap {
-        margin-left: 20px;
+        font-size: 11px !important;
+        font-weight: 700 !important;
+        color: #111 !important;
+        white-space: nowrap !important;
+        min-width: fit-content !important;
     }
 
     .value {
-        flex: 1;
-        border-bottom: 1px dotted #000;
-        padding: 3px 6px;
-        font-size: 14px;
-        color: #111;
+        flex: 1 !important;
+        display: inline-block !important;
+        min-width: 0 !important;
+        border-bottom: 1px dotted #000 !important;
+        padding: 1px 4px !important;
+        font-size: 11px !important;
+        color: #111 !important;
     }
 
         .value.long {
-            flex: 2;
+            min-width: 180px !important;
         }
 
-    .address-row {
-        align-items: flex-start;
+    .small-gap {
+        margin-left: 12px !important;
     }
 
+    .address-row {
+        align-items: flex-start !important;
+    }
+
+        .address-row .value {
+            min-height: 28px !important;
+        }
+
+    /* FOOTER */
+
     .form-footer {
-        margin-top: 35px;
-        display: flex;
-        justify-content: space-between;
+        margin-top: 18px !important;
+        display: flex !important;
+        justify-content: space-between !important;
     }
 
     .signature-box {
-        width: 180px;
-        text-align: center;
-        border-top: 1px solid #333;
-        padding-top: 8px;
-        font-size: 12px;
-        font-weight: 600;
-        color: #222;
+        width: 150px !important;
+        padding-top: 6px !important;
+        border-top: 1px solid #333 !important;
+        text-align: center !important;
+        font-size: 11px !important;
+        color: #111 !important;
     }
 
-    .schoolname {
-        font-family: 'Noto Sans Gujarati', 'Arial Unicode MS', sans-serif;
-    }
+    /* PAGE BREAK FIX */
 
-    @page {
-        size: portrait;
-        margin: 0;
+    .form-row,
+    .section-title,
+    .top-student-header,
+    .form-footer,
+    .admission-form {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
     }
 }
