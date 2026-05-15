@@ -1,0 +1,247 @@
+﻿@model List<SVM.Controllers.StudentAttendancesController.AttendanceReportItem>
+
+@{
+	ViewData["Title"] = "Attendance Report";
+	var sessions = ViewBag.Sessions as List<SVM.Models.Session>;
+	var mediums = ViewBag.Mediums as List<string>;
+	var totals = ViewBag.Totals as SVM.Controllers.StudentAttendancesController.AttendanceTotals;
+}
+
+<h2>📋 Attendance Report</h2>
+
+<form method="get" asp-action="Index" id="reportForm">
+	<div class="row">
+		<div class="col-md-2">
+			<label>Session</label>
+			<select name="sessionId" class="form-control" id="sessionSelect">
+				<option value="">-- Select --</option>
+				@if (sessions != null)
+				{
+					foreach (var s in sessions)
+					{
+						<option value="@s.SessionId" selected="@(ViewBag.SelectedSessionId?.ToString() == s.SessionId.ToString())">
+							@s.SessionName
+						</option>
+					}
+				}
+			</select>
+		</div>
+		<div class="col-md-2">
+			<label>Medium</label>
+			<select name="medium" class="form-control" id="MediumDropdown">
+				<option value="">-- Select Medium --</option>
+				@if (mediums != null)
+				{
+					foreach (var med in mediums)
+					{
+						<option value="@med" selected="@(ViewBag.SelectedMedium == med ? "selected" : null)">
+							@med
+						</option>
+					}
+				}
+			</select>
+		</div>
+		<div class="col-md-2">
+			<label>Class</label>
+			<select name="classId" class="form-control" id="classSelect">
+				<option value="">-- Select --</option>
+				@if (ViewBag.Classes != null)
+				{
+					foreach (var c in ViewBag.Classes as List<SVM.Models.Class>)
+					{
+						<option value="@c.ClassId" selected="@(ViewBag.SelectedClassId?.ToString() == c.ClassId.ToString())">
+							@c.ClassName
+						</option>
+					}
+				}
+			</select>
+		</div>
+		<div class="col-md-2">
+			<label>Section</label>
+			<select name="sectionId" class="form-control" id="sectionSelect">
+				<option value="">-- Select --</option>
+				@if (ViewBag.Sections != null)
+				{
+					foreach (var sec in ViewBag.Sections as List<SVM.Models.Section>)
+					{
+						<option value="@sec.SectionId" selected="@(ViewBag.SelectedSectionId?.ToString() == sec.SectionId.ToString())">
+							@sec.SectionName
+						</option>
+					}
+				}
+			</select>
+		</div>
+		<div class="col-md-2">
+			<label>Date</label>
+			<input type="date" name="date" class="form-control" value="@ViewBag.SelectedDate" />
+		</div>
+		<div class="col-md-2">
+			<label>&nbsp;</label>
+			<button type="submit" class="btn btn-primary form-control">🔍 Show Report</button>
+		</div>
+		<div class="col-md-2">
+			<label>&nbsp;</label>
+			<a href="#" id="downloadBtn" class="btn btn-success form-control">📥 Download Excel</a>
+		</div>
+	</div>
+</form>
+
+<hr />
+
+@if (ViewBag.NoAttendanceMessage != null)
+{
+	<div class="alert alert-warning">
+		@ViewBag.NoAttendanceMessage
+	</div>
+}
+else if (Model != null && Model.Any())
+{
+	<table class="table table-bordered table-striped">
+		<thead class="table-dark">
+			<tr>
+				<th>Student Name</th>
+				<th>Roll No</th>
+				<th>Gender</th>
+				<th>Status</th>
+				<th>Actions</th>
+
+			</tr>
+		</thead>
+		<tbody>
+			@foreach (var item in Model)
+			{
+				<tr>
+					<td>@item.FullName</td>
+					<td>@item.RollNo</td>
+					<td>@item.Gender</td>
+					<td style="color: @(item.Status == "Present" ? "green" : "red")">@item.Status</td>
+					<td>
+						@if (item.AttendanceId > 0)
+						{
+							<a asp-action="Details" asp-route-id="@item.AttendanceId" class="btn btn-info btn-sm">Details</a>
+							<a asp-action="Delete" asp-route-id="@item.AttendanceId" class="btn btn-danger btn-sm">Delete</a>
+						}
+						else
+						{
+							<span class="text-muted">No record</span>
+						}
+					</td>
+				</tr>
+			}
+		</tbody>
+	</table>
+
+	<div class="card mb-4">
+		<div class="card-header bg-info text-white">
+			<strong>Summary</strong>
+		</div>
+		<div class="card-body">
+			<div class="row">
+				<div class="col-md-4">
+					<strong>Overall</strong><br />
+					Present: @totals?.TotalPresent &nbsp;|&nbsp;
+					Absent: @totals?.TotalAbsent
+				</div>
+				<div class="col-md-4">
+					<strong>Girls</strong><br />
+					Present: @totals?.GirlsPresent &nbsp;|&nbsp;
+					Absent: @totals?.GirlsAbsent
+				</div>
+				<div class="col-md-4">
+					<strong>Boys</strong><br />
+					Present: @totals?.BoysPresent &nbsp;|&nbsp;
+					Absent: @totals?.BoysAbsent
+				</div>
+			</div>
+		</div>
+	</div>
+}
+else if (ViewBag.SelectedSessionId != null && ViewBag.SelectedClassId != null && ViewBag.SelectedSectionId != null)
+{
+	<div class="alert alert-warning">⚠ No students found for the selected filters.</div>
+}
+else
+{
+	<div class="alert alert-info">Please select Session, Class, Section and Date to view report.</div>
+}
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	$(function () {
+		function loadClasses() {
+			var sessionId = $('#sessionSelect').val();
+			var medium = $('#MediumDropdown').val();
+			if (sessionId) {
+				$.get('/StudentAttendances/GetClassesBySession', { sessionId: sessionId, medium: medium }, function (data) {
+					var classSelect = $('#classSelect');
+					classSelect.empty().append('<option value="">-- Select Class --</option>');
+					$.each(data, function (i, c) {
+						classSelect.append('<option value="' + c.value + '">' + c.text + '</option>');
+					});
+					var selectedClassId = '@ViewBag.SelectedClassId';
+					if (selectedClassId) {
+						classSelect.val(selectedClassId);
+						loadSections();
+					}
+				});
+			} else {
+				$('#classSelect').empty().append('<option value="">-- Select Class --</option>');
+				$('#sectionSelect').empty().append('<option value="">-- Select Section --</option>');
+			}
+		}
+
+		function loadSections() {
+			var classId = $('#classSelect').val();
+			if (classId) {
+				$.get('/StudentAttendances/GetSectionsByClass', { classId: classId }, function (data) {
+					var sectionSelect = $('#sectionSelect');
+					sectionSelect.empty().append('<option value="">-- Select Section --</option>');
+					$.each(data, function (i, s) {
+						sectionSelect.append('<option value="' + s.value + '">' + s.text + '</option>');
+					});
+					var selectedSectionId = '@ViewBag.SelectedSectionId';
+					if (selectedSectionId) {
+						sectionSelect.val(selectedSectionId);
+					}
+				});
+			} else {
+				$('#sectionSelect').empty().append('<option value="">-- Select Section --</option>');
+			}
+		}
+
+		// Cascade dropdowns on change
+		$('#sessionSelect').change(function () { loadClasses(); });
+		$('#MediumDropdown').change(function () {
+			if ($('#sessionSelect').val()) loadClasses();
+		});
+		$('#classSelect').change(function () { loadSections(); });
+
+		// On page load, if session is selected, load classes & sections
+		var initSession = '@ViewBag.SelectedSessionId';
+		if (initSession) {
+			loadClasses();
+		}
+
+		// ========== DOWNLOAD BUTTON CLICK HANDLER ==========
+		$('#downloadBtn').click(function (e) {
+			e.preventDefault();  // Stop anchor from navigating
+
+			// Get current filter values from the form
+			var sessionId = $('#sessionSelect').val();
+			var medium = $('#MediumDropdown').val();
+			var classId = $('#classSelect').val();
+			var sectionId = $('#sectionSelect').val();
+			var date = $('input[name="date"]').val();
+
+			// Build URL with parameters
+			var url = '/StudentAttendances/ExportToExcel?';
+			if (sessionId) url += 'sessionId=' + sessionId + '&';
+			if (medium) url += 'medium=' + encodeURIComponent(medium) + '&';
+			if (classId) url += 'classId=' + classId + '&';
+			if (sectionId) url += 'sectionId=' + sectionId + '&';
+			if (date) url += 'date=' + date;
+
+			// Redirect to export action
+			window.location.href = url;
+		});
+	});
+</script>
