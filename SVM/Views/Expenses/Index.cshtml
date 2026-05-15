@@ -1,0 +1,183 @@
+﻿@model IEnumerable<SVM.Models.Expense>
+
+@{
+    ViewData["Title"] = "Expenses";
+}
+
+<link rel="stylesheet"
+      href="/css/AdminSide_Css/ExpenseIndex.css"
+      asp-append-version="true" />
+
+<link rel="stylesheet"
+      href="~/css/AdminSide_Css/SearchBar.css"
+      asp-append-version="true" />
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<div class="expense-page">
+
+    <!-- HEADER -->
+    <div class="page-header">
+        <h2>Expense Management</h2>
+    </div>
+
+    <!-- SEARCH BAR -->
+    <div class="top-bar">
+        <div class="left-side">
+            <input type="text"
+                   id="titleSearch"
+                   class="search-box"
+                   placeholder="Search expense..." />
+
+            <select id="paymentFilter" class="search-box">
+                <option value="all">All Payment</option>
+                <option value="Cash">Cash</option>
+                <option value="UPI">UPI</option>
+                <option value="Cheque">Cheque</option>
+                <option value="Bank Transfer">Bank Transfer</option>
+            </select>
+
+            <input type="date" id="expenseDate" class="search-box" />
+
+            <button type="button" class="search-btn" onclick="filterExpense()">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Search
+            </button>
+
+            <button type="button" class="reset-btn" onclick="resetFilter()">
+                Reset
+            </button>
+            <div class="right-side">
+                <a asp-action="ExportExcel" class="excel-btn">
+                    <i class="fa-solid fa-file-excel"></i>
+                </a>
+
+                <a asp-action="Create" class="add-btn">
+                    <i class="fa-solid fa-plus"></i>
+                </a>
+            </div>
+        </div>
+
+        
+    </div>
+
+    <!-- SUCCESS -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="success-box">
+            @TempData["Success"]
+        </div>
+    }
+
+    @if (TempData["Error"] != null)
+    {
+        <div class="error-box">
+            @TempData["Error"]
+        </div>
+    }
+
+    <!-- NO DATA -->
+    <div id="noData" class="no-data">
+        No Data found
+    </div>
+
+    <!-- TABLE -->
+    <div class="table-container">
+        <table>
+            <thead>
+                <tr>
+                    <th>Voucher</th>
+                    <th>Title</th>
+                    <th>Category</th>
+                    <th>Amount</th>
+                    <th>Payment</th>
+                    <th>Paid To</th>
+                    <th>Date</th>
+                    <th>Status</th>
+                    <th>Receipt</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr class="expense-row"
+                        data-payment="@item.PaymentMethod"
+                        data-date="@item.ExpenseDate.ToString("yyyy-MM-dd")">
+                        <td>@item.VoucherNo</td>
+                        <td>@item.Title</td>
+                        <td>@item.Category</td>
+                        <td>₹ @item.Amount</td>
+                        <td>@item.PaymentMethod</td>
+                        <td>@item.PaidTo</td>
+                        <td>@item.ExpenseDate.ToString("dd-MM-yyyy")</td>
+                        <td>
+                            <span class="status-badge">
+                                @item.Status
+                            </span>
+                        </td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(item.ReceiptFile))
+                            {
+                                <a href="@item.ReceiptFile"
+                                   target="_blank"
+                                   class="receipt-btn">
+                                    View
+                                </a>
+                            }
+                            else
+                            {
+                                <span class="no-file">
+                                    No File
+                                </span>
+                            }
+                        </td>
+                        <td class="actions">
+                            <a asp-action="Edit" asp-route-id="@item.ExpenseId" class="edit">Edit</a>
+                            <a asp-action="Print" asp-route-id="@item.ExpenseId" class="print">Print</a>
+                            <a asp-action="Delete" asp-route-id="@item.ExpenseId" class="delete">Delete</a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    function filterExpense() {
+        let title = document.getElementById("titleSearch").value.toLowerCase();
+        let payment = document.getElementById("paymentFilter").value.toLowerCase();
+        let date = document.getElementById("expenseDate").value;
+        let rows = document.querySelectorAll(".expense-row");
+        let visible = 0;
+
+        rows.forEach(r => {
+            let rowText = r.innerText.toLowerCase();
+            let rowPayment = r.dataset.payment.toLowerCase();
+            let rowDate = r.dataset.date;
+
+            let matchTitle = title === "" || rowText.includes(title);
+            let matchPayment = payment === "all" || rowPayment === payment;
+            let matchDate = !date || rowDate === date;
+
+            if (matchTitle && matchPayment && matchDate) {
+                r.style.display = "";
+                visible++;
+            } else {
+                r.style.display = "none";
+            }
+        });
+
+        document.getElementById("noData").style.display = visible === 0 ? "block" : "none";
+    }
+
+    function resetFilter() {
+        document.getElementById("titleSearch").value = "";
+        document.getElementById("paymentFilter").value = "all";
+        document.getElementById("expenseDate").value = "";
+        document.querySelectorAll(".expense-row").forEach(r => r.style.display = "");
+        document.getElementById("noData").style.display = "none";
+    }
+</script>

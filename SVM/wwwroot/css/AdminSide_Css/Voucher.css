@@ -1,0 +1,347 @@
+﻿* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 20px;
+    background: #eef2f7;
+    font-family: 'Segoe UI', Arial, sans-serif;
+}
+
+.voucher-page {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.top-actions {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+
+.back-btn, .print-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.back-btn {
+    background: #e2e8f0;
+    color: #1e293b;
+}
+
+.print-btn {
+    background: #2563eb;
+    color: white;
+}
+
+    .print-btn:hover {
+        background: #1d4ed8;
+    }
+
+.back-btn:hover {
+    background: #cbd5e1;
+}
+
+.voucher-container {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+}
+
+.voucher-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 3px solid #2563eb;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.logo-box img {
+    width: 80px;
+    height: 80px;
+    object-fit: contain;
+}
+
+.school-details {
+    text-align: center;
+    flex: 1;
+}
+
+.school-name {
+    font-size: 24px;
+    color: #1e3a8a;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+.school-details p {
+    margin: 2px 0;
+    font-size: 12px;
+    color: #4b5563;
+}
+
+.voucher-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: bold;
+    margin: 20px 0;
+    padding-bottom: 10px;
+    border-bottom: 2px dashed #cbd5e1;
+    color: #1f2937;
+}
+
+.info-row {
+    display: flex;
+    padding: 10px 0;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+    .info-row .label {
+        width: 130px;
+        font-weight: 600;
+        color: #4b5563;
+    }
+
+    .info-row .value {
+        flex: 1;
+        font-weight: 500;
+        color: #1f2937;
+    }
+
+.section-title {
+    font-size: 18px;
+    font-weight: bold;
+    margin: 20px 0 15px 0;
+    padding-left: 10px;
+    border-left: 4px solid #2563eb;
+    color: #1f2937;
+}
+
+.expense-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+
+    .expense-table th {
+        background: #2563eb;
+        color: white;
+        padding: 12px;
+        text-align: left;
+        font-weight: 600;
+    }
+
+    .expense-table td {
+        padding: 12px;
+        border-bottom: 1px solid #ddd;
+    }
+
+        .expense-table td:last-child {
+            text-align: right;
+        }
+
+    .expense-table tfoot td {
+        background: #eff6ff;
+        padding: 12px;
+        font-weight: bold;
+        border-top: 2px solid #2563eb;
+    }
+
+.amount-box {
+    background: #f0fdf4;
+    margin-left:69%;
+    width:30%;
+    border: 2px solid #22c55e;
+    border-radius: 12px;
+    padding: 20px;
+    margin-top: 20px;
+    text-align: center;
+}
+
+    .amount-box label {
+        font-size: 13px;
+        color: #166534;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: block;
+    }
+
+    .amount-box .amount {
+        font-size: 15px;
+        font-weight: 800;
+        color: #16a34a;
+        margin-top: 8px;
+    }
+
+.amount-in-words {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 8px;
+}
+
+.voucher-footer {
+    margin-top: 30px;
+    padding-top: 20px;
+    border-top: 1px dashed #cbd5e1;
+}
+
+.signature {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 20px;
+}
+
+.signature-box {
+    width: 200px;
+    text-align: center;
+    padding-top: 20px;
+    border-top: 2px solid #1e293b;
+}
+
+.generated-text {
+    text-align: center;
+    font-size: 10px;
+    color: #9ca3af;
+    margin-top: 20px;
+}
+
+/* ================= PRINT CSS ================= */
+@page {
+    size: A4 portrait;
+    margin: 10mm;
+}
+
+@media print {
+    html, body {
+        width: 210mm;
+        height: auto;
+        background: #ffffff !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: visible !important;
+    }
+
+        body * {
+            visibility: hidden;
+        }
+
+    .voucher-container,
+    .voucher-container * {
+        visibility: visible;
+    }
+
+    .voucher-container {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        margin: 0 !important;
+        padding: 15px !important;
+        border: none !important;
+        border-radius: 0 !important;
+        box-shadow: none !important;
+        background: white !important;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .expense-table th {
+        background: #2563eb !important;
+        color: white !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .expense-table th,
+    .expense-table td {
+        border: 1px solid #999 !important;
+        padding: 8px !important;
+    }
+
+    .voucher-header {
+        display: flex !important;
+        align-items: center;
+        gap: 15px;
+    }
+
+    .logo-box img {
+        width: 70px !important;
+        height: 70px !important;
+    }
+
+    .amount-box {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .signature-box {
+        width: 180px;
+    }
+}
+
+/* Mobile Responsive */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    .voucher-container {
+        padding: 15px;
+    }
+
+    .voucher-header {
+        gap: 10px;
+    }
+
+    .logo-box img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .school-name {
+        font-size: 18px;
+    }
+
+    .school-details p {
+        font-size: 10px;
+    }
+
+    .voucher-title {
+        font-size: 16px;
+    }
+
+    .info-row .label {
+        width: 100px;
+    }
+
+    .amount-box .amount {
+        font-size: 22px;
+    }
+
+    .signature-box {
+        width: 130px;
+    }
+
+    .top-actions {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .back-btn, .print-btn {
+        justify-content: center;
+    }
+}

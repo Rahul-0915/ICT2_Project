@@ -1,0 +1,191 @@
+﻿
+
+    
+
+@model SVM.Models.Expense
+
+@{
+    Layout = null;
+    ViewData["Title"] = "Expense Voucher";
+
+    // School Details - Tumhare hisaab se change karo
+    var schoolName = "SHARDA VIDYA MANDIR";
+    var schoolAddress = "Gujarat Housing Board, Pandesara, Surat - 394221";
+    var schoolPhone = "+91 98765 43210";
+    var schoolEmail = "info@shardavidyamandir.edu.in";
+    var logoPath = "/images/SVMGuj_logo.png";  
+}
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Expense Voucher - @Model.VoucherNo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <link rel="stylesheet" href="~/css/AdminSide_Css/ExpenseVoucher.css" asp-append-version="true" />
+    <link rel="stylesheet"
+          href="/css/AdminSide_Css/Voucher.css"
+          asp-append-version="true" />
+</head>
+<body>
+    <div class="voucher-page">
+        <div class="top-actions no-print">
+            <a asp-action="Index" class="back-btn"_self>
+                <i class="fa-solid fa-arrow-left"></i> Back
+            </a>
+            <button type="button" class="print-btn" onclick="printVoucher()">
+                <i class="fa-solid fa-print"></i> Print / Save as PDF
+            </button>
+        </div>
+
+        <div class="voucher-container">
+            <!-- HEADER WITH SCHOOL DETAILS -->
+            <div class="voucher-header">
+                <div class="logo-box">
+                    <img src="@logoPath" alt="School Logo" />
+                </div>
+                <div class="school-details">
+                    <h1 class="school-name">@schoolName</h1>
+                    <p>@schoolAddress</p>
+                    <p> @schoolPhone &nbsp; | &nbsp;  @schoolEmail</p>
+                </div>
+            </div>
+
+            <!-- VOUCHER TITLE -->
+            <div class="voucher-title">
+                EXPENSE VOUCHER
+            </div>
+
+            <!-- INFO SECTION -->
+            <div class="info-section">
+                <div class="info-row">
+                    <span class="label">Voucher No. :</span>
+                    <span class="value">@Model.VoucherNo</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Date :</span>
+                    <span class="value">@Model.ExpenseDate.ToString("dd-MM-yyyy")</span>
+                </div>
+                <div class="info-row">
+                    <span class="label">Status :</span>
+                    <span class="value">
+                        <span style="background: #dbeafe; color: #1d4ed8; padding: 4px 12px; border-radius: 30px; font-size: 12px;">
+                            @Model.Status
+                        </span>
+                    </span>
+                </div>
+            </div>
+
+            <!-- EXPENSE DETAILS TITLE -->
+            <div class="section-title">EXPENSE DETAILS</div>
+
+            <!-- EXPENSE TABLE -->
+            <table class="expense-table">
+                <thead>
+                    <tr>
+                        <th>Particulars</th>
+                        <th>Details</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Title / Description</strong></td>
+                        <td>@Model.Title</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Category</strong></td>
+                        <td>@Model.Category</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Payment Method</strong></td>
+                        <td>@Model.PaymentMethod</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Paid To</strong></td>
+                        <td>@Model.PaidTo</td>
+                    </tr>
+                    @if (!string.IsNullOrEmpty(Model.Description))
+                    {
+                        <tr>
+                            <td><strong>Full Description</strong></td>
+                            <td>@Model.Description</td>
+                        </tr>
+                    }
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td><strong>Total Amount</strong></td>
+                        <td style="text-align: right;"><strong>₹ @Model.Amount.ToString("N2")</strong></td>
+                    </tr>
+                </tfoot>
+            </table>
+
+            <!-- AMOUNT IN WORDS -->
+            <div class="amount-box">
+                <label>Amount in Words</label>
+                <div class="amount">₹ @Model.Amount.ToString("N2")</div>
+                <div class="amount-in-words">
+                    @NumberToWords((long)Model.Amount) Rupees Only
+                </div>
+            </div>
+
+            <!-- FOOTER WITH SIGNATURES -->
+            <div class="voucher-footer">
+                <div class="signature">
+                    <div class="signature-box">
+                        Authorized Signatory
+                    </div>
+                    <div class="signature-box">
+                        Recipient Signature
+                    </div>
+                </div>
+                <div class="generated-text">
+                    Generated on: @DateTime.Now.ToString("dd-MM-yyyy HH:mm:ss")
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function printVoucher() {
+            window.focus();
+            window.print();
+        }
+    </script>
+</body>
+</html>
+
+@functions {
+    // Convert number to words
+    public string NumberToWords(long number)
+    {
+        if (number == 0) return "Zero";
+
+        string[] ones = { "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine" };
+        string[] teens = { "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
+        string[] tens = { "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
+        string[] thousands = { "", "Thousand", "Million", "Billion" };
+
+        string words = "";
+
+        for (int i = 0; number > 0; i++)
+        {
+            if (number % 1000 != 0)
+            {
+                words = ConvertHundreds(number % 1000, ones, teens, tens) + " " + thousands[i] + " " + words;
+            }
+            number /= 1000;
+        }
+
+        return words.Trim();
+
+        string ConvertHundreds(long num, string[] onesArr, string[] teensArr, string[] tensArr)
+        {
+            if (num == 0) return "";
+            if (num < 10) return onesArr[num];
+            if (num < 20) return teensArr[num - 10];
+            if (num < 100) return tensArr[num / 10] + " " + onesArr[num % 10];
+            return onesArr[num / 100] + " Hundred " + ConvertHundreds(num % 100, onesArr, teensArr, tensArr);
+        }
+    }
+}
