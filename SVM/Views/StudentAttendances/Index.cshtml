@@ -1,247 +1,671 @@
 ﻿@model List<SVM.Controllers.StudentAttendancesController.AttendanceReportItem>
 
 @{
-	ViewData["Title"] = "Attendance Report";
-	var sessions = ViewBag.Sessions as List<SVM.Models.Session>;
-	var mediums = ViewBag.Mediums as List<string>;
-	var totals = ViewBag.Totals as SVM.Controllers.StudentAttendancesController.AttendanceTotals;
+    ViewData["Title"] = "Attendance Report";
+
+    var sessions =
+        ViewBag.Sessions as List<SVM.Models.Session>;
+
+    var mediums =
+        ViewBag.Mediums as List<string>;
+
+    var totals =
+        ViewBag.Totals as
+        SVM.Controllers.StudentAttendancesController.AttendanceTotals;
 }
 
-<h2>📋 Attendance Report</h2>
+<link rel="stylesheet"
+      href="~/css/AdminSide_Css/Daily_Attendance.css"
+      asp-append-version="true" />
 
-<form method="get" asp-action="Index" id="reportForm">
-	<div class="row">
-		<div class="col-md-2">
-			<label>Session</label>
-			<select name="sessionId" class="form-control" id="sessionSelect">
-				<option value="">-- Select --</option>
-				@if (sessions != null)
-				{
-					foreach (var s in sessions)
-					{
-						<option value="@s.SessionId" selected="@(ViewBag.SelectedSessionId?.ToString() == s.SessionId.ToString())">
-							@s.SessionName
-						</option>
-					}
-				}
-			</select>
-		</div>
-		<div class="col-md-2">
-			<label>Medium</label>
-			<select name="medium" class="form-control" id="MediumDropdown">
-				<option value="">-- Select Medium --</option>
-				@if (mediums != null)
-				{
-					foreach (var med in mediums)
-					{
-						<option value="@med" selected="@(ViewBag.SelectedMedium == med ? "selected" : null)">
-							@med
-						</option>
-					}
-				}
-			</select>
-		</div>
-		<div class="col-md-2">
-			<label>Class</label>
-			<select name="classId" class="form-control" id="classSelect">
-				<option value="">-- Select --</option>
-				@if (ViewBag.Classes != null)
-				{
-					foreach (var c in ViewBag.Classes as List<SVM.Models.Class>)
-					{
-						<option value="@c.ClassId" selected="@(ViewBag.SelectedClassId?.ToString() == c.ClassId.ToString())">
-							@c.ClassName
-						</option>
-					}
-				}
-			</select>
-		</div>
-		<div class="col-md-2">
-			<label>Section</label>
-			<select name="sectionId" class="form-control" id="sectionSelect">
-				<option value="">-- Select --</option>
-				@if (ViewBag.Sections != null)
-				{
-					foreach (var sec in ViewBag.Sections as List<SVM.Models.Section>)
-					{
-						<option value="@sec.SectionId" selected="@(ViewBag.SelectedSectionId?.ToString() == sec.SectionId.ToString())">
-							@sec.SectionName
-						</option>
-					}
-				}
-			</select>
-		</div>
-		<div class="col-md-2">
-			<label>Date</label>
-			<input type="date" name="date" class="form-control" value="@ViewBag.SelectedDate" />
-		</div>
-		<div class="col-md-2">
-			<label>&nbsp;</label>
-			<button type="submit" class="btn btn-primary form-control">🔍 Show Report</button>
-		</div>
-		<div class="col-md-2">
-			<label>&nbsp;</label>
-			<a href="#" id="downloadBtn" class="btn btn-success form-control">📥 Download Excel</a>
-		</div>
-	</div>
-</form>
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
-<hr />
+<div class="attendance-page">
 
-@if (ViewBag.NoAttendanceMessage != null)
-{
-	<div class="alert alert-warning">
-		@ViewBag.NoAttendanceMessage
-	</div>
-}
-else if (Model != null && Model.Any())
-{
-	<table class="table table-bordered table-striped">
-		<thead class="table-dark">
-			<tr>
-				<th>Student Name</th>
-				<th>Roll No</th>
-				<th>Gender</th>
-				<th>Status</th>
-				<th>Actions</th>
+    <div class="attendance-card">
 
-			</tr>
-		</thead>
-		<tbody>
-			@foreach (var item in Model)
-			{
-				<tr>
-					<td>@item.FullName</td>
-					<td>@item.RollNo</td>
-					<td>@item.Gender</td>
-					<td style="color: @(item.Status == "Present" ? "green" : "red")">@item.Status</td>
-					<td>
-						@if (item.AttendanceId > 0)
-						{
-							<a asp-action="Details" asp-route-id="@item.AttendanceId" class="btn btn-info btn-sm">Details</a>
-							<a asp-action="Delete" asp-route-id="@item.AttendanceId" class="btn btn-danger btn-sm">Delete</a>
-						}
-						else
-						{
-							<span class="text-muted">No record</span>
-						}
-					</td>
-				</tr>
-			}
-		</tbody>
-	</table>
+        <!-- HEADER -->
 
-	<div class="card mb-4">
-		<div class="card-header bg-info text-white">
-			<strong>Summary</strong>
-		</div>
-		<div class="card-body">
-			<div class="row">
-				<div class="col-md-4">
-					<strong>Overall</strong><br />
-					Present: @totals?.TotalPresent &nbsp;|&nbsp;
-					Absent: @totals?.TotalAbsent
-				</div>
-				<div class="col-md-4">
-					<strong>Girls</strong><br />
-					Present: @totals?.GirlsPresent &nbsp;|&nbsp;
-					Absent: @totals?.GirlsAbsent
-				</div>
-				<div class="col-md-4">
-					<strong>Boys</strong><br />
-					Present: @totals?.BoysPresent &nbsp;|&nbsp;
-					Absent: @totals?.BoysAbsent
-				</div>
-			</div>
-		</div>
-	</div>
-}
-else if (ViewBag.SelectedSessionId != null && ViewBag.SelectedClassId != null && ViewBag.SelectedSectionId != null)
-{
-	<div class="alert alert-warning">⚠ No students found for the selected filters.</div>
-}
-else
-{
-	<div class="alert alert-info">Please select Session, Class, Section and Date to view report.</div>
-}
+        <div class="attendance-header">
+
+            <h2>
+
+                
+
+                Daily Attendance Report
+
+            </h2>
+
+        </div>
+
+        <!-- FILTER -->
+
+        <div class="filter-card">
+
+            <form method="get"
+                  asp-action="Index"
+                  id="reportForm">
+
+                <div class="filter-grid">
+
+                    <div class="filter-group">
+
+                        <label>Session</label>
+
+                        <select name="sessionId"
+                                class="filter-control"
+                                id="sessionSelect">
+
+                            <option value="">
+                                -- Select --
+                            </option>
+
+                            @if (sessions != null)
+                            {
+                                foreach (var s in sessions)
+                                {
+                                    <option value="@s.SessionId"
+                                            selected="@(ViewBag.SelectedSessionId?.ToString() == s.SessionId.ToString())">
+
+                                        @s.SessionName
+
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                    </div>
+
+                    <div class="filter-group">
+
+                        <label>Medium</label>
+
+                        <select name="medium"
+                                class="filter-control"
+                                id="MediumDropdown">
+
+                            <option value="">
+                                -- Select Medium --
+                            </option>
+
+                            @if (mediums != null)
+                            {
+                                foreach (var med in mediums)
+                                {
+                                    <option value="@med"
+                                            selected="@(ViewBag.SelectedMedium == med ? "selected" : null)">
+
+                                        @med
+
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                    </div>
+
+                    <div class="filter-group">
+
+                        <label>Class</label>
+
+                        <select name="classId"
+                                class="filter-control"
+                                id="classSelect">
+
+                            <option value="">
+                                -- Select --
+                            </option>
+
+                            @if (ViewBag.Classes != null)
+                            {
+                                foreach (var c in ViewBag.Classes as List<SVM.Models.Class>)
+                                {
+                                    <option value="@c.ClassId"
+                                            selected="@(ViewBag.SelectedClassId?.ToString() == c.ClassId.ToString())">
+
+                                        @c.ClassName
+
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                    </div>
+
+                    <div class="filter-group">
+
+                        <label>Section</label>
+
+                        <select name="sectionId"
+                                class="filter-control"
+                                id="sectionSelect">
+
+                            <option value="">
+                                -- Select --
+                            </option>
+
+                            @if (ViewBag.Sections != null)
+                            {
+                                foreach (var sec in ViewBag.Sections as List<SVM.Models.Section>)
+                                {
+                                    <option value="@sec.SectionId"
+                                            selected="@(ViewBag.SelectedSectionId?.ToString() == sec.SectionId.ToString())">
+
+                                        @sec.SectionName
+
+                                    </option>
+                                }
+                            }
+
+                        </select>
+
+                    </div>
+
+                    <div class="filter-group">
+
+                        <label>Date</label>
+
+                        <input type="date"
+                               name="date"
+                               class="filter-control"
+                               value="@ViewBag.SelectedDate" />
+
+                    </div>
+
+                    <div class="filter-group btn-group-custom">
+
+                        <button type="submit"
+                                class="search-btn-main">
+
+                            <i class="fas fa-search"></i>
+
+                            Show Report
+
+                        </button>
+
+                    </div>
+
+                </div>
+
+            </form>
+
+        </div>
+
+        @if (ViewBag.SelectedSessionId == null ||
+        ViewBag.SelectedClassId == null ||
+        ViewBag.SelectedSectionId == null)
+        {
+            <div class="info-message">
+
+                <h5>
+                    Please select Session, Class and Section
+                </h5>
+
+            </div>
+        }
+        else if (ViewBag.NoAttendanceMessage != null)
+        {
+            <div class="info-message error-message">
+
+                <h5>
+                    @ViewBag.NoAttendanceMessage
+                </h5>
+
+            </div>
+        }
+        else if (Model != null && Model.Any())
+        {
+
+            <!-- SEARCH BAR -->
+
+            <div class="student-search-bar">
+
+                <input type="text"
+                       id="rollSearch"
+                       class="student-search-box"
+                       placeholder="Search Roll No..." />
+
+                <input type="text"
+                       id="nameSearch"
+                       class="student-search-box"
+                       placeholder="Search Student..." />
+
+                <button type="button"
+                        class="search-btn-small"
+                        onclick="filterStudents()">
+
+                    <i class="fas fa-search"></i>
+
+                    Search
+
+                </button>
+
+                <button type="button"
+                        class="reset-btn-small"
+                        onclick="resetStudentFilter()">
+
+                    <i class="fas fa-rotate-left"></i>
+
+                    Reset
+
+                </button>
+
+                <a href="#"
+                   id="downloadBtn"
+                   class="export-btn-small">
+
+                    <i class="fas fa-file-excel"></i>
+
+                    Export
+
+                </a>
+
+                <span id="filterCount"
+                      class="filter-count">
+                </span>
+
+            </div>
+
+            <!-- SUMMARY + TABLE -->
+
+            <div class="report-layout">
+
+                <!-- SUMMARY -->
+
+                <div class="attendance-summary-register">
+
+                    <div class="summary-title">
+
+                        Attendance Summary
+
+                    </div>
+
+                    <div class="summary-row">
+
+                        <span>Total Students</span>
+
+                        <strong>@Model.Count</strong>
+
+                    </div>
+
+                    <div class="summary-row">
+
+                        <span>Total Present</span>
+
+                        <strong class="green-text">
+                            @totals?.TotalPresent
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-row">
+
+                        <span>Total Absent</span>
+
+                        <strong class="red-text">
+                            @totals?.TotalAbsent
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-row">
+
+                        <span>Girls Present</span>
+
+                        <strong>
+                            @totals?.GirlsPresent
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-row">
+
+                        <span>Girls Absent</span>
+
+                        <strong>
+                            @totals?.GirlsAbsent
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-row">
+
+                        <span>Boys Present</span>
+
+                        <strong>
+                            @totals?.BoysPresent
+                        </strong>
+
+                    </div>
+
+                    <div class="summary-row">
+
+                        <span>Boys Absent</span>
+
+                        <strong>
+                            @totals?.BoysAbsent
+                        </strong>
+
+                    </div>
+
+                </div>
+
+                <!-- TABLE -->
+
+                <div class="table-wrapper">
+
+                    <table class="attendance-table">
+
+                        <thead>
+
+                            <tr>
+
+                                <th class="roll-col">
+                                    Roll No
+                                </th>
+
+                                <th class="name-col">
+                                    Student Name
+                                </th>
+
+                                <th>
+                                    Gender
+                                </th>
+
+                                <th>
+                                    Status
+                                </th>
+
+                                @* <th>
+                                    Actions
+                                </th> *@
+
+                            </tr>
+
+                        </thead>
+
+                        <tbody>
+
+                            @foreach (var item in Model)
+                            {
+                                <tr class="student-row"
+                                    data-roll="@item.RollNo"
+                                    data-name="@item.FullName.ToLower()">
+
+                                    <td class="roll-col">
+
+                                        @item.RollNo
+
+                                    </td>
+
+                                    <td class="name-col">
+
+                                        @item.FullName
+
+                                    </td>
+
+                                    <td>
+
+                                        @item.Gender
+
+                                    </td>
+
+                                    <td>
+
+                                        <span class="status-badge @(item.Status == "Present"
+                                    ? "present-badge"
+                                    : "absent-badge")">
+
+                                            @item.Status
+
+                                        </span>
+
+                                    </td>
+
+                                    @* <td class="action-cell">
+
+                                        @if (item.AttendanceId > 0)
+                                        {
+                                            <a asp-action="Details"
+                                               asp-route-id="@item.AttendanceId"
+                                               class="action-btn details-btn">
+
+                                                <i class="fas fa-eye"></i>
+
+                                            </a>
+
+                                            <a asp-action="Delete"
+                                               asp-route-id="@item.AttendanceId"
+                                               class="action-btn delete-btn">
+
+                                                <i class="fas fa-trash"></i>
+
+                                            </a>
+                                        }
+
+                                    </td> *@
+
+                                </tr>
+                            }
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            </div>
+
+        }
+
+    </div>
+
+</div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
 <script>
-	$(function () {
-		function loadClasses() {
-			var sessionId = $('#sessionSelect').val();
-			var medium = $('#MediumDropdown').val();
-			if (sessionId) {
-				$.get('/StudentAttendances/GetClassesBySession', { sessionId: sessionId, medium: medium }, function (data) {
-					var classSelect = $('#classSelect');
-					classSelect.empty().append('<option value="">-- Select Class --</option>');
-					$.each(data, function (i, c) {
-						classSelect.append('<option value="' + c.value + '">' + c.text + '</option>');
-					});
-					var selectedClassId = '@ViewBag.SelectedClassId';
-					if (selectedClassId) {
-						classSelect.val(selectedClassId);
-						loadSections();
-					}
-				});
-			} else {
-				$('#classSelect').empty().append('<option value="">-- Select Class --</option>');
-				$('#sectionSelect').empty().append('<option value="">-- Select Section --</option>');
-			}
-		}
 
-		function loadSections() {
-			var classId = $('#classSelect').val();
-			if (classId) {
-				$.get('/StudentAttendances/GetSectionsByClass', { classId: classId }, function (data) {
-					var sectionSelect = $('#sectionSelect');
-					sectionSelect.empty().append('<option value="">-- Select Section --</option>');
-					$.each(data, function (i, s) {
-						sectionSelect.append('<option value="' + s.value + '">' + s.text + '</option>');
-					});
-					var selectedSectionId = '@ViewBag.SelectedSectionId';
-					if (selectedSectionId) {
-						sectionSelect.val(selectedSectionId);
-					}
-				});
-			} else {
-				$('#sectionSelect').empty().append('<option value="">-- Select Section --</option>');
-			}
-		}
+    $(function () {
 
-		// Cascade dropdowns on change
-		$('#sessionSelect').change(function () { loadClasses(); });
-		$('#MediumDropdown').change(function () {
-			if ($('#sessionSelect').val()) loadClasses();
-		});
-		$('#classSelect').change(function () { loadSections(); });
+        function loadClasses() {
 
-		// On page load, if session is selected, load classes & sections
-		var initSession = '@ViewBag.SelectedSessionId';
-		if (initSession) {
-			loadClasses();
-		}
+            var sessionId =
+                $('#sessionSelect').val();
 
-		// ========== DOWNLOAD BUTTON CLICK HANDLER ==========
-		$('#downloadBtn').click(function (e) {
-			e.preventDefault();  // Stop anchor from navigating
+            var medium =
+                $('#MediumDropdown').val();
 
-			// Get current filter values from the form
-			var sessionId = $('#sessionSelect').val();
-			var medium = $('#MediumDropdown').val();
-			var classId = $('#classSelect').val();
-			var sectionId = $('#sectionSelect').val();
-			var date = $('input[name="date"]').val();
+            if (sessionId) {
 
-			// Build URL with parameters
-			var url = '/StudentAttendances/ExportToExcel?';
-			if (sessionId) url += 'sessionId=' + sessionId + '&';
-			if (medium) url += 'medium=' + encodeURIComponent(medium) + '&';
-			if (classId) url += 'classId=' + classId + '&';
-			if (sectionId) url += 'sectionId=' + sectionId + '&';
-			if (date) url += 'date=' + date;
+                $.get('/StudentAttendances/GetClassesBySession',
 
-			// Redirect to export action
-			window.location.href = url;
-		});
-	});
+                    {
+                        sessionId: sessionId,
+                        medium: medium
+                    },
+
+                    function (data) {
+
+                        var classSelect =
+                            $('#classSelect');
+
+                        classSelect.empty().append(
+                            '<option value="">-- Select Class --</option>'
+                        );
+
+                        $.each(data, function (i, c) {
+
+                            classSelect.append(
+                                '<option value="' + c.value + '">' + c.text + '</option>'
+                            );
+
+                        });
+
+                    });
+            }
+        }
+
+        function loadSections() {
+
+            var classId =
+                $('#classSelect').val();
+
+            if (classId) {
+
+                $.get('/StudentAttendances/GetSectionsByClass',
+
+                    {
+                        classId: classId
+                    },
+
+                    function (data) {
+
+                        var sectionSelect =
+                            $('#sectionSelect');
+
+                        sectionSelect.empty().append(
+                            '<option value="">-- Select Section --</option>'
+                        );
+
+                        $.each(data, function (i, s) {
+
+                            sectionSelect.append(
+                                '<option value="' + s.value + '">' + s.text + '</option>'
+                            );
+
+                        });
+
+                    });
+            }
+        }
+
+        $('#sessionSelect').change(function () {
+
+            loadClasses();
+
+        });
+
+        $('#MediumDropdown').change(function () {
+
+            loadClasses();
+
+        });
+
+        $('#classSelect').change(function () {
+
+            loadSections();
+
+        });
+
+        $('#downloadBtn').click(function (e) {
+
+            e.preventDefault();
+
+            var sessionId =
+                $('#sessionSelect').val();
+
+            var medium =
+                $('#MediumDropdown').val();
+
+            var classId =
+                $('#classSelect').val();
+
+            var sectionId =
+                $('#sectionSelect').val();
+
+            var date =
+                $('input[name="date"]').val();
+
+            var url =
+                '/StudentAttendances/ExportToExcel?';
+
+            if (sessionId)
+                url += 'sessionId=' + sessionId + '&';
+
+            if (medium)
+                url += 'medium=' + medium + '&';
+
+            if (classId)
+                url += 'classId=' + classId + '&';
+
+            if (sectionId)
+                url += 'sectionId=' + sectionId + '&';
+
+            if (date)
+                url += 'date=' + date;
+
+            window.location.href = url;
+
+        });
+
+    });
+
+    // SEARCH
+
+    function filterStudents() {
+
+        var rollSearch =
+            $('#rollSearch').val().toLowerCase();
+
+        var nameSearch =
+            $('#nameSearch').val().toLowerCase();
+
+        var rows =
+            $('.student-row');
+
+        var visibleCount = 0;
+
+        rows.each(function () {
+
+            var roll =
+                $(this).data('roll')
+                    .toString()
+                    .toLowerCase();
+
+            var name =
+                $(this).data('name');
+
+            var matchRoll =
+                roll.includes(rollSearch);
+
+            var matchName =
+                name.includes(nameSearch);
+
+            if (matchRoll && matchName) {
+
+                $(this).show();
+
+                visibleCount++;
+
+            }
+            else {
+
+                $(this).hide();
+
+            }
+
+        });
+
+        $('#filterCount').text(
+            visibleCount + ' students shown'
+        );
+    }
+
+    function resetStudentFilter() {
+
+        $('#rollSearch').val('');
+
+        $('#nameSearch').val('');
+
+        $('.student-row').show();
+
+        $('#filterCount').text('');
+
+    }
+
 </script>

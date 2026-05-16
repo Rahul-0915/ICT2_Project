@@ -311,5 +311,100 @@ namespace SVM_API.Controllers
             public int StudentId { get; set; }
             public string Status { get; set; } = "";
         }
+
+        [HttpGet("monthly-report")]
+        public async Task<ActionResult<object>> GetMonthlyReport(
+    [FromQuery] int sessionId,
+    [FromQuery] string? medium,
+    [FromQuery] int? classId,
+    [FromQuery] int? sectionId,
+    [FromQuery] int year,
+    [FromQuery] int month)
+        {
+            // 1. Students
+            var studentsQuery = _context.Students.Where(s => s.SessionId == sessionId);
+            if (!string.IsNullOrEmpty(medium))
+                studentsQuery = studentsQuery.Where(s => s.Class != null && s.Class.Medium == medium);
+            if (classId.HasValue) studentsQuery = studentsQuery.Where(s => s.ClassId == classId.Value);
+            if (sectionId.HasValue) studentsQuery = studentsQuery.Where(s => s.SectionId == sectionId.Value);
+
+            var students = await studentsQuery
+                .Select(s => new { s.StudentId, s.RollNo, s.FirstName, s.LastName, s.Gender })
+                .OrderBy(s => s.RollNo)
+                .ToListAsync();
+
+            if (!students.Any())
+                return Ok(new { Students = new List<object>(), Dates = new List<DateTime>(), TotalDays = 0 });
+
+            // 2. Attendance for the month
+            var startDate = new DateTime(year, month, 1);
+            var endDate = startDate.AddMonths(1).AddDays(-1);
+
+            var attendances = await _context.StudentAttendances
+                .Where(a => a.SessionId == sessionId
+                    && a.AttendanceDate >= startDate
+                    && a.AttendanceDate <= endDate)
+                .ToListAsync();
+
+            // 3. Filter attendance by class/section if needed
+            if (classId.HasValue)
+                attendances = attendances.Where(a => a.ClassId == classId.Value).ToList();
+            if (sectionId.HasValue)
+                attendances = attendances.Where(a => a.SectionId == sectionId.Value).ToList();
+
+            // 4. Get distinct dates
+            var dates = attendances.Select(a => a.AttendanceDate.Date).Distinct().OrderBy(d => d).ToList();
+
+            // If no attendance, return empty
+            if (!dates.Any())
+                return Ok(new { Students = new List<object>(), Dates = new List<DateTime>(), TotalDays = 0 });
+
+            // 5. Create dictionary
+            var dict = attendances
+                .GroupBy(a => a.StudentId)
+                .ToDictionary(g => g.Key, g => g.ToDictionary(a => a.AttendanceDate.Date, a => a.Status));
+
+            // 6. Build report with correct counts
+            var report = new List<object>();
+
+            foreach (var s in students)
+            {
+                var dailyStatus = new List<object>();
+                int presentCount = 0;
+
+                foreach (var d in dates)
+                {
+                    string status;
+                    if (dict.ContainsKey(s.StudentId) && dict[s.StudentId].ContainsKey(d))
+                    {
+                        status = dict[s.StudentId][d] == "Present" ? "P" : "A";
+                        if (status == "P") presentCount++;
+                    }
+                    else
+                    {
+                        status = "A";
+                    }
+                    dailyStatus.Add(new { Date = d, Status = status });
+                }
+
+                int totalDays = dates.Count;
+                int absentCount = totalDays - presentCount;
+                decimal percentage = totalDays > 0 ? Math.Round((decimal)presentCount / totalDays * 100, 2) : 0;
+
+                report.Add(new
+                {
+                    RollNo = s.RollNo ?? 0,
+                    StudentName = s.FirstName + " " + s.LastName,
+                    Gender = s.Gender ?? "N/A",
+                    DailyStatus = dailyStatus,
+                    Present = presentCount,
+                    Absent = absentCount,
+                    TotalDays = totalDays,
+                    Percentage = percentage
+                });
+            }
+
+            return Ok(new { Students = report, Dates = dates, TotalDays = dates.Count });
+        }
     }
 }
