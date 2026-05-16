@@ -433,34 +433,100 @@ namespace SVM.Controllers
                 TempData["Error"] = "No attendance data available to export.";
                 return RedirectToAction(nameof(Index), new { sessionId, medium, classId, sectionId, date });
             }
+            // ================= GET CLASS / SECTION NAME =================
 
+            string className = "";
+            string sectionName = "";
+
+            // CLASS NAME
+            if (classId.HasValue)
+            {
+                var classResponse =
+                    await _client.GetAsync($"Classes/{classId}");
+
+                if (classResponse.IsSuccessStatusCode)
+                {
+                    var classJson =
+                        await classResponse.Content.ReadAsStringAsync();
+
+                    var classData =
+                        JsonSerializer.Deserialize<Class>(
+                            classJson,
+                            new JsonSerializerOptions
+                            {
+                                PropertyNameCaseInsensitive = true
+                            });
+
+                    className = classData?.ClassName ?? "";
+                }
+            }
+
+            // SECTION NAME
+            if (sectionId.HasValue)
+            {
+                var sectionResponse =
+                    await _client.GetAsync($"Sections/{sectionId}");
+
+                if (sectionResponse.IsSuccessStatusCode)
+                {
+                    var sectionJson =
+                        await sectionResponse.Content.ReadAsStringAsync();
+
+                    var sectionData =
+                        JsonSerializer.Deserialize<Section>(
+                            sectionJson,
+                            new JsonSerializerOptions
+                            {
+                                PropertyNameCaseInsensitive = true
+                            });
+
+                    sectionName = sectionData?.SectionName ?? "";
+                }
+            }
             // Build CSV content
+            // ================= CSV =================
+
             var csv = new StringBuilder();
 
-            // Add headers
+            // TITLE
+            csv.AppendLine("DAILY ATTENDANCE REPORT");
+            csv.AppendLine();
+
+            // FILTER DETAILS
+            csv.AppendLine($"Medium,{medium}");
+            csv.AppendLine($"Class,{className}");
+            csv.AppendLine($"Section,{sectionName}");
+            csv.AppendLine($"Date,{selectedDate:dd-MMM-yyyy}");
+            csv.AppendLine();
+
+            // SUMMARY
+            csv.AppendLine($"Total Students,{reportItems.Count}");
+            csv.AppendLine($"Total Present,{totals?.TotalPresent}");
+            csv.AppendLine($"Total Absent,{totals?.TotalAbsent}");
+            csv.AppendLine($"Girls Present,{totals?.GirlsPresent}");
+            csv.AppendLine($"Girls Absent,{totals?.GirlsAbsent}");
+            csv.AppendLine($"Boys Present,{totals?.BoysPresent}");
+            csv.AppendLine($"Boys Absent,{totals?.BoysAbsent}");
+
+            csv.AppendLine();
+
+            // TABLE HEADER
             csv.AppendLine("Student Name,Roll No,Gender,Status");
 
-            // Add rows
+            // TABLE ROWS
             foreach (var item in reportItems)
             {
-                csv.AppendLine($"\"{item.FullName}\",{item.RollNo},\"{item.Gender}\",{item.Status}");
+                csv.AppendLine(
+                    $"\"{item.FullName}\",{item.RollNo},\"{item.Gender}\",{item.Status}"
+                );
             }
 
-            // Add totals summary (optional)
-            if (totals != null)
-            {
-                csv.AppendLine();
-                csv.AppendLine($"Total Present,{totals.TotalPresent}");
-                csv.AppendLine($"Total Absent,{totals.TotalAbsent}");
-                csv.AppendLine($"Girls Present,{totals.GirlsPresent}");
-                csv.AppendLine($"Girls Absent,{totals.GirlsAbsent}");
-                csv.AppendLine($"Boys Present,{totals.BoysPresent}");
-                csv.AppendLine($"Boys Absent,{totals.BoysAbsent}");
-            }
+            // FILE
+            string fileName =
+                $"Attendance_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
 
-            // Generate file name
-            string fileName = $"Attendance_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
-            byte[] fileBytes = Encoding.UTF8.GetBytes(csv.ToString());
+            byte[] fileBytes =
+                Encoding.UTF8.GetBytes(csv.ToString());
 
             return File(fileBytes, "text/csv", fileName);
         }
@@ -511,6 +577,161 @@ namespace SVM.Controllers
             public int GirlsAbsent { get; set; }
             public int BoysPresent { get; set; }
             public int BoysAbsent { get; set; }
+        }
+        // ============================= MONTHLY REPORT (MONTH WISE) =============================
+        public async Task<IActionResult> MonthlyReport(int? sessionId, string? medium, int? classId, int? sectionId, int? year, int? month)
+        {
+            // Set default values
+            int reportYear = year ?? DateTime.Now.Year;
+            int reportMonth = month ?? DateTime.Now.Month;
+
+            // Load dropdowns (same as Index)
+            await LoadSessionsDropdown();
+            await LoadMediumsDropdown();
+
+            if (sessionId.HasValue && sessionId > 0)
+            {
+                await LoadClassesDropdownBySession(sessionId.Value, medium);
+                if (classId.HasValue && classId > 0)
+                    await LoadSectionsDropdownByClass(classId.Value);
+            }
+
+            ViewBag.SelectedSessionId = sessionId;
+            ViewBag.SelectedMedium = medium;
+            ViewBag.SelectedClassId = classId;
+            ViewBag.SelectedSectionId = sectionId;
+            ViewBag.SelectedYear = reportYear;
+            ViewBag.SelectedMonth = reportMonth;
+
+            // Years dropdown
+            var years = Enumerable.Range(DateTime.Now.Year - 5, 11).ToList();
+            ViewBag.Years = new SelectList(years, reportYear);
+
+            // Months dropdown
+            var months = new List<SelectListItem>();
+            for (int i = 1; i <= 12; i++)
+            {
+                months.Add(new SelectListItem { Value = i.ToString(), Text = new DateTime(2000, i, 1).ToString("MMMM"), Selected = i == reportMonth });
+            }
+            ViewBag.Months = months;
+
+            // Check if filters are selected
+            if (sessionId.HasValue && sessionId > 0 && classId.HasValue && classId > 0 && sectionId.HasValue)
+            {
+                // Check if future month
+                DateTime selectedDate = new DateTime(reportYear, reportMonth, 1);
+                if (selectedDate > DateTime.Now)
+                {
+                    ViewBag.Message = $"⚠️ {selectedDate:MMMM yyyy} has not started yet.";
+                    return View(new List<MonthlyReportStudent>());
+                }
+
+                string url = $"StudentAttendances/monthly-report?sessionId={sessionId}&classId={classId}&sectionId={sectionId}&year={reportYear}&month={reportMonth}";
+                if (!string.IsNullOrEmpty(medium))
+                    url += $"&medium={Uri.EscapeDataString(medium)}";
+
+                var response = await _client.GetAsync(url);
+                if (response.IsSuccessStatusCode)
+                {
+                    var json = await response.Content.ReadAsStringAsync();
+                    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var result = JsonSerializer.Deserialize<MonthlyReportResponse>(json, options);
+
+                    if (result != null && result.Students != null && result.Students.Any())
+                    {
+                        ViewBag.Dates = result.Dates;
+                        ViewBag.TotalDays = result.TotalDays;
+                        return View(result.Students);
+                    }
+                    else
+                    {
+                        ViewBag.Message = "No attendance records found for the selected month.";
+                    }
+                }
+                else
+                {
+                    ViewBag.Message = "Error fetching data.";
+                }
+            }
+
+            return View(new List<MonthlyReportStudent>());
+        }
+
+        // ============================= EXPORT MONTHLY REPORT TO EXCEL =============================
+        public async Task<IActionResult> ExportMonthlyToExcel(int? sessionId, string? medium, int? classId, int? sectionId, int year, int month)
+        {
+            string url = $"StudentAttendances/monthly-report?sessionId={sessionId}&classId={classId}&sectionId={sectionId}&year={year}&month={month}";
+            if (!string.IsNullOrEmpty(medium))
+                url += $"&medium={Uri.EscapeDataString(medium)}";
+
+            var response = await _client.GetAsync(url);
+            if (!response.IsSuccessStatusCode)
+            {
+                TempData["Error"] = "Failed to fetch data.";
+                return RedirectToAction(nameof(MonthlyReport), new { sessionId, medium, classId, sectionId, year, month });
+            }
+
+            var json = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var result = JsonSerializer.Deserialize<MonthlyReportResponse>(json, options);
+
+            if (result == null || result.Students == null || !result.Students.Any())
+            {
+                TempData["Error"] = "No data to export.";
+                return RedirectToAction(nameof(MonthlyReport), new { sessionId, medium, classId, sectionId, year, month });
+            }
+
+            // Build CSV
+            var csv = new StringBuilder();
+
+            // Header
+            var headers = new List<string> { "Roll No", "Student Name" };
+            headers.AddRange(result.Dates.Select(d => d.ToString("dd/MM")));
+            headers.AddRange(new[] { "Total Days", "Present", "Absent", "Percentage" });
+            csv.AppendLine(string.Join(",", headers.Select(h => $"\"{h}\"")));
+
+            // Rows
+            foreach (var student in result.Students)
+            {
+                var row = new List<string> { student.RollNo.ToString(), $"\"{student.StudentName}\"" };
+                row.AddRange(student.DailyStatus.Select(s => s.Status));
+                row.Add(result.TotalDays.ToString());
+                row.Add(student.Present.ToString());
+                row.Add(student.Absent.ToString());
+                row.Add($"{student.Percentage}%");
+                csv.AppendLine(string.Join(",", row));
+            }
+
+            // Class info
+            string fileName = $"MonthlyAttendance_{year}_{month}_{DateTime.Now:yyyyMMdd_HHmmss}.csv";
+            byte[] fileBytes = Encoding.UTF8.GetBytes(csv.ToString());
+
+            return File(fileBytes, "text/csv", fileName);
+        }
+
+        // ============================= RESPONSE CLASSES =============================
+        public class MonthlyReportResponse
+        {
+            public List<MonthlyReportStudent> Students { get; set; }
+            public List<DateTime> Dates { get; set; }
+            public int TotalDays { get; set; }
+        }
+
+        public class MonthlyReportStudent
+        {
+            public int RollNo { get; set; }
+            public string StudentName { get; set; }
+            public string Gender { get; set; }
+            public List<DailyStatusItem> DailyStatus { get; set; }
+            public int Present { get; set; }
+            public int Absent { get; set; }
+            public decimal Percentage { get; set; }
+        }
+
+        public class DailyStatusItem
+        {
+            public DateTime Date { get; set; }
+            public string Status { get; set; }
         }
     }
 }

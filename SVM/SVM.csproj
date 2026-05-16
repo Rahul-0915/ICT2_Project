@@ -10,6 +10,7 @@
 
 	<ItemGroup>
 	  <_ContentIncludedByDefault Remove="wwwroot\css\AdminSide_Css\AddAdmin.css" />
+	  <_ContentIncludedByDefault Remove="wwwroot\css\AdminSide_Css\Daily_Attendance.css" />
 	  <_ContentIncludedByDefault Remove="wwwroot\css\AdminSide_Css\Fees_Structure_CreateForm.css" />
 	  <_ContentIncludedByDefault Remove="wwwroot\css\AdminSide_Css\StaffDisplay.css" />
 	  <_ContentIncludedByDefault Remove="wwwroot\css\AdminSide_Css\StudentsDetail.css" />

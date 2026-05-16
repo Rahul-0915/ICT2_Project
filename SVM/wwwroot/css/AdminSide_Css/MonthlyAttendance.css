@@ -1,0 +1,383 @@
+﻿/* PAGE */
+
+body {
+    margin: 0;
+    padding: 16px;
+    background-color: #efeae2;
+    background-image: url('/images/AdminDashboardBGImg.png');
+    background-repeat: repeat;
+    font-family: "Segoe UI", sans-serif;
+}
+
+/* MAIN */
+
+.monthly-attendance-container {
+    width: 100%;
+}
+
+/* CARD */
+
+.report-card {
+    background: white;
+
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+
+/* HEADER */
+
+.card-header-custom {
+    padding: 16px 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.card-header-custom h3 {
+    margin: 0;
+    font-size: 20px;
+    color: #111827;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+/* BODY */
+
+.card-body-custom {
+    padding: 16px;
+}
+
+/* FILTER */
+
+.filter-card {
+    margin-bottom: 16px;
+}
+
+.row.g-3 {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: end;
+}
+
+.col-md-1,
+.col-md-2 {
+    flex: 1;
+    min-width: 160px;
+}
+
+/* LABEL */
+
+.filter-label {
+    display: block;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #374151;
+}
+
+/* INPUT */
+
+.filter-select {
+    width: 100%;
+    height: 40px;
+    padding: 0 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    background: #fff;
+    font-size: 14px;
+}
+
+.filter-select:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+/* SEARCH BTN */
+
+.search-btn-custom {
+    width: 100%;
+    height: 40px;
+    border: none;
+    border-radius: 10px;
+    background: #2563eb;
+    color: white;
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+}
+
+/* MESSAGE */
+
+.info-message {
+    padding: 18px;
+    border-radius: 10px;
+    background: #f9fafb;
+    text-align: center;
+    color: #6b7280;
+    border: 1px dashed #d1d5db;
+}
+
+.info-message i {
+    font-size: 26px;
+    margin-bottom: 8px;
+    display: block;
+}
+
+.error-message {
+    background: #ffe5e5;
+    border: 1px solid #ffb3b3;
+    color: #d8000c;
+}
+
+    .error-message h5,
+    .error-message i {
+        color: #d8000c;
+    }
+/* SUMMARY */
+
+.summary-card {
+    display: grid;
+    grid-template-columns: repeat(auto-fit,minmax(180px,1fr));
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.summary-item {
+    background: white;
+    border: 1px solid #e5e7eb;
+    border-radius: 10px;
+    padding: 14px;
+    text-align: center;
+}
+
+.summary-item h6 {
+    margin: 0;
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.summary-item h4 {
+    margin: 8px 0 0;
+    font-size: 22px;
+}
+
+/* SEARCH BAR */
+
+.student-search-bar {
+    
+    width:70%;
+    margin:auto;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 16px;
+}
+
+.student-search-box {
+    height: 38px;
+    padding: 0 12px;
+    border: 1px solid #d1d5db;
+    border-radius: 10px;
+    min-width: 180px;
+    font-size: 13px;
+}
+
+.student-search-box:focus {
+    outline: none;
+    border-color: #2563eb;
+}
+
+/* BUTTON */
+
+.search-btn-small,
+.reset-btn-small,
+.fullscreen-btn,
+.export-btn-small {
+    height: 38px;
+    padding: 0 14px;
+    border: none;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    text-decoration: none;
+}
+
+/* SEARCH */
+
+.search-btn-small {
+    background: #2563eb;
+    color: white;
+}
+
+/* RESET */
+
+.reset-btn-small {
+    background: #6b7280;
+    color: white;
+}
+
+/* FULL SCREEN */
+
+.fullscreen-btn {
+    background: #111827;
+    color: white;
+}
+
+/* EXPORT */
+
+.export-btn-small {
+    background: #10b981;
+    color: white;
+}
+
+/* TABLE */
+
+.table-container {
+    background: white;
+    border-radius: 5px;
+    overflow: auto;
+    border: 1px solid #e5e7eb;
+}
+
+/* FULL SCREEN */
+
+.table-container:fullscreen {
+    background: white;
+    padding: 16px;
+}
+
+/* TABLE */
+
+.attendance-table {
+    border-collapse: collapse;
+    width: max-content;
+    min-width: 100%;
+}
+
+/* HEADER */
+
+.attendance-table thead {
+    background: #f3f4f6;
+}
+
+/* COMMON */
+
+.attendance-table th,
+.attendance-table td {
+    border: 1px solid #e5e7eb;
+    text-align: center;
+    padding: 5px 4px;
+    font-size: 12px;
+    white-space: nowrap;
+}
+
+/* ROLL */
+
+.roll-col {
+    width: 45px;
+    min-width: 45px;
+    max-width: 45px;
+    font-weight: 600;
+}
+
+/* NAME */
+
+.name-col {
+    width: auto;
+    min-width: unset;
+    max-width: unset;
+    padding: 0 10px !important;
+    text-align: left !important;
+    font-weight: 600;
+}
+
+/* DATE */
+
+.date-col {
+    width: 34px;
+    min-width: 34px;
+    max-width: 34px;
+    padding: 4px 0 !important;
+}
+
+/* DATE VERTICAL */
+
+.vertical-date {
+    writing-mode: vertical-rl;
+    transform: rotate(180deg);
+    font-size: 10px;
+    line-height: 1;
+    padding: 2px 0;
+}
+
+/* SMALL COL */
+
+.small-col {
+    width: 40px;
+    min-width: 40px;
+    max-width: 40px;
+    font-weight: 700;
+}
+
+/* PRESENT */
+
+.present-cell {
+    background: #dcfce7;
+    color: #166534;
+    font-weight: bold;
+}
+
+/* ABSENT */
+
+.absent-cell {
+    background: #fee2e2;
+    color: #991b1b;
+    font-weight: bold;
+}
+
+/* HOVER */
+
+.attendance-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+/* FOOTER */
+
+.table-footer {
+    background: #f3f4f6;
+    font-weight: 700;
+}
+
+/* FILTER COUNT */
+
+.filter-count {
+    margin-left: auto;
+    font-size: 13px;
+    font-weight: 600;
+    color: #6b7280;
+}
+
+/* MOBILE */
+
+@media(max-width:768px) {
+
+    .student-search-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .student-search-box {
+        width: 100%;
+    }
+
+    .filter-count {
+        margin-left: 0;
+    }
+
+}
