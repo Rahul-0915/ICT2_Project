@@ -35,9 +35,9 @@ public partial class SvmContext : DbContext
 
     public virtual DbSet<Student> Students { get; set; }
 
-	public DbSet<Expense> Expenses { get; set; }
+    public DbSet<Expense> Expenses { get; set; }
 
-	public virtual DbSet<StudentAttendance> StudentAttendances { get; set; }
+    public virtual DbSet<StudentAttendance> StudentAttendances { get; set; }
 
     public virtual DbSet<Subject> Subjects { get; set; }
 
@@ -47,10 +47,10 @@ public partial class SvmContext : DbContext
     public DbSet<Updates> Updates { get; set; }
     public virtual DbSet<Timetable> Timetables { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    //=> optionsBuilder.UseSqlServer("Data Source=LAPTOP-4UGH4KDC\\SQLEXPRESS;Initial Catalog=SVM;Integrated Security=True;Encrypt=False");
+    => optionsBuilder.UseSqlServer("Data Source=LAPTOP-4UGH4KDC\\SQLEXPRESS;Initial Catalog=SVM;Integrated Security=True;Encrypt=False");
 
 
-    => optionsBuilder.UseSqlServer("Data Source=LAPTOP-0UK50KGM\\SQLEXPRESS;Initial Catalog=SVM;Integrated Security=True;Encrypt=False");
+    //=> optionsBuilder.UseSqlServer("Data Source=LAPTOP-0UK50KGM\\SQLEXPRESS;Initial Catalog=SVM;Integrated Security=True;Encrypt=False");
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -149,7 +149,7 @@ public partial class SvmContext : DbContext
             entity.Property(e => e.TotalAmount).HasColumnName("total_amount");
             entity.Property(e => e.SessionId).HasColumnName("session_id");
 
-          
+
             // Relationship with Class
             entity.HasOne(e => e.Class)
                 .WithMany(c => c.FeeStructures)
