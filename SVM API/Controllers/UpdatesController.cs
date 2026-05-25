@@ -81,5 +81,15 @@ namespace SVM_API.Controllers
         {
             return _context.Updates.Any(e => e.Id == id);
         }
+        // GET: api/Updates/active
+        [HttpGet("active")]
+        public async Task<ActionResult<IEnumerable<Updates>>> GetActiveUpdates()
+        {
+            var activeUpdates = await _context.Updates
+                .Where(u => u.Status == 1)   // Status 1 = Active
+                .OrderByDescending(u => u.CreatedAt)
+                .ToListAsync();
+            return activeUpdates;
+        }
     }
 }

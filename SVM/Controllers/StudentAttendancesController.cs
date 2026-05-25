@@ -23,7 +23,7 @@ namespace SVM.Controllers
         }
 
         // ============================= INDEX (Report with filters) =============================
-        // ============================= INDEX (Report with filters) =============================
+     
         public async Task<IActionResult> Index(int? sessionId, string? medium, int? classId, int? sectionId, string? date)
         {
             // Parse date safely

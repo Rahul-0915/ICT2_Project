@@ -1,6 +1,7 @@
 
 using Microsoft.AspNetCore.Http.Json;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 using SVM_API.Models;
 using SVM_API.Services;
 
@@ -11,6 +12,7 @@ namespace SVM_API
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+
             builder.Services.AddDbContext<SvmContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStrings")));
             // Add services to the container.
             builder.Services.AddHttpClient();
@@ -27,6 +29,7 @@ namespace SVM_API
             builder.Services.AddScoped<IEmailService, EmailService>();
             var app = builder.Build();
 
+
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
@@ -37,8 +40,16 @@ namespace SVM_API
             //app.UseHttpsRedirection();
 
             app.UseAuthorization();
-            app.UseStaticFiles();   // This enables serving files from wwwroot
-            
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                FileProvider = new PhysicalFileProvider(
+          @"C:\Users\PRAKRUTI\source\repos\ICT2_Project\SVM\wwwroot\images\updates"),
+                RequestPath = "/images/updates"
+            });
+            app.UseStaticFiles(new StaticFileOptions
+            {
+                ServeUnknownFileTypes = true
+            });
             app.MapControllers();
 
             app.Run();
