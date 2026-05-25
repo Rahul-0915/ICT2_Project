@@ -20,24 +20,25 @@ namespace SVM_API.Controllers
             _context = context;
         }
 
-        // GET: api/Staffs
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Staff>>> GetStaff()
         {
-            return await _context.Staff.ToListAsync();
+            return await _context.Staff
+                .Include(s => s.User)  
+                .ToListAsync();
         }
 
-        // GET: api/Staffs/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Staff>> GetStaff(int id)
         {
-            var staff = await _context.Staff.FindAsync(id);
+            var staff = await _context.Staff
+                .Include(s => s.User)   
+                .FirstOrDefaultAsync(s => s.StaffId == id);
 
             if (staff == null)
             {
                 return NotFound();
             }
-
             return staff;
         }
 
