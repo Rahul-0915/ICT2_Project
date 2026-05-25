@@ -62,54 +62,42 @@ namespace SVM.Controllers
             };
 
             // GET CLASS DATA
-
             if (classResponse.IsSuccessStatusCode)
             {
                 var classData = await classResponse.Content.ReadAsStringAsync();
-
                 classList = JsonSerializer.Deserialize<List<Class>>(classData, option);
             }
 
             // GET SECTION DATA
-
             List<Section> sections = new();
-
             if (sectionResponse.IsSuccessStatusCode)
             {
                 var sectionData = await sectionResponse.Content.ReadAsStringAsync();
-
                 sections = JsonSerializer.Deserialize<List<Section>>(sectionData, option);
             }
 
             // GET STUDENT DATA
-
             List<Student> students = new();
-
             if (studentResponse.IsSuccessStatusCode)
             {
                 var studentData = await studentResponse.Content.ReadAsStringAsync();
-
                 students = JsonSerializer.Deserialize<List<Student>>(studentData, option);
             }
 
             // MANUAL BINDING
-
             foreach (var cls in classList)
             {
                 // CLASS SECTIONS
-
                 cls.Sections = sections
                     .Where(s => s.ClassId == cls.ClassId)
                     .ToList();
 
                 // CLASS STUDENTS
-
                 cls.Students = students
                     .Where(s => s.ClassId == cls.ClassId)
                     .ToList();
 
                 // SECTION STUDENTS
-
                 foreach (var sec in cls.Sections)
                 {
                     sec.Students = students
@@ -118,9 +106,17 @@ namespace SVM.Controllers
                 }
             }
 
+            // ✅ LOAD ALL SESSIONS FOR THE FILTER DROPDOWN
+            var sessionResponse = await _client.GetAsync("Sessions");
+            if (sessionResponse.IsSuccessStatusCode)
+            {
+                var sessionData = await sessionResponse.Content.ReadAsStringAsync();
+                var allSessions = JsonSerializer.Deserialize<List<Session>>(sessionData, option);
+                ViewBag.AllSessions = allSessions;
+            }
+
             return View(classList);
         }
-
         // GET: Classes/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -147,18 +143,15 @@ namespace SVM.Controllers
             return View();
         }
 
-        // POST: Classes/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ClassId,ClassName,Medium,SessionId")] Class classData)
         {
-            // ✅ Duplicate check before saving
-            if (await IsClassDuplicate(classData.ClassName, classData.Medium))
+            // ✅ Duplicate check with SessionId
+            if (await IsClassDuplicate(classData.ClassName, classData.Medium, classData.SessionId))
             {
-                ModelState.AddModelError("ClassName", $"Class '{classData.ClassName}' with Medium '{classData.Medium}' already exists!");
-                ModelState.AddModelError("Medium", "This combination already exists.");
+                ModelState.AddModelError("ClassName", $"Class '{classData.ClassName}' with Medium '{classData.Medium}' already exists in this session!");
+                ModelState.AddModelError("Medium", "This combination already exists in this session.");
                 await LoadSessions();
                 LoadMediums();
                 return View(classData);
@@ -171,11 +164,10 @@ namespace SVM.Controllers
                 {
                     return RedirectToAction(nameof(Index));
                 }
-                // Check if API returned duplicate error
-                if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
                 {
-                    var errorData = await response.Content.ReadAsStringAsync();
-                    ModelState.AddModelError("", "Duplicate class detected!");
+                    var error = await response.Content.ReadFromJsonAsync<Dictionary<string, string>>();
+                    ModelState.AddModelError("", error?["message"] ?? "Duplicate class detected!");
                 }
                 else
                 {
@@ -186,7 +178,6 @@ namespace SVM.Controllers
             LoadMediums();
             return View(classData);
         }
-
         // GET: Classes/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -207,22 +198,17 @@ namespace SVM.Controllers
         }
 
         // POST: Classes/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, [Bind("ClassId,ClassName,Medium,SessionId")] Class classData)
         {
-            if (id != classData.ClassId)
-            {
-                return NotFound();
-            }
+            if (id != classData.ClassId) return NotFound();
 
-            // ✅ Duplicate check while editing (excluding current class)
-            if (await IsClassDuplicate(classData.ClassName, classData.Medium, id))
+            // ✅ Duplicate check with SessionId (excluding current class)
+            if (await IsClassDuplicate(classData.ClassName, classData.Medium, classData.SessionId, id))
             {
-                ModelState.AddModelError("ClassName", $"Class '{classData.ClassName}' with Medium '{classData.Medium}' already exists!");
-                ModelState.AddModelError("Medium", "This combination already exists.");
+                ModelState.AddModelError("ClassName", $"Class '{classData.ClassName}' with Medium '{classData.Medium}' already exists in this session!");
+                ModelState.AddModelError("Medium", "This combination already exists in this session.");
                 await LoadSessions();
                 LoadMediums();
                 return View(classData);
@@ -300,8 +286,11 @@ namespace SVM.Controllers
             };
             ViewBag.MediumList = mediums;
         }
-        private async Task<bool> IsClassDuplicate(string className, string medium, int? excludeId = null)
+        private async Task<bool> IsClassDuplicate(string className, string medium, int? sessionId, int? excludeId = null)
         {
+            // If no session is selected, duplicate doesn't make sense
+            if (sessionId == null) return false;
+
             var response = await _client.GetAsync("Classes");
             if (response.IsSuccessStatusCode)
             {
@@ -312,6 +301,7 @@ namespace SVM.Controllers
                 return classes.Any(c =>
                     c.ClassName == className &&
                     c.Medium == medium &&
+                    c.SessionId == sessionId.Value &&   // Now safe because we checked null
                     (excludeId == null || c.ClassId != excludeId)
                 );
             }

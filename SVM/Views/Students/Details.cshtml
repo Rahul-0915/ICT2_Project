@@ -30,18 +30,19 @@
 <div class="details-page">
 
     <!-- TOP BUTTONS -->
-    <div class="top-actions no-print">
-
-        <a asp-action="Index" class="back-btn">
-            ← Back
-        </a>
-
-        <button onclick="printPage()" class="print-btn">
-            🖨 Print Form
-        </button>
-
-    </div>
-
+   <div class="top-actions no-print">
+    <a asp-action="Index"
+       asp-route-sessionId="@ViewBag.BackSessionId"
+       asp-route-medium="@ViewBag.BackMedium"
+       asp-route-classId="@ViewBag.BackClassId"
+       asp-route-sectionId="@ViewBag.BackSectionId"
+       class="back-btn">
+        ← Back
+    </a>
+    <button onclick="printPage()" class="print-btn">
+        🖨 Print Form
+    </button>
+</div>
     <!-- MAIN FORM -->
     <div class="admission-form" id="printArea">
 

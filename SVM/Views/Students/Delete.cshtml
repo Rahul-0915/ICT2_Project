@@ -159,9 +159,22 @@
 		</dd>
 	</dl>
 
-	<form asp-action="Delete">
-		<input type="hidden" asp-for="StudentId" />
-		<input type="submit" value="Delete" class="btn btn-danger" /> |
-		<a asp-action="Index">Back to List</a>
-	</form>
+<form asp-action="Delete">
+    <input type="hidden" asp-for="StudentId" />
+    
+    @* Pass the filter values as hidden fields so they go back to the DeleteConfirmed action *@
+    <input type="hidden" name="sessionId" value="@ViewBag.BackSessionId" />
+    <input type="hidden" name="medium" value="@ViewBag.BackMedium" />
+    <input type="hidden" name="classId" value="@ViewBag.BackClassId" />
+    <input type="hidden" name="sectionId" value="@ViewBag.BackSectionId" />
+    
+    <input type="submit" value="Delete" class="btn btn-danger" /> |
+    <a asp-action="Index"
+       asp-route-sessionId="@ViewBag.BackSessionId"
+       asp-route-medium="@ViewBag.BackMedium"
+       asp-route-classId="@ViewBag.BackClassId"
+       asp-route-sectionId="@ViewBag.BackSectionId">
+        Back to List
+    </a>
+</form>
 </div>
