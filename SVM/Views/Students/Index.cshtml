@@ -365,554 +365,415 @@
     </div>
 
 </div>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
-
     let tableMode = false;
 
     $(document).ready(function () {
-
         $("#actionBar").hide();
         $("#tableWrapper").hide();
 
-        $("#mediumFilter").change(function () {
+        // ========== SESSION CHANGE - RESET EVERYTHING ==========
+        $("#sessionFilter").change(function () {
+            let sessionId = $(this).val();
+            
+            // Reset all dependent dropdowns
+            $("#mediumFilter").val("");
+            $("#classFilter").html('<option value="">Select Class</option>');
+            $("#sectionFilter").html('<option value="">Select Section</option>');
+            
+            // Hide results
+            $("#actionBar").hide();
+            $("#resultTitle").html("");
+            $("#noData").show().css("color", "").html("Select filters and search students");
+            
+            // Hide all cards
+            $(".student-card").each(function() {
+                $(this).hide();
+            });
+            $("#tableBody").html("");
+        });
 
+        // ========== MEDIUM CHANGE - LOAD CLASSES (NO SEARCH) ==========
+        $("#mediumFilter").change(function () {
             let medium = $(this).val();
             let sessionId = $("#sessionFilter").val();
 
             if (sessionId == "") {
-
                 alert("Please select session first");
-
                 $("#mediumFilter").val("");
-
                 return;
             }
 
+            // Reset Class and Section when Medium changes
             $("#classFilter").html('<option value="">Select Class</option>');
             $("#sectionFilter").html('<option value="">Select Section</option>');
+            
+            // Hide results
+            $("#actionBar").hide();
+            $("#resultTitle").html("");
+            $("#noData").show().css("color", "").html("Select filters and search students");
+            
+            // Hide all cards
+            $(".student-card").each(function() {
+                $(this).hide();
+            });
+            $("#tableBody").html("");
 
             if (medium != "") {
-
                 $.ajax({
-
                     url: '@Url.Action("GetClassesByMedium", "Students")',
-
                     type: 'GET',
-
-                    data: {
-                        medium: medium,
-                        sessionId: sessionId
-                    },
-
+                    data: { medium: medium, sessionId: sessionId },
                     success: function (data) {
-
                         $.each(data, function (i, item) {
-
-                            $("#classFilter").append(
-
-                                `<option value="${item.value}">
-                                                ${item.text}
-                                            </option>`
-
-                            );
-
+                            $("#classFilter").append(`<option value="${item.value}">${item.text}</option>`);
                         });
-
                     }
-
                 });
-
             }
-
         });
 
+        // ========== CLASS CHANGE - LOAD SECTIONS (NO SEARCH) ==========
         $("#classFilter").change(function () {
-
             let classId = $(this).val();
-
+            let sessionId = $("#sessionFilter").val();
+            let medium = $("#mediumFilter").val();
+            
+            // Reset Section when Class changes
             $("#sectionFilter").html('<option value="">Select Section</option>');
-
+            
+            // Hide results
+            $("#actionBar").hide();
+            $("#resultTitle").html("");
+            $("#noData").show().css("color", "").html("Select filters and search students");
+            
+            // Hide all cards
+            $(".student-card").each(function() {
+                $(this).hide();
+            });
+            $("#tableBody").html("");
+            
             if (classId != "") {
-
                 $.ajax({
-
                     url: '@Url.Action("GetSectionsByClass", "Students")',
-
                     type: 'GET',
-
                     data: { classId: classId },
-
                     success: function (data) {
-
                         $.each(data, function (i, item) {
-
-                            $("#sectionFilter").append(
-
-                                `<option value="${item.value}">
-                                                ${item.text}
-                                            </option>`
-
-                            );
-
+                            $("#sectionFilter").append(`<option value="${item.value}">${item.text}</option>`);
                         });
-
                     }
-
                 });
-
             }
-
         });
 
+        // ========== PRE-SELECT FILTERS FROM ViewBag (only when coming back from Edit/Delete/Details) ==========
+        var selectedSessionId = '@ViewBag.SelectedSessionId';
+        var selectedMedium = '@ViewBag.SelectedMedium';
+        var selectedClassId = '@ViewBag.SelectedClassId';
+        var selectedSectionId = '@ViewBag.SelectedSectionId';
+
+        if (selectedSessionId && selectedSessionId != "") {
+            $('#sessionFilter').val(selectedSessionId);
+        }
+
+        if (selectedMedium && selectedMedium != "") {
+            $('#mediumFilter').val(selectedMedium);
+            loadClassesAfterPreSelect();
+        }
+
+        function loadClassesAfterPreSelect() {
+            var sessionId = $('#sessionFilter').val();
+            var medium = $('#mediumFilter').val();
+            if (sessionId && medium) {
+                $.ajax({
+                    url: '@Url.Action("GetClassesByMedium", "Students")',
+                    type: 'GET',
+                    data: { medium: medium, sessionId: sessionId },
+                    success: function (data) {
+                        var classSelect = $('#classFilter');
+                        classSelect.empty();
+                        classSelect.append('<option value="">Select Class</option>');
+                        $.each(data, function (i, item) {
+                            classSelect.append($('<option></option>').val(item.value).text(item.text));
+                        });
+                        
+                        if (selectedClassId && selectedClassId != "") {
+                            classSelect.val(selectedClassId);
+                            loadSectionsAfterPreSelect();
+                        }
+                    }
+                });
+            }
+        }
+
+        function loadSectionsAfterPreSelect() {
+            var classId = $('#classFilter').val();
+            if (classId) {
+                $.ajax({
+                    url: '@Url.Action("GetSectionsByClass", "Students")',
+                    type: 'GET',
+                    data: { classId: classId },
+                    success: function (data) {
+                        var sectionSelect = $('#sectionFilter');
+                        sectionSelect.empty();
+                        sectionSelect.append('<option value="">Select Section</option>');
+                        $.each(data, function (i, item) {
+                            sectionSelect.append($('<option></option>').val(item.value).text(item.text));
+                        });
+                        
+                        if (selectedSectionId && selectedSectionId != "") {
+                            sectionSelect.val(selectedSectionId);
+                        }
+                        
+                        // Auto search only when coming back from Edit/Delete/Details
+                        if (selectedSessionId && selectedMedium && selectedClassId && selectedSectionId) {
+                            searchStudents();
+                        }
+                    }
+                });
+            }
+        }
     });
 
+    // ========== SEARCH STUDENTS FUNCTION (Only called on Search button click) ==========
     function searchStudents() {
-
-        let session =
-            $("#sessionFilter").val();
-
-        let medium =
-            $("#mediumFilter").val();
-
-        let classId =
-            $("#classFilter").val();
-
-        let sectionId =
-            $("#sectionFilter").val();
+        let session = $("#sessionFilter").val();
+        let medium = $("#mediumFilter").val();
+        let classId = $("#classFilter").val();
+        let sectionId = $("#sectionFilter").val();
 
         if (!session || !medium || !classId || !sectionId) {
-
             alert("Please select all filters");
-
             return;
         }
 
-        let cards =
-            document.querySelectorAll(".student-card");
-
+        let cards = document.querySelectorAll(".student-card");
         let visible = 0;
 
         cards.forEach(card => {
-
-            let match =
-                card.dataset.session == session &&
-                card.dataset.medium == medium &&
-                card.dataset.class == classId &&
-                card.dataset.section == sectionId;
+            let match = card.dataset.session == session &&
+                        card.dataset.medium == medium &&
+                        card.dataset.class == classId &&
+                        card.dataset.section == sectionId;
 
             if (match) {
-
                 card.style.display = "flex";
-
                 visible++;
-
             } else {
-
                 card.style.display = "none";
-
             }
-
         });
 
         if (visible > 0) {
-
             $("#actionBar").show();
-
             $("#noData").hide();
-
             $("#noData").css("color", "");
-
-            let classText =
-                $("#classFilter option:selected").text();
-
-            let sectionText =
-                $("#sectionFilter option:selected").text();
-
-            let mediumText =
-                medium + " Medium";
-
-            $("#resultTitle").html(
-
-                `${mediumText} | ${classText} | Section ${sectionText}`
-
-            );
-
+            
+            let classText = $("#classFilter option:selected").text();
+            let sectionText = $("#sectionFilter option:selected").text();
+            let mediumText = medium + " Medium";
+            
+            $("#resultTitle").html(`${mediumText} | ${classText} | Section ${sectionText}`);
             buildTable();
-
-        }
-        else {
-
+        } else {
             $("#actionBar").hide();
-
             $("#resultTitle").html("");
-
-            $("#noData")
-                .show()
-                .css("color", "red")
-                .html("No Students Data Available");
-
+            $("#noData").show().css("color", "red").html("No Students Data Available");
             $("#tableBody").html("");
-
         }
-
     }
 
+    // ========== FILTER CURRENT DATA (Search within results) ==========
     function filterCurrentData() {
-
-        let value =
-            $("#studentSearch").val().toLowerCase();
-
-        let session =
-            $("#sessionFilter").val();
-
-        let medium =
-            $("#mediumFilter").val();
-
-        let classId =
-            $("#classFilter").val();
-
-        let sectionId =
-            $("#sectionFilter").val();
-
-        let cards =
-            document.querySelectorAll(".student-card");
-
+        let value = $("#studentSearch").val().toLowerCase();
+        let session = $("#sessionFilter").val();
+        let medium = $("#mediumFilter").val();
+        let classId = $("#classFilter").val();
+        let sectionId = $("#sectionFilter").val();
+        let cards = document.querySelectorAll(".student-card");
         let visible = 0;
 
         cards.forEach(card => {
-
-            // First filter by selected dropdowns
-            let matchFilter =
-                card.dataset.session == session &&
-                card.dataset.medium == medium &&
-                card.dataset.class == classId &&
-                card.dataset.section == sectionId;
+            let matchFilter = card.dataset.session == session &&
+                              card.dataset.medium == medium &&
+                              card.dataset.class == classId &&
+                              card.dataset.section == sectionId;
 
             if (matchFilter) {
-
-                let name =
-                    card.dataset.name.toLowerCase();
-
-                let roll =
-                    card.dataset.roll.toLowerCase();
-
-                // Then search by name/roll
+                let name = card.dataset.name.toLowerCase();
+                let roll = card.dataset.roll.toLowerCase();
+                
                 if (name.includes(value) || roll.includes(value)) {
-
                     card.style.display = "flex";
-
                     visible++;
-
                 } else {
-
                     card.style.display = "none";
-
                 }
-
             } else {
-
                 card.style.display = "none";
-
             }
-
         });
-
         buildTable();
-
     }
 
+    // ========== TOGGLE VIEW (Card/Table) ==========
     function toggleView() {
-
         tableMode = !tableMode;
-
         if (tableMode) {
-
             $("#cardContainer").hide();
             $("#tableWrapper").show();
-
             $("#toggleViewBtn").text("Card View");
-
-        }
-        else {
-
+        } else {
             $("#cardContainer").show();
             $("#tableWrapper").hide();
-
             $("#toggleViewBtn").text("Table View");
-
         }
-
     }
 
-
-
+    // ========== BUILD TABLE FROM VISIBLE CARDS ==========
     function buildTable() {
-
         let html = "";
-
         $(".student-card").each(function () {
-
             if ($(this).css("display") != "none") {
-
-                // DATA
-                let id =
-                    $(this).data("id");
-
-                let name =
-                    $(this).data("name");
-
-                let roll =
-                    $(this).data("roll");
-
-                let cls =
-                    $(this).find(".detail-row p").eq(0).text();
-
-                let sec =
-                    $(this).find(".detail-row p").eq(1).text();
-
-                let gr =
-                    $(this).find(".detail-row p").eq(3).text();
-
-                let phone =
-                    $(this).find(".detail-row p").eq(5).text();
-
-                let photo =
-                    $(this).find(".student-photo").attr("src");
+                let id = $(this).data("id");
+                let name = $(this).data("name");
+                let roll = $(this).data("roll");
+                let cls = $(this).find(".detail-row p").eq(0).text();
+                let sec = $(this).find(".detail-row p").eq(1).text();
+                let gr = $(this).find(".detail-row p").eq(3).text();
+                let phone = $(this).find(".detail-row p").eq(5).text();
+                let photo = $(this).find(".student-photo").attr("src");
 
                 html += `
-
-                        <tr>
-
-                            <td>${roll}</td>
-
-                            <td>
-                                <img src="${photo}"
-                                     class="table-photo">
-                            </td>
-
-                            <td>${name}</td>
-
-                            <td>${gr}</td>
-
-                            <td>${phone}</td>
-
-                            <td>${cls}</td>
-
-                            <td>${sec}</td>
-
-                            <td class="table-actions">
-
-                                <a href="/Students/Edit/${id}">
-                                    Edit
-                                </a>
-
-                                <a href="/Students/Details/${id}">
-                                    View
-                                </a>
-
-                                <a href="/Students/Delete/${id}">
-                                    Delete
-                                </a>
-
-                            </td>
-
-                        </tr>
-
-                    `;
-
+                    <tr>
+                        <td>${roll}</td>
+                        <td><img src="${photo}" class="table-photo"></td>
+                        <td>${name}</td>
+                        <td>${gr}</td>
+                        <td>${phone}</td>
+                        <td>${cls}</td>
+                        <td>${sec}</td>
+                        <td class="table-actions">
+                            <a href="/Students/Edit/${id}">Edit</a>
+                            <a href="/Students/Details/${id}">View</a>
+                            <a href="/Students/Delete/${id}">Delete</a>
+                        </td>
+                    </tr>
+                `;
             }
-
         });
-
         $("#tableBody").html(html);
-
     }
+
+    // ========== DOWNLOAD PDF ==========
     async function downloadPDF() {
-
         await document.fonts.ready;
-
-        let cards = [...document.querySelectorAll(".student-card")]
-            .filter(x => x.style.display != "none");
-
+        let cards = [...document.querySelectorAll(".student-card")].filter(x => x.style.display != "none");
         if (cards.length == 0) {
-
             alert("No cards found");
             return;
         }
-
-        // MAIN PDF AREA
+        
         let printArea = document.createElement("div");
-
         printArea.style.width = "100%";
         printArea.style.display = "grid";
-
-        // 2 CARDS PER ROW
         printArea.style.gridTemplateColumns = "repeat(2, 1fr)";
-
-        // VERY SMALL GAP
         printArea.style.columnGap = "2px";
         printArea.style.rowGap = "2px";
-
         printArea.style.padding = "2px";
         printArea.style.background = "white";
 
         cards.forEach(card => {
-
             let clone = card.cloneNode(true);
-
             clone.style.display = "flex";
-
-            // CARD SIZE
             clone.style.width = "370px";
             clone.style.minHeight = "215px";
-
             clone.style.margin = "0 auto";
-
             clone.style.borderRadius = "10px";
             clone.style.border = "1px solid #ddd";
-
             clone.style.boxShadow = "none";
             clone.style.overflow = "hidden";
-
-            // HEADER
+            
             let top = clone.querySelector(".card-top");
-
             top.style.padding = "7px";
             top.style.gap = "7px";
-
-            // LOGO
+            
             let logo = clone.querySelector(".school-logo");
-
             logo.style.width = "38px";
             logo.style.height = "38px";
-
-            // SCHOOL NAME
+            
             let schoolName = clone.querySelector(".school-name");
-
             schoolName.style.fontSize = "14px";
             schoolName.style.fontWeight = "800";
             schoolName.style.lineHeight = "1.1";
-
-            // IMPORTANT FOR GUJARATI
-            schoolName.style.fontFamily =
-                "'Noto Sans Gujarati','Arial Unicode MS',sans-serif";
-
-            // TAG
+            schoolName.style.fontFamily = "'Noto Sans Gujarati','Arial Unicode MS',sans-serif";
+            
             let tag = clone.querySelector(".school-tag");
-
             tag.style.fontSize = "8px";
-
-            // BODY
+            
             let body = clone.querySelector(".card-body");
-
             body.style.padding = "8px";
             body.style.gap = "8px";
-
-            // PHOTO
+            
             let photo = clone.querySelector(".student-photo");
-
             photo.style.width = "75px";
             photo.style.height = "90px";
-
-            // PHOTO BOX
+            
             let photoBox = clone.querySelector(".student-photo-box");
-
             photoBox.style.width = "75px";
             photoBox.style.minWidth = "75px";
-
-            // NAME
+            
             let studentName = clone.querySelector(".student-details h2");
-
             studentName.style.fontSize = "14px";
             studentName.style.marginBottom = "5px";
-
-            // DETAILS
+            
             clone.querySelectorAll(".detail-row").forEach(row => {
-
                 row.style.marginBottom = "2px";
-
                 let span = row.querySelector("span");
                 let p = row.querySelector("p");
-
                 span.style.width = "48px";
                 span.style.fontSize = "8px";
-
                 p.style.fontSize = "9px";
             });
-
-            // ADDRESS
+            
             let addressSpan = clone.querySelector(".address-row span");
             let addressP = clone.querySelector(".address-row p");
-
             addressSpan.style.fontSize = "8px";
-
             addressP.style.fontSize = "7px";
             addressP.style.lineHeight = "1.1";
-
-            // FOOTER
+            
             let footer = clone.querySelector(".card-footer");
-
             footer.style.fontSize = "6px";
             footer.style.padding = "4px 6px";
-
+            
             printArea.appendChild(clone);
-
         });
 
         html2pdf().set({
-
             margin: 2,
-
             filename: 'Student-ID-Cards.pdf',
-
-            image: {
-                type: 'jpeg',
-                quality: 1
-            },
-
-            html2canvas: {
-
-                scale: 4,
-                useCORS: true,
-                letterRendering: true
-
-            },
-
-            jsPDF: {
-
-                unit: 'mm',
-                format: 'a4',
-
-                // PORTRAIT
-                orientation: 'portrait'
-            }
-
+            image: { type: 'jpeg', quality: 1 },
+            html2canvas: { scale: 4, useCORS: true, letterRendering: true },
+            jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
         }).from(printArea).save();
     }
 
+    // ========== DOWNLOAD EXCEL ==========
     function downloadExcel() {
         let rows = [];
-
-        // Get filter values for heading
         let mediumText = $("#mediumFilter option:selected").val() || "";
         let classText = $("#classFilter option:selected").text() || "";
         let sectionText = $("#sectionFilter option:selected").text() || "";
 
-        // Add Main Heading
         rows.push([`${mediumText} Medium | ${classText} | Section ${sectionText}`]);
-        rows.push([]); // Empty row
-
-        // Add Column Headers
+        rows.push([]);
         rows.push(["Roll No", "Student Name", "Class", "Section", "GR No", "Phone", "DOB", "Address"]);
 
-        // Add Student Data
         $(".student-card").each(function () {
             if ($(this).css("display") != "none") {
                 let roll = $(this).data("roll");
@@ -923,38 +784,22 @@
                 let phone = $(this).find(".detail-row p").eq(5).text();
                 let dob = $(this).find(".detail-row p").eq(4).text();
                 let address = $(this).find(".address-row p").text();
-
                 rows.push([roll, name, cls, sec, gr, phone, dob, address]);
             }
         });
 
         let ws = XLSX.utils.aoa_to_sheet(rows);
-
-        // Set column widths
-        ws['!cols'] = [
-            { wch: 12 },  // Roll No
-            { wch: 25 },  // Name
-            { wch: 12 },  // Class
-            { wch: 10 },  // Section
-            { wch: 15 },  // GR No
-            { wch: 15 },  // Phone
-            { wch: 15 },  // DOB
-            { wch: 40 }   // Address
-        ];
-
-        // Merge heading cells (first row spans all columns)
+        ws['!cols'] = [{ wch: 12 }, { wch: 25 }, { wch: 12 }, { wch: 10 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 40 }];
         if (!ws['!merges']) ws['!merges'] = [];
         ws['!merges'].push({ s: { r: 0, c: 0 }, e: { r: 0, c: 7 } });
-
+        
         let wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Students");
         XLSX.writeFile(wb, "Students_List.xlsx");
     }
 
+    // ========== RESET FILTERS ==========
     function resetFilters() {
-
         location.reload();
-
     }
-
 </script>

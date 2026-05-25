@@ -24,31 +24,42 @@ namespace SVM_API.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Class>>> GetClasses()
         {
-            return await _context.Classes.Include(c=>c.Session).ToListAsync();
+            return await _context.Classes
+                .Include(c => c.Session)
+                .ToListAsync();
         }
 
         // GET: api/Classes/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Class>> GetClass(int id)
         {
-            var @class = await _context.Classes.Include(c => c.Session).FirstOrDefaultAsync(c => c.ClassId == id);
+            var @class = await _context.Classes
+                .Include(c => c.Session)
+                .FirstOrDefaultAsync(c => c.ClassId == id);
 
             if (@class == null)
-            {
                 return NotFound();
-            }
 
             return @class;
         }
 
         // PUT: api/Classes/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutClass(int id, Class @class)
         {
             if (id != @class.ClassId)
-            {
                 return BadRequest();
+
+            // ✅ Check for duplicate in the SAME session (excluding current record)
+            bool duplicateExists = await _context.Classes.AnyAsync(c =>
+                c.ClassName == @class.ClassName &&
+                c.Medium == @class.Medium &&
+                c.SessionId == @class.SessionId &&
+                c.ClassId != id);
+
+            if (duplicateExists)
+            {
+                return Conflict(new { message = $"Class '{@class.ClassName}' with Medium '{@class.Medium}' already exists in this session." });
             }
 
             _context.Entry(@class).State = EntityState.Modified;
@@ -60,23 +71,29 @@ namespace SVM_API.Controllers
             catch (DbUpdateConcurrencyException)
             {
                 if (!ClassExists(id))
-                {
                     return NotFound();
-                }
                 else
-                {
                     throw;
-                }
             }
 
             return NoContent();
         }
 
         // POST: api/Classes
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Class>> PostClass(Class @class)
         {
+            // ✅ Check for duplicate in the SAME session (for new record)
+            bool duplicateExists = await _context.Classes.AnyAsync(c =>
+                c.ClassName == @class.ClassName &&
+                c.Medium == @class.Medium &&
+                c.SessionId == @class.SessionId);
+
+            if (duplicateExists)
+            {
+                return Conflict(new { message = $"Class '{@class.ClassName}' with Medium '{@class.Medium}' already exists in this session." });
+            }
+
             _context.Classes.Add(@class);
             await _context.SaveChangesAsync();
 
@@ -89,9 +106,7 @@ namespace SVM_API.Controllers
         {
             var @class = await _context.Classes.FindAsync(id);
             if (@class == null)
-            {
                 return NotFound();
-            }
 
             _context.Classes.Remove(@class);
             await _context.SaveChangesAsync();
@@ -103,6 +118,5 @@ namespace SVM_API.Controllers
         {
             return _context.Classes.Any(e => e.ClassId == id);
         }
-
     }
 }

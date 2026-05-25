@@ -36,8 +36,8 @@ namespace SVM.Controllers
             return HttpContext.Session.GetString("FullName") ?? "Admin";
         }
 
-        // GET: Students
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> Index(int? sessionId, string medium, int? classId, int? sectionId)
         {
             List<Student> studentList = new List<Student>();
             var response = await _client.GetAsync("Students");
@@ -46,7 +46,17 @@ namespace SVM.Controllers
             {
                 var data = await response.Content.ReadAsStringAsync();
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                studentList = JsonSerializer.Deserialize<List<Student>>(data, options);
+                var allStudents = JsonSerializer.Deserialize<List<Student>>(data, options);
+
+                // Apply filters if provided (do NOT filter by medium – classId already restricts to correct medium)
+                if (sessionId.HasValue)
+                    allStudents = allStudents.Where(s => s.SessionId == sessionId).ToList();
+                if (classId.HasValue)
+                    allStudents = allStudents.Where(s => s.ClassId == classId).ToList();
+                if (sectionId.HasValue)
+                    allStudents = allStudents.Where(s => s.SectionId == sectionId).ToList();
+
+                studentList = allStudents;
 
                 // Manually load related entities for each student
                 foreach (var student in studentList)
@@ -97,22 +107,31 @@ namespace SVM.Controllers
                 ModelState.AddModelError("", "Failed to load students.");
             }
 
-            // LOAD ALL SESSIONS
+            // Load all sessions for the filter dropdown
             var sessionResponse = await _client.GetAsync("Sessions");
-
             if (sessionResponse.IsSuccessStatusCode)
             {
                 var sessionData = await sessionResponse.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                };
-
-                var allSessions =
-                    JsonSerializer.Deserialize<List<Session>>(sessionData, options);
-
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var allSessions = JsonSerializer.Deserialize<List<Session>>(sessionData, options);
                 ViewBag.AllSessions = allSessions;
+                ViewBag.SelectedSessionId = sessionId;   // for pre-selection
             }
+
+            // Load all classes (will be filtered later via AJAX)
+            var classResponse = await _client.GetAsync("Classes");
+            if (classResponse.IsSuccessStatusCode)
+            {
+                var classData = await classResponse.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var allClasses = JsonSerializer.Deserialize<List<Class>>(classData, options);
+                ViewBag.AllClasses = allClasses;
+            }
+
+            // Pass selected filter values to the view
+            ViewBag.SelectedMedium = medium;
+            ViewBag.SelectedClassId = classId;
+            ViewBag.SelectedSectionId = sectionId;
 
             return View(studentList);
         }
@@ -170,9 +189,14 @@ namespace SVM.Controllers
                 }
             }
 
+            // ✅ Store filter values for "Back to List" link
+            ViewBag.BackSessionId = student.SessionId;
+            ViewBag.BackClassId = student.ClassId;
+            ViewBag.BackSectionId = student.SectionId;
+            ViewBag.BackMedium = student.Class?.Medium;
+
             return View(student);
         }
-
         // GET: Students/Create
         public async Task<IActionResult> Create()
         {
@@ -257,7 +281,6 @@ namespace SVM.Controllers
             return View(student);
         }
 
-        // GET: Students/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -269,7 +292,32 @@ namespace SVM.Controllers
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var student = JsonSerializer.Deserialize<Student>(data, options);
 
-            // Get the original added-by user's full name
+            // Get the medium from the student's current class
+            string currentMedium = null;
+            if (student.ClassId.HasValue)
+            {
+                var classResp = await _client.GetAsync($"Classes/{student.ClassId}");
+                if (classResp.IsSuccessStatusCode)
+                {
+                    var classData = await classResp.Content.ReadAsStringAsync();
+                    var classObj = JsonSerializer.Deserialize<Class>(classData, options);
+                    currentMedium = classObj?.Medium;
+                }
+            }
+
+            // ✅ Store filter values for "Back to List" link
+            ViewBag.BackSessionId = student.SessionId;
+            ViewBag.BackClassId = student.ClassId;
+            ViewBag.BackSectionId = student.SectionId;
+            ViewBag.BackMedium = currentMedium;
+
+            // Load filtered dropdowns
+            await LoadSessionsDropdown(student.SessionId);
+            await LoadClassesDropdown(student.ClassId, student.SessionId, currentMedium);
+            await LoadSectionsDropdown(student.SectionId);
+            LoadMediums();
+
+            // Get added by user name
             if (student.UserId.HasValue)
             {
                 var userResp = await _client.GetAsync($"Users/{student.UserId}");
@@ -280,10 +328,6 @@ namespace SVM.Controllers
                     ViewBag.AddedByName = user?.FullName ?? user?.Username ?? "Unknown";
                 }
             }
-
-            await LoadClassesDropdown(student.ClassId);
-            await LoadSectionsDropdown(student.SectionId);
-            await LoadSessionsDropdown(student.SessionId);
 
             return View(student);
         }
@@ -326,11 +370,34 @@ namespace SVM.Controllers
                 if (response.IsSuccessStatusCode)
                 {
                     TempData["Success"] = "Student updated successfully!";
-                    return RedirectToAction(nameof(Index));
+
+                    // ---------- PRESERVE FILTERS ----------
+                    // Get the medium from the student's updated class
+                    string medium = null;
+                    if (student.ClassId.HasValue)
+                    {
+                        var classResp = await _client.GetAsync($"Classes/{student.ClassId}");
+                        if (classResp.IsSuccessStatusCode)
+                        {
+                            var classData = await classResp.Content.ReadAsStringAsync();
+                            var classObj = JsonSerializer.Deserialize<Class>(classData, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                            medium = classObj?.Medium;
+                        }
+                    }
+
+                    // Redirect to Index with the current filters (Session, Medium, Class, Section)
+                    return RedirectToAction(nameof(Index), new
+                    {
+                        sessionId = student.SessionId,
+                        medium = medium,
+                        classId = student.ClassId,
+                        sectionId = student.SectionId
+                    });
                 }
                 ModelState.AddModelError("", "Update failed!");
             }
 
+            // If we reach here, something went wrong – reload the dropdowns with the entered data
             await LoadClassesDropdown(student.ClassId);
             await LoadSectionsDropdown(student.SectionId);
             await LoadSessionsDropdown(student.SessionId);
@@ -390,21 +457,28 @@ namespace SVM.Controllers
                 }
             }
 
+            // ✅ Store filter values for "Back to List" link
+            ViewBag.BackSessionId = student.SessionId;
+            ViewBag.BackClassId = student.ClassId;
+            ViewBag.BackSectionId = student.SectionId;
+            ViewBag.BackMedium = student.Class?.Medium;
+
             return View(student);
         }
 
         // POST: Students/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, int? sessionId, string medium, int? classId, int? sectionId)
         {
-            // First get the student to delete the photo file
+            // First get the student to delete the photo file and also to retrieve filter values
+            Student? student = null;
             var response = await _client.GetAsync($"Students/{id}");
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadAsStringAsync();
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var student = JsonSerializer.Deserialize<Student>(data, options);
+                student = JsonSerializer.Deserialize<Student>(data, options);
 
                 if (!string.IsNullOrEmpty(student?.StudentPhoto))
                 {
@@ -416,16 +490,44 @@ namespace SVM.Controllers
                 }
             }
 
+            // If filter values weren't passed in the request (e.g., from the Delete view), use the student's own values
+            if (student != null)
+            {
+                if (sessionId == null) sessionId = student.SessionId;
+                if (classId == null) classId = student.ClassId;
+                if (sectionId == null) sectionId = student.SectionId;
+                if (string.IsNullOrEmpty(medium) && classId.HasValue)
+                {
+                    // Fetch medium from class
+                    var classResp = await _client.GetAsync($"Classes/{classId.Value}");
+                    if (classResp.IsSuccessStatusCode)
+                    {
+                        var classData = await classResp.Content.ReadAsStringAsync();
+                        var classObj = JsonSerializer.Deserialize<Class>(classData, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        medium = classObj?.Medium;
+                    }
+                }
+            }
+
             var deleteResponse = await _client.DeleteAsync($"Students/{id}");
             if (!deleteResponse.IsSuccessStatusCode)
             {
                 ModelState.AddModelError("", "Delete failed!");
+                // If delete fails, return to the Delete view with the same student data
+                return View(student);
             }
 
             TempData["Success"] = "Student deleted successfully!";
-            return RedirectToAction(nameof(Index));
-        }
 
+            // Redirect to Index with the preserved filter values
+            return RedirectToAction(nameof(Index), new
+            {
+                sessionId = sessionId,
+                medium = medium,
+                classId = classId,
+                sectionId = sectionId
+            });
+        }
         // ---------------------- Helper Methods ----------------------
 
         private async Task<bool> StudentExists(int id)
@@ -479,16 +581,24 @@ namespace SVM.Controllers
             return nextRollNo;
         }
 
-        // Load Classes dropdown (optionally with selected value)
-        private async Task LoadClassesDropdown(int? selectedClassId = null)
+        // Load Classes dropdown (optionally with selected value, filtered by session and medium)
+        private async Task LoadClassesDropdown(int? selectedClassId = null, int? sessionId = null, string medium = null)
         {
             var response = await _client.GetAsync("Classes");
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadAsStringAsync();
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var classes = JsonSerializer.Deserialize<List<Class>>(data, options);
-                ViewData["ClassId"] = new SelectList(classes, "ClassId", "ClassName", selectedClassId);
+                var allClasses = JsonSerializer.Deserialize<List<Class>>(data, options);
+
+                // Filter by sessionId and medium if provided
+                var filteredClasses = allClasses;
+                if (sessionId.HasValue)
+                    filteredClasses = filteredClasses.Where(c => c.SessionId == sessionId).ToList();
+                if (!string.IsNullOrEmpty(medium))
+                    filteredClasses = filteredClasses.Where(c => c.Medium == medium).ToList();
+
+                ViewData["ClassId"] = new SelectList(filteredClasses, "ClassId", "ClassName", selectedClassId);
             }
             else
             {
@@ -539,206 +649,95 @@ namespace SVM.Controllers
         }
 
         // GET: GetClassesByMedium (for cascading dropdowns)
-        //[HttpGet]
-        //public async Task<JsonResult> GetClassesByMedium(string medium)
-        //{
-        //    var response = await _client.GetAsync("Classes");
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        var data = await response.Content.ReadAsStringAsync();
-        //        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        //        var allClasses = JsonSerializer.Deserialize<List<Class>>(data, options);
-        //        var filteredClasses = allClasses.Where(c => c.Medium == medium)
-        //                                        .Select(c => new { value = c.ClassId, text = c.ClassName })
-        //                                        .ToList();
-        //        return Json(filteredClasses);
-        //    }
-        //    return Json(new List<object>());
-        //}
-
         [HttpGet]
         public async Task<JsonResult> GetClassesByMedium(string medium, int sessionId)
         {
             var response = await _client.GetAsync("Classes");
-
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadAsStringAsync();
-
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                };
-
-                var allClasses =
-                    JsonSerializer.Deserialize<List<Class>>(data, options);
-
-                var filteredClasses =
-                    allClasses
-                    .Where(c =>
-                        c.Medium == medium &&
-                        c.SessionId == sessionId)
-                    .Select(c => new
-                    {
-                        value = c.ClassId,
-                        text = c.ClassName
-                    })
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var allClasses = JsonSerializer.Deserialize<List<Class>>(data, options);
+                var filteredClasses = allClasses
+                    .Where(c => c.Medium == medium && c.SessionId == sessionId)
+                    .Select(c => new { value = c.ClassId, text = c.ClassName })
                     .ToList();
-
                 return Json(filteredClasses);
             }
-
             return Json(new List<object>());
         }
 
-        // GET: GetSectionsByClass (for cascading dropdowns)
-        //[HttpGet]
-        //public async Task<JsonResult> GetSectionsByClass(int classId)
-        //{
-        //    var response = await _client.GetAsync("Sections");
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        var data = await response.Content.ReadAsStringAsync();
-        //        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        //        var allSections = JsonSerializer.Deserialize<List<Section>>(data, options);
-        //        var filteredSections = allSections.Where(s => s.ClassId == classId)
-        //                                          .Select(s => new { value = s.SectionId, text = s.SectionName })
-        //                                          .ToList();
-        //        return Json(filteredSections);
-        //    }
-        //    return Json(new List<object>());
-        //}
-
         // GET: GetSectionsByClass
-
         [HttpGet]
         public async Task<JsonResult> GetSectionsByClass(int classId)
         {
             var sectionResponse = await _client.GetAsync("Sections");
-
             if (!sectionResponse.IsSuccessStatusCode)
-            {
                 return Json(new List<object>());
-            }
 
-            var sectionData =
-                await sectionResponse.Content.ReadAsStringAsync();
-
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var allSections =
-                JsonSerializer.Deserialize<List<Section>>(sectionData, options);
-
+            var sectionData = await sectionResponse.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var allSections = JsonSerializer.Deserialize<List<Section>>(sectionData, options);
             if (allSections == null)
-            {
                 return Json(new List<object>());
-            }
 
-            var filteredSections =
-                allSections
+            var filteredSections = allSections
                 .Where(x => x.ClassId == classId)
                 .OrderBy(x => x.SectionName)
-                .Select(x => new
-                {
-                    value = x.SectionId,
-                    text = x.SectionName
-                })
+                .Select(x => new { value = x.SectionId, text = x.SectionName })
                 .ToList();
-
             return Json(filteredSections);
         }
 
-        //Promtion
+        // Promotion
         public async Task<IActionResult> Promotion()
         {
             List<Student> studentList = new List<Student>();
-
             var response = await _client.GetAsync("Students");
-
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadAsStringAsync();
-
-                var options = new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                };
-
-                studentList =
-                    JsonSerializer.Deserialize<List<Student>>(data, options);
-
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                studentList = JsonSerializer.Deserialize<List<Student>>(data, options);
                 foreach (var student in studentList)
                 {
                     if (student.ClassId.HasValue)
                     {
-                        var classResp =
-                            await _client.GetAsync($"Classes/{student.ClassId}");
-
+                        var classResp = await _client.GetAsync($"Classes/{student.ClassId}");
                         if (classResp.IsSuccessStatusCode)
                         {
-                            var classData =
-                                await classResp.Content.ReadAsStringAsync();
-
-                            student.Class =
-                                JsonSerializer.Deserialize<Class>(classData, options);
+                            var classData = await classResp.Content.ReadAsStringAsync();
+                            student.Class = JsonSerializer.Deserialize<Class>(classData, options);
                         }
                     }
-
                     if (student.SectionId.HasValue)
                     {
-                        var sectionResp =
-                            await _client.GetAsync($"Sections/{student.SectionId}");
-
+                        var sectionResp = await _client.GetAsync($"Sections/{student.SectionId}");
                         if (sectionResp.IsSuccessStatusCode)
                         {
-                            var sectionData =
-                                await sectionResp.Content.ReadAsStringAsync();
-
-                            student.Section =
-                                JsonSerializer.Deserialize<Section>(sectionData, options);
+                            var sectionData = await sectionResp.Content.ReadAsStringAsync();
+                            student.Section = JsonSerializer.Deserialize<Section>(sectionData, options);
                         }
                     }
-
                     if (student.SessionId.HasValue)
                     {
-                        var sessionResp =
-                            await _client.GetAsync($"Sessions/{student.SessionId}");
-
+                        var sessionResp = await _client.GetAsync($"Sessions/{student.SessionId}");
                         if (sessionResp.IsSuccessStatusCode)
                         {
-                            var sessionData =
-                                await sessionResp.Content.ReadAsStringAsync();
-
-                            student.Session =
-                                JsonSerializer.Deserialize<Session>(sessionData, options);
+                            var sessionData = await sessionResp.Content.ReadAsStringAsync();
+                            student.Session = JsonSerializer.Deserialize<Session>(sessionData, options);
                         }
                     }
                 }
             }
-
-            // ALL SESSIONS
             var sessionResponse = await _client.GetAsync("Sessions");
-
             if (sessionResponse.IsSuccessStatusCode)
             {
-                var sessionData =
-                    await sessionResponse.Content.ReadAsStringAsync();
-
-                var options =
-                    new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    };
-
-                var allSessions =
-                    JsonSerializer.Deserialize<List<Session>>(sessionData, options);
-
+                var sessionData = await sessionResponse.Content.ReadAsStringAsync();
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var allSessions = JsonSerializer.Deserialize<List<Session>>(sessionData, options);
                 ViewBag.AllSessions = allSessions;
             }
-
             return View(studentList);
         }
 
@@ -747,78 +746,46 @@ namespace SVM.Controllers
         public async Task<JsonResult> GetNextClass(int currentClassId, int newSessionId)
         {
             var classResponse = await _client.GetAsync("Classes");
-
             if (!classResponse.IsSuccessStatusCode)
-            {
                 return Json(null);
-            }
 
             var classData = await classResponse.Content.ReadAsStringAsync();
-
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            var allClasses =
-                JsonSerializer.Deserialize<List<Class>>(classData, options);
-
-            // Current Class
-            var currentClass =
-                allClasses.FirstOrDefault(x => x.ClassId == currentClassId);
-
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var allClasses = JsonSerializer.Deserialize<List<Class>>(classData, options);
+            var currentClass = allClasses.FirstOrDefault(x => x.ClassId == currentClassId);
             if (currentClass == null)
-            {
                 return Json(null);
-            }
 
-            // Current class number
             int currentNumber = 0;
-
             int.TryParse(currentClass.ClassName, out currentNumber);
-
             int nextNumber = currentNumber + 1;
-
-            // Find next class from SAME medium + SAME session
-            var nextClass =
-                allClasses.FirstOrDefault(x =>
-                    x.ClassName == nextNumber.ToString()
-                    &&
-                    x.Medium == currentClass.Medium
-                    &&
-                    x.SessionId == newSessionId
-                );
-
+            var nextClass = allClasses.FirstOrDefault(x =>
+                x.ClassName == nextNumber.ToString() &&
+                x.Medium == currentClass.Medium &&
+                x.SessionId == newSessionId);
             if (nextClass == null)
-            {
                 return Json(null);
-            }
-
-            return Json(new
-            {
-                value = nextClass.ClassId,
-                text = nextClass.ClassName
-            });
+            return Json(new { value = nextClass.ClassId, text = nextClass.ClassName });
         }
 
         [HttpPost]
-        public async Task<IActionResult> PromoteStudents(
-    [FromBody] PromotionRequest request)
+        public async Task<IActionResult> PromoteStudents([FromBody] PromotionRequest request)
         {
-            var response =
-                await _client.PostAsJsonAsync(
-                    "Students/PromoteStudents",
-                    request);
-
+            var response = await _client.PostAsJsonAsync("Students/PromoteStudents", request);
             if (response.IsSuccessStatusCode)
-            {
                 return Ok();
-            }
-
-            var error =
-                await response.Content.ReadAsStringAsync();
-
+            var error = await response.Content.ReadAsStringAsync();
             return BadRequest(error);
+        }
+
+        private void LoadMediums()
+        {
+            var mediums = new List<SelectListItem>
+            {
+                new SelectListItem { Value = "Gujarati", Text = "Gujarati" },
+                new SelectListItem { Value = "English", Text = "English" }
+            };
+            ViewBag.MediumList = mediums;
         }
     }
 }
