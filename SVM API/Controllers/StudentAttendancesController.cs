@@ -74,7 +74,6 @@ namespace SVM_API.Controllers
         }
 
         // ========== NEW METHODS FOR ANDROID ==========
-
         [HttpGet("students")]
         public async Task<ActionResult<IEnumerable<object>>> GetFilteredStudents(
             [FromQuery] int sessionId,
@@ -82,27 +81,28 @@ namespace SVM_API.Controllers
             [FromQuery] int? classId,
             [FromQuery] int? sectionId)
         {
-            var query = _context.Students
-                .Include(s => s.Class)
-                .Include(s => s.Section)
-                .Where(s => s.SessionId == sessionId);
+            var query = from s in _context.Students
+                        join c in _context.Classes on s.ClassId equals c.ClassId
+                        join sec in _context.Sections on s.SectionId equals sec.SectionId
+                        where s.SessionId == sessionId
+                        select new { Student = s, Class = c, Section = sec };
 
             if (!string.IsNullOrEmpty(medium))
-                query = query.Where(s => s.Class != null && s.Class.Medium == medium);
+                query = query.Where(x => x.Class.Medium == medium);
             if (classId.HasValue)
-                query = query.Where(s => s.ClassId == classId.Value);
+                query = query.Where(x => x.Student.ClassId == classId.Value);
             if (sectionId.HasValue)
-                query = query.Where(s => s.SectionId == sectionId.Value);
+                query = query.Where(x => x.Student.SectionId == sectionId.Value);
 
-            var students = await query.Select(s => new
+            var students = await query.Select(x => new
             {
-                s.StudentId,
-                s.FirstName,
-                s.LastName,
-                s.RollNo,
-                ClassName = s.Class != null ? s.Class.ClassName : "",
-                SectionName = s.Section != null ? s.Section.SectionName : "",
-                s.AdmissionNo
+                x.Student.StudentId,
+                x.Student.FirstName,
+                x.Student.LastName,
+                x.Student.RollNo,
+                ClassName = x.Class.ClassName,
+                SectionName = x.Section.SectionName,
+                x.Student.AdmissionNo
             }).ToListAsync();
 
             return Ok(students);
