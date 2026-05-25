@@ -1,415 +1,296 @@
 ﻿@{
-	ViewData["Title"] = "Fee Structures";
-	var list = ViewBag.FeeStructures as List<SVM.Models.FeeStructure>;
+    ViewData["Title"] = "Fee Structures";
+    var list = ViewBag.FeeStructures as List<SVM.Models.FeeStructure>;
 
-	bool hasSearch =
-		ViewBag.SelectedSessionId != null ||
-		ViewBag.SelectedMedium != null ||
-		ViewBag.SelectedClassId != null;
+    bool hasSearch =
+        ViewBag.SelectedSessionId != null ||
+        ViewBag.SelectedMedium != null ||
+        ViewBag.SelectedClassId != null;
 }
 
 <link rel="stylesheet"
-	  href="/css/AdminSide_Css/Fees_Structure_display.css"
-	  asp-append-version="true" />
+      href="/css/AdminSide_Css/Fees_Structure_display.css"
+      asp-append-version="true" />
 
 <link rel="stylesheet"
-	  href="/css/AdminSide_Css/SearchBar.css"
-	  asp-append-version="true" />
+      href="/css/AdminSide_Css/SearchBar.css"
+      asp-append-version="true" />
 
 <link rel="stylesheet"
-	  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
 <div class="fee-page">
 
-	<!-- TOP BAR -->
-
-	<div class="top-bar">
-
-		<form method="get"
-			  class="left-side"
-			  onsubmit="return validateSearch()">
-
-			<!-- SESSION -->
-			@Html.DropDownList(
-							"sessionId",
-							ViewBag.SessionList as SelectList,
-							"-- Select Session --",
-							new
-							{
-								@class = "search-box",
-								id = "sessionSelect"
-							})
-
-			<!-- MEDIUM -->
-			@Html.DropDownList(
-							"medium",
-							ViewBag.MediumList as SelectList,
-							"-- Select Medium --",
-							new
-							{
-								@class = "search-box",
-								id = "mediumSelect"
-							})
-
-			<!-- CLASS -->
-
-			<select name="classId"
-					id="classSelect"
-					class="search-box">
-
-				<option value="">Select Class</option>
-
-			</select>
-
-			<!-- SEARCH -->
-
-			<button type="submit"
-					class="search-btn">
-				<i class="fa-solid fa-magnifying-glass"></i>
-
-				Search
-
-			</button>
-
-			<!-- RESET -->
-
-			
-			<button type="button"
-					class="reset-btn"
-					onclick="resetFilters()">
-
-				Reset
-
-			</button>
-
-		</form>
-
-		<!-- CREATE -->
-
-		<a asp-action="Create"
-		   class="add-btn">
-
-			<i class="fa-solid fa-plus"></i>
-
-		</a>
-
-	</div>
-
-	<!-- TITLE -->
-
-
-
-	<!-- MESSAGE -->
-
-	<h3 id="messageBox"
-		 class="no-data" style="text-align:center">
-
-		Search to view class wise fee structures
-
-	</h3>
-
-	<!-- TABLE -->
-	@if (list != null && list.Any())
-	{
-		<div id="feeTableSection"
-			 class="table-card">
-
-			<div class="table-responsive">
-
-				<table class="table">
-
-					<thead>
-
-						<tr>
-
-							<th>Admission Fees</th>
-							<th>Monthly Fees</th>
-							<th>Activity Fees</th>
-							<th>Computer Fees</th>
-							<th>Total Amount</th>
-							<th>Actions</th>
-
-						</tr>
-
-					</thead>
-
-					<tbody>
-
-						@foreach (var fs in list)
-						{
-							<tr>
-
-								<td>@fs.AdmissionFees?.ToString("C")</td>
-
-								<td>@fs.MonthlyFees?.ToString("C")</td>
-
-								<td>@fs.OtherActivityFees?.ToString("C")</td>
-
-								<td>@fs.ComputerFees?.ToString("C")</td>
-
-								<td>@fs.TotalAmount?.ToString("C")</td>
-
-								<td>
-
-									<div class="action-buttons">
-
-										<!-- EDIT -->
-
-										<a asp-action="Edit"
-										   asp-route-id="@fs.FeeId"
-										   asp-route-sessionId="@ViewBag.SelectedSessionId"
-										   asp-route-medium="@ViewBag.SelectedMedium"
-										   asp-route-classId="@ViewBag.SelectedClassId"
-										   class="edit-btn">
-
-											<i class="fa-solid fa-pen"></i>
-
-										</a>
-
-										<!-- DETAILS -->
-
-										<a asp-action="Details"
-										   asp-route-id="@fs.FeeId"
-										   class="view-btn">
-
-											<i class="fa-solid fa-eye"></i>
-
-										</a>
-
-										<!-- DELETE -->
-
-										<a asp-action="Delete"
-										   asp-route-id="@fs.FeeId"
-										   asp-route-sessionId="@ViewBag.SelectedSessionId"
-										   asp-route-medium="@ViewBag.SelectedMedium"
-										   asp-route-classId="@ViewBag.SelectedClassId"
-										   class="delete-btn">
-
-											<i class="fa-solid fa-trash"></i>
-
-										</a>
-
-									</div>
-
-								</td>
-
-							</tr>
-						}
-
-					</tbody>
-
-				</table>
-
-			</div>
-
-			<!-- PDF -->
-
-			@* <a asp-action="DownloadPdf"
-			   asp-route-sessionId="@ViewBag.SelectedSessionId"
-			   asp-route-medium="@ViewBag.SelectedMedium"
-			   asp-route-classId="@ViewBag.SelectedClassId"
-			   class="pdf-btn">
-
-				<i class="fa-solid fa-file-pdf"></i>
-				Download PDF
-
-			</a> *@
-
-		</div>
-	}
-
+    <!-- TOP BAR -->
+    <div class="top-bar">
+        <form method="get" class="left-side" onsubmit="return validateSearch()">
+
+            <!-- SESSION -->
+            @Html.DropDownList(
+                     "sessionId",
+                     ViewBag.SessionList as SelectList,
+                     "-- Select Session --",
+                     new { @class = "search-box", id = "sessionSelect" })
+
+            <!-- MEDIUM -->
+            @Html.DropDownList(
+                     "medium",
+                     ViewBag.MediumList as SelectList,
+                     "-- Select Medium --",
+                     new { @class = "search-box", id = "mediumSelect" })
+
+            <!-- CLASS -->
+            <select name="classId" id="classSelect" class="search-box">
+                <option value="">-- Select Class --</option>
+            </select>
+
+            <!-- SEARCH -->
+            <button type="submit" class="search-btn">
+                <i class="fa-solid fa-magnifying-glass"></i>
+                Search
+            </button>
+
+            <!-- RESET -->
+            <button type="button" class="reset-btn" onclick="resetFilters()">
+                Reset
+            </button>
+        </form>
+
+        <!-- CREATE -->
+        <a asp-action="Create" class="add-btn">
+            <i class="fa-solid fa-plus"></i>
+        </a>
+    </div>
+
+    <!-- MESSAGE -->
+    <h3 id="messageBox" class="no-data" style="text-align:center">
+        Search to view class wise fee structures
+    </h3>
+
+    <!-- TABLE -->
+    @if (list != null && list.Any())
+    {
+        <div id="feeTableSection" class="table-card">
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Admission Fees</th>
+                            <th>Monthly Fees</th>
+                            <th>Activity Fees</th>
+                            <th>Computer Fees</th>
+                            <th>Total Amount</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var fs in list)
+                        {
+                            <tr>
+                                <td>@fs.AdmissionFees?.ToString("C")</td>
+                                <td>@fs.MonthlyFees?.ToString("C")</td>
+                                <td>@fs.OtherActivityFees?.ToString("C")</td>
+                                <td>@fs.ComputerFees?.ToString("C")</td>
+                                <td>@fs.TotalAmount?.ToString("C")</td>
+                                <td>
+                                    <div class="action-buttons">
+                                        <a asp-action="Edit"
+                                           asp-route-id="@fs.FeeId"
+                                           asp-route-sessionId="@ViewBag.SelectedSessionId"
+                                           asp-route-medium="@ViewBag.SelectedMedium"
+                                           asp-route-classId="@ViewBag.SelectedClassId"
+                                           class="edit-btn">
+                                            <i class="fa-solid fa-pen"></i>
+                                        </a>
+                                        <a asp-action="Details"
+                                           asp-route-id="@fs.FeeId"
+                                           class="view-btn">
+                                            <i class="fa-solid fa-eye"></i>
+                                        </a>
+                                        <a asp-action="Delete"
+                                           asp-route-id="@fs.FeeId"
+                                           asp-route-sessionId="@ViewBag.SelectedSessionId"
+                                           asp-route-medium="@ViewBag.SelectedMedium"
+                                           asp-route-classId="@ViewBag.SelectedClassId"
+                                           class="delete-btn">
+                                            <i class="fa-solid fa-trash"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    }
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
+    const msg = document.getElementById("messageBox");
+    msg.style.display = "block";
+    msg.style.color = "#6b7280";
 
-	// MESSAGE BOX
+    @if (hasSearch)
+    {
+        if (list == null || !list.Any())
+        {
+            <text>
+                msg.innerText = "No Data Found";
+            msg.style.color = "red";
+            </text>
+        }
+        else
+        {
+            <text>
+                msg.style.display = "none";
+            </text>
+        }
+    }
 
-	const msg =
-		document.getElementById("messageBox");
+        // Get URL parameter
+        function getParam(p) {
+            return new URLSearchParams(window.location.search).get(p);
+        }
 
-	// DEFAULT MESSAGE
+    // Load classes based on session and medium
+    function loadClasses(sessionId, medium, selectedClassId) {
+        if (!sessionId || !medium) {
+            resetClassDropdown();
+            return;
+        }
 
-	msg.style.display = "block";
-	msg.style.color = "#6b7280";
+        $.ajax({
+            url: '/FeesStructures/GetClassesByMedium',
+            type: 'GET',
+            data: { medium: medium, sessionId: sessionId },
+            success: function (data) {
+                let $class = $('#classSelect');
+                $class.empty();
+                $class.append('<option value="">-- Select Class --</option>');
 
-	@if (hasSearch)
-	{
-		if (list == null || !list.Any())
-		{
-			<text>
-				msg.innerText = "No Data Found";
-			msg.style.color = "red";
-			</text>
-		}
-		else
-		{
-			<text>
-				msg.style.display = "none";
-			</text>
-		}
-	}
+                if (data && data.length > 0) {
+                    $.each(data, function (i, c) {
+                        let option = $('<option></option>')
+                            .attr('value', c.value)
+                            .text(c.text);
 
-		// SEARCH VALIDATION
+                        if (selectedClassId && c.value == selectedClassId) {
+                            option.attr('selected', 'selected');
+                        }
+                        $class.append(option);
+                    });
+                } else {
+                    $class.append('<option value="" disabled>No classes available</option>');
+                }
+            },
+            error: function () {
+                resetClassDropdown();
+            }
+        });
+    }
 
-		function validateSearch() {
+    function resetClassDropdown() {
+        $('#classSelect').empty().append('<option value="">-- Select Class --</option>');
+    }
 
-			let session =
-				document.getElementById("sessionSelect").value;
+    function resetFilters() {
+        // Reset dropdowns
+        document.getElementById("sessionSelect").value = "";
+        document.getElementById("mediumSelect").value = "";
+        resetClassDropdown();
 
-			let medium =
-				document.getElementById("mediumSelect").value;
+        // Hide table
+        let table = document.getElementById("feeTableSection");
+        if (table) {
+            table.style.display = "none";
+        }
 
-			let classId =
-				document.getElementById("classSelect").value;
+        // Show message
+        msg.style.display = "block";
+        msg.style.color = "#6b7280";
+        msg.innerText = "Search to view class wise fee structures";
 
-			if (session === "" ||
-				medium === "" ||
-				classId === "") {
+        // Clear URL
+        window.history.replaceState({}, document.title, window.location.pathname);
+    }
 
-				msg.style.display = "block";
-				msg.style.color = "red";
-				msg.innerText =
-					"Please select Session, Medium and Class";
+    function validateSearch() {
+        let session = document.getElementById("sessionSelect").value;
+        let medium = document.getElementById("mediumSelect").value;
+        let classId = document.getElementById("classSelect").value;
 
-				return false;
-			}
+        if (session === "" || medium === "" || classId === "") {
+            msg.style.display = "block";
+            msg.style.color = "red";
+            msg.innerText = "Please select Session, Medium and Class";
+            return false;
+        }
+        return true;
+    }
 
-			return true;
-		}
+    $(document).ready(function () {
+        let sessionId = getParam('sessionId');
+        let medium = getParam('medium');
+        let classId = getParam('classId');
 
-	// URL PARAM
+        if (sessionId) $('#sessionSelect').val(sessionId);
+        if (medium) $('#mediumSelect').val(medium);
 
-	function getParam(p) {
+        // Load classes when BOTH session and medium are selected
+        if (sessionId && medium) {
+            loadClasses(sessionId, medium, classId);
+        }
 
-		return new URLSearchParams(window.location.search)
-			.get(p);
-	}
+        // When session changes
+        $('#sessionSelect').change(function () {
+            let newSession = $(this).val();
+            let currentMedium = $('#mediumSelect').val();
+            if (newSession && currentMedium) {
+                loadClasses(newSession, currentMedium, null);
+            } else {
+                resetClassDropdown();
+            }
+        });
 
-	$(document).ready(function () {
+        // When medium changes
+        $('#mediumSelect').change(function () {
+            let currentSession = $('#sessionSelect').val();
+            let newMedium = $(this).val();
+            if (currentSession && newMedium) {
+                loadClasses(currentSession, newMedium, null);
+            } else {
+                resetClassDropdown();
+            }
+        });
+    });
 
-		let session = getParam('sessionId');
-		let medium = getParam('medium');
-		let classId = getParam('classId');
+    function loadClasses(sessionId, medium, selectedClassId) {
+        $.ajax({
+            url: '/FeesStructures/GetClassesByMedium',
+            type: 'GET',
+            data: { medium: medium, sessionId: sessionId },
+            success: function (data) {
+                let $class = $('#classSelect');
+                $class.empty();
+                $class.append('<option value="">-- Select Class --</option>');
 
-		if (session)
-			$('#sessionSelect').val(session);
+                $.each(data, function (i, c) {
+                    let option = $('<option></option>')
+                        .attr('value', c.value)
+                        .text(c.text);
+                    if (selectedClassId && c.value == selectedClassId) {
+                        option.attr('selected', 'selected');
+                    }
+                    $class.append(option);
+                });
+            }
+        });
+    }
 
-		if (medium)
-			$('#mediumSelect').val(medium);
-
-		// LOAD CLASS
-
-		if (medium) {
-
-			$.get('/FeesStructures/GetClassesByMedium',
-				{ medium: medium },
-
-				function (data) {
-
-					let $class = $('#classSelect');
-
-					$class.empty();
-
-					$class.append(
-						'<option value="">Select Class</option>'
-					);
-
-					$.each(data, function (i, c) {
-
-						let opt =
-							$('<option>')
-								.val(c.value)
-								.text(c.text);
-
-						if (classId &&
-							c.value == classId) {
-
-							opt.prop('selected', true);
-						}
-
-						$class.append(opt);
-					});
-				});
-		}
-
-		// CHANGE MEDIUM
-
-		$('#mediumSelect').change(function () {
-
-			let med = $(this).val();
-
-			if (med) {
-
-				$.get('/FeesStructures/GetClassesByMedium',
-					{ medium: med },
-
-					function (data) {
-
-						let $class = $('#classSelect');
-
-						$class.empty();
-
-						$class.append(
-							'<option value="">Select Class</option>'
-						);
-
-						$.each(data, function (i, c) {
-
-							$class.append(
-
-								$('<option>')
-									.val(c.value)
-									.text(c.text)
-
-							);
-						});
-					});
-			}
-			else {
-
-				$('#classSelect')
-					.empty()
-					.append('<option value="">Select Class</option>');
-			}
-		});
-	});
-
-	function resetFilters() {
-
-		// dropdown reset
-
-		document.getElementById("sessionSelect").value = "";
-		document.getElementById("mediumSelect").value = "";
-
-		$('#classSelect')
-			.empty()
-			.append('<option value="">Select Class</option>');
-
-		// table hide
-
-		let table =
-			document.getElementById("feeTableSection");
-
-		if (table) {
-			table.style.display = "none";
-		}
-
-		// message show
-
-		msg.style.display = "block";
-		msg.style.color = "#6b7280";
-		msg.innerText =
-			"Search to view class wise fee structures";
-
-		// url clear
-
-		window.history.replaceState(
-			{},
-			document.title,
-			window.location.pathname
-		);
-	}
-
+    function resetClassDropdown() {
+        $('#classSelect').empty().append('<option value="">-- Select Class --</option>');
+    }
 </script>

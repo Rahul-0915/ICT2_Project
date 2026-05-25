@@ -448,16 +448,21 @@ namespace SVM.Controllers
         }
 
         [HttpGet]
-        public async Task<JsonResult> GetClassesByMedium(string medium)
+        public async Task<JsonResult> GetClassesByMedium(string medium, int? sessionId)
         {
-            var res = await _client.GetAsync("Classes");
-            if (!res.IsSuccessStatusCode) return Json(new List<object>());
+            if (string.IsNullOrEmpty(medium) || !sessionId.HasValue)
+                return Json(new List<object>());
+
+            var res = await _client.GetAsync($"FeeStructures/GetClassesByMediumAndSession?medium={medium}&sessionId={sessionId}");
+
+            if (!res.IsSuccessStatusCode)
+                return Json(new List<object>());
+
             var data = await res.Content.ReadAsStringAsync();
-            var opt = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var all = JsonSerializer.Deserialize<List<Class>>(data, opt) ?? new();
-            var filtered = all.Where(c => c.Medium == medium)
-                              .Select(c => new { value = c.ClassId, text = $"{c.ClassName} - {c.Medium}" });
-            return Json(filtered);
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var classes = JsonSerializer.Deserialize<List<dynamic>>(data, options) ?? new List<dynamic>();
+
+            return Json(classes);
         }
         // In FeesStructuresController.cs
         public async Task<IActionResult> DownloadPdf(int? sessionId, string medium, int? classId)

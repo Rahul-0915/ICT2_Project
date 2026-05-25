@@ -37,10 +37,7 @@
             <select id="sessionFilter" class="search-box">
                 <option value="">Select Session</option>
 
-                @foreach (var s in Model
-                .Where(x => x.Session != null)
-                .Select(x => x.Session)
-                .DistinctBy(x => x.SessionId))
+                @foreach (var s in ViewBag.AllSessions)
                 {
                     <option value="@s.SessionId">
                         @s.SessionName
@@ -156,7 +153,8 @@
 
     <!-- NO DATA -->
 
-    <div class="no-data" id="noData">
+    <div class="no-data"
+         id="noData">
 
         Select filters and search students
 
@@ -386,6 +384,16 @@
         $("#mediumFilter").change(function () {
 
             let medium = $(this).val();
+            let sessionId = $("#sessionFilter").val();
+
+            if (sessionId == "") {
+
+                alert("Please select session first");
+
+                $("#mediumFilter").val("");
+
+                return;
+            }
 
             $("#classFilter").html('<option value="">Select Class</option>');
             $("#sectionFilter").html('<option value="">Select Section</option>');
@@ -398,7 +406,10 @@
 
                     type: 'GET',
 
-                    data: { medium: medium },
+                    data: {
+                        medium: medium,
+                        sessionId: sessionId
+                    },
 
                     success: function (data) {
 
@@ -407,8 +418,8 @@
                             $("#classFilter").append(
 
                                 `<option value="${item.value}">
-                                            ${item.text}
-                                        </option>`
+                                                ${item.text}
+                                            </option>`
 
                             );
 
@@ -445,8 +456,8 @@
                             $("#sectionFilter").append(
 
                                 `<option value="${item.value}">
-                                            ${item.text}
-                                        </option>`
+                                                ${item.text}
+                                            </option>`
 
                             );
 
@@ -516,6 +527,8 @@
 
             $("#noData").hide();
 
+            $("#noData").css("color", "");
+
             let classText =
                 $("#classFilter option:selected").text();
 
@@ -536,7 +549,16 @@
         }
         else {
 
-       
+            $("#actionBar").hide();
+
+            $("#resultTitle").html("");
+
+            $("#noData")
+                .show()
+                .css("color", "red")
+                .html("No Students Data Available");
+
+            $("#tableBody").html("");
 
         }
 
@@ -666,44 +688,44 @@
 
                 html += `
 
-                    <tr>
+                        <tr>
 
-                        <td>${roll}</td>
+                            <td>${roll}</td>
 
-                        <td>
-                            <img src="${photo}"
-                                 class="table-photo">
-                        </td>
+                            <td>
+                                <img src="${photo}"
+                                     class="table-photo">
+                            </td>
 
-                        <td>${name}</td>
+                            <td>${name}</td>
 
-                        <td>${gr}</td>
+                            <td>${gr}</td>
 
-                        <td>${phone}</td>
+                            <td>${phone}</td>
 
-                        <td>${cls}</td>
+                            <td>${cls}</td>
 
-                        <td>${sec}</td>
+                            <td>${sec}</td>
 
-                        <td class="table-actions">
+                            <td class="table-actions">
 
-                            <a href="/Students/Edit/${id}">
-                                Edit
-                            </a>
+                                <a href="/Students/Edit/${id}">
+                                    Edit
+                                </a>
 
-                            <a href="/Students/Details/${id}">
-                                View
-                            </a>
+                                <a href="/Students/Details/${id}">
+                                    View
+                                </a>
 
-                            <a href="/Students/Delete/${id}">
-                                Delete
-                            </a>
+                                <a href="/Students/Delete/${id}">
+                                    Delete
+                                </a>
 
-                        </td>
+                            </td>
 
-                    </tr>
+                        </tr>
 
-                `;
+                    `;
 
             }
 

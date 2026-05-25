@@ -1,0 +1,882 @@
+﻿@model IEnumerable<SVM.Models.Student>
+
+@{
+    ViewData["Title"] = "Student Promotion";
+}
+
+<link rel="stylesheet"
+      href="~/css/AdminSide_Css/SearchBar.css"
+      asp-append-version="true" />
+
+<link rel="stylesheet"
+      href="~/css/AdminSide_Css/PromoteStudents.css"
+      asp-append-version="true" />
+
+<link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<div class="promotion-page">
+
+    <!-- TOP BAR -->
+
+    <div class="top-bar">
+
+        <div class="left-side">
+
+            <!-- SESSION -->
+
+            <select id="sessionFilter" class="search-box">
+
+                <option value="">Select Session</option>
+
+                @foreach (var s in ViewBag.AllSessions)
+                {
+                    <option value="@s.SessionId">
+                        @s.SessionName
+                    </option>
+                }
+
+            </select>
+
+            <!-- MEDIUM -->
+
+            <select id="mediumFilter" class="search-box">
+
+                <option value="">Select Medium</option>
+
+                <option value="Gujarati">
+                    Gujarati
+                </option>
+
+                <option value="English">
+                    English
+                </option>
+
+            </select>
+
+            <!-- CLASS -->
+
+            <select id="classFilter" class="search-box">
+
+                <option value="">
+                    Select Class
+                </option>
+
+            </select>
+
+            <!-- SECTION -->
+
+            <select id="sectionFilter" class="search-box">
+
+                <option value="">
+                    Select Section
+                </option>
+
+            </select>
+
+            <!-- SEARCH -->
+
+            <button type="button"
+                    class="search-btn"
+                    onclick="searchStudents()">
+
+                <i class="fa-solid fa-magnifying-glass"></i>
+
+                Search
+
+            </button>
+
+            <!-- RESET -->
+
+            <button type="button"
+                    class="reset-btn"
+                    onclick="resetFilters()">
+
+                Reset
+
+            </button>
+
+        </div>
+
+    </div>
+
+    <!-- RESULT -->
+
+    <div class="result-title"
+         id="resultTitle">
+    </div>
+
+    <!-- ACTION BAR -->
+
+    <div class="action-bar"
+         id="actionBar">
+
+        <div class="action-inner">
+
+            <div class="left-actions">
+
+                <button type="button"
+                        class="select-btn"
+                        onclick="selectAllStudents()">
+
+                    Select All
+
+                </button>
+
+                <button type="button"
+                        class="unselect-btn"
+                        onclick="unselectAllStudents()">
+
+                    Unselect
+
+                </button>
+
+            </div>
+
+            <div class="right-actions">
+
+                <button type="button"
+                        class="promotion-btn"
+                        onclick="openPromotionModal()">
+
+                    <i class="fa-solid fa-arrow-up-right-dots"></i>
+
+                    Promote Students
+
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- NO DATA -->
+
+    <div class="no-data"
+         id="noData">
+
+        Select filters and search students
+
+    </div>
+
+    <!-- TABLE -->
+
+    <div class="table-wrapper"
+         id="tableWrapper">
+
+        <table class="student-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>Select</th>
+
+                    <th>Roll No</th>
+
+                    <th>Photo</th>
+
+                    <th>Student Name</th>
+
+                    <th>GR No</th>
+
+                    <th>Current Class</th>
+
+                    <th>Current Section</th>
+
+                </tr>
+
+            </thead>
+
+            <tbody id="tableBody">
+
+                @foreach (var item in Model)
+                {
+                    var medium = item.Class?.Medium ?? "";
+
+                    <tr class="student-row"
+                        data-id="@item.StudentId"
+                        data-session="@item.SessionId"
+                        data-medium="@medium"
+                        data-class="@item.ClassId"
+                        data-section="@item.SectionId"
+                        style="display:none;">
+
+                        <td>
+
+                            <input type="checkbox"
+                                   class="student-checkbox"
+                                   value="@item.StudentId" />
+
+                        </td>
+
+                        <td>
+                            @item.RollNo
+                        </td>
+
+                        <td>
+
+                            @if (!string.IsNullOrEmpty(item.StudentPhoto))
+                            {
+                                <img src="@item.StudentPhoto"
+                                     class="table-photo" />
+                            }
+                            else
+                            {
+                                <img src="/images/default-user.png"
+                                     class="table-photo" />
+                            }
+
+                        </td>
+
+                        <td class="student-name">
+
+                            @item.FirstName
+                            @item.LastName
+
+                        </td>
+
+                        <td>
+
+                            @item.Grno
+
+                        </td>
+
+                        <td>
+
+                            @item.Class?.ClassName
+
+                        </td>
+
+                        <td>
+
+                            @item.Section?.SectionName
+
+                        </td>
+
+                    </tr>
+                }
+
+            </tbody>
+
+        </table>
+
+    </div>
+
+</div>
+
+<!-- PROMOTION MODAL -->
+
+<div class="promotion-modal"
+     id="promotionModal">
+
+    <div class="promotion-box">
+
+        <div class="promotion-header">
+
+            <h2>
+
+                Promote Students
+
+            </h2>
+
+            <button type="button"
+                    class="close-btn"
+                    onclick="closePromotionModal()">
+
+                <i class="fa-solid fa-xmark"></i>
+
+            </button>
+
+        </div>
+
+        <div class="promotion-body">
+
+            <!-- NEW SESSION -->
+
+            <div class="form-group">
+
+                <label>
+
+                    New Session
+
+                </label>
+
+                <select id="newSession"
+                        class="promotion-select">
+
+                    <option value="">
+                        Select Session
+                    </option>
+
+                    @foreach (var s in ViewBag.AllSessions)
+                    {
+                        <option value="@s.SessionId">
+                            @s.SessionName
+                        </option>
+                    }
+
+                </select>
+
+            </div>
+
+            <!-- NEXT CLASS -->
+
+            <div class="form-group">
+
+                <label>
+
+                    Next Class
+
+                </label>
+
+                <select id="nextClass"
+                        class="promotion-select">
+
+                    <option value="">
+                        Select Next Class
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- NEXT SECTION -->
+
+            <div class="form-group">
+
+                <label>
+
+                    Next Section
+
+                </label>
+
+                <select id="nextSection"
+                        class="promotion-select">
+
+                    <option value="">
+                        Select Section
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+        <div class="promotion-footer">
+
+            <button type="button"
+                    class="cancel-btn"
+                    onclick="closePromotionModal()">
+
+                Cancel
+
+            </button>
+
+            <button type="button"
+                    class="submit-btn"
+                    onclick="submitPromotion()">
+
+                Promote Now
+
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+    $(document).ready(function () {
+
+        $("#actionBar").hide();
+
+        $("#tableWrapper").hide();
+
+        $("#promotionModal").hide();
+
+    });
+
+    // SESSION + MEDIUM CHANGE
+
+    $("#sessionFilter, #mediumFilter").change(function () {
+
+        let sessionId =
+            $("#sessionFilter").val();
+
+        let medium =
+            $("#mediumFilter").val();
+
+        $("#classFilter").html(
+            '<option value="">Select Class</option>'
+        );
+
+        $("#sectionFilter").html(
+            '<option value="">Select Section</option>'
+        );
+
+        // SESSION FIRST VALIDATION
+
+        if ($(this).attr("id") == "mediumFilter"
+            && sessionId == "") {
+
+            alert("Please select session first");
+
+            $("#mediumFilter").val("");
+
+            return;
+
+        }
+
+        // LOAD CLASSES
+
+        if (sessionId != "" && medium != "") {
+
+            $.ajax({
+
+                url: '@Url.Action("GetClassesByMedium", "Students")',
+
+                type: 'GET',
+
+                data: {
+                    medium: medium,
+                    sessionId: sessionId
+                },
+
+                success: function (data) {
+
+                    $.each(data, function (i, item) {
+
+                        $("#classFilter").append(
+
+                            `<option value="${item.value}">
+                                    ${item.text}
+                                </option>`
+
+                        );
+
+                    });
+
+                }
+
+            });
+
+        }
+
+    });
+
+    // CLASS CHANGE
+
+    $("#classFilter").change(function () {
+
+        let classId =
+            $(this).val();
+
+        $("#sectionFilter").html(
+            '<option value="">Select Section</option>'
+        );
+
+        if (classId != "") {
+
+            $.ajax({
+
+                url: '@Url.Action("GetSectionsByClass", "Students")',
+
+                type: 'GET',
+
+                data: {
+                    classId: classId
+                },
+
+                success: function (data) {
+
+                    $.each(data, function (i, item) {
+
+                        $("#sectionFilter").append(
+
+                            `<option value="${item.value}">
+                                    ${item.text}
+                                </option>`
+
+                        );
+
+                    });
+
+                }
+
+            });
+
+        }
+
+    });
+
+    // SEARCH STUDENTS
+
+    function searchStudents() {
+
+        let session =
+            $("#sessionFilter").val();
+
+        let medium =
+            $("#mediumFilter").val();
+
+        let classId =
+            $("#classFilter").val();
+
+        let sectionId =
+            $("#sectionFilter").val();
+
+        if (!session || !medium || !classId || !sectionId) {
+
+            alert("Please select all filters");
+
+            return;
+
+        }
+
+        let rows =
+            document.querySelectorAll(".student-row");
+
+        let visible = 0;
+
+        rows.forEach(row => {
+
+            let match =
+                row.dataset.session == session &&
+                row.dataset.medium == medium &&
+                row.dataset.class == classId &&
+                row.dataset.section == sectionId;
+
+            if (match) {
+
+                row.style.display = "table-row";
+
+                visible++;
+
+            }
+            else {
+
+                row.style.display = "none";
+
+            }
+
+        });
+
+        // DATA FOUND
+
+        if (visible > 0) {
+
+            $("#actionBar").show();
+
+            $("#tableWrapper").show();
+
+            $("#noData").hide();
+
+            $("#noData").css("color", "");
+
+            let classText =
+                $("#classFilter option:selected").text();
+
+            let sectionText =
+                $("#sectionFilter option:selected").text();
+
+            let mediumText =
+                medium + " Medium";
+
+            $("#resultTitle").html(
+
+                `${mediumText} | ${classText} | Section ${sectionText}`
+
+            );
+
+        }
+
+        // NO DATA
+
+        else {
+
+            $("#tableWrapper").hide();
+
+            $("#actionBar").hide();
+
+            $("#resultTitle").html("");
+
+            $("#noData")
+                .show()
+                .css("color", "red")
+                .html("No Students Data Available");
+
+        }
+
+    }
+
+    // SELECT ALL
+
+    function selectAllStudents() {
+
+        $(".student-row").each(function () {
+
+            if ($(this).css("display") != "none") {
+
+                $(this)
+                    .find(".student-checkbox")
+                    .prop("checked", true);
+
+            }
+
+        });
+
+    }
+
+    // UNSELECT ALL
+
+    function unselectAllStudents() {
+
+        $(".student-checkbox")
+            .prop("checked", false);
+
+    }
+
+    // OPEN PROMOTION MODAL
+
+    function openPromotionModal() {
+
+        let checked =
+            $(".student-checkbox:checked").length;
+
+        if (checked == 0) {
+
+            alert("Please select students");
+
+            return;
+
+        }
+
+        $("#promotionModal").fadeIn();
+
+        $("#newSession").val("");
+
+        $("#nextClass").html(
+            '<option value="">Select Next Class</option>'
+        );
+
+        $("#nextSection").html(
+            '<option value="">Select Section</option>'
+        );
+
+    }
+
+    // CLOSE MODAL
+
+    function closePromotionModal() {
+
+        $("#promotionModal").fadeOut();
+
+    }
+
+    // NEW SESSION CHANGE
+
+    $("#newSession").change(function () {
+
+        let sessionId = $("#newSession").val();
+
+        let currentClassId = $("#classFilter").val();
+
+        $("#nextClass").html(
+            '<option value="">Loading...</option>'
+        );
+
+        $("#nextSection").html(
+            '<option value="">Select Section</option>'
+        );
+
+        if (sessionId == "" || currentClassId == "") {
+            return;
+        }
+
+        $.ajax({
+
+            url: '@Url.Action("GetNextClass", "Students")',
+
+            type: 'GET',
+
+            data: {
+                currentClassId: currentClassId,
+                newSessionId: sessionId
+            },
+
+            success: function (data) {
+
+                $("#nextClass").html(
+                    '<option value="">Select Next Class</option>'
+                );
+
+                if (data == null) {
+
+                    alert("Next class not found");
+
+                    return;
+                }
+
+                $("#nextClass").append(
+
+                    `<option value="${data.value}" selected>
+                        ${data.text}
+                    </option>`
+
+                );
+
+                loadPromotionSections(data.value);
+
+            },
+
+            error: function () {
+
+                alert("Failed to load next class");
+
+            }
+
+        });
+
+    });
+
+    // LOAD PROMOTION SECTION
+
+    function loadPromotionSections(classId) {
+
+        $("#nextSection").html(
+            '<option value="">Loading...</option>'
+        );
+
+        $.ajax({
+
+            url: '@Url.Action("GetSectionsByClass", "Students")',
+
+            type: 'GET',
+
+            data: {
+                classId: classId
+            },
+
+            success: function (data) {
+
+                $("#nextSection").html(
+                    '<option value="">Select Section</option>'
+                );
+
+                $.each(data, function (i, item) {
+
+                    $("#nextSection").append(
+
+                        `<option value="${item.value}">
+                                ${item.text}
+                            </option>`
+
+                    );
+
+                });
+
+            }
+
+        });
+
+    }
+
+    // NEXT CLASS CHANGE
+
+    $("#nextClass").change(function () {
+
+        let classId =
+            $(this).val();
+
+        if (classId != "") {
+
+            loadPromotionSections(classId);
+
+        }
+
+    });
+
+    // SUBMIT PROMOTION
+
+    function submitPromotion() {
+
+        let students = [];
+
+        $(".student-checkbox:checked").each(function () {
+
+            students.push(
+                parseInt($(this).val())
+            );
+
+        });
+
+        let nextClass =
+            $("#nextClass").val();
+
+        let nextSection =
+            $("#nextSection").val();
+
+        let newSession =
+            $("#newSession").val();
+
+        if (!newSession || !nextClass || !nextSection) {
+
+            alert("Please select session, class and section");
+
+            return;
+
+        }
+
+        $.ajax({
+
+            url: '/Students/PromoteStudents',
+
+            type: 'POST',
+
+            contentType: 'application/json',
+
+            data: JSON.stringify({
+
+                studentIds: students,
+                newClassId: parseInt(nextClass),
+                newSectionId: parseInt(nextSection),
+                newSessionId: parseInt(newSession)
+
+            }),
+
+            success: function () {
+
+                alert("Students promoted successfully");
+
+                location.reload();
+
+            },
+
+            error: function (xhr) {
+
+                console.log(xhr.responseText);
+
+                alert(xhr.responseText);
+
+            }
+
+        });
+
+    }
+
+    // RESET
+
+    function resetFilters() {
+
+        location.reload();
+
+    }
+
+</script>

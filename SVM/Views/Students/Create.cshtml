@@ -208,23 +208,101 @@
 
         $(document).ready(function() {
             $('#SessionGroup, #ClassGroup, #SectionGroup').hide();
-            $('#Medium').change(function() {
+
+            $('#Medium').change(function () {
+
                 var selectedMedium = $(this).val();
+
                 if (selectedMedium === 'Gujarati' || selectedMedium === 'English') {
+
                     $('#SessionGroup, #ClassGroup, #SectionGroup').show();
-                    loadClassesByMedium(selectedMedium);
-                } else {
-                    $('#SessionGroup, #ClassGroup, #SectionGroup').hide();
-                    $('#ClassId').html('<option value="">-- Select Class --</option>');
-                    $('#SectionId').html('<option value="">-- Select Section --</option>');
-                    $('#SessionId').html('<option value="">-- Select Session --</option>');
+
+                    loadSessions(selectedMedium);
                 }
             });
+
+            $('#SessionId').change(function () {
+
+                var sessionId = $(this).val();
+                var medium = $('#Medium').val();
+
+                if (sessionId && medium) {
+
+                    loadClassesBySessionAndMedium(sessionId, medium);
+                }
+            });
+
             $('#ClassId').change(function() {
                 var classId = $(this).val();
                 if (classId) loadSectionsByClass(classId);
                 else $('#SectionId').html('<option value="">-- Select Section --</option>');
             });
+
+            function loadClassesBySessionAndMedium(sessionId, medium) {
+
+                $.ajax({
+
+                    url: '@Url.Action("GetClassesByMedium", "Students")',
+
+                    type: 'GET',
+
+                    data: {
+                        sessionId: sessionId,
+                        medium: medium
+                    },
+
+                    success: function (data) {
+
+                        var classSelect = $('#ClassId');
+
+                        classSelect.empty();
+
+                        classSelect.append('<option value="">-- Select Class --</option>');
+
+                        $.each(data, function (index, item) {
+
+                            classSelect.append(
+                                $('<option></option>')
+                                    .val(item.value)
+                                    .text(item.text)
+                            );
+                        });
+
+                        $('#SectionId').html('<option value="">-- Select Section --</option>');
+                    }
+                });
+            }
+
+            function loadSessions(medium) {
+
+                $.ajax({
+                    url: '@Url.Action("GetSessionsByMedium", "Students")',
+                    type: 'GET',
+                    data: { medium: medium },
+
+                    success: function (data) {
+
+                        var sessionSelect = $('#SessionId');
+
+                        sessionSelect.empty();
+
+                        sessionSelect.append('<option value="">-- Select Session --</option>');
+
+                        $.each(data, function (index, item) {
+
+                            sessionSelect.append(
+                                $('<option></option>')
+                                    .val(item.value)
+                                    .text(item.text)
+                            );
+                        });
+
+                        $('#ClassId').html('<option value="">-- Select Class --</option>');
+                        $('#SectionId').html('<option value="">-- Select Section --</option>');
+                    }
+                });
+            }
+
             function loadClassesByMedium(medium) {
                 $.ajax({ url: '@Url.Action("GetClassesByMedium", "Students")', type: 'GET', data: { medium: medium },
                     success: function(data) {
