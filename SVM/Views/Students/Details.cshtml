@@ -1,7 +1,4 @@
-﻿
-
-
-      @model SVM.Models.Student
+﻿@model SVM.Models.Student
 
 @{
     ViewData["Title"] = "Student Details";
@@ -17,6 +14,13 @@
         medium == "English"
         ? "/images/SVMEng_logo.png"
         : "/images/SVMGuj_logo.png";
+
+    // PROMOTION CHECK
+    var isPromoted = !string.IsNullOrEmpty(Model.AdmissionNo) &&
+                      Model.AdmissionNo.StartsWith("promoted-");
+
+    // FIXED PROMOTION DATE (stable display)
+    var promotionDate = DateTime.Now.ToString("dd-MM-yyyy");
 }
 
 <link rel="stylesheet"
@@ -26,61 +30,42 @@
 <div class="details-page">
 
     <!-- TOP BUTTONS -->
-
     <div class="top-actions no-print">
 
-        <a asp-action="Index"
-           class="back-btn">
-
+        <a asp-action="Index" class="back-btn">
             ← Back
-
         </a>
 
-        <button onclick="printPage()"
-                class="print-btn">
-
+        <button onclick="printPage()" class="print-btn">
             🖨 Print Form
-
         </button>
 
     </div>
 
     <!-- MAIN FORM -->
-
-    <div class="admission-form"
-         id="printArea">
+    <div class="admission-form" id="printArea">
 
         <!-- HEADER -->
-
         <div class="form-header">
 
             <div class="logo-box">
-
-                <img src="@logo"
-                     alt="School Logo" />
-
+                <img src="@logo" alt="School Logo" />
             </div>
 
             <div class="school-details">
 
                 <h1 class="schoolname">
-
                     @schoolName
-
                 </h1>
 
                 <p>
-
                     Gujarat Housing Board,
                     Pandesara, Surat - 394221
-
                 </p>
 
                 <p>
-
                     +91 9876543210 |
                     shardavidhyamandir@gmail.com
-
                 </p>
 
             </div>
@@ -88,98 +73,65 @@
         </div>
 
         <!-- TITLE -->
-
         <div class="form-title">
-
-            ADMISSION CONFIRMATION FORM
-
+            @(isPromoted ? "STUDENT DETAILS" : "ADMISSION CONFIRMATION FORM")
         </div>
 
-        <!-- TOP HEADER AREA -->
-
+        <!-- PERSONAL DETAILS -->
         <div class="top-student-header">
-
-            <!-- LEFT DETAILS -->
 
             <div class="top-basic-details">
 
-                <!-- PERSONAL DETAILS -->
-
                 <div class="section-title">
-
                     PERSONAL DETAILS
-
                 </div>
 
                 <div class="form-row">
-
-                    <span class="label">
-
-                        Student Name :
-
-                    </span>
-
+                    <span class="label">Student Name :</span>
                     <span class="value">
-
-                        @Model.FirstName
-                        @Model.LastName
-
+                        @Model.FirstName @Model.LastName
                     </span>
-
                 </div>
 
                 <div class="form-row">
-
-                    <span class="label">
-
-                        Father's Name :
-
-                    </span>
-
+                    <span class="label">Father's Name :</span>
                     <span class="value">
-
                         @Model.FatherName
-
                     </span>
-
                 </div>
 
                 <div class="form-row">
-
-                    <span class="label">
-
-                        Date of Birth :
-
-                    </span>
-
+                    <span class="label">Date of Birth :</span>
                     <span class="value">
-
                         @(Model.Dob?.ToString("dd-MM-yyyy"))
-
                     </span>
-
                 </div>
 
                 <div class="form-row">
-
-                    <span class="label">
-
-                        Gender :
-
-                    </span>
-
+                    <span class="label">Gender :</span>
                     <span class="value">
-
                         @Model.Gender
-
                     </span>
+                </div>
 
+                <!-- Admission Date + Promotion Date -->
+                <div class="form-row">
+                    <span class="label">Admission Date :</span>
+                    <span class="value">
+                        @(Model.AdmissionDate?.ToString("dd-MM-yyyy"))
+
+                        @if (isPromoted)
+                        {
+                            <span style="margin-left:10px; font-size:12px; color:#555;">
+                                | Promoted on: @promotionDate
+                            </span>
+                        }
+                    </span>
                 </div>
 
             </div>
 
             <!-- PHOTO -->
-
             <div class="photo-box">
 
                 @if (!string.IsNullOrEmpty(Model.StudentPhoto))
@@ -199,250 +151,109 @@
 
         </div>
 
-
+        <!-- BLOOD / AADHAR -->
         <div class="classic-form">
 
             <div class="form-row">
 
-                <span class="label">
+                <span class="label">Blood Group :</span>
+                <span class="value">@Model.BloodGroup</span>
 
-                    Blood Group :
-
-                </span>
-
-                <span class="value">
-
-                    @Model.BloodGroup
-
-                </span>
-
-                <span class="label small-gap">
-
-                    Aadhar No :
-
-                </span>
-
-                <span class="value">
-
-                    @Model.AadharNo
-
-                </span>
+                <span class="label small-gap">Aadhar No :</span>
+                <span class="value">@Model.AadharNo</span>
 
             </div>
 
         </div>
 
         <!-- ACADEMIC DETAILS -->
-
-        <div class="section-title">
-
-            ACADEMIC DETAILS
-
-        </div>
+        <div class="section-title">ACADEMIC DETAILS</div>
 
         <div class="classic-form">
 
             <div class="form-row">
+                <span class="label">Admission No :</span>
+                <span class="value">@Model.AdmissionNo</span>
 
-                <span class="label">
-
-                    Admission No :
-
-                </span>
-
-                <span class="value">
-
-                    @Model.AdmissionNo
-
-                </span>
-
-                <span class="label small-gap">
-
-                    Roll No :
-
-                </span>
-
-                <span class="value">
-
-                    @Model.RollNo
-
-                </span>
-
+                <span class="label small-gap">Roll No :</span>
+                <span class="value">@Model.RollNo</span>
             </div>
 
             <div class="form-row">
+                <span class="label">Class :</span>
+                <span class="value">@Model.Class?.ClassName</span>
 
-                <span class="label">
-
-                    Class :
-
-                </span>
-
-                <span class="value">
-
-                    @Model.Class?.ClassName
-
-                </span>
-
-                <span class="label small-gap">
-
-                    Division :
-
-                </span>
-
-                <span class="value">
-
-                    @Model.Section?.SectionName
-
-                </span>
-
+                <span class="label small-gap">Division :</span>
+                <span class="value">@Model.Section?.SectionName</span>
             </div>
 
             <div class="form-row">
+                <span class="label">GR No :</span>
+                <span class="value">@Model.Grno</span>
 
-                <span class="label">
-
-                    GR No :
-
-                </span>
-
-                <span class="value">
-
-                    @Model.Grno
-
-                </span>
-
-                <span class="label small-gap">
-
-                    Session :
-
-                </span>
-
-                <span class="value">
-
-                    @Model.Session?.SessionName
-
-                </span>
-
+                <span class="label small-gap">Session :</span>
+                <span class="value">@Model.Session?.SessionName</span>
             </div>
 
             <div class="form-row">
-
-                <span class="label">
-
-                    Previous School :
-
-                </span>
-
+                <span class="label">Previous School :</span>
                 <span class="value long">
-
                     @Model.PreviousSchool
-
                 </span>
-
             </div>
 
         </div>
 
         <!-- CONTACT DETAILS -->
-
-        <div class="section-title">
-
-            CONTACT DETAILS
-
-        </div>
+        <div class="section-title">CONTACT DETAILS</div>
 
         <div class="classic-form">
 
             <div class="form-row">
+                <span class="label">Phone :</span>
+                <span class="value">@Model.Phone</span>
 
-                <span class="label">
-
-                    Phone :
-
-                </span>
-
-                <span class="value">
-
-                    @Model.Phone
-
-                </span>
-
-                <span class="label small-gap">
-
-                    Mother Phone :
-
-                </span>
-
-                <span class="value">
-
-                    @Model.MotherPhone
-
-                </span>
-
+                <span class="label small-gap">Mother Phone :</span>
+                <span class="value">@Model.MotherPhone</span>
             </div>
 
         </div>
 
         <!-- ADDRESS DETAILS -->
-
-        <div class="section-title">
-
-            ADDRESS DETAILS
-
-        </div>
+        <div class="section-title">ADDRESS DETAILS</div>
 
         <div class="classic-form">
 
             <div class="form-row address-row">
-
-                <span class="label">
-
-                    Address :
-
-                </span>
-
+                <span class="label">Address :</span>
                 <span class="value long">
-
                     @Model.Address,
                     @Model.City,
                     @Model.State -
                     @Model.Pincode
-
                 </span>
-
             </div>
 
         </div>
 
         <!-- FOOTER -->
-
         <div class="form-footer">
 
             <div class="signature-box">
-
                 Clerk Signature
-
             </div>
 
             <div class="signature-box">
-
                 Principal Signature
-
             </div>
 
         </div>
 
     </div>
-
 </div>
 
 <script>
-
     function printPage() {
-
         window.print();
-
     }
-
 </script>
