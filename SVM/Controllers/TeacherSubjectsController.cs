@@ -138,6 +138,17 @@ namespace SVM.Controllers
         public async Task<IActionResult> Create()
         {
             await LoadDropdowns();
+
+            var res = await _client.GetAsync("Sessions");
+            var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+            var sessions = JsonSerializer.Deserialize<List<Session>>(
+                await res.Content.ReadAsStringAsync(), option);
+
+            var activeSession = sessions.FirstOrDefault(x => x.IsActive == 1);
+
+            ViewBag.SessionId = new SelectList(sessions, "SessionId", "SessionName", activeSession?.SessionId);
+
             return View();
         }
 
@@ -354,6 +365,38 @@ namespace SVM.Controllers
                 ts.ClassId == classId &&
                 ts.SessionId == sessionId &&
                 (excludeId == null || ts.Id != excludeId));
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetClassesBySessionMedium(int sessionId, string medium)
+        {
+            var res = await _client.GetAsync($"TeacherSubjects/classes-by-session-medium?sessionId={sessionId}&medium={medium}");
+
+            var data = await res.Content.ReadAsStringAsync();
+            var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+            var list = JsonSerializer.Deserialize<List<Class>>(data, option);
+
+            return Json(list.Select(x => new {
+                value = x.ClassId,
+                text = x.ClassName
+            }));
+        }
+
+        [HttpGet]
+        public async Task<JsonResult> GetSubjectsByClass(int classId)
+        {
+            var res = await _client.GetAsync($"TeacherSubjects/subjects-by-class/{classId}");
+
+            var data = await res.Content.ReadAsStringAsync();
+            var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+            var list = JsonSerializer.Deserialize<List<Subject>>(data, option);
+
+            return Json(list.Select(x => new {
+                value = x.SubjectId,
+                text = x.SubjectName
+            }));
         }
 
     }

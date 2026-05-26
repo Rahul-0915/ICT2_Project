@@ -34,6 +34,23 @@
 
         <div class="left-side">
 
+
+            <select id="sessionFilter" class="search-box">
+
+                <option value="all">All Sessions</option>
+
+                @foreach (var session in ViewBag.Sessions)
+                {
+                    <option value="@session.SessionId"
+                            selected="@(session.SessionId == ViewBag.ActiveSessionId)">
+
+                        @session.SessionName
+
+                    </option>
+                }
+
+            </select>
+
             <!-- MEDIUM -->
 
             <select id="mediumFilter"
@@ -52,25 +69,16 @@
             <select id="classFilter"
                     class="search-box">
 
-                <option value="">Select Class</option>
+                <option value="">All Classes</option>
 
-                <option value="JR KG">JR KG</option>
-                <option value="SR KG">SR KG</option>
+                @foreach (var cls in ViewBag.Classes)
+                {
+                    <option value="@cls.ClassName.ToLower()">
 
-                <option value="1">Class 1</option>
-                <option value="2">Class 2</option>
-                <option value="3">Class 3</option>
-                <option value="4">Class 4</option>
-                <option value="5">Class 5</option>
+                        @cls.ClassName
 
-                <option value="6">Class 6</option>
-                <option value="7">Class 7</option>
-                <option value="8">Class 8</option>
-                <option value="9">Class 9</option>
-                <option value="10">Class 10</option>
-
-                <option value="11">Class 11</option>
-                <option value="12">Class 12</option>
+                    </option>
+                }
 
             </select>
 
@@ -125,6 +133,7 @@
             <div class="subject-card"
                  data-medium="@group.Key.Medium"
                  data-class="@group.Key.ClassName"
+                 data-session="@group.First().Class.SessionId"
                  style="display:none;">
 
                 <!-- HEADER -->
@@ -235,6 +244,10 @@
             document.getElementById("classFilter")
                 .value.toLowerCase();
 
+        let session =
+            document.getElementById("sessionFilter")
+                .value;
+
         let cards =
             document.querySelectorAll(".subject-card");
 
@@ -248,37 +261,42 @@
             let cardClass =
                 card.dataset.class.toLowerCase();
 
+            let cardSession =
+                card.dataset.session;
+
             let matchMedium =
                 medium === "all" || cardMedium === medium;
 
             let matchClass =
                 className === "" || cardClass === className;
 
-            if (matchMedium && matchClass) {
+            let matchSession =
+                session === "all" || cardSession === session;
+
+            if (matchMedium && matchClass && matchSession) {
 
                 card.style.display = "block";
-                visible++;
 
+                visible++;
             }
             else {
 
                 card.style.display = "none";
-
             }
-
         });
 
         if (visible === 0) {
 
             document.getElementById("noDataMessage").style.display = "block";
-            document.getElementById("noDataMessage").style.color = "red";
-            document.getElementById("noDataMessage").innerText = "No Subjects Found";
 
+            document.getElementById("noDataMessage").style.color = "red";
+
+            document.getElementById("noDataMessage").innerText =
+                "No Subjects Found";
         }
         else {
 
             document.getElementById("noDataMessage").style.display = "none";
-
         }
     }
 
@@ -300,5 +318,9 @@
         document.getElementById("noDataMessage").style.color = "#6b7280";
         document.getElementById("noDataMessage").innerText = "Search to view class wise subjects";
     }
+    window.onload = function () {
 
+        filterSubjects();
+
+    };
 </script>

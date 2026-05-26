@@ -3,6 +3,7 @@
 @{
     ViewData["Title"] = "Assign Subject to Teacher";
 }
+
 <link rel="stylesheet" href="~/css/AdminSide_Css/SubjectAllocationForm.css" asp-append-version="true" />
 
 <div class="container mt-4">
@@ -10,12 +11,15 @@
         <div class="card-header bg-primary text-white rounded-top-4">
             <h3 class="mb-0"><i class="fas fa-chalkboard-teacher"></i> Subject Allocation</h3>
         </div>
+
         <div class="card-body">
             <form asp-action="Create">
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger" role="alert"></div>
+
+                <div asp-validation-summary="ModelOnly" class="alert alert-danger"></div>
 
                 <div class="row g-3">
-                    <!-- Staff Dropdown -->
+
+                    <!-- STAFF -->
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="StaffId" class="form-label fw-semibold">Teacher</label>
@@ -26,51 +30,140 @@
                         </div>
                     </div>
 
-                    <!-- Subject Dropdown -->
+                    <!-- SESSION (AUTO ACTIVE) -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="SubjectId" class="form-label fw-semibold">Subject</label>
-                            <select asp-for="SubjectId" class="form-select" asp-items="ViewBag.SubjectId">
-                                <option value="">-- Select Subject --</option>
+                            <label asp-for="SessionId" class="form-label fw-semibold">Session</label>
+                            <select asp-for="SessionId" id="SessionId" class="form-select" asp-items="ViewBag.SessionId">
+                                <option value="">-- Select Session --</option>
                             </select>
-                            <span asp-validation-for="SubjectId" class="text-danger"></span>
+                            <span asp-validation-for="SessionId" class="text-danger"></span>
                         </div>
                     </div>
 
-                    <!-- Class Dropdown -->
+                    <!-- MEDIUM -->
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label fw-semibold">Medium</label>
+                            <select id="Medium" class="form-select">
+                                <option value="">-- Select Medium --</option>
+                                <option value="Gujarati">Gujarati</option>
+                                <option value="English">English</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- CLASS -->
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="ClassId" class="form-label fw-semibold">Class</label>
-                            <select asp-for="ClassId" class="form-select" asp-items="ViewBag.ClassId">
+                            <select asp-for="ClassId" id="ClassId" class="form-select">
                                 <option value="">-- Select Class --</option>
                             </select>
                             <span asp-validation-for="ClassId" class="text-danger"></span>
                         </div>
                     </div>
 
-                    <!-- Session Dropdown -->
+                    <!-- SUBJECT -->
                     <div class="col-md-6">
                         <div class="form-group">
-                            <label asp-for="SessionId" class="form-label fw-semibold">Session</label>
-                            <select asp-for="SessionId" class="form-select" asp-items="ViewBag.SessionId">
-                                <option value="">-- Select Session --</option>
+                            <label asp-for="SubjectId" class="form-label fw-semibold">Subject</label>
+                            <select asp-for="SubjectId" id="SubjectId" class="form-select">
+                                <option value="">-- Select Subject --</option>
                             </select>
-                            <span asp-validation-for="SessionId" class="text-danger"></span>
+                            <span asp-validation-for="SubjectId" class="text-danger"></span>
                         </div>
                     </div>
+
                 </div>
 
-                <!-- Form Buttons -->
+                <!-- BUTTONS -->
                 <div class="form-group mt-4 d-flex gap-2">
                     <button type="submit" class="btn btn-primary px-4">
                         <i class="fas fa-save"></i> Assign
                     </button>
+
                     <a asp-action="Index" class="btn btn-secondary px-4">
                         <i class="fas fa-arrow-left"></i> Back to List
                     </a>
                 </div>
+
             </form>
         </div>
     </div>
 </div>
 
+<!-- JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+    $(document).ready(function () {
+
+        function getSessionId() {
+            return $('#SessionId').val();
+        }
+
+        // =========================
+        // MEDIUM + SESSION → CLASS
+        // =========================
+        $('#Medium, #SessionId').change(function () {
+
+            let medium = $('#Medium').val();
+            let sessionId = $('#SessionId').val();
+
+            if (!medium || !sessionId) return;
+
+            $('#ClassId').html('<option>Loading...</option>');
+            $('#SubjectId').html('<option value="">-- Select Subject --</option>');
+
+            $.ajax({
+                url: '/TeacherSubjects/GetClassesBySessionMedium',
+                type: 'GET',
+                data: { sessionId: sessionId, medium: medium },
+
+                success: function (data) {
+
+                    $('#ClassId').empty();
+                    $('#ClassId').append('<option value="">-- Select Class --</option>');
+
+                    $.each(data, function (i, item) {
+                        $('#ClassId').append(
+                            `<option value="${item.value}">${item.text}</option>`
+                        );
+                    });
+                }
+            });
+        });
+
+        // =========================
+        // CLASS → SUBJECT
+        // =========================
+        $('#ClassId').change(function () {
+
+            let classId = $(this).val();
+
+            if (!classId) return;
+
+            $('#SubjectId').html('<option>Loading...</option>');
+
+            $.ajax({
+                url: '/TeacherSubjects/GetSubjectsByClass',
+                type: 'GET',
+                data: { classId: classId },
+
+                success: function (data) {
+
+                    $('#SubjectId').empty();
+                    $('#SubjectId').append('<option value="">-- Select Subject --</option>');
+
+                    $.each(data, function (i, item) {
+                        $('#SubjectId').append(
+                            `<option value="${item.value}">${item.text}</option>`
+                        );
+                    });
+                }
+            });
+        });
+
+    });
+</script>

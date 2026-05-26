@@ -103,5 +103,21 @@ namespace SVM_API.Controllers
         {
             return _context.TeacherSubjects.Any(e => e.Id == id);
         }
+
+
+        [HttpGet("classes-by-session-medium")]
+        public async Task<ActionResult<IEnumerable<Class>>> GetClassesBySessionMedium(int sessionId, string medium)
+        {
+            return await _context.Classes
+                .Where(c => c.SessionId == sessionId && c.Medium == medium)
+                .ToListAsync();
+        }
+        [HttpGet("subjects-by-class/{classId}")]
+        public async Task<ActionResult<IEnumerable<Subject>>> GetSubjectsByClass(int classId)
+        {
+            return await _context.Subjects
+                .Where(s => s.ClassId == classId)
+                .ToListAsync();
+        }
     }
 }
