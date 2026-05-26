@@ -121,7 +121,6 @@
     </div>
 </div>
 }
-
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
     function getQueryParam(param) {
@@ -129,9 +128,9 @@
         return urlParams.get(param);
     }
 
-    function loadClasses(medium, selectedClassId) {
-        if (!medium) return;
-        $.get('/Timetables/GetClassesByMedium', { medium: medium }, function(data) {
+    function loadClasses(medium, sessionId, selectedClassId) {
+        if (!medium || !sessionId) return;
+        $.get('/Timetables/GetClassesByMedium', { medium: medium, sessionId: sessionId }, function(data) {
             let $classSelect = $('#classSelect');
             $classSelect.empty().append('<option value="">-- Select Class --</option>');
             $.each(data, function(i, c) {
@@ -166,19 +165,36 @@
 
         if (sessionId) $('#sessionSelect').val(sessionId);
         if (medium) $('#mediumSelect').val(medium);
-        if (medium) {
-            loadClasses(medium, classId);
+        
+        // ✅ Load classes only if both session AND medium are present (like Student reference)
+        if (sessionId && medium) {
+            loadClasses(medium, sessionId, classId);
+        }
+    });
+
+    $('#sessionSelect').change(function() {
+        let sessionId = $(this).val();
+        let medium = $('#mediumSelect').val();
+        
+        // ✅ Reset class and section when session changes
+        $('#classSelect').empty().append('<option value="">-- Select Class --</option>');
+        $('#sectionSelect').empty().append('<option value="">-- Select Section --</option>');
+        
+        if (sessionId && medium) {
+            loadClasses(medium, sessionId, null);
         }
     });
 
     $('#mediumSelect').change(function() {
-        var medium = $(this).val();
-        if (medium) {
-            loadClasses(medium, null);
-            $('#sectionSelect').empty().append('<option value="">-- Select Section --</option>');
-        } else {
-            $('#classSelect').empty().append('<option value="">-- Select Class --</option>');
-            $('#sectionSelect').empty().append('<option value="">-- Select Section --</option>');
+        let medium = $(this).val();
+        let sessionId = $('#sessionSelect').val();
+        
+        // ✅ Reset class and section when medium changes
+        $('#classSelect').empty().append('<option value="">-- Select Class --</option>');
+        $('#sectionSelect').empty().append('<option value="">-- Select Section --</option>');
+        
+        if (sessionId && medium) {
+            loadClasses(medium, sessionId, null);
         }
     });
 

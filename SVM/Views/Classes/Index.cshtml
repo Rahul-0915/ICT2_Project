@@ -7,275 +7,214 @@
 <!DOCTYPE html>
 <html>
 <head>
-
     <title>Classes</title>
-
     <link rel="stylesheet"
           href="~/css/AdminSide_Css/ClassesDisplay.css"
           asp-append-version="true" />
-
+    <link rel="stylesheet"
+          href="~/css/AdminSide_Css/SearchBar.css"
+          asp-append-version="true" />
     <link rel="stylesheet"
           href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
 </head>
-
 <body>
 
     <div class="class-page">
 
         <!-- TOP BAR -->
-
         <div class="top-bar">
-
             <div class="left-side">
+                <!-- SESSION FILTER -->
+                <select id="sessionFilter" class="search-box">
+                    <option value="">All Sessions</option>
+                    @{
+                        var sessions = ViewBag.AllSessions as List<SVM.Models.Session>;
+                        if (sessions != null)
+                        {
+                            foreach (var s in sessions)
+                            {
+                                <option value="@s.SessionId">@s.SessionName</option>
+                            }
+                        }
+                    }
+                </select>
 
-                <!-- SEARCH -->
-
+                <!-- CLASS SEARCH -->
                 <select id="searchInput" class="search-box">
+                    <option value="">All Classes</option>
+                    <option value="JR KG">JR KG</option>
+                    <option value="SR KG">SR KG</option>
+                    <option value="1">Class 1</option>
+                    <option value="2">Class 2</option>
+                    <option value="3">Class 3</option>
+                    <option value="4">Class 4</option>
+                    <option value="5">Class 5</option>
+                    <option value="6">Class 6</option>
+                    <option value="7">Class 7</option>
+                    <option value="8">Class 8</option>
+                    <option value="9">Class 9</option>
+                    <option value="10">Class 10</option>
+                    <option value="11">Class 11</option>
+                    <option value="12">Class 12</option>
+                </select>
 
-    <option value="">All Classes</option>
-
-    <option value="JR KG">JR KG</option>
-    <option value="SR KG">SR KG</option>
-
-    <option value="1">Class 1</option>
-    <option value="2">Class 2</option>
-    <option value="3">Class 3</option>
-    <option value="4">Class 4</option>
-    <option value="5">Class 5</option>
-
-    <option value="6">Class 6</option>
-    <option value="7">Class 7</option>
-    <option value="8">Class 8</option>
-    <option value="9">Class 9</option>
-    <option value="10">Class 10</option>
-
-    <option value="11">Class 11</option>
-    <option value="12">Class 12</option>
-
-</select>
-
-
-                <!-- FILTER -->
-
-                <select id="mediumFilter"
-                        class="filter-dropdown">
-
+                <!-- MEDIUM FILTER -->
+                <select id="mediumFilter" class="filter-dropdown">
                     <option value="all">All Mediums</option>
-
                     <option value="Gujarati">Gujarati</option>
-
                     <option value="English">English</option>
-
                 </select>
 
                 <!-- SEARCH BUTTON -->
-
-                <button class="search-btn"
-                        onclick="filterClasses()">
-
+                <button class="search-btn" onclick="filterClasses()">
                     <i class="fa-solid fa-magnifying-glass"></i>
                     Search
-                    
-
-
                 </button>
 
                 <!-- RESET BUTTON -->
-
-                <button class="reset-btn"
-                        onclick="resetFilter()">
-
+                <button class="reset-btn" onclick="resetFilter()">
                     Reset
-
                 </button>
-
             </div>
 
             <!-- ADD BUTTON -->
-
-            <a asp-action="Create"
-               class="add-btn">
-
+            <a asp-action="Create" class="add-btn">
                 <i class="fa-solid fa-plus"></i>
-
             </a>
-
         </div>
 
-        <!-- PAGE TITLE -->
 
-        <h1 class="page-title">
-
-            Class Management
-
-        </h1>
-
-        <!-- NO DATA -->
-
-        <div id="noDataMessage"
-             class="no-data">
-
-            No Class Found
-
+        <!-- NO DATA MESSAGE (Subject module style) -->
+        <div id="noDataMessage" class="no-data">
+            Select filters and click Search
         </div>
 
         <!-- CLASS CONTAINER -->
-
         <div class="class-container">
-
             @foreach (var item in Model)
             {
                 <div class="class-card"
-                     data-medium="@item.Medium">
+                     data-medium="@item.Medium"
+                     data-session="@item.SessionId"
+                     data-classname="@item.ClassName"
+                     style="display:none;">
 
                     <!-- CARD HEADER -->
-
                     <div class="card-header">
-
-                        <!-- LEFT -->
-
                         <div>
-
-                            <h2 class="class-name">
-                                @item.ClassName
-                            </h2>
-
-                            <p class="medium-text">
-
-                                @item.Medium Medium
-
-                            </p>
-
+                            <div class="class-badge">Class @item.ClassName</div>
+                            <p class="medium-text">@item.Medium Medium</p>
                         </div>
-
-                        <!-- RIGHT -->
-
                         <div class="right-info">
-
-                            <div class="session-badge">
-
-                                @item.Session?.SessionName
-
-                            </div>
-
+                            <div class="session-badge">@item.Session?.SessionName</div>
                             <div class="count-info">
-
                                 @item.Students.Count Students |
                                 @item.Sections.Count Sections
-
                             </div>
-
                         </div>
-
                     </div>
 
                     <!-- SECTION LIST -->
-
                     <div class="section-list">
-
-    @foreach (var sec in item.Sections)
-    {
-        <div class="section-row">
-
-            <!-- LEFT: SECTION INFO -->
-            <div class="section-name">
-                Section @sec.SectionName
-            </div>
-
-            <!-- RIGHT: ACTIONS -->
-            <div class="section-actions">
-
-                <!-- EDIT SECTION -->
-                                    <a asp-controller="Sections"
-                                       asp-action="Edit"
-                                       asp-route-id="@sec.SectionId"
-                                       class="sec-icon edit"
-                                       title="Edit Section">
-
+                        @foreach (var sec in item.Sections)
+                        {
+                            <div class="section-row">
+                                <div class="section-name">Section @sec.SectionName</div>
+                                <div class="section-actions">
+                                    <a asp-controller="Sections" asp-action="Edit" asp-route-id="@sec.SectionId" class="sec-icon edit" title="Edit Section">
                                         <i class="fa-solid fa-pen"></i>
-
                                     </a>
-
-                <!-- DELETE SECTION -->
-                                    <a asp-controller="Sections"
-                                       asp-action="Delete"
-                                       asp-route-id="@sec.SectionId"
-                                       class="sec-icon delete"
-                                       title="Delete Section"
-                                       onclick="return confirm('Delete this section?');">
-
+                                    <a asp-controller="Sections" asp-action="Delete" asp-route-id="@sec.SectionId" class="sec-icon delete" title="Delete Section" onclick="return confirm('Delete this section?');">
                                         <i class="fa-solid fa-trash"></i>
-
                                     </a>
-
-            </div>
-
-        </div>
-    }
-
-    <!-- ADD NEW SECTION (INSIDE CLASS) -->
+                                </div>
+                            </div>
+                        }
                         <div class="section-add">
-
-                            <a asp-controller="Sections"
-                               asp-action="Create"
-                               asp-route-classId="@item.ClassId"
-                               asp-route-medium="@item.Medium"
-                               class="add-section-btn">
-
-                                <i class="fa-solid fa-plus"></i>
-                                Add Section
-
+                            <a asp-controller="Sections" asp-action="Create" asp-route-classId="@item.ClassId" asp-route-medium="@item.Medium" class="add-section-btn">
+                                <i class="fa-solid fa-plus"></i> Add Section
                             </a>
-
                         </div>
-
-</div>
-
-                    <!-- ACTION BUTTONS -->
-
-                    <div class="action-buttons">
-
-                        <a asp-action="Edit"
-                           asp-route-id="@item.ClassId"
-                           class="edit-btn">
-
-                            <i class="fa-solid fa-pen"></i>
-
-                            Edit
-
-                        </a>
-
-                        <a asp-action="Details"
-                           asp-route-id="@item.ClassId"
-                           class="details-btn">
-
-                            <i class="fa-solid fa-eye"></i>
-
-                            Details
-
-                        </a>
-
-                        <a asp-action="Delete"
-                           asp-route-id="@item.ClassId"
-                           class="delete-btn">
-
-                            <i class="fa-solid fa-trash"></i>
-
-                            Delete
-
-                        </a>
-
                     </div>
 
+                    <!-- ACTION BUTTONS -->
+                    <div class="action-buttons">
+                        <a asp-action="Edit" asp-route-id="@item.ClassId" class="edit-btn">
+                            <i class="fa-solid fa-pen"></i> Edit
+                        </a>
+                        <a asp-action="Details" asp-route-id="@item.ClassId" class="details-btn">
+                            <i class="fa-solid fa-eye"></i> Details
+                        </a>
+                        <a asp-action="Delete" asp-route-id="@item.ClassId" class="delete-btn">
+                            <i class="fa-solid fa-trash"></i> Delete
+                        </a>
+                    </div>
                 </div>
             }
-
         </div>
-
     </div>
 
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // DEFAULT MESSAGE (like Subject module)
+        document.getElementById("noDataMessage").style.display = "block";
+        document.getElementById("noDataMessage").style.color = "#6b7280";
+        document.getElementById("noDataMessage").innerHTML = "Search to view class and Division";
 
-    <script src="/js/AdminSide_Js/Classes.js"></script>
+        // DEFAULT HIDE - Initially sab cards hide
+        document.querySelectorAll(".class-card").forEach(card => {
+            card.style.display = "none";
+        });
+
+        function filterClasses() {
+            let sessionValue = document.getElementById("sessionFilter").value;
+            let searchValue = document.getElementById("searchInput").value.toLowerCase().trim();
+            let mediumValue = document.getElementById("mediumFilter").value.toLowerCase();
+            
+            let cards = document.querySelectorAll(".class-card");
+            let visible = 0;
+
+            cards.forEach(card => {
+                let cardSession = card.getAttribute("data-session") || "";
+                let className = card.querySelector(".class-badge")?.innerText.toLowerCase() || "";
+                let cardMedium = card.getAttribute("data-medium")?.toLowerCase() || "";
+                
+                let sessionMatch = sessionValue === "" || cardSession === sessionValue;
+                let searchMatch = searchValue === "" || className.includes(searchValue);
+                let mediumMatch = mediumValue === "all" || cardMedium === mediumValue;
+                
+                if (sessionMatch && searchMatch && mediumMatch) {
+                    card.style.display = "block";
+                    visible++;
+                } else {
+                    card.style.display = "none";
+                }
+            });
+
+            let noDataMsg = document.getElementById("noDataMessage");
+            if (visible === 0) {
+                noDataMsg.style.display = "block";
+                noDataMsg.style.color = "red";
+                noDataMsg.innerHTML = "No Class Found";
+            } else {
+                noDataMsg.style.display = "none";
+            }
+        }
+
+        function resetFilter() {
+            document.getElementById("sessionFilter").value = "";
+            document.getElementById("searchInput").value = "";
+            document.getElementById("mediumFilter").value = "all";
+            
+            document.querySelectorAll(".class-card").forEach(card => {
+                card.style.display = "none";
+            });
+            
+            let noDataMsg = document.getElementById("noDataMessage");
+            noDataMsg.style.display = "block";
+            noDataMsg.style.color = "#6b7280";
+            noDataMsg.innerHTML = "Select filters and click Search";
+        }
+    </script>
 </body>
 </html>

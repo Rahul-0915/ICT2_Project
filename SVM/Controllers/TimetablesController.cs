@@ -35,10 +35,8 @@ namespace SVM.Controllers
 
             var timetables = await GetTimetables(sessionId.Value, classId.Value, sectionId.Value);
 
-            // ✅ Get teacher mapping for this session, class, section
             var teacherMapping = await GetTeacherMapping(sessionId.Value, classId.Value, sectionId.Value);
 
-            // ✅ Pass teacherMapping to PrepareGrid
             var grid = await PrepareGridAsync(timetables, teacherMapping);
             ViewBag.Grid = grid;
             ViewBag.SelectedSessionId = sessionId;
@@ -48,6 +46,7 @@ namespace SVM.Controllers
 
             return View();
         }
+
         [HttpGet]
         public async Task<IActionResult> Create(int sessionId, int classId, int sectionId, string dayName, int lectureNo, string medium)
         {
@@ -66,7 +65,6 @@ namespace SVM.Controllers
             var subjects = await GetSubjects();
             ViewBag.SubjectList = new SelectList(subjects, "SubjectId", "SubjectName");
 
-            // Create empty teacher dropdown using anonymous type
             ViewBag.StaffList = new SelectList(new List<object>(), "StaffId", "DisplayName");
 
             ViewBag.ReturnSessionId = sessionId;
@@ -112,7 +110,6 @@ namespace SVM.Controllers
             if (timetable.SubjectId.HasValue)
             {
                 var teachers = await GetTeachersForSubject(timetable.SubjectId.Value, timetable.ClassId, timetable.SessionId);
-                // Convert to anonymous objects with DisplayName
                 var teacherList = teachers.Select(t => new { StaffId = t.StaffId, DisplayName = $"{t.FirstName} {t.LastName}" }).ToList();
                 ViewBag.StaffList = new SelectList(teacherList, "StaffId", "DisplayName", timetable.StaffId);
             }
@@ -136,11 +133,9 @@ namespace SVM.Controllers
             var subjects = await GetSubjects();
             ViewBag.SubjectList = new SelectList(subjects, "SubjectId", "SubjectName", timetable.SubjectId);
 
-            // Load teacher dropdown based on current subject/class/session
             if (timetable.SubjectId.HasValue)
             {
                 var teachers = await GetTeachersForSubject(timetable.SubjectId.Value, timetable.ClassId, timetable.SessionId);
-                // Also include currently assigned teacher even if not in filtered list
                 if (timetable.StaffId.HasValue && !teachers.Any(t => t.StaffId == timetable.StaffId.Value))
                 {
                     var staffRes = await _client.GetAsync($"Staffs/{timetable.StaffId.Value}");
@@ -151,7 +146,6 @@ namespace SVM.Controllers
                         if (extraStaff != null) teachers.Add(extraStaff);
                     }
                 }
-                // Build anonymous list with DisplayName
                 var teacherList = teachers.Select(t => new { StaffId = t.StaffId, DisplayName = $"{t.FirstName} {t.LastName}" }).ToList();
                 ViewBag.StaffList = new SelectList(teacherList, "StaffId", "DisplayName", timetable.StaffId);
             }
@@ -220,7 +214,6 @@ namespace SVM.Controllers
             var data = await response.Content.ReadAsStringAsync();
             var timetable = JsonSerializer.Deserialize<Timetable>(data, options);
 
-            // ✅ Load teacher for this timetable's subject, class, session
             if (timetable.SubjectId.HasValue && timetable.SessionId > 0 && timetable.ClassId > 0)
             {
                 var teacherMapping = await GetTeacherMapping(timetable.SessionId, timetable.ClassId, timetable.SectionId);
@@ -263,32 +256,31 @@ namespace SVM.Controllers
             });
         }
 
-        // -------------------------- EXPORT METHODS (with names) --------------------------
-
-        // Excel export
+        // -------------------------- EXPORT METHODS --------------------------
         public async Task<IActionResult> ExportExcel(int sessionId, int classId, int sectionId, string medium)
         {
             var timetables = await GetTimetables(sessionId, classId, sectionId);
             var teacherMapping = await GetTeacherMapping(sessionId, classId, sectionId);
-            var grid = await PrepareGridAsync(timetables, teacherMapping); var sessionName = await GetSessionName(sessionId);
+            var grid = await PrepareGridAsync(timetables, teacherMapping);
+            var sessionName = await GetSessionName(sessionId);
             var className = await GetClassName(classId);
             var sectionName = await GetSectionName(sectionId);
             var html = GenerateHtmlTable(grid, sessionName, className, sectionName, medium);
             return File(System.Text.Encoding.UTF8.GetBytes(html), "application/vnd.ms-excel", $"Timetable_{sessionName}_{className}_{sectionName}_{medium}.xls");
         }
-        // Word export
+
         public async Task<IActionResult> ExportWord(int sessionId, int classId, int sectionId, string medium)
         {
             var timetables = await GetTimetables(sessionId, classId, sectionId);
             var teacherMapping = await GetTeacherMapping(sessionId, classId, sectionId);
-            var grid = await PrepareGridAsync(timetables, teacherMapping); var sessionName = await GetSessionName(sessionId);
+            var grid = await PrepareGridAsync(timetables, teacherMapping);
+            var sessionName = await GetSessionName(sessionId);
             var className = await GetClassName(classId);
             var sectionName = await GetSectionName(sectionId);
             var html = GenerateHtmlTable(grid, sessionName, className, sectionName, medium);
             return File(System.Text.Encoding.UTF8.GetBytes(html), "application/msword", $"Timetable_{sessionName}_{className}_{sectionName}_{medium}.doc");
         }
 
-        // PDF export using QuestPDF
         public async Task<IActionResult> ExportPdf(int sessionId, int classId, int sectionId, string medium)
         {
             var timetables = await GetTimetables(sessionId, classId, sectionId);
@@ -301,18 +293,18 @@ namespace SVM.Controllers
             var pdfBytes = document.GeneratePdf();
             return File(pdfBytes, "application/pdf", $"Timetable_{sessionName}_{className}_{sectionName}_{medium}.pdf");
         }
+
         // -------------------------- HELPER METHODS --------------------------
-
         private string GenerateHtmlTable(Dictionary<string, Dictionary<int, Timetable>> grid,
-    string sessionName, string className, string sectionName, string medium)
-{
-    var days = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+            string sessionName, string className, string sectionName, string medium)
+        {
+            var days = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 
-    string schoolName = medium?.ToLower() == "gujarati"
-        ? "શારદા વિદ્યામંદિર"
-        : "S.V.M English Medium School";
+            string schoolName = medium?.ToLower() == "gujarati"
+                ? "શારદા વિદ્યામંદિર"
+                : "S.V.M English Medium School";
 
-    var html = $@"
+            var html = $@"
 <html>
 <head>
 <meta charset='utf-8'/>
@@ -321,43 +313,34 @@ body {{
     font-family: Arial;
     text-align: center;
 }}
-
 h1 {{
     margin: 5px;
 }}
-
 .table {{
     width: 100%;
     border-collapse: collapse;
 }}
-
 .table th, .table td {{
     border: 1px solid black;
     padding: 6px;
     text-align: center;
     vertical-align: middle;
 }}
-
 .header {{
     margin-bottom: 10px;
 }}
-
 .small {{
     font-size: 12px;
 }}
-
 .footer {{
     margin-top: 30px;
     text-align: right;
 }}
 </style>
 </head>
-
 <body>
-
 <h1>{schoolName}</h1>
 <h2>TIME TABLE</h2>
-
 <div class='header'>
 <b>Class:</b> {className} &nbsp;&nbsp;
 <b>Section:</b> {sectionName} &nbsp;&nbsp;
@@ -365,175 +348,157 @@ h1 {{
 <br/>
 <b>Session:</b> {sessionName}
 </div>
-
 <table class='table'>
 <thead>
 <tr>
 <th>Period/Day</th>";
 
-    foreach (var d in days)
-        html += $"<th>{d}</th>";
+            foreach (var d in days)
+                html += $"<th>{d}</th>";
 
-    html += "</tr></thead><tbody>";
+            html += "</tr></thead><tbody>";
 
-    for (int p = 1; p <= 8; p++)
-    {
-        html += $"<tr><th>Period {p}</th>";
-
-        foreach (var day in days)
-        {
-            if (day == "Saturday" && p > 5)
+            for (int p = 1; p <= 8; p++)
             {
-                html += "<td>-</td>";
-                continue;
-            }
+                html += $"<tr><th>Period {p}</th>";
 
-            var cell = grid[day].ContainsKey(p) ? grid[day][p] : null;
+                foreach (var day in days)
+                {
+                    if (day == "Saturday" && p > 5)
+                    {
+                        html += "<td>-</td>";
+                        continue;
+                    }
 
-            if (cell != null && cell.SubjectId != null)
-            {
-                var teacher = cell.Staff != null ? $"{cell.Staff.FirstName} {cell.Staff.LastName}" : "";
+                    var cell = grid[day].ContainsKey(p) ? grid[day][p] : null;
 
-                html += $@"
+                    if (cell != null && cell.SubjectId != null)
+                    {
+                        var teacher = cell.Staff != null ? $"{cell.Staff.FirstName} {cell.Staff.LastName}" : "";
+
+                        html += $@"
 <td>
 <b>{cell.Subject?.SubjectName}</b><br/>
 {cell.StartTime} - {cell.EndTime}<br/>
 <span class='small'>{teacher}</span>
 </td>";
-            }
-            else if (cell?.IsBreak == true)
+                    }
+                    else if (cell?.IsBreak == true)
+                    {
+                        html += $"<td><b>BREAK</b><br/>{cell.StartTime}-{cell.EndTime}</td>";
+                    }
+                    else
+                    {
+                        html += "<td>--</td>";
+                    }
+                }
 
-			{
-                html += $"<td><b>BREAK</b><br/>{cell.StartTime}-{cell.EndTime}</td>";
+                html += "</tr>";
             }
-            else
-            {
-                html += "<td>--</td>";
-            }
-        }
 
-        html += "</tr>";
-    }
-
-    html += $@"
+            html += $@"
 </tbody>
 </table>
-
 <div class='footer'>
 Principal Sign: ____________________
 </div>
-
 </body>
 </html>";
 
-    return html;
-}
-		// pdf create
-		private IDocument CreatePdfDocument(
-	 Dictionary<string, Dictionary<int, Timetable>> grid,
-	 string sessionName,
-	 string className,
-	 string sectionName,
-	 string medium)
-		{
-			var days = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
+            return html;
+        }
 
-			string schoolName = medium?.ToLower() == "gujarati"
-				? "શારદા વિદ્યામંદિર"
-				: "S.V.M English Medium School";
+        private IDocument CreatePdfDocument(Dictionary<string, Dictionary<int, Timetable>> grid,
+            string sessionName, string className, string sectionName, string medium)
+        {
+            var days = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
 
-			return Document.Create(container =>
-			{
-				container.Page(page =>
-				{
-					page.Size(PageSizes.A4.Landscape());
-					page.Margin(20);
-					page.DefaultTextStyle(x => x.FontSize(10));
+            string schoolName = medium?.ToLower() == "gujarati"
+                ? "શારદા વિદ્યામંદિર"
+                : "S.V.M English Medium School";
 
-					// HEADER (SCHOOL NAME)
-					page.Header().Column(col =>
-					{
-						col.Item().AlignCenter().Text(schoolName).FontSize(18).Bold();
-						col.Item().AlignCenter().Text("TIME TABLE").FontSize(14).Bold();
+            return Document.Create(container =>
+            {
+                container.Page(page =>
+                {
+                    page.Size(PageSizes.A4.Landscape());
+                    page.Margin(20);
+                    page.DefaultTextStyle(x => x.FontSize(10));
 
-						col.Item().AlignCenter().Text(
-							$"Class: {className}   |   Section: {sectionName}   |   Medium: {medium}"
-						);
+                    page.Header().Column(col =>
+                    {
+                        col.Item().AlignCenter().Text(schoolName).FontSize(18).Bold();
+                        col.Item().AlignCenter().Text("TIME TABLE").FontSize(14).Bold();
+                        col.Item().AlignCenter().Text($"Class: {className}   |   Section: {sectionName}   |   Medium: {medium}");
+                        col.Item().AlignCenter().Text($"Session: {sessionName}");
+                    });
 
-						col.Item().AlignCenter().Text($"Session: {sessionName}");
-					});
+                    page.Content().PaddingTop(10).Table(table =>
+                    {
+                        table.ColumnsDefinition(columns =>
+                        {
+                            columns.ConstantColumn(60);
+                            foreach (var _ in days)
+                                columns.RelativeColumn();
+                        });
 
-					// TABLE
-					page.Content().PaddingTop(10).Table(table =>
-					{
-						table.ColumnsDefinition(columns =>
-						{
-							columns.ConstantColumn(60);
-							foreach (var _ in days)
-								columns.RelativeColumn();
-						});
+                        table.Header(header =>
+                        {
+                            header.Cell().Border(1).Padding(5).AlignCenter().Text("Period/Day");
+                            foreach (var day in days)
+                                header.Cell().Border(1).Padding(5).AlignCenter().Text(day);
+                        });
 
-						// HEADER ROW
-						table.Header(header =>
-						{
-							header.Cell().Border(1).Padding(5).AlignCenter().Text("Period/Day");
+                        for (int p = 1; p <= 8; p++)
+                        {
+                            table.Cell().Border(1).Padding(5).AlignCenter().Text($"Period {p}");
 
-							foreach (var day in days)
-								header.Cell().Border(1).Padding(5).AlignCenter().Text(day);
-						});
+                            foreach (var day in days)
+                            {
+                                if (day == "Saturday" && p > 5)
+                                {
+                                    table.Cell().Border(1).Padding(5).AlignCenter().Text("-");
+                                    continue;
+                                }
 
-						// DATA ROWS
-						for (int p = 1; p <= 8; p++)
-						{
-							table.Cell().Border(1).Padding(5).AlignCenter().Text($"Period {p}");
+                                var cell = grid[day].ContainsKey(p) ? grid[day][p] : null;
 
-							foreach (var day in days)
-							{
-								if (day == "Saturday" && p > 5)
-								{
-									table.Cell().Border(1).Padding(5).AlignCenter().Text("-");
-									continue;
-								}
+                                if (cell != null && cell.SubjectId != null)
+                                {
+                                    var teacherName = cell.Staff != null
+                                        ? $"{cell.Staff.FirstName} {cell.Staff.LastName}"
+                                        : "";
 
-								var cell = grid[day].ContainsKey(p) ? grid[day][p] : null;
+                                    table.Cell().Border(1).Padding(5).AlignCenter().Column(col =>
+                                    {
+                                        col.Item().Text(cell.Subject?.SubjectName).Bold();
+                                        col.Item().Text($"{cell.StartTime} - {cell.EndTime}");
+                                        col.Item().Text(teacherName);
+                                    });
+                                }
+                                else if (cell != null && cell.IsBreak == true)
+                                {
+                                    table.Cell().Border(1).Padding(5).AlignCenter().Column(col =>
+                                    {
+                                        col.Item().Text("BREAK").Bold();
+                                        col.Item().Text($"{cell.StartTime} - {cell.EndTime}");
+                                    });
+                                }
+                                else
+                                {
+                                    table.Cell().Border(1).Padding(5).AlignCenter().Text("--");
+                                }
+                            }
+                        }
+                    });
 
-								if (cell != null && cell.SubjectId != null)
-								{
-									var teacherName = cell.Staff != null
-										? $"{cell.Staff.FirstName} {cell.Staff.LastName}"
-										: "";
+                    page.Footer().PaddingTop(3).AlignRight().Text("Principal Sign: ____________________");
+                });
+            });
+        }
 
-									table.Cell().Border(1).Padding(5).AlignCenter().Column(col =>
-									{
-										col.Item().Text(cell.Subject?.SubjectName).Bold();
-										col.Item().Text($"{cell.StartTime} - {cell.EndTime}");
-										col.Item().Text(teacherName);
-									});
-								}
-								else if (cell != null && cell.IsBreak == true)
-								{
-									table.Cell().Border(1).Padding(5).AlignCenter().Column(col =>
-									{
-										col.Item().Text("BREAK").Bold();
-										col.Item().Text($"{cell.StartTime} - {cell.EndTime}");
-									});
-								}
-								else
-								{
-									table.Cell().Border(1).Padding(5).AlignCenter().Text("--");
-								}
-							}
-						}
-					});
-
-					// FOOTER
-					page.Footer().PaddingTop(3).AlignRight().Text("Principal Sign: ____________________");
-				});
-			});
-		}
-		// -------------------------- NAME FETCHING HELPERS --------------------------
-
-		private async Task<string> GetSessionName(int sessionId)
+        // -------------------------- NAME FETCHING HELPERS --------------------------
+        private async Task<string> GetSessionName(int sessionId)
         {
             var sessions = await GetSessions();
             var session = sessions.FirstOrDefault(s => s.SessionId == sessionId);
@@ -548,7 +513,7 @@ Principal Sign: ____________________
                 var data = await response.Content.ReadAsStringAsync();
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 var classObj = JsonSerializer.Deserialize<Class>(data, options);
-                return classObj != null ? $"{classObj.ClassName} - {classObj.Medium}" : classId.ToString();
+                return classObj != null ? classObj.ClassName : classId.ToString();
             }
             return classId.ToString();
         }
@@ -588,15 +553,6 @@ Principal Sign: ____________________
             return JsonSerializer.Deserialize<List<Subject>>(data, options) ?? new List<Subject>();
         }
 
-        private async Task<List<Staff>> GetStaffs()
-        {
-            var response = await _client.GetAsync("Staff");
-            if (!response.IsSuccessStatusCode) return new List<Staff>();
-            var data = await response.Content.ReadAsStringAsync();
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            return JsonSerializer.Deserialize<List<Staff>>(data, options) ?? new List<Staff>();
-        }
-
         private async Task<List<Timetable>> GetTimetables(int sessionId, int classId, int sectionId)
         {
             var response = await _client.GetAsync($"Timetables?sessionId={sessionId}&classId={classId}&sectionId={sectionId}");
@@ -611,7 +567,6 @@ Principal Sign: ____________________
             var days = new[] { "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday" };
             var grid = new Dictionary<string, Dictionary<int, Timetable>>();
 
-            // Pehle saari unique StaffIds collect karo
             var staffIds = timetables.Where(t => t.StaffId.HasValue).Select(t => t.StaffId.Value).Distinct().ToList();
             var staffDict = new Dictionary<int, Staff>();
             foreach (var sid in staffIds)
@@ -629,10 +584,8 @@ Principal Sign: ____________________
                     var entry = timetables.FirstOrDefault(t => t.DayName == day && t.LectureNo == p);
                     if (entry != null)
                     {
-                        // Priority 1: Staff stored in Timetable
                         if (entry.StaffId.HasValue && staffDict.ContainsKey(entry.StaffId.Value))
                             entry.Staff = staffDict[entry.StaffId.Value];
-                        // Priority 2: Fallback to TeacherSubjects mapping
                         else if (entry.SubjectId.HasValue && teacherMapping.ContainsKey(entry.SubjectId.Value))
                             entry.Staff = teacherMapping[entry.SubjectId.Value];
                     }
@@ -642,16 +595,19 @@ Principal Sign: ____________________
             }
             return grid;
         }
+
         [HttpGet]
-        public async Task<JsonResult> GetClassesByMedium(string medium)
+        public async Task<JsonResult> GetClassesByMedium(string medium, int sessionId)
         {
             var response = await _client.GetAsync("Classes");
             if (!response.IsSuccessStatusCode) return Json(new List<object>());
             var data = await response.Content.ReadAsStringAsync();
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var allClasses = JsonSerializer.Deserialize<List<Class>>(data, options) ?? new List<Class>();
-            var filtered = allClasses.Where(c => c.Medium == medium)
-                                     .Select(c => new { value = c.ClassId, text = $"{c.ClassName} - {c.Medium}" })
+
+            // ✅ Filter by BOTH medium AND sessionId (like Student reference)
+            var filtered = allClasses.Where(c => c.Medium == medium && c.SessionId == sessionId)
+                                     .Select(c => new { value = c.ClassId, text = c.ClassName })  // ✅ Only Class Name, not "1 - Gujarati"
                                      .ToList();
             return Json(filtered);
         }
@@ -667,9 +623,9 @@ Principal Sign: ____________________
             var sectionList = sections.Select(s => new { value = s.SectionId, text = s.SectionName }).ToList();
             return Json(sectionList);
         }
+
         private async Task<Dictionary<int, Staff>> GetTeacherMapping(int sessionId, int classId, int sectionId)
         {
-            // TeacherSubjects mapping for given session and class
             var response = await _client.GetAsync($"TeacherSubjects?sessionId={sessionId}&classId={classId}");
             if (!response.IsSuccessStatusCode) return new Dictionary<int, Staff>();
 
@@ -695,9 +651,9 @@ Principal Sign: ____________________
 
             return teacherMapping;
         }
+
         private async Task<List<Staff>> GetTeachersForSubject(int subjectId, int classId, int sessionId)
         {
-            // First get TeacherSubjects mapping for this subject, class, session
             var response = await _client.GetAsync($"TeacherSubjects?subjectId={subjectId}&classId={classId}&sessionId={sessionId}");
             if (!response.IsSuccessStatusCode) return new List<Staff>();
 
@@ -720,6 +676,7 @@ Principal Sign: ____________________
             }
             return teachers;
         }
+
         private async Task<Staff> GetStaffById(int staffId)
         {
             var response = await _client.GetAsync($"Staffs/{staffId}");
@@ -728,6 +685,7 @@ Principal Sign: ____________________
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             return JsonSerializer.Deserialize<Staff>(data, options);
         }
+
         [HttpGet]
         public async Task<JsonResult> GetTeachersForSubjectDropdown(int subjectId, int classId, int sessionId)
         {
