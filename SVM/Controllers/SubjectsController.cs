@@ -21,38 +21,92 @@ namespace SVM.Controllers
         }
 
         // GET: Subjects
-        public async Task<IActionResult> Index()
-        {
-            List<Subject> subjectList = new List<Subject>();
-            var response = await _client.GetAsync("Subjects");
+        //public async Task<IActionResult> Index()
+        //{
+        //    List<Subject> subjectList = new List<Subject>();
+        //    var response = await _client.GetAsync("Subjects");
 
-            if (response.IsSuccessStatusCode)
-            {
-                var data = await response.Content.ReadAsStringAsync();
-                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                subjectList = JsonSerializer.Deserialize<List<Subject>>(data, option);
+        //    if (response.IsSuccessStatusCode)
+        //    {
+        //        var data = await response.Content.ReadAsStringAsync();
+        //        var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        //        subjectList = JsonSerializer.Deserialize<List<Subject>>(data, option);
 
-                // Manually load Class for each subject
-                foreach (var subject in subjectList)
-                {
-                    if (subject.ClassId.HasValue)
-                    {
-                        var classResponse = await _client.GetAsync($"Classes/{subject.ClassId}");
-                        if (classResponse.IsSuccessStatusCode)
-                        {
-                            var classData = await classResponse.Content.ReadAsStringAsync();
-                            subject.Class = JsonSerializer.Deserialize<Class>(classData, option);
-                        }
-                    }
-                }
-            }
-            else
+        //        // Manually load Class for each subject
+        //        foreach (var subject in subjectList)
+        //        {
+        //            if (subject.ClassId.HasValue)
+        //            {
+        //                var classResponse = await _client.GetAsync($"Classes/{subject.ClassId}");
+        //                if (classResponse.IsSuccessStatusCode)
+        //                {
+        //                    var classData = await classResponse.Content.ReadAsStringAsync();
+        //                    subject.Class = JsonSerializer.Deserialize<Class>(classData, option);
+        //                }
+        //            }
+        //        }
+        //    }
+        //    else
+        //    {
+        //        ModelState.AddModelError("", "Failed to load subjects");
+        //    }
+
+        //    return View(subjectList);
+        //}
+
+  public async Task<IActionResult> Index()
+{
+    List<Subject> subjectList = new List<Subject>();
+
+    var option = new JsonSerializerOptions
+    {
+        PropertyNameCaseInsensitive = true
+    };
+
+    // SUBJECTS
+    var response = await _client.GetAsync("Subjects");
+
+    if (response.IsSuccessStatusCode)
+    {
+        var data = await response.Content.ReadAsStringAsync();
+
+        subjectList = JsonSerializer.Deserialize<List<Subject>>(data, option);
+    }
+
+    // SESSIONS
+    var sessionResponse = await _client.GetAsync("Sessions");
+
+    if (sessionResponse.IsSuccessStatusCode)
+    {
+        var sessionData = await sessionResponse.Content.ReadAsStringAsync();
+
+        var sessions = JsonSerializer.Deserialize<List<Session>>(sessionData, option);
+
+        ViewBag.Sessions = sessions;
+
+                // ACTIVE SESSION AUTO SELECT
+                var activeSession =
+        sessions.FirstOrDefault(x => x.IsActive == 1);
+
+                ViewBag.ActiveSessionId = activeSession?.SessionId;
+    }
+     var classesResponse = await _client.GetAsync("Classes");
+
+            if (classesResponse.IsSuccessStatusCode)
             {
-                ModelState.AddModelError("", "Failed to load subjects");
+                var classData = await classesResponse.Content.ReadAsStringAsync();
+
+                var classes = JsonSerializer.Deserialize<List<Class>>(classData, option);
+
+                ViewBag.Classes = classes
+                    .GroupBy(c => c.ClassName)
+                    .Select(g => g.First())
+                    .OrderBy(c => c.ClassId)
+                    .ToList();
             }
 
             return View(subjectList);
-        }
+}
 
         // GET: Subjects/Details/5
         public async Task<IActionResult> Details(int? id)
