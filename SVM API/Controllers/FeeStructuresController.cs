@@ -44,7 +44,7 @@ namespace SVM_API.Controllers
                     value = c.ClassId,
                     text = c.ClassName
                 })
-                .OrderBy(c => c.text)
+                
                 .ToListAsync();
 
             return Ok(result);

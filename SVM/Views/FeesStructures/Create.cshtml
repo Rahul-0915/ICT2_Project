@@ -237,63 +237,148 @@
         let selectedClassId =
             '@Model.ClassId';
 
+        let selectedSessionId =
+            '@Model.SessionId';
+
         let selectedMedium =
             '@ViewBag.Medium';
+
+        // AUTO SELECT VALUES
+
+        if (selectedSessionId) {
+
+            $('#sessionSelect')
+                .val(selectedSessionId);
+        }
 
         if (selectedMedium) {
 
             $('#mediumSelect')
                 .val(selectedMedium);
-
-            loadClasses(selectedMedium);
         }
+
+        // PAGE LOAD PE CLASS AUTO LOAD
+
+        if (
+            selectedSessionId &&
+            selectedMedium
+        ) {
+
+            loadClasses(
+                selectedSessionId,
+                selectedMedium,
+                selectedClassId
+            );
+        }
+
+        // SESSION CHANGE
+
+        $('#sessionSelect').change(function () {
+
+            let sessionId =
+                $(this).val();
+
+            let medium =
+                $('#mediumSelect').val();
+
+            resetClassDropdown();
+
+            if (sessionId && medium) {
+
+                loadClasses(
+                    sessionId,
+                    medium,
+                    null
+                );
+            }
+        });
+
+        // MEDIUM CHANGE
 
         $('#mediumSelect').change(function () {
 
             let medium =
                 $(this).val();
 
-            loadClasses(medium);
+            let sessionId =
+                $('#sessionSelect').val();
+
+            resetClassDropdown();
+
+            if (sessionId && medium) {
+
+                loadClasses(
+                    sessionId,
+                    medium,
+                    null
+                );
+            }
         });
 
-        function loadClasses(medium) {
+        // LOAD CLASS FUNCTION
 
-            if (medium) {
+        function loadClasses(
+            sessionId,
+            medium,
+            selectedClassId
+        ) {
 
-                $.get(
+            $.ajax({
+
+                url:
                     '/FeesStructures/GetClassesByMedium',
-                    { medium: medium },
 
-                    function (data) {
+                type: 'GET',
 
-                        let $class =
-                            $('#classSelect');
+                data: {
+                    medium: medium,
+                    sessionId: sessionId
+                },
 
-                        $class.empty();
+                success: function (data) {
 
-                        $class.append(
-                            '<option value="">-- Select Class --</option>'
-                        );
+                    let $class =
+                        $('#classSelect');
 
-                        $.each(data, function (i, c) {
+                    $class.empty();
 
-                            let option =
-                                $('<option>')
-                                    .val(c.value)
-                                    .text(c.text);
+                    $class.append(
+                        '<option value="">-- Select Class --</option>'
+                    );
 
-                            if (selectedClassId == c.value) {
+                    $.each(data, function (i, c) {
 
-                                option.prop(
-                                    'selected',
-                                    true
-                                );
-                            }
+                        let option =
+                            $('<option></option>')
+                                .attr('value', c.value)
+                                .text(c.text);
 
-                            $class.append(option);
-                        });
+                        if (
+                            selectedClassId &&
+                            c.value == selectedClassId
+                        ) {
+
+                            option.attr(
+                                'selected',
+                                'selected'
+                            );
+                        }
+
+                        $class.append(option);
                     });
-            }
+                }
+            });
+        }
+
+        // RESET CLASS
+
+        function resetClassDropdown() {
+
+            $('#classSelect')
+                .empty()
+                .append(
+                    '<option value="">-- Select Class --</option>'
+                );
         }
 
         function calculateTotal() {

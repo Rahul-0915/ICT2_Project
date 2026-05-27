@@ -39,7 +39,32 @@ namespace SVM.Controllers
         [HttpGet]
         public async Task<IActionResult> Index(int? sessionId, string medium, int? classId, int? sectionId)
         {
-            List<Student> studentList = new List<Student>();
+			// AUTO SELECT ACTIVE SESSION
+			if (!sessionId.HasValue)
+			{
+				var sessionResp = await _client.GetAsync("Sessions");
+
+				if (sessionResp.IsSuccessStatusCode)
+				{
+					var sessionData = await sessionResp.Content.ReadAsStringAsync();
+
+					var options = new JsonSerializerOptions
+					{
+						PropertyNameCaseInsensitive = true
+					};
+
+					var allSessions = JsonSerializer.Deserialize<List<Session>>(sessionData, options);
+
+					var activeSession = allSessions?
+						.FirstOrDefault(x => x.IsActive==1);
+
+					if (activeSession != null)
+					{
+						sessionId = activeSession.SessionId;
+					}
+				}
+			}
+			List<Student> studentList = new List<Student>();
             var response = await _client.GetAsync("Students");
 
             if (response.IsSuccessStatusCode)
@@ -115,8 +140,10 @@ namespace SVM.Controllers
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 var allSessions = JsonSerializer.Deserialize<List<Session>>(sessionData, options);
                 ViewBag.AllSessions = allSessions;
+
                 ViewBag.SelectedSessionId = sessionId;   // for pre-selection
             }
+
 
             // Load all classes (will be filtered later via AJAX)
             var classResponse = await _client.GetAsync("Classes");
@@ -737,38 +764,84 @@ namespace SVM.Controllers
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 var allSessions = JsonSerializer.Deserialize<List<Session>>(sessionData, options);
                 ViewBag.AllSessions = allSessions;
+                // ACTIVE SESSION
+                var activeSession = allSessions?
+                    .FirstOrDefault(x => x.IsActive==1);
+
+                if (activeSession != null)
+                {
+                    ViewBag.SelectedSessionId = activeSession.SessionId;
+                }
             }
             return View(studentList);
         }
 
-        // GET: GetNextClass
-        [HttpGet]
-        public async Task<JsonResult> GetNextClass(int currentClassId, int newSessionId)
-        {
-            var classResponse = await _client.GetAsync("Classes");
-            if (!classResponse.IsSuccessStatusCode)
-                return Json(null);
+		// GET: GetNextClass
+		[HttpGet]
+		public async Task<JsonResult> GetNextClass(int currentClassId, int newSessionId)
+		{
+			var classResponse = await _client.GetAsync("Classes");
+			if (!classResponse.IsSuccessStatusCode)
+				return Json(null);
 
-            var classData = await classResponse.Content.ReadAsStringAsync();
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var allClasses = JsonSerializer.Deserialize<List<Class>>(classData, options);
-            var currentClass = allClasses.FirstOrDefault(x => x.ClassId == currentClassId);
-            if (currentClass == null)
-                return Json(null);
+			var classData = await classResponse.Content.ReadAsStringAsync();
 
-            int currentNumber = 0;
-            int.TryParse(currentClass.ClassName, out currentNumber);
-            int nextNumber = currentNumber + 1;
-            var nextClass = allClasses.FirstOrDefault(x =>
-                x.ClassName == nextNumber.ToString() &&
-                x.Medium == currentClass.Medium &&
-                x.SessionId == newSessionId);
-            if (nextClass == null)
-                return Json(null);
-            return Json(new { value = nextClass.ClassId, text = nextClass.ClassName });
-        }
+			var options = new JsonSerializerOptions
+			{
+				PropertyNameCaseInsensitive = true
+			};
 
-        [HttpPost]
+			var allClasses = JsonSerializer.Deserialize<List<Class>>(classData, options);
+
+			if (allClasses == null)
+				return Json(null);
+
+			// Current Class
+			var currentClass = allClasses
+				.FirstOrDefault(x => x.ClassId == currentClassId);
+
+			if (currentClass == null)
+				return Json(null);
+
+			// SAME MEDIUM + CURRENT SESSION CLASSES
+			var currentSessionClasses = allClasses
+				.Where(x =>
+					x.SessionId == currentClass.SessionId &&
+					x.Medium == currentClass.Medium)
+				.OrderBy(x => x.ClassId)
+				.ToList();
+
+			// CURRENT INDEX
+			int currentIndex = currentSessionClasses
+				.FindIndex(x => x.ClassId == currentClassId);
+
+			if (currentIndex == -1)
+				return Json(null);
+
+			// NEXT CLASS NAME
+			if (currentIndex + 1 >= currentSessionClasses.Count)
+				return Json(null);
+
+			string nextClassName =
+				currentSessionClasses[currentIndex + 1].ClassName;
+
+			// FIND SAME CLASS IN NEW SESSION
+			var nextClass = allClasses.FirstOrDefault(x =>
+				x.ClassName == nextClassName &&
+				x.Medium == currentClass.Medium &&
+				x.SessionId == newSessionId);
+
+			if (nextClass == null)
+				return Json(null);
+
+			return Json(new
+			{
+				value = nextClass.ClassId,
+				text = nextClass.ClassName
+			});
+		}
+
+		[HttpPost]
         public async Task<IActionResult> PromoteStudents([FromBody] PromotionRequest request)
         {
             var response = await _client.PostAsJsonAsync("Students/PromoteStudents", request);

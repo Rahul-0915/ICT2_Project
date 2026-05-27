@@ -1,0 +1,344 @@
+﻿/* ===== GLOBAL ===== */
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background: linear-gradient(to bottom, #f4f7fb, #eef3ff);
+    color: #333;
+    overflow-x: hidden;
+    font-size: 15px;
+    line-height: 1.5;
+}
+
+/* ===== HERO ===== */
+.hero {
+    height: 720px;
+    background-image: url('/images/AboutSchoolModelPic.png');
+    background-position: top center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    position: relative;
+}
+
+    .hero::after {
+        content: "";
+        position: absolute;
+        width: 100%;
+        height: 100%;
+    }
+
+.hero-text {
+    position: absolute;
+    top: 50%;
+    left: 8%;
+    transform: translateY(-50%);
+    color: darkblue;
+    z-index: 2;
+}
+
+    .hero-text h1 {
+        font-size: 38px;
+        margin: 0;
+        line-height: 1.2;
+    }
+
+    .hero-text p {
+        font-size: 16px;
+        color: darkblue;
+        margin-top: 10px;
+    }
+
+/* ===== SECTION ===== */
+.section {
+    padding: 60px 20px;
+    background: #f9f9f9;
+}
+
+    .section:nth-child(even) {
+        background: linear-gradient(to right, #f9fbff, #eef3ff);
+    }
+
+.container {
+    max-width: 1000px;
+    margin: auto;
+    text-align: center;
+}
+
+    .container h2 {
+        font-size: 30px;
+        color: #2a5298;
+        margin-bottom: 18px;
+    }
+
+    .container p {
+        font-size: 15px;
+        line-height: 1.8;
+        color: #555;
+        margin-bottom: 15px;
+    }
+
+.highlight {
+    margin-top: 20px;
+    font-weight: bold;
+    color: #f4c400;
+    font-size: 17px;
+}
+
+/* heading */
+.section h2 {
+    font-size: 26px;
+    position: relative;
+    display: inline-block;
+    margin-bottom: 25px;
+}
+
+    .section h2::after {
+        content: "";
+        width: 50%;
+        height: 3px;
+        background: linear-gradient(to right, #f4c400, #ff9900);
+        position: absolute;
+        left: 0;
+        bottom: -6px;
+    }
+
+/* ===== PROFILE ===== */
+.profile {
+    display: flex;
+    gap: 35px;
+    align-items: center;
+}
+
+    .profile.reverse {
+        flex-direction: row-reverse;
+    }
+
+    .profile img {
+        width: 210px;
+        height: 240px;
+        object-fit: cover;
+        border-radius: 10px;
+        border: 4px solid #f4c400;
+        box-shadow: 0 10px 25px rgba(244,196,0,0.25);
+    }
+
+.profile-text {
+    flex: 1;
+    text-align: left;
+}
+
+    .profile-text h3 {
+        font-size: 24px;
+        margin-bottom: 10px;
+        color: #2a5298;
+    }
+
+    .profile-text p {
+        font-size: 15px;
+        line-height: 1.7;
+    }
+
+/* message */
+.message {
+    margin-top: 12px;
+    background: linear-gradient(135deg, #f4c400, #ff9900);
+    padding: 12px;
+    border-radius: 6px;
+    font-style: italic;
+    font-weight: 500;
+    font-size: 14px;
+}
+
+/* ===== PRINCIPAL CARDS ===== */
+.multi-profile {
+    display: flex;
+    gap: 22px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.multi-card {
+    flex: 1;
+    min-width: 250px;
+    max-width: 320px;
+    background: linear-gradient(to bottom, #ffffff, #f9fbff);
+    padding: 18px;
+    border-radius: 12px;
+    text-align: center;
+    transition: 0.3s;
+    border: 1px solid #e6ecff;
+}
+
+    .multi-card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(0,0,0,0.12);
+    }
+
+    .multi-card img {
+        width: 210px;
+        height: 210px;
+        object-fit: cover;
+        border-radius: 8px;
+        transition: 0.3s;
+    }
+
+    .multi-card:hover img {
+        transform: scale(1.05);
+    }
+
+    .multi-card h3 {
+        margin-top: 15px;
+        font-size: 20px;
+        color: #2a5298;
+    }
+
+    .multi-card p {
+        font-size: 14px;
+    }
+
+.role {
+    font-size: 13px;
+    color: gray;
+}
+
+/* ===== STAFF ===== */
+.staff-box {
+    display: flex;
+    gap: 35px;
+    align-items: center;
+}
+
+.staff-img img {
+    width: 290px;
+    border-radius: 10px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+}
+
+.staff-text {
+    text-align: left;
+}
+
+    .staff-text p {
+        font-size: 15px;
+        line-height: 1.7;
+    }
+
+/* ===== ACHIEVEMENTS ===== */
+.achievements {
+    display: flex;
+    gap: 18px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.ach-box {
+    flex: 1;
+    min-width: 180px;
+    max-width: 250px;
+    padding: 25px;
+    border-radius: 10px;
+    color: white;
+    text-align: center;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.18);
+}
+
+    .ach-box h2 {
+        margin: 0;
+        font-size: 28px;
+    }
+
+    .ach-box p {
+        color: white;
+        margin-top: 8px;
+        font-size: 14px;
+    }
+
+    /* different colors */
+    .ach-box:nth-child(1) {
+        background: linear-gradient(135deg, #ff7e5f, #feb47b);
+    }
+
+    .ach-box:nth-child(2) {
+        background: linear-gradient(135deg, #43cea2, #185a9d);
+    }
+
+    .ach-box:nth-child(3) {
+        background: linear-gradient(135deg, #f7971e, #ffd200);
+    }
+
+/* ===== MOBILE ===== */
+@media(max-width:768px) {
+
+    body {
+        font-size: 14px;
+    }
+
+    .hero {
+        height: 420px;
+        background-position: center;
+    }
+
+    .hero-text {
+        left: 5%;
+        width: 90%;
+    }
+
+        .hero-text h1 {
+            font-size: 26px;
+        }
+
+        .hero-text p {
+            font-size: 14px;
+        }
+
+    .section {
+        padding: 45px 15px;
+    }
+
+    .container h2 {
+        font-size: 24px;
+    }
+
+    .container p {
+        font-size: 14px;
+    }
+
+    .profile,
+    .profile.reverse,
+    .staff-box {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .profile-text,
+    .staff-text {
+        text-align: center;
+    }
+
+    .profile img {
+        width: 180px;
+        height: 210px;
+    }
+
+    .multi-card {
+        min-width: 100%;
+    }
+
+        .multi-card img {
+            width: 180px;
+            height: 180px;
+        }
+
+    .staff-img img {
+        width: 100%;
+        max-width: 280px;
+    }
+
+    .achievements {
+        gap: 15px;
+    }
+
+    .ach-box {
+        width: 100%;
+        max-width: 280px;
+    }
+}

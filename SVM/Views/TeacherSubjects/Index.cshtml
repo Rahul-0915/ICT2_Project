@@ -39,46 +39,69 @@
                    placeholder="Search teacher..."
                    class="search-box" />
 
-            <!-- CLASS FILTER -->
+            <!-- SESSION -->
+
+            <select id="sessionFilter"
+                    class="search-box">
+
+                @foreach (var s in ViewBag.SessionId as SelectList)
+                {
+                    <option value="@s.Value"
+                            selected="@(s.Selected ? "selected" : null)">
+                        @s.Text
+                    </option>
+                }
+
+            </select>
+
+            <!-- MEDIUM -->
+
+            <select id="mediumFilter"
+                    class="search-box">
+
+                <option value="">All Medium</option>
+
+                @foreach (string m in ViewBag.Mediums)
+                {
+                    if (ViewBag.SelectedMedium == m)
+                    {
+                        <option selected value="@m">@m</option>
+                    }
+                    else
+                    {
+                        <option value="@m">@m</option>
+                    }
+                }
+
+            </select>
+
+            <!-- CLASS -->
 
             <select id="classFilter"
                     class="search-box">
 
                 <option value="">All Classes</option>
 
-                <option value="JR KG">JR KG</option>
-                <option value="SR KG">SR KG</option>
-
-                <option value="1">Class 1</option>
-                <option value="2">Class 2</option>
-                <option value="3">Class 3</option>
-                <option value="4">Class 4</option>
-                <option value="5">Class 5</option>
-
-                <option value="6">Class 6</option>
-                <option value="7">Class 7</option>
-                <option value="8">Class 8</option>
-                <option value="9">Class 9</option>
-                <option value="10">Class 10</option>
-
-                <option value="11">Class 11</option>
-                <option value="12">Class 12</option>
+                @foreach (var c in ViewBag.ClassId as SelectList)
+                {
+                    <option value="@c.Value"
+                            selected="@(c.Selected ? "selected" : null)">
+                        @c.Text
+                    </option>
+                }
 
             </select>
 
-            <!-- BUTTON -->
+            <!-- SEARCH -->
 
             <button type="button"
                     class="search-btn"
-                    onclick="filterTeachers()">
+                    onclick="applyFilter()">
 
                 <i class="fa-solid fa-magnifying-glass"></i>
                 Search
 
             </button>
-
-            <!-- RESET -->
-
             <button type="button"
                     class="reset-btn"
                     onclick="resetFilter()">
@@ -88,7 +111,6 @@
             </button>
 
         </div>
-
         <!-- ADD -->
 
         <a asp-action="Create"
@@ -271,6 +293,8 @@
 
 </div>
 
+
+
 <script>
 
     // DEFAULT HIDE
@@ -279,7 +303,9 @@
             card.style.display = "none";
         });
 
-    function filterTeachers() {
+    // ================= SEARCH FILTER =================
+
+    function applyFilter() {
 
         let search =
             document.getElementById("searchInput")
@@ -287,6 +313,18 @@
 
         let selectedClass =
             document.getElementById("classFilter")
+                .options[
+                document.getElementById("classFilter").selectedIndex
+            ].text.toLowerCase();
+
+        let selectedSession =
+            document.getElementById("sessionFilter")
+                .options[
+                document.getElementById("sessionFilter").selectedIndex
+            ].text.toLowerCase();
+
+        let selectedMedium =
+            document.getElementById("mediumFilter")
                 .value.toLowerCase();
 
         let cards =
@@ -300,64 +338,88 @@
                 card.querySelector(".teacher-name")
                     .innerText.toLowerCase();
 
-            let classBadges =
-                card.querySelectorAll(".class-badge");
+            let rows =
+                card.querySelectorAll("tbody tr");
 
-            let classMatch = false;
+            let showCard = false;
 
-            // ALL CLASSES
-            if (selectedClass === "") {
+            rows.forEach(row => {
 
-                classMatch = true;
+                let className =
+                    row.querySelector(".class-badge")
+                        ?.innerText.toLowerCase() || "";
 
-            }
-            else {
+                let mediumName =
+                    row.querySelector(".medium-badge")
+                        ?.innerText.toLowerCase() || "";
 
-                classBadges.forEach(badge => {
+                let sessionName =
+                    row.cells[2].innerText.toLowerCase();
 
-                    let className =
-                        badge.innerText.toLowerCase();
+                let teacherMatch =
+                    search === "" ||
+                    teacherName.includes(search);
 
-                    if (className.includes(selectedClass)) {
+                let classMatch =
+                    selectedClass === "all classes" ||
+                    selectedClass === "" ||
+                    className.includes(selectedClass);
 
-                        classMatch = true;
+                let mediumMatch =
+                    selectedMedium === "" ||
+                    mediumName.includes(selectedMedium);
 
-                    }
+                let sessionMatch =
+                    selectedSession === "" ||
+                    sessionName.includes(selectedSession);
 
-                });
+                if (
+                    teacherMatch &&
+                    classMatch &&
+                    mediumMatch &&
+                    sessionMatch
+                ) {
+                    showCard = true;
+                }
 
-            }
+            });
 
-            // TEACHER SEARCH
-            let searchMatch =
-                search === "" ||
-                teacherName.includes(search);
-
-            // SHOW CONDITION
-            if (searchMatch && classMatch) {
+            if (showCard) {
 
                 card.style.display = "block";
                 visible++;
-                document.getElementById("page-info").style.display = "none";
 
+                document.getElementById("page-info")
+                    .style.display = "none";
             }
             else {
 
                 card.style.display = "none";
-
             }
 
         });
 
-        // NO DATA
-        document.getElementById("noDataMessage").style.display =
+        // NO DATA MESSAGE
+
+        document.getElementById("noDataMessage")
+            .style.display =
             visible === 0 ? "block" : "none";
-        document.getElementById("noDataMessage").style.color = "red";
+
+        document.getElementById("noDataMessage")
+            .style.color = "red";
     }
 
+    // ================= RESET =================
+
     function resetFilter() {
-        document.getElementById("page-info").style.display = "block";
+
+        document.getElementById("page-info")
+            .style.display = "block";
+
         document.getElementById("searchInput").value = "";
+
+        document.getElementById("mediumFilter").value = "";
+
         document.getElementById("classFilter").value = "";
 
         document.querySelectorAll(".teacher-card")
@@ -365,7 +427,47 @@
                 card.style.display = "none";
             });
 
-        document.getElementById("noDataMessage").style.display = "none";
+        document.getElementById("noDataMessage")
+            .style.display = "none";
     }
+
+    // ================= SESSION + MEDIUM => CLASS =================
+
+    async function loadClasses() {
+
+        let sessionId =
+            document.getElementById("sessionFilter").value;
+
+        let medium =
+            document.getElementById("mediumFilter").value;
+
+        let classDropdown =
+            document.getElementById("classFilter");
+
+        classDropdown.innerHTML =
+            '<option value="">Loading...</option>';
+
+        let response =
+            await fetch(`/TeacherSubjects/GetClassesBySessionMedium?sessionId=${sessionId}&medium=${medium}`);
+
+        let data = await response.json();
+
+        classDropdown.innerHTML =
+            '<option value="">All Classes</option>';
+
+        data.forEach(item => {
+
+            classDropdown.innerHTML +=
+                `<option value="${item.value}">
+                        ${item.text}
+                    </option>`;
+        });
+    }
+
+    document.getElementById("sessionFilter")
+        .addEventListener("change", loadClasses);
+
+    document.getElementById("mediumFilter")
+        .addEventListener("change", loadClasses);
 
 </script>

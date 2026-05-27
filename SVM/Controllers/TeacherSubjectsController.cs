@@ -20,64 +20,187 @@ namespace SVM.Controllers
         }
 
         // GET: TeacherSubjects
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+     int? sessionId,
+     string? medium,
+     int? classId)
         {
-            List<TeacherSubject> teacherSubjects = new List<TeacherSubject>();
+            List<TeacherSubject> teacherSubjects = new();
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            // ================= ACTIVE SESSION =================
+
+            var sessRes = await _client.GetAsync("Sessions");
+
+            List<Session> sessions = new();
+
+            if (sessRes.IsSuccessStatusCode)
+            {
+                var sessData = await sessRes.Content.ReadAsStringAsync();
+
+                sessions = JsonSerializer.Deserialize<List<Session>>(sessData, options);
+
+                if (!sessionId.HasValue)
+                {
+                    var activeSession =
+                        sessions.FirstOrDefault(x => x.IsActive == 1);
+
+                    if (activeSession != null)
+                    {
+                        sessionId = activeSession.SessionId;
+                    }
+                }
+            }
+
+            ViewBag.SessionId =
+                new SelectList(sessions, "SessionId", "SessionName", sessionId);
+
+            // ================= MEDIUM =================
+
+            ViewBag.Mediums = new List<string>
+    {
+        "Gujarati",
+        "English"
+    };
+
+            // ================= CLASS =================
+
+            List<Class> classList = new();
+
+            var classRes = await _client.GetAsync("Classes");
+
+            if (classRes.IsSuccessStatusCode)
+            {
+                var classData = await classRes.Content.ReadAsStringAsync();
+
+                var allClasses =
+                    JsonSerializer.Deserialize<List<Class>>(classData, options);
+
+                classList = allClasses;
+
+                if (sessionId.HasValue)
+                {
+                    classList = classList
+                        .Where(x => x.SessionId == sessionId)
+                        .ToList();
+                }
+
+                if (!string.IsNullOrEmpty(medium))
+                {
+                    classList = classList
+                        .Where(x => x.Medium == medium)
+                        .ToList();
+                }
+            }
+
+            ViewBag.ClassId =
+                new SelectList(classList, "ClassId", "ClassName", classId);
+
+            // ================= DATA =================
 
             var response = await _client.GetAsync("TeacherSubjects");
+
             if (response.IsSuccessStatusCode)
             {
                 var data = await response.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                teacherSubjects = JsonSerializer.Deserialize<List<TeacherSubject>>(data, options);
+
+                teacherSubjects =
+                    JsonSerializer.Deserialize<List<TeacherSubject>>(data, options);
 
                 foreach (var ts in teacherSubjects)
                 {
                     if (ts.StaffId.HasValue)
                     {
-                        var staffRes = await _client.GetAsync($"Staffs/{ts.StaffId}");
+                        var staffRes =
+                            await _client.GetAsync($"Staffs/{ts.StaffId}");
+
                         if (staffRes.IsSuccessStatusCode)
                         {
-                            var staffData = await staffRes.Content.ReadAsStringAsync();
-                            ts.Staff = JsonSerializer.Deserialize<Staff>(staffData, options);
+                            var staffData =
+                                await staffRes.Content.ReadAsStringAsync();
+
+                            ts.Staff =
+                                JsonSerializer.Deserialize<Staff>(staffData, options);
                         }
                     }
 
                     if (ts.SubjectId.HasValue)
                     {
-                        var subRes = await _client.GetAsync($"Subjects/{ts.SubjectId}");
+                        var subRes =
+                            await _client.GetAsync($"Subjects/{ts.SubjectId}");
+
                         if (subRes.IsSuccessStatusCode)
                         {
-                            var subData = await subRes.Content.ReadAsStringAsync();
-                            ts.Subject = JsonSerializer.Deserialize<Subject>(subData, options);
+                            var subData =
+                                await subRes.Content.ReadAsStringAsync();
+
+                            ts.Subject =
+                                JsonSerializer.Deserialize<Subject>(subData, options);
                         }
                     }
 
                     if (ts.ClassId.HasValue)
                     {
-                        var classRes = await _client.GetAsync($"Classes/{ts.ClassId}");
-                        if (classRes.IsSuccessStatusCode)
+                        var cRes =
+                            await _client.GetAsync($"Classes/{ts.ClassId}");
+
+                        if (cRes.IsSuccessStatusCode)
                         {
-                            var classData = await classRes.Content.ReadAsStringAsync();
-                            ts.Class = JsonSerializer.Deserialize<Class>(classData, options);
+                            var cData =
+                                await cRes.Content.ReadAsStringAsync();
+
+                            ts.Class =
+                                JsonSerializer.Deserialize<Class>(cData, options);
                         }
                     }
 
                     if (ts.SessionId.HasValue)
                     {
-                        var sessRes = await _client.GetAsync($"Sessions/{ts.SessionId}");
-                        if (sessRes.IsSuccessStatusCode)
+                        var sRes =
+                            await _client.GetAsync($"Sessions/{ts.SessionId}");
+
+                        if (sRes.IsSuccessStatusCode)
                         {
-                            var sessData = await sessRes.Content.ReadAsStringAsync();
-                            ts.Session = JsonSerializer.Deserialize<Session>(sessData, options);
+                            var sData =
+                                await sRes.Content.ReadAsStringAsync();
+
+                            ts.Session =
+                                JsonSerializer.Deserialize<Session>(sData, options);
                         }
                     }
                 }
+
+                // ================= FILTER =================
+
+                if (sessionId.HasValue)
+                {
+                    teacherSubjects = teacherSubjects
+                        .Where(x => x.SessionId == sessionId)
+                        .ToList();
+                }
+
+                if (!string.IsNullOrEmpty(medium))
+                {
+                    teacherSubjects = teacherSubjects
+                        .Where(x => x.Class?.Medium == medium)
+                        .ToList();
+                }
+
+                if (classId.HasValue)
+                {
+                    teacherSubjects = teacherSubjects
+                        .Where(x => x.ClassId == classId)
+                        .ToList();
+                }
             }
-            else
-            {
-                ModelState.AddModelError("", "Failed to load teacher-subject assignments");
-            }
+
+            ViewBag.SelectedSessionId = sessionId;
+            ViewBag.SelectedMedium = medium;
+            ViewBag.SelectedClassId = classId;
 
             return View(teacherSubjects);
         }
@@ -184,16 +307,147 @@ namespace SVM.Controllers
         // GET: TeacherSubjects/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
-            if (id == null) return NotFound();
+            if (id == null)
+                return NotFound();
 
-            var response = await _client.GetAsync($"TeacherSubjects/{id}");
-            if (!response.IsSuccessStatusCode) return NotFound();
+            var response =
+                await _client.GetAsync($"TeacherSubjects/{id}");
 
-            var data = await response.Content.ReadAsStringAsync();
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var teacherSubject = JsonSerializer.Deserialize<TeacherSubject>(data, options);
+            if (!response.IsSuccessStatusCode)
+                return NotFound();
 
-            await LoadDropdowns(teacherSubject);
+            var data =
+                await response.Content.ReadAsStringAsync();
+
+            var options =
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
+            var teacherSubject =
+                JsonSerializer.Deserialize<TeacherSubject>(data, options);
+
+            // ================= LOAD CLASS =================
+
+            if (teacherSubject.ClassId.HasValue)
+            {
+                var classRes =
+                    await _client.GetAsync($"Classes/{teacherSubject.ClassId}");
+
+                if (classRes.IsSuccessStatusCode)
+                {
+                    var classData =
+                        await classRes.Content.ReadAsStringAsync();
+
+                    teacherSubject.Class =
+                        JsonSerializer.Deserialize<Class>(classData, options);
+                }
+            }
+
+            // ================= STAFF =================
+
+            var staffRes = await _client.GetAsync("Staffs");
+
+            if (staffRes.IsSuccessStatusCode)
+            {
+                var staffData =
+                    await staffRes.Content.ReadAsStringAsync();
+
+                var allStaff =
+                    JsonSerializer.Deserialize<List<Staff>>(staffData, options);
+
+                var teachers =
+                    allStaff.Where(x =>
+                        x.Designation != null &&
+                        x.Designation.Equals("Teacher",
+                        StringComparison.OrdinalIgnoreCase))
+                    .ToList();
+
+                ViewBag.StaffId =
+                    new SelectList(
+                        teachers,
+                        "StaffId",
+                        "FirstName",
+                        teacherSubject.StaffId);
+            }
+
+            // ================= SESSION =================
+
+            var sessRes =
+                await _client.GetAsync("Sessions");
+
+            if (sessRes.IsSuccessStatusCode)
+            {
+                var sessData =
+                    await sessRes.Content.ReadAsStringAsync();
+
+                var sessions =
+                    JsonSerializer.Deserialize<List<Session>>(sessData, options);
+
+                ViewBag.SessionId =
+                    new SelectList(
+                        sessions,
+                        "SessionId",
+                        "SessionName",
+                        teacherSubject.SessionId);
+            }
+
+            // ================= CLASS =================
+
+            var classResponse =
+                await _client.GetAsync("Classes");
+
+            if (classResponse.IsSuccessStatusCode)
+            {
+                var classData =
+                    await classResponse.Content.ReadAsStringAsync();
+
+                var allClasses =
+                    JsonSerializer.Deserialize<List<Class>>(classData, options);
+
+                var filteredClasses =
+                    allClasses
+                    .Where(x =>
+                        x.SessionId == teacherSubject.SessionId &&
+                        x.Medium == teacherSubject.Class?.Medium)
+                    .ToList();
+
+                ViewBag.ClassId =
+                    new SelectList(
+                        filteredClasses,
+                        "ClassId",
+                        "ClassName",
+                        teacherSubject.ClassId);
+            }
+
+            // ================= SUBJECT =================
+
+            var subRes =
+                await _client.GetAsync(
+                    $"TeacherSubjects/subjects-by-class/{teacherSubject.ClassId}");
+
+            if (subRes.IsSuccessStatusCode)
+            {
+                var subData =
+                    await subRes.Content.ReadAsStringAsync();
+
+                var subjects =
+                    JsonSerializer.Deserialize<List<Subject>>(subData, options);
+
+                ViewBag.SubjectId =
+                    new SelectList(
+                        subjects,
+                        "SubjectId",
+                        "SubjectName",
+                        teacherSubject.SubjectId);
+            }
+
+            // ================= MEDIUM =================
+
+            ViewBag.SelectedMedium =
+                teacherSubject.Class?.Medium;
+
             return View(teacherSubject);
         }
 

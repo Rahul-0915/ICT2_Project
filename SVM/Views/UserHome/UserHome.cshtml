@@ -1,0 +1,170 @@
+﻿@{
+    Layout = "~/Views/Shared/UserLayout.cshtml";
+    ViewBag.Title = "Home";
+    ViewBag.ShowPreloader = true;
+
+}
+
+
+
+
+
+
+
+<!-- SLIDER -->
+<div class="slider">
+
+    <div class="slides active">
+        <img src="~/images/HomeSchoolModelPic.png">
+    </div>
+
+    <div class="slides">
+        <img src="/images/svm gm poster.png">
+    </div>
+
+    <div class="slides">
+        <img src="/images/svm em poster.png">
+    </div>
+
+    <div class="slider-text">
+        <h1>Welcome to S.V.M School</h1>
+        <p>SHARDA VIDYAMANDIR</p>
+    </div>
+
+</div>
+
+<!-- INTRO -->
+<section class="school-intro">
+    <div class="intro-container">
+
+        <div class="intro-img">
+
+            <img src="~/images/SersvatiMata.jpg" alt="Saraswati Mata">
+        </div>
+
+        <div class="intro-text">
+            <h2>Sharda Vidyamandir</h2>
+
+            <p class="medium">
+                Gujarati Medium & S.V.M English Medium School
+            </p>
+
+            <p class="highlight">
+                "Shaping Bright Futures Through Quality Education, Strong Values,
+                and Modern Learning. At Sharda Vidyamandir, we nurture young minds
+                to grow with confidence, knowledge, and discipline, preparing them
+                to succeed in a global world."
+            </p>
+
+            <p>
+                Managed by <b>Shiv Shakti Education Trust</b>
+            </p>
+
+            <p class="trustee">
+                Trustee: <b>Umakanat Sir</b>
+            </p>
+        </div>
+
+    </div>
+</section>
+
+<!-- TIMING -->
+<section class="timing">
+    <h2>School Timing</h2>
+
+    <div class="timing-container">
+
+        <div class="timing-box">
+            <h3>Gujarati Medium</h3>
+            <p>Jr. KG to Std 8</p>
+            <span>12:20 PM – 5:30 PM</span>
+        </div>
+
+        <div class="timing-box">
+            <h3>Gujarati Medium</h3>
+            <p>Std 9 to 12 Com</p>
+            <span>7:20 AM – 12:10 PM</span>
+        </div>
+
+        <div class="timing-box">
+            <h3>English Medium</h3>
+            <p>Jr. KG to Std 12</p>
+            <span>7:20 AM – 12:10 PM</span>
+        </div>
+
+    </div>
+</section>
+
+<!-- ADMISSION -->
+<section class="admission">
+    <div class="admission-content">
+        <h2 class="blink">Admissions Open 2026-27</h2>
+
+        <p>
+            Sharda Vidyamandir Gujarati Medium & S.V.M English Medium School
+        </p>
+
+        <a href="#" class="admission-btn">Apply Now</a>
+    </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+    <div class="stats-container">
+
+        <div class="stat-box">
+            <h2>800+</h2>
+            <p>Total Students</p>
+        </div>
+
+        <div class="stat-box">
+            <h2>35+</h2>
+            <p>Total Staff</p>
+        </div>
+
+        <div class="stat-box">
+            <h2>10+</h2>
+            <p>Admin Staff</p>
+        </div>
+
+    </div>
+</section>
+
+<!-- TOPPERS -->
+<section class="toppers">
+    <h2>Our School Toppers</h2>
+
+    <div class="toppers-grid">
+
+        <!-- ✅ MVC IMAGE PATH -->
+        <div class="poster" style="background-image: url('/images/poster.png');"></div>
+        <div class="poster" style="background-image: url('/images/poster.png');"></div>
+        <div class="poster" style="background-image: url('/images/poster.png');"></div>
+        <div class="poster" style="background-image: url('/images/poster.png');"></div>
+
+    </div>
+</section>
+
+
+<section class="events">
+    <h2>School Events</h2>
+
+    <div class="diagonal-gallery">
+
+        <img src="https://images.unsplash.com/photo-1503676260728-1c00da094a0b">
+        <img src="https://images.unsplash.com/photo-1523240795612-9a054b0db644">
+        <img src="https://images.unsplash.com/photo-1588072432836-e10032774350">
+        <img src="https://images.unsplash.com/photo-1517486808906-6ca8b3f04846">
+        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7">
+        <img src="https://images.unsplash.com/photo-1509062522246-3755977927d7">
+
+    </div>
+
+    <div class="gallery-btn-container">
+
+
+        <a asp-controller="UserHome" asp-action="Gallery" class="gallery-btn">
+            View Full Gallery →
+        </a>
+    </div>
+</section>
