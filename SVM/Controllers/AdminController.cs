@@ -20,7 +20,8 @@ namespace SVM.Controllers
 
         public async Task<IActionResult> AdminDashboard()
         {
-            if (HttpContext.Session.GetString("UserId") == null)
+			int totalClasses = 0;
+			if (HttpContext.Session.GetString("UserId") == null)
                 return RedirectToAction("Login", "Account");
 
             Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
@@ -46,26 +47,70 @@ namespace SVM.Controllers
                 Console.WriteLine(ex.Message);
             }
 
-            // ----- Naye counts (students, staff, subjects, active session) -----
-            int totalStudents = 0;
-            int totalStaff = 0;
-            int totalSubjects = 0;
-            string activeSessionName = "N/A";
-            decimal totalExpense = 0;
+			// ----- Naye counts (students, staff, subjects, active session) -----
+			int totalStudents = 0;
+			int totalStaff = 0;
+			int totalSubjects = 0;
+			string activeSessionName = "N/A";
+
+			Session activeSession = null;   // ✅ ADD THIS
+			decimal totalExpense = 0;
+
+			
 
             try
             {
-                // Students count
-                var studentsResp = await _client.GetAsync("Students");
-                if (studentsResp.IsSuccessStatusCode)
-                {
-                    var studentsJson = await studentsResp.Content.ReadAsStringAsync();
-                    var students = JsonSerializer.Deserialize<List<Student>>(studentsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-                    totalStudents = students?.Count ?? 0;
-                }
+				var sessionsResp = await _client.GetAsync("Sessions");
+				if (sessionsResp.IsSuccessStatusCode)
+				{
+					var sessionsJson = await sessionsResp.Content.ReadAsStringAsync();
+					var sessions = JsonSerializer.Deserialize<List<Session>>(sessionsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                // Staff count (agar API exist karti hai)
-                var staffResp = await _client.GetAsync("Staffs");
+					activeSession = sessions?.FirstOrDefault(s => s.IsActive == 1);
+					var classesResp = await _client.GetAsync("Classes");
+
+					if (classesResp.IsSuccessStatusCode)
+					{
+						var classesJson = await classesResp.Content.ReadAsStringAsync();
+
+						var classes = JsonSerializer.Deserialize<List<Class>>(classesJson,
+							new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+						if (activeSession != null)
+						{
+							totalClasses = classes?
+								.Count(c => c.SessionId == activeSession.SessionId) ?? 0;
+						}
+					}
+
+					if (activeSession == null && sessions != null)
+					{
+						var today = DateOnly.FromDateTime(DateTime.Today);
+						activeSession = sessions.FirstOrDefault(s => today >= s.StartDate && today <= s.EndDate);
+					}
+
+					if (activeSession != null)
+						activeSessionName = activeSession.SessionName;
+				}
+				// Students count (ACTIVE SESSION ONLY)
+				var studentsResp = await _client.GetAsync("Students");
+				if (studentsResp.IsSuccessStatusCode)
+				{
+					var studentsJson = await studentsResp.Content.ReadAsStringAsync();
+
+					var students = JsonSerializer.Deserialize<List<Student>>(
+						studentsJson,
+						new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+					if (activeSession != null)
+					{
+						totalStudents = students?
+							.Count(s => s.SessionId == activeSession.SessionId) ?? 0;
+					}
+				}
+
+				// Staff count (agar API exist karti hai)
+				var staffResp = await _client.GetAsync("Staffs");
                 if (staffResp.IsSuccessStatusCode)
                 {
                     var staffJson = await staffResp.Content.ReadAsStringAsync();
@@ -101,23 +146,7 @@ namespace SVM.Controllers
                 }
                 // Active session name
                 // Active session name
-                var sessionsResp = await _client.GetAsync("Sessions");
-                if (sessionsResp.IsSuccessStatusCode)
-                {
-                    var sessionsJson = await sessionsResp.Content.ReadAsStringAsync();
-                    var sessions = JsonSerializer.Deserialize<List<Session>>(sessionsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-
-                    var activeSession = sessions?.FirstOrDefault(s => s.IsActive == 1);
-
-                    if (activeSession == null && sessions != null)
-                    {
-                        var today = DateOnly.FromDateTime(DateTime.Today);
-                        activeSession = sessions.FirstOrDefault(s => today >= s.StartDate && today <= s.EndDate);
-                    }
-
-                    if (activeSession != null)
-                        activeSessionName = activeSession.SessionName;
-                }
+         
             }
             catch (Exception ex)
             {
@@ -129,8 +158,8 @@ namespace SVM.Controllers
             ViewBag.TotalSubjects = totalSubjects;
             ViewBag.TotalExpense = totalExpense;
             ViewBag.ActiveSessionName = activeSessionName;
-
-            return View(updatesList ?? new List<Updates>());
+			ViewBag.TotalClasses = totalClasses;
+			return View(updatesList ?? new List<Updates>());
         }
 
         // Keep AdminPanel as it was, or remove if not used

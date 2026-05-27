@@ -39,7 +39,8 @@
 
                 @foreach (var s in ViewBag.AllSessions)
                 {
-                    <option value="@s.SessionId">
+                    <option value="@s.SessionId"
+                            selected="@(ViewBag.SelectedSessionId == s.SessionId ? "selected" : null)">
                         @s.SessionName
                     </option>
                 }

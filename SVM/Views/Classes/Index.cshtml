@@ -27,42 +27,35 @@
                 <!-- SESSION FILTER -->
                 <select id="sessionFilter" class="search-box">
                     <option value="">All Sessions</option>
-                    @{
-                        var sessions = ViewBag.AllSessions as List<SVM.Models.Session>;
-                        if (sessions != null)
-                        {
-                            foreach (var s in sessions)
-                            {
-                                <option value="@s.SessionId">@s.SessionName</option>
-                            }
-                        }
+
+                    @foreach (var s in (List<SVM.Models.Session>)ViewBag.AllSessions)
+                    {
+                        <option value="@s.SessionId"
+                                selected="@(s.SessionId == (int?)ViewBag.ActiveSessionId ? "selected" : null)">
+                            @s.SessionName
+                        </option>
                     }
                 </select>
 
-                <!-- CLASS SEARCH -->
-                <select id="searchInput" class="search-box">
-                    <option value="">All Classes</option>
-                    <option value="JR KG">JR KG</option>
-                    <option value="SR KG">SR KG</option>
-                    <option value="1">Class 1</option>
-                    <option value="2">Class 2</option>
-                    <option value="3">Class 3</option>
-                    <option value="4">Class 4</option>
-                    <option value="5">Class 5</option>
-                    <option value="6">Class 6</option>
-                    <option value="7">Class 7</option>
-                    <option value="8">Class 8</option>
-                    <option value="9">Class 9</option>
-                    <option value="10">Class 10</option>
-                    <option value="11">Class 11</option>
-                    <option value="12">Class 12</option>
-                </select>
+             
 
                 <!-- MEDIUM FILTER -->
                 <select id="mediumFilter" class="filter-dropdown">
                     <option value="all">All Mediums</option>
-                    <option value="Gujarati">Gujarati</option>
-                    <option value="English">English</option>
+
+                    @foreach (var m in (List<string>)ViewBag.MediumList)
+                    {
+                        <option value="@m">@m</option>
+                    }
+                </select>
+
+                <select id="searchInput" class="search-box">
+                    <option value="">All Classes</option>
+
+                    @foreach (var c in (List<string>)ViewBag.ClassNames)
+                    {
+                        <option value="@c">@c</option>
+                    }
                 </select>
 
                 <!-- SEARCH BUTTON -->
