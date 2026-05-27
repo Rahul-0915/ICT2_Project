@@ -31,6 +31,10 @@ public partial class Student
 
     public string? AadharNo { get; set; }
 
+    // ========== NEW EMAIL FIELD ==========
+    public string? Email { get; set; }
+    // ========== END EMAIL FIELD ==========
+
     public int? ClassId { get; set; }
 
     public int? SectionId { get; set; }
