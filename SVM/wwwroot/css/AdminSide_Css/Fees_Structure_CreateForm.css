@@ -246,6 +246,33 @@ small {
     margin-bottom: 18px;
     font-size: 13px;
 }
+.info-box {
+    margin-top: 15px;
+    margin-bottom: 20px;
+    padding: 15px;
+    border-radius: 12px;
+    background: #f3f4f6;
+    border: 1px solid #d1d5db;
+}
+
+.info-item {
+    margin-bottom: 8px;
+    font-size: 15px;
+    color: #111827;
+}
+
+    .info-item strong {
+        color: #2563eb;
+    }
+
+.top-fields {
+    display: flex;
+    gap: 15px;
+}
+
+    .top-fields .form-group {
+        flex: 1;
+    }
 
 /* RESPONSIVE */
 @media (max-width: 900px) {
