@@ -158,7 +158,7 @@ namespace SVM.Controllers
                 var userForApi = new
                 {
                     username = username,
-                    password = "123456",
+                    password = staff.Phone,
                     fullName = $"{staff.FirstName} {staff.LastName}",
                     email = staff.Email,
                     phone = staff.Phone,
