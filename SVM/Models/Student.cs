@@ -72,6 +72,12 @@ public partial class Student
     [Display(Name = "Aadhar Number")]
     public string? AadharNo { get; set; }
 
+    [Required(ErrorMessage = "Email is required")]
+    [EmailAddress(ErrorMessage = "Please enter a valid email address")]
+    [StringLength(100, ErrorMessage = "Email cannot exceed 100 characters")]
+    [Display(Name = "Email Address")]
+    public string? Email { get; set; }
+
     [Required(ErrorMessage = "Class is required")]
     [Display(Name = "Class")]
     public int? ClassId { get; set; }
