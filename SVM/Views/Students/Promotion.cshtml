@@ -394,16 +394,7 @@
 
 <script>
 
-    $(document).ready(function () {
-
-        $("#actionBar").hide();
-
-        $("#tableWrapper").hide();
-
-        $("#promotionModal").hide();
-
-    });
-
+  
     // SESSION + MEDIUM CHANGE
 
     $("#sessionFilter, #mediumFilter").change(function () {
@@ -659,7 +650,10 @@
 
         }
 
-        $("#promotionModal").fadeIn();
+        $("#promotionModal")
+            .css("display", "flex")
+            .hide()
+            .fadeIn();
 
         $("#newSession").val("");
 

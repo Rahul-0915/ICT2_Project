@@ -43,9 +43,9 @@ namespace SVM_API
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
-          //@"C:\Users\PRAKRUTI\source\repos\ICT2_Project\SVM\wwwroot\images\updates"),
+                //@"C:\Users\PRAKRUTI\source\repos\ICT2_Project\SVM\wwwroot\images\updates"),
                 @"C:\Projects\SVM\wwwroot\images\updates\"),
-                
+
                 RequestPath = "/images/updates"
             });
             app.UseStaticFiles(new StaticFileOptions

@@ -118,5 +118,18 @@ namespace SVM_API.Controllers
         {
             return _context.Classes.Any(e => e.ClassId == id);
         }
+        [HttpGet("WithFilters")]
+        public async Task<ActionResult<IEnumerable<Class>>> GetClassesWithFilters(int? sessionId, string medium)
+        {
+            var query = _context.Classes.AsQueryable();
+
+            if (sessionId.HasValue)
+                query = query.Where(c => c.SessionId == sessionId);
+            if (!string.IsNullOrEmpty(medium))
+                query = query.Where(c => c.Medium == medium);
+
+            var classes = await query.ToListAsync();
+            return Ok(classes);
+        }
     }
 }
