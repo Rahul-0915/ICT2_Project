@@ -1,0 +1,178 @@
+﻿@model IEnumerable<SVM.Models.Updates>
+
+@{
+    ViewData["Title"] = "Gallery";
+
+    Layout = "~/Views/Shared/UserLayout.cshtml";
+
+    ViewBag.ShowPreloader = false;
+}
+
+@section PageCss {
+    <link rel="stylesheet"
+          href="@Url.Content("~/css/UserSide_Css/UserGallery.css")" />
+}
+
+<div class="gallery-page">
+
+    <!-- HEADER -->
+
+    <div class="gallery-header">
+
+        <h1>School Event Gallery</h1>
+
+        <p>
+            Explore beautiful memories, celebrations,
+            achievements and unforgettable school moments.
+        </p>
+
+    </div>
+
+    <!-- GRID -->
+    @if (Model.Any())
+    {
+        <div class="gallery-grid">
+
+            @{
+                var itemList = Model.ToList();
+            }
+
+            @for (int i = 0; i < itemList.Count; i++)
+            {
+                var item = itemList[i];
+
+                var extension = System.IO.Path
+                .GetExtension(item.FilePath)?
+                .ToLower();
+
+                bool isVideo =
+                extension == ".mp4" ||
+                extension == ".webm" ||
+                extension == ".ogg";
+
+                <div class="gallery-card"
+                     onclick="openLightbox(@i)">
+
+                    @if (isVideo)
+                    {
+                        <video class="gallery-media"
+                               muted>
+
+                            <source src="@item.FilePath" />
+
+                        </video>
+
+                        <div class="video-icon">
+
+                            <i class="fa-solid fa-play"></i>
+
+                        </div>
+                    }
+                    else
+                    {
+                        <img src="@item.FilePath"
+                             alt="@item.Title"
+                             class="gallery-media" />
+                    }
+
+                </div>
+            }
+
+        </div>
+    }
+
+    <!-- LIGHTBOX -->
+
+    <div class="lightbox"
+         id="lightbox">
+
+        <span class="close-btn"
+              onclick="closeLightbox()">
+
+            &times;
+
+        </span>
+
+        <button class="nav-btn prev"
+                onclick="changeSlide(-1)">
+
+            &#10094;
+
+        </button>
+
+        <!-- CONTENT -->
+
+        <div class="lightbox-content">
+
+            <!-- IMAGE -->
+
+            <img id="lightbox-img" />
+
+            <!-- VIDEO -->
+
+            <video controls
+                   id="lightbox-video"
+                   style="display:none;">
+
+                <source id="lightbox-video-source" />
+
+            </video>
+
+            <!-- INFO -->
+
+            <div class="lightbox-info">
+
+                <h2 id="lightbox-title"></h2>
+
+                <div class="lightbox-date"
+                     id="lightbox-date">
+                </div>
+
+                <p id="lightbox-description"></p>
+
+            </div>
+
+        </div>
+
+        <button class="nav-btn next"
+                onclick="changeSlide(1)">
+
+            &#10095;
+
+        </button>
+
+    </div>
+
+</div>
+
+<script src="@Url.Content("~/js/UserSide_Js/UserGallery.js")"></script>
+
+<script>
+
+    let galleryItems = [
+
+    @foreach (var item in Model)
+    {
+        var extension = System.IO.Path
+        .GetExtension(item.FilePath)?
+        .ToLower();
+
+        bool isVideo =
+        extension == ".mp4" ||
+        extension == ".webm" ||
+        extension == ".ogg";
+
+        <text>
+            {
+                src: "@item.FilePath",
+                title: "@Html.Raw(item.Title?.Replace("\"", "\\\""))",
+                description: "@Html.Raw(item.Description?.Replace("\"", "\\\""))",
+                date: "@item.CreatedAt.ToString("MMMM dd, yyyy")",
+                isVideo: @(isVideo.ToString().ToLower())
+                    },
+        </text>
+    }
+
+        ];
+
+</script>
