@@ -69,6 +69,33 @@ namespace SVM.Controllers
                 var error = await response.Content.ReadAsStringAsync();
                 ModelState.AddModelError("", $"Failed to load students: {error}");
             }
+            // ================= ACTIVE SESSION AUTO SELECT =================
+
+            if (!sessionId.HasValue)
+            {
+                var sessionResponse = await _client.GetAsync("Sessions");
+
+                if (sessionResponse.IsSuccessStatusCode)
+                {
+                    var sessionData = await sessionResponse.Content.ReadAsStringAsync();
+
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+
+                    var allSessions =
+                        JsonSerializer.Deserialize<List<Session>>(sessionData, options);
+
+                    var activeSession =
+                        allSessions?.FirstOrDefault(x => x.IsActive == 1);
+
+                    if (activeSession != null)
+                    {
+                        sessionId = activeSession.SessionId;
+                    }
+                }
+            }
 
             // ✅ FIXED: Only pass 2 parameters
             await LoadFiltersAsync(sessionId, medium);
@@ -844,22 +871,60 @@ namespace SVM.Controllers
                 return Json(null);
 
             var classData = await classResponse.Content.ReadAsStringAsync();
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
             var allClasses = JsonSerializer.Deserialize<List<Class>>(classData, options);
-            var currentClass = allClasses.FirstOrDefault(x => x.ClassId == currentClassId);
+
+            if (allClasses == null)
+                return Json(null);
+
+            // Current Class
+            var currentClass = allClasses
+                .FirstOrDefault(x => x.ClassId == currentClassId);
+
             if (currentClass == null)
                 return Json(null);
 
-            int currentNumber = 0;
-            int.TryParse(currentClass.ClassName, out currentNumber);
-            int nextNumber = currentNumber + 1;
+            // SAME MEDIUM + CURRENT SESSION CLASSES
+            var currentSessionClasses = allClasses
+                .Where(x =>
+                    x.SessionId == currentClass.SessionId &&
+                    x.Medium == currentClass.Medium)
+                .OrderBy(x => x.ClassId)
+                .ToList();
+
+            // CURRENT INDEX
+            int currentIndex = currentSessionClasses
+                .FindIndex(x => x.ClassId == currentClassId);
+
+            if (currentIndex == -1)
+                return Json(null);
+
+            // NEXT CLASS NAME
+            if (currentIndex + 1 >= currentSessionClasses.Count)
+                return Json(null);
+
+            string nextClassName =
+                currentSessionClasses[currentIndex + 1].ClassName;
+
+            // FIND SAME CLASS IN NEW SESSION
             var nextClass = allClasses.FirstOrDefault(x =>
-                x.ClassName == nextNumber.ToString() &&
+                x.ClassName == nextClassName &&
                 x.Medium == currentClass.Medium &&
                 x.SessionId == newSessionId);
+
             if (nextClass == null)
                 return Json(null);
-            return Json(new { value = nextClass.ClassId, text = nextClass.ClassName });
+
+            return Json(new
+            {
+                value = nextClass.ClassId,
+                text = nextClass.ClassName
+            });
         }
 
         [HttpPost]

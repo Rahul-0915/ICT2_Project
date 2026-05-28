@@ -29,6 +29,7 @@
     border-radius: 18px;
     margin-bottom: 20px;
     box-shadow: 0 6px 24px rgba(0,0,0,0.06);
+    display: none;
 }
 
 .action-inner {
@@ -95,6 +96,7 @@
     border-radius: 18px;
     overflow: hidden;
     box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+    display: none;
 }
 
 .student-table {
@@ -154,7 +156,7 @@
     position: fixed;
     inset: 0;
     background: rgba(15,23,42,.55);
-    display: flex;
+    display: none;
     justify-content: center;
     align-items: center;
     z-index: 999;
