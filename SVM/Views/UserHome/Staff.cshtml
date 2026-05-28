@@ -1,0 +1,86 @@
+﻿@model IEnumerable<SVM.Models.Staff>
+
+@{
+    Layout = "~/Views/Shared/UserLayout.cshtml";
+    ViewBag.Title = "Our Staff";
+}
+
+@section PageCss {
+    <link rel="stylesheet"
+          href="~/css/UserSide_Css/Staff_Info.css" />
+}
+
+<section class="staff-page">
+
+    <div class="staff-header">
+
+        <h1>Our Teaching Staff</h1>
+
+        <p>
+            Meet our experienced and dedicated teachers.
+        </p>
+
+    </div>
+
+    <div class="staff-grid">
+
+        @foreach (var item in Model)
+        {
+            <div class="staff-card">
+
+                <!-- IMAGE -->
+
+                <div class="staff-image">
+
+                    @if (!string.IsNullOrEmpty(item.StafPhoto))
+                    {
+                        <img src="@item.StafPhoto"
+                             alt="@item.FirstName" />
+                    }
+                    else
+                    {
+                        <img src="~/images/no-image.png"
+                             alt="No Image" />
+                    }
+
+                </div>
+
+                <!-- CONTENT -->
+
+                <div class="staff-content">
+
+                    <h2>
+                        @item.FirstName @item.LastName
+                    </h2>
+
+                    <span class="designation">
+                        @item.Designation
+                    </span>
+
+                    <div class="staff-info">
+
+                        <p>
+                            <strong>Qualification :</strong>
+                            @item.Qualification
+                        </p>
+
+                        <p>
+                            <strong>Experience :</strong>
+                            @item.ExperienceYears Years
+                        </p>
+
+                        <p>
+                            <strong>Email :</strong>
+                            @item.Email
+                        </p>
+
+                    </div>
+
+                </div>
+
+            </div>
+        }
+
+    </div>
+
+</section>

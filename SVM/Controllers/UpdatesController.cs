@@ -235,7 +235,9 @@ namespace SVM.Controllers
             {
                 new SelectListItem { Value = "", Text = "-- Select Category --" },
                 new SelectListItem { Value = "notice", Text = "Notice" },
-                new SelectListItem { Value = "event", Text = "Event" }
+                new SelectListItem { Value = "event", Text = "Event" },
+                new SelectListItem { Value = "ToperStudents", Text = "ToperStudents" }
+
             };
             ViewBag.CategoryList = new SelectList(categories, "Value", "Text", selectedCategory);
 
