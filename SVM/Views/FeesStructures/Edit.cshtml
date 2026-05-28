@@ -70,6 +70,8 @@
 			<p class="form-subheading">
 				Update fee details carefully for this class and session.
 			</p>
+		
+			
 
 			<div asp-validation-summary="ModelOnly"
 				 class="alert alert-danger"
@@ -85,14 +87,68 @@
 				<input type="hidden"
 					   asp-for="FeeId" />
 
-				<input type="hidden"
-					   asp-for="SessionId" />
-
-				<input type="hidden"
-					   asp-for="ClassId" />
+	
 
 				<div class="form-grid">
+					<!-- SESSION -->
 
+					<div class="form-group">
+
+						<label>
+							Session
+						</label>
+
+						@Html.DropDownList(
+															"SessionId",
+															ViewBag.SessionList as SelectList,
+															"-- Select Session --",
+															new
+															{
+																@class = "form-control",
+																id = "sessionSelect"
+															})
+
+					</div>
+
+					<!-- MEDIUM -->
+
+					<div class="form-group">
+
+						<label>
+							Medium
+						</label>
+
+						@Html.DropDownList(
+															"medium",
+															ViewBag.MediumList as SelectList,
+															"-- Select Medium --",
+															new
+															{
+																@class = "form-control",
+																id = "mediumSelect"
+															})
+
+					</div>
+
+					<!-- CLASS -->
+
+					<div class="form-group">
+
+						<label>
+							Class
+						</label>
+
+						<select asp-for="ClassId"
+								id="classSelect"
+								class="form-control">
+
+							<option value="">
+								-- Select Class --
+							</option>
+
+						</select>
+
+					</div>
 					<!-- ADMISSION -->
 
 					<div class="form-group">
@@ -165,6 +221,8 @@
 
 				</div>
 
+				
+
 				<!-- BUTTONS -->
 
 				<div class="button-area">
@@ -203,6 +261,139 @@
 <script>
 
 	$(document).ready(function () {
+
+		let selectedClassId =
+			'@Model.ClassId';
+
+		let selectedSessionId =
+			'@Model.SessionId';
+
+		let selectedMedium =
+			'@ViewBag.Medium';
+
+		// AUTO LOAD CLASSES
+
+		if (
+			selectedSessionId &&
+			selectedMedium
+		) {
+
+			loadClasses(
+				selectedSessionId,
+				selectedMedium,
+				selectedClassId
+			);
+		}
+
+		// SESSION CHANGE
+
+		$('#sessionSelect').change(function () {
+
+			let sessionId =
+				$(this).val();
+
+			let medium =
+				$('#mediumSelect').val();
+
+			resetClassDropdown();
+
+			if (sessionId && medium) {
+
+				loadClasses(
+					sessionId,
+					medium,
+					null
+				);
+			}
+		});
+
+		// MEDIUM CHANGE
+
+		$('#mediumSelect').change(function () {
+
+			let medium =
+				$(this).val();
+
+			let sessionId =
+				$('#sessionSelect').val();
+
+			resetClassDropdown();
+
+			if (sessionId && medium) {
+
+				loadClasses(
+					sessionId,
+					medium,
+					null
+				);
+			}
+		});
+
+		// LOAD CLASSES
+
+		function loadClasses(
+			sessionId,
+			medium,
+			selectedClassId
+		) {
+
+			$.ajax({
+
+				url:
+					'/FeesStructures/GetClassesByMedium',
+
+				type: 'GET',
+
+				data: {
+					medium: medium,
+					sessionId: sessionId
+				},
+
+				success: function (data) {
+
+					let $class =
+						$('#classSelect');
+
+					$class.empty();
+
+					$class.append(
+						'<option value="">-- Select Class --</option>'
+					);
+
+					$.each(data, function (i, c) {
+
+						let option =
+							$('<option></option>')
+								.attr('value', c.value)
+								.text(c.text);
+
+						if (
+							selectedClassId &&
+							c.value == selectedClassId
+						) {
+
+							option.attr(
+								'selected',
+								'selected'
+							);
+						}
+
+						$class.append(option);
+					});
+				}
+			});
+		}
+
+		// RESET CLASS
+
+		function resetClassDropdown() {
+
+			$('#classSelect')
+				.empty()
+				.append(
+					'<option value="">-- Select Class --</option>'
+				);
+		}
 
 		function calculateTotal() {
 

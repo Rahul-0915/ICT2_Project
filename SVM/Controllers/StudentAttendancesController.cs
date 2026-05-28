@@ -26,6 +26,31 @@ namespace SVM.Controllers
      
         public async Task<IActionResult> Index(int? sessionId, string? medium, int? classId, int? sectionId, string? date)
         {
+            // AUTO SELECT ACTIVE SESSION
+            if (!sessionId.HasValue)
+            {
+                var sessionResponse = await _client.GetAsync("Sessions");
+
+                if (sessionResponse.IsSuccessStatusCode)
+                {
+                    var sessionData = await sessionResponse.Content.ReadAsStringAsync();
+
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+
+                    var allSessions = JsonSerializer.Deserialize<List<Session>>(sessionData, options);
+
+                    var activeSession = allSessions?
+                        .FirstOrDefault(x => x.IsActive==1);
+
+                    if (activeSession != null)
+                    {
+                        sessionId = activeSession.SessionId;
+                    }
+                }
+            }
             // Parse date safely
             DateTime selectedDate;
             if (!string.IsNullOrEmpty(date) && DateTime.TryParseExact(date, "yyyy-MM-dd", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsed))
@@ -581,12 +606,38 @@ namespace SVM.Controllers
         // ============================= MONTHLY REPORT (MONTH WISE) =============================
         public async Task<IActionResult> MonthlyReport(int? sessionId, string? medium, int? classId, int? sectionId, int? year, int? month)
         {
+            // AUTO SELECT ACTIVE SESSION
+            if (!sessionId.HasValue)
+            {
+                var sessionResponse = await _client.GetAsync("Sessions");
+
+                if (sessionResponse.IsSuccessStatusCode)
+                {
+                    var sessionData = await sessionResponse.Content.ReadAsStringAsync();
+
+                    var options = new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    };
+
+                    var allSessions = JsonSerializer.Deserialize<List<Session>>(sessionData, options);
+
+                    var activeSession = allSessions?
+                        .FirstOrDefault(x => x.IsActive==1);
+
+                    if (activeSession != null)
+                    {
+                        sessionId = activeSession.SessionId;
+                    }
+                }
+            }
+            await LoadSessionsDropdown(sessionId);
             // Set default values
             int reportYear = year ?? DateTime.Now.Year;
             int reportMonth = month ?? DateTime.Now.Month;
 
             // Load dropdowns (same as Index)
-            await LoadSessionsDropdown();
+            await LoadSessionsDropdown(sessionId);
             await LoadMediumsDropdown();
 
             if (sessionId.HasValue && sessionId > 0)

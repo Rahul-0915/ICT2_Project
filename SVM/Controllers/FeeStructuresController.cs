@@ -19,42 +19,101 @@ namespace SVM.Controllers
 
         public async Task<IActionResult> Index(int? sessionId, string medium, int? classId)
         {
+            // ALL SESSIONS
             var sessions = await GetSessions();
-            ViewBag.SessionList = new SelectList(sessions, "SessionId", "SessionName", sessionId);
-            ViewBag.MediumList = new SelectList(new[] { "Gujarati", "English" }, medium);
 
-            if (sessionId == null || string.IsNullOrEmpty(medium) || classId == null)
-                return View();
+            // ACTIVE SESSION AUTO SELECT
+            if (sessionId == null)
+            {
+                var activeSession = sessions
+                    .FirstOrDefault(x => x.IsActive == 1);
 
-            var feeList = await GetFeeStructures(sessionId.Value, classId.Value);
-            Console.WriteLine($"FeeList count: {feeList?.Count ?? 0}");
+                if (activeSession != null)
+                {
+                    sessionId = activeSession.SessionId;
+                }
+            }
 
-            ViewBag.FeeStructures = feeList;
+            // DEFAULT MEDIUM
+            if (string.IsNullOrEmpty(medium))
+            {
+                medium = "Gujarati";
+            }
+
+            // DROPDOWNS
+            ViewBag.SessionList =
+                new SelectList(
+                    sessions,
+                    "SessionId",
+                    "SessionName",
+                    sessionId
+                );
+
+            ViewBag.MediumList =
+                new SelectList(
+                    new[] { "Gujarati", "English" },
+                    medium
+                );
+
+            // STORE SELECTED VALUES
             ViewBag.SelectedSessionId = sessionId;
             ViewBag.SelectedMedium = medium;
             ViewBag.SelectedClassId = classId;
+
+            // SEARCH ONLY WHEN CLASS SELECTED
+            if (sessionId != null &&
+                !string.IsNullOrEmpty(medium) &&
+                classId != null)
+            {
+                var feeList =
+                    await GetFeeStructures(
+                        sessionId.Value,
+                        classId.Value
+                    );
+
+                ViewBag.FeeStructures = feeList;
+            }
 
             return View();
         }
 
         [HttpGet]
         public async Task<IActionResult> Create(
-        int? sessionId,
-        string medium,
-        int? classId)
+     int? sessionId,
+     string medium,
+     int? classId)
         {
             var model = new FeeStructure();
 
-            if (sessionId != null)
-                model.SessionId = sessionId;
-
-            if (classId != null)
-                model.ClassId = classId;
-
-            // SESSION DROPDOWN
-
+            // GET SESSIONS
             var sessions = await GetSessions();
 
+            // ACTIVE SESSION AUTO SELECT
+            if (sessionId == null)
+            {
+                var activeSession = sessions
+                    .FirstOrDefault(x => x.IsActive == 1);
+
+                if (activeSession != null)
+                {
+                    sessionId = activeSession.SessionId;
+                    model.SessionId = activeSession.SessionId;
+                }
+            }
+
+            // DEFAULT MEDIUM
+            if (string.IsNullOrEmpty(medium))
+            {
+                medium = "Gujarati";
+            }
+
+            // CLASS
+            if (classId != null)
+            {
+                model.ClassId = classId;
+            }
+
+            // SESSION DROPDOWN
             ViewBag.SessionList =
                 new SelectList(
                     sessions,
@@ -64,7 +123,6 @@ namespace SVM.Controllers
                 );
 
             // MEDIUM DROPDOWN
-
             ViewBag.MediumList =
                 new SelectList(
                     new[] { "Gujarati", "English" },
@@ -218,12 +276,36 @@ namespace SVM.Controllers
             var data = await response.Content.ReadAsStringAsync();
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var feeStructure = JsonSerializer.Deserialize<FeeStructure>(data, options);
+            ViewBag.ClassName =
+    await GetClassName(
+        feeStructure.ClassId ?? 0
+    );
 
-            ViewBag.Medium = medium;
-            ViewBag.ClassId = classId;
-            ViewBag.SessionId = sessionId;   // <-- ADD THIS
+            ViewBag.SessionName =
+                await GetSessionName(
+                    feeStructure.SessionId ?? 0
+                );
+			var sessions = await GetSessions();
 
-            return View(feeStructure);
+			ViewBag.SessionList =
+				new SelectList(
+					sessions,
+					"SessionId",
+					"SessionName",
+					feeStructure.SessionId
+				);
+
+			ViewBag.MediumList =
+				new SelectList(
+					new[] { "Gujarati", "English" },
+					medium
+				);
+
+			ViewBag.Medium = medium;
+			ViewBag.ClassId = feeStructure.ClassId;
+			ViewBag.SessionId = feeStructure.SessionId;
+
+			return View(feeStructure);
         }
 
         [HttpPost]

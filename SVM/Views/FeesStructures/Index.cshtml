@@ -3,9 +3,9 @@
     var list = ViewBag.FeeStructures as List<SVM.Models.FeeStructure>;
 
     bool hasSearch =
-        ViewBag.SelectedSessionId != null ||
-        ViewBag.SelectedMedium != null ||
-        ViewBag.SelectedClassId != null;
+     ViewBag.SelectedSessionId != null &&
+     ViewBag.SelectedMedium != null &&
+     ViewBag.SelectedClassId != null;
 }
 
 <link rel="stylesheet"
@@ -232,65 +232,68 @@
     }
 
     $(document).ready(function () {
-        let sessionId = getParam('sessionId');
-        let medium = getParam('medium');
-        let classId = getParam('classId');
 
-        if (sessionId) $('#sessionSelect').val(sessionId);
-        if (medium) $('#mediumSelect').val(medium);
+        let sessionId =
+            $('#sessionSelect').val();
 
-        // Load classes when BOTH session and medium are selected
+        let medium =
+            $('#mediumSelect').val();
+
+        let classId =
+            '@ViewBag.SelectedClassId';
+
+        // AUTO LOAD CLASSES
         if (sessionId && medium) {
-            loadClasses(sessionId, medium, classId);
+            loadClasses(
+                sessionId,
+                medium,
+                classId
+            );
         }
 
-        // When session changes
+        // SESSION CHANGE
         $('#sessionSelect').change(function () {
-            let newSession = $(this).val();
-            let currentMedium = $('#mediumSelect').val();
-            if (newSession && currentMedium) {
-                loadClasses(newSession, currentMedium, null);
-            } else {
-                resetClassDropdown();
+
+            let session =
+                $(this).val();
+
+            let medium =
+                $('#mediumSelect').val();
+
+            resetClassDropdown();
+
+            if (session && medium) {
+
+                loadClasses(
+                    session,
+                    medium,
+                    null
+                );
             }
         });
 
-        // When medium changes
+        // MEDIUM CHANGE
         $('#mediumSelect').change(function () {
-            let currentSession = $('#sessionSelect').val();
-            let newMedium = $(this).val();
-            if (currentSession && newMedium) {
-                loadClasses(currentSession, newMedium, null);
-            } else {
-                resetClassDropdown();
+
+            let medium =
+                $(this).val();
+
+            let session =
+                $('#sessionSelect').val();
+
+            resetClassDropdown();
+
+            if (session && medium) {
+
+                loadClasses(
+                    session,
+                    medium,
+                    null
+                );
             }
         });
     });
 
-    function loadClasses(sessionId, medium, selectedClassId) {
-        $.ajax({
-            url: '/FeesStructures/GetClassesByMedium',
-            type: 'GET',
-            data: { medium: medium, sessionId: sessionId },
-            success: function (data) {
-                let $class = $('#classSelect');
-                $class.empty();
-                $class.append('<option value="">-- Select Class --</option>');
 
-                $.each(data, function (i, c) {
-                    let option = $('<option></option>')
-                        .attr('value', c.value)
-                        .text(c.text);
-                    if (selectedClassId && c.value == selectedClassId) {
-                        option.attr('selected', 'selected');
-                    }
-                    $class.append(option);
-                });
-            }
-        });
-    }
-
-    function resetClassDropdown() {
-        $('#classSelect').empty().append('<option value="">-- Select Class --</option>');
-    }
+  
 </script>

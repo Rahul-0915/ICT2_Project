@@ -22,10 +22,22 @@ namespace SVM.Controllers
         // GET: Timetables?sessionId=1&classId=2&sectionId=3&medium=Gujarati
         public async Task<IActionResult> Index(int? sessionId, int? classId, int? sectionId, string medium)
         {
-            var sessions = await GetSessions();
-            ViewBag.SessionList = new SelectList(sessions, "SessionId", "SessionName", sessionId);
+			var sessions = await GetSessions();
 
-            ViewBag.MediumList = new SelectList(new[] { "Gujarati", "English" }, medium);
+			// ✅ Active session auto select
+			if (sessionId == null)
+			{
+				var activeSession = sessions.FirstOrDefault(s => s.IsActive == 1);
+
+				if (activeSession != null)
+				{
+					sessionId = activeSession.SessionId;
+				}
+			}
+
+			ViewBag.SessionList = new SelectList(sessions, "SessionId", "SessionName", sessionId);
+
+			ViewBag.MediumList = new SelectList(new[] { "Gujarati", "English" }, medium);
 
             var sections = await GetSections();
             ViewBag.SectionList = new SelectList(sections, "SectionId", "SectionName", sectionId);
@@ -62,7 +74,7 @@ namespace SVM.Controllers
                 IsBreak = false
             };
 
-            var subjects = await GetSubjects();
+            var subjects = await GetSubjectsByClass(classId);
             ViewBag.SubjectList = new SelectList(subjects, "SubjectId", "SubjectName");
 
             ViewBag.StaffList = new SelectList(new List<object>(), "StaffId", "DisplayName");
@@ -104,7 +116,7 @@ namespace SVM.Controllers
                 }
             }
 
-            var subjects = await GetSubjects();
+            var subjects = await GetSubjectsByClass(timetable.ClassId);
             ViewBag.SubjectList = new SelectList(subjects, "SubjectId", "SubjectName", timetable.SubjectId);
 
             if (timetable.SubjectId.HasValue)
@@ -130,7 +142,7 @@ namespace SVM.Controllers
             var data = await response.Content.ReadAsStringAsync();
             var timetable = JsonSerializer.Deserialize<Timetable>(data, options);
 
-            var subjects = await GetSubjects();
+            var subjects = await GetSubjectsByClass(timetable.ClassId);
             ViewBag.SubjectList = new SelectList(subjects, "SubjectId", "SubjectName", timetable.SubjectId);
 
             if (timetable.SubjectId.HasValue)
@@ -692,6 +704,23 @@ Principal Sign: ____________________
             var teachers = await GetTeachersForSubject(subjectId, classId, sessionId);
             var list = teachers.Select(t => new { value = t.StaffId, text = $"{t.FirstName} {t.LastName}" });
             return Json(list);
+        }
+        private async Task<List<Subject>> GetSubjectsByClass(int classId)
+        {
+            var response = await _client.GetAsync($"Subjects/ByClass/{classId}");
+
+            if (!response.IsSuccessStatusCode)
+                return new List<Subject>();
+
+            var data = await response.Content.ReadAsStringAsync();
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            return JsonSerializer.Deserialize<List<Subject>>(data, options)
+                   ?? new List<Subject>();
         }
     }
 }

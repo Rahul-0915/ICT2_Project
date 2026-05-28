@@ -113,6 +113,26 @@ namespace SVM.Controllers
                 var sessionData = await sessionResponse.Content.ReadAsStringAsync();
                 var allSessions = JsonSerializer.Deserialize<List<Session>>(sessionData, option);
                 ViewBag.AllSessions = allSessions;
+                // ACTIVE SESSION AUTO SELECT
+                var activeSession = allSessions?
+                    .FirstOrDefault(s => s.IsActive == 1); // ya Current flag
+
+                ViewBag.ActiveSessionId = activeSession?.SessionId;
+                var classNames = classList
+                    .Select(c => c.ClassName)
+                    .Distinct()
+                    
+                    .ToList();
+
+                ViewBag.ClassNames = classNames;
+
+                // MEDIUM DROPDOWN (DB SE OPTIONAL)
+                var mediums = classList
+                    .Select(c => c.Medium)
+                    .Distinct()
+                    .ToList();
+
+                ViewBag.MediumList = mediums;
             }
 
             return View(classList);
@@ -140,6 +160,26 @@ namespace SVM.Controllers
         {
             await LoadSessions();
             LoadMediums();
+
+            var response = await _client.GetAsync("Classes");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsStringAsync();
+                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                var classList = JsonSerializer.Deserialize<List<Class>>(data, option);
+
+                ViewBag.ClassNames = classList?
+                    .Select(x => x.ClassName)
+                    .Distinct()
+                    .ToList();
+            }
+            else
+            {
+                ViewBag.ClassNames = new List<string>();
+            }
+
             return View();
         }
 
@@ -185,15 +225,40 @@ namespace SVM.Controllers
             {
                 return NotFound();
             }
+
             var response = await _client.GetAsync($"Classes/{id}");
             if (!response.IsSuccessStatusCode)
             {
                 return NotFound();
             }
+
             var data = await response.Content.ReadAsStringAsync();
-            var classData = JsonSerializer.Deserialize<Class>(data, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            var classData = JsonSerializer.Deserialize<Class>(data,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
             await LoadSessions();
             LoadMediums();
+
+            // 🔥 ADD THIS ALSO
+            var classResponse = await _client.GetAsync("Classes");
+
+            if (classResponse.IsSuccessStatusCode)
+            {
+                var classDataList = await classResponse.Content.ReadAsStringAsync();
+                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                var classList = JsonSerializer.Deserialize<List<Class>>(classDataList, option);
+
+                ViewBag.ClassNames = classList?
+                    .Select(x => x.ClassName)
+                    .Distinct()
+                    .ToList();
+            }
+            else
+            {
+                ViewBag.ClassNames = new List<string>();
+            }
+
             return View(classData);
         }
 
@@ -307,6 +372,7 @@ namespace SVM.Controllers
             }
             return false;
         }
+
 
     }
 
