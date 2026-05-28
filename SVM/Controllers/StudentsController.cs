@@ -43,33 +43,6 @@ namespace SVM.Controllers
             // 🔥 Build URL with filters
             var url = $"Students/WithDetails?sessionId={sessionId}&medium={medium}&classId={classId}&sectionId={sectionId}";
             var response = await _client.GetAsync(url);
-			// AUTO SELECT ACTIVE SESSION
-			if (!sessionId.HasValue)
-			{
-				var sessionResp = await _client.GetAsync("Sessions");
-
-				if (sessionResp.IsSuccessStatusCode)
-				{
-					var sessionData = await sessionResp.Content.ReadAsStringAsync();
-
-					var options = new JsonSerializerOptions
-					{
-						PropertyNameCaseInsensitive = true
-					};
-
-					var allSessions = JsonSerializer.Deserialize<List<Session>>(sessionData, options);
-
-					var activeSession = allSessions?
-						.FirstOrDefault(x => x.IsActive==1);
-
-					if (activeSession != null)
-					{
-						sessionId = activeSession.SessionId;
-					}
-				}
-			}
-			List<Student> studentList = new List<Student>();
-            var response = await _client.GetAsync("Students");
 
             if (response.IsSuccessStatusCode)
             {
@@ -124,13 +97,6 @@ namespace SVM.Controllers
             // Load classes with filters (1 call)
             var classUrl = $"Classes/WithFilters?sessionId={sessionId}&medium={medium}";
             var classResponse = await _client.GetAsync(classUrl);
-
-                ViewBag.SelectedSessionId = sessionId;   // for pre-selection
-            }
-
-
-            // Load all classes (will be filtered later via AJAX)
-            var classResponse = await _client.GetAsync("Classes");
             if (classResponse.IsSuccessStatusCode)
             {
                 var classData = await classResponse.Content.ReadAsStringAsync();
@@ -791,135 +757,112 @@ namespace SVM.Controllers
 
         public async Task<IActionResult> Promotion()
         {
-            List<Student> studentList = new List<Student>();
-            var response = await _client.GetAsync("Students");
-            if (response.IsSuccessStatusCode)
+            List<Student> studentList = new();
+
+            var options = new JsonSerializerOptions
             {
-                var data = await response.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                studentList = JsonSerializer.Deserialize<List<Student>>(data, options);
-                foreach (var student in studentList)
-                {
-                    if (student.ClassId.HasValue)
-                    {
-                        var classResp = await _client.GetAsync($"Classes/{student.ClassId}");
-                        if (classResp.IsSuccessStatusCode)
-                        {
-                            var classData = await classResp.Content.ReadAsStringAsync();
-                            student.Class = JsonSerializer.Deserialize<Class>(classData, options);
-                        }
-                    }
-                    if (student.SectionId.HasValue)
-                    {
-                        var sectionResp = await _client.GetAsync($"Sections/{student.SectionId}");
-                        if (sectionResp.IsSuccessStatusCode)
-                        {
-                            var sectionData = await sectionResp.Content.ReadAsStringAsync();
-                            student.Section = JsonSerializer.Deserialize<Section>(sectionData, options);
-                        }
-                    }
-                    if (student.SessionId.HasValue)
-                    {
-                        var sessionResp = await _client.GetAsync($"Sessions/{student.SessionId}");
-                        if (sessionResp.IsSuccessStatusCode)
-                        {
-                            var sessionData = await sessionResp.Content.ReadAsStringAsync();
-                            student.Session = JsonSerializer.Deserialize<Session>(sessionData, options);
-                        }
-                    }
-                }
+                PropertyNameCaseInsensitive = true
+            };
+
+            // ================= STUDENTS =================
+            var studentResponse = await _client.GetAsync("Students");
+
+            if (studentResponse.IsSuccessStatusCode)
+            {
+                var studentData = await studentResponse.Content.ReadAsStringAsync();
+
+                studentList = JsonSerializer.Deserialize<List<Student>>(studentData, options) ?? new();
             }
+
+            // ================= CLASSES =================
+            var classResponse = await _client.GetAsync("Classes");
+
+            List<Class> allClasses = new();
+
+            if (classResponse.IsSuccessStatusCode)
+            {
+                var classData = await classResponse.Content.ReadAsStringAsync();
+
+                allClasses = JsonSerializer.Deserialize<List<Class>>(classData, options) ?? new();
+            }
+
+            // ================= SECTIONS =================
+            var sectionResponse = await _client.GetAsync("Sections");
+
+            List<Section> allSections = new();
+
+            if (sectionResponse.IsSuccessStatusCode)
+            {
+                var sectionData = await sectionResponse.Content.ReadAsStringAsync();
+
+                allSections = JsonSerializer.Deserialize<List<Section>>(sectionData, options) ?? new();
+            }
+
+            // ================= SESSIONS =================
             var sessionResponse = await _client.GetAsync("Sessions");
+
+            List<Session> allSessions = new();
+
             if (sessionResponse.IsSuccessStatusCode)
             {
                 var sessionData = await sessionResponse.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-                var allSessions = JsonSerializer.Deserialize<List<Session>>(sessionData, options);
+
+                allSessions = JsonSerializer.Deserialize<List<Session>>(sessionData, options) ?? new();
+
                 ViewBag.AllSessions = allSessions;
+
                 // ACTIVE SESSION
-                var activeSession = allSessions?
-                    .FirstOrDefault(x => x.IsActive==1);
+                var activeSession = allSessions
+                    .FirstOrDefault(x => x.IsActive == 1);
 
                 if (activeSession != null)
                 {
                     ViewBag.SelectedSessionId = activeSession.SessionId;
                 }
             }
+
+            // ================= MAP DATA =================
+            foreach (var student in studentList)
+            {
+                student.Class = allClasses
+                    .FirstOrDefault(x => x.ClassId == student.ClassId);
+
+                student.Section = allSections
+                    .FirstOrDefault(x => x.SectionId == student.SectionId);
+
+                student.Session = allSessions
+                    .FirstOrDefault(x => x.SessionId == student.SessionId);
+            }
+
             return View(studentList);
         }
-
         [HttpGet]
         public async Task<JsonResult> GetNextClass(int currentClassId, int newSessionId)
         {
             var classResponse = await _client.GetAsync("Classes");
             if (!classResponse.IsSuccessStatusCode)
                 return Json(null);
-		// GET: GetNextClass
-		[HttpGet]
-		public async Task<JsonResult> GetNextClass(int currentClassId, int newSessionId)
-		{
-			var classResponse = await _client.GetAsync("Classes");
-			if (!classResponse.IsSuccessStatusCode)
-				return Json(null);
 
-			var classData = await classResponse.Content.ReadAsStringAsync();
+            var classData = await classResponse.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var allClasses = JsonSerializer.Deserialize<List<Class>>(classData, options);
+            var currentClass = allClasses.FirstOrDefault(x => x.ClassId == currentClassId);
+            if (currentClass == null)
+                return Json(null);
 
-			var options = new JsonSerializerOptions
-			{
-				PropertyNameCaseInsensitive = true
-			};
+            int currentNumber = 0;
+            int.TryParse(currentClass.ClassName, out currentNumber);
+            int nextNumber = currentNumber + 1;
+            var nextClass = allClasses.FirstOrDefault(x =>
+                x.ClassName == nextNumber.ToString() &&
+                x.Medium == currentClass.Medium &&
+                x.SessionId == newSessionId);
+            if (nextClass == null)
+                return Json(null);
+            return Json(new { value = nextClass.ClassId, text = nextClass.ClassName });
+        }
 
-			var allClasses = JsonSerializer.Deserialize<List<Class>>(classData, options);
-
-			if (allClasses == null)
-				return Json(null);
-
-			// Current Class
-			var currentClass = allClasses
-				.FirstOrDefault(x => x.ClassId == currentClassId);
-
-			if (currentClass == null)
-				return Json(null);
-
-			// SAME MEDIUM + CURRENT SESSION CLASSES
-			var currentSessionClasses = allClasses
-				.Where(x =>
-					x.SessionId == currentClass.SessionId &&
-					x.Medium == currentClass.Medium)
-				.OrderBy(x => x.ClassId)
-				.ToList();
-
-			// CURRENT INDEX
-			int currentIndex = currentSessionClasses
-				.FindIndex(x => x.ClassId == currentClassId);
-
-			if (currentIndex == -1)
-				return Json(null);
-
-			// NEXT CLASS NAME
-			if (currentIndex + 1 >= currentSessionClasses.Count)
-				return Json(null);
-
-			string nextClassName =
-				currentSessionClasses[currentIndex + 1].ClassName;
-
-			// FIND SAME CLASS IN NEW SESSION
-			var nextClass = allClasses.FirstOrDefault(x =>
-				x.ClassName == nextClassName &&
-				x.Medium == currentClass.Medium &&
-				x.SessionId == newSessionId);
-
-			if (nextClass == null)
-				return Json(null);
-
-			return Json(new
-			{
-				value = nextClass.ClassId,
-				text = nextClass.ClassName
-			});
-		}
-
-		[HttpPost]
+        [HttpPost]
         public async Task<IActionResult> PromoteStudents([FromBody] PromotionRequest request)
         {
             var response = await _client.PostAsJsonAsync("Students/PromoteStudents", request);
