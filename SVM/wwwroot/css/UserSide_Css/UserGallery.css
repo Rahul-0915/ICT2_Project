@@ -1,0 +1,256 @@
+﻿/* =========================
+   GALLERY PAGE
+========================= */
+
+.gallery-page {
+    width: 90%;
+    max-width: 1400px;
+    margin: 35px auto;
+    background: white;
+    border: 1px solid #d1d5db;
+    
+    padding: 45px 20px 60px;
+    box-sizing: border-box;
+    box-shadow: 0 4px 18px rgba(0,0,0,0.04);
+}
+
+/* HEADER */
+
+.gallery-header {et5juru 088 
+    text-align: center;
+    margin-bottom: 40px;
+}
+
+    .gallery-header h1 {
+        margin: 0 0 10px;
+        font-size: 34px;
+        color: #102542;
+        font-weight: 800;
+    }
+
+    .gallery-header p {
+        margin: 0;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+/* GRID */
+
+.gallery-grid {
+    columns: 4 240px;
+    column-gap: 16px;
+}
+
+/* CARD */
+
+.gallery-card {
+    position: relative;
+    margin-bottom: 16px;
+    overflow: hidden;
+    cursor: pointer;
+    break-inside: avoid;
+    background: #f1f5f9;
+    transition: 0.3s ease;
+}
+
+    .gallery-card:hover {
+        transform: translateY(-4px);
+    }
+
+/* MEDIA */
+
+.gallery-media {
+    width: 100%;
+    display: block;
+    object-fit: cover;
+    transition: 0.4s ease;
+}
+
+.gallery-card:hover .gallery-media {
+    transform: scale(1.04);
+}
+
+/* VIDEO ICON */
+
+.video-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 22px;
+}
+
+/* LIGHTBOX */
+
+.lightbox {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.94);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 99999;
+}
+
+/* CONTENT */
+
+.lightbox-content {
+    width: 92%;
+    max-width: 1200px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* IMAGE */
+
+#lightbox-img,
+#lightbox-video {
+    max-width: 100%;
+    max-height: 74vh;
+    object-fit: contain;
+    border-radius: 12px;
+    background: black;
+}
+
+/* INFO */
+
+.lightbox-info {
+    width: 100%;
+    margin-top: 20px;
+    text-align: center;
+    color: white;
+}
+
+    .lightbox-info h2 {
+        margin: 0 0 10px;
+        font-size: 28px;
+        font-weight: 700;
+    }
+
+.lightbox-date {
+    font-size: 14px;
+    color: #cbd5e1;
+    margin-bottom: 12px;
+}
+
+.lightbox-info p {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.8;
+    color: #e5e7eb;
+}
+
+/* BUTTON */
+
+.nav-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(255,255,255,0.15);
+    border: none;
+    color: white;
+    font-size: 35px;
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+    .nav-btn:hover {
+        background: rgba(255,255,255,0.3);
+    }
+
+.prev {
+    left: 25px;
+}
+
+.next {
+    right: 25px;
+}
+
+/* CLOSE */
+
+.close-btn {
+    position: absolute;
+    top: 18px;
+    right: 28px;
+    color: white;
+    font-size: 42px;
+    cursor: pointer;
+    z-index: 10;
+}
+
+/* MOBILE */
+
+@media(max-width:768px) {
+
+    .gallery-page {
+        width: 95%;
+        padding: 35px 12px 45px;
+    }
+
+    .gallery-header {
+        margin-bottom: 28px;
+    }
+
+        .gallery-header h1 {
+            font-size: 28px;
+        }
+
+        .gallery-header p {
+            font-size: 13px;
+        }
+
+    .gallery-grid {
+        columns: 2 150px;
+        column-gap: 10px;
+    }
+
+    .gallery-card {
+        margin-bottom: 10px;
+    }
+
+    .lightbox-info h2 {
+        font-size: 20px;
+    }
+
+    .lightbox-info p {
+        font-size: 13px;
+        line-height: 1.7;
+    }
+
+    #lightbox-img,
+    #lightbox-video {
+        max-height: 58vh;
+    }
+
+    .nav-btn {
+        width: 42px;
+        height: 42px;
+        font-size: 24px;
+    }
+
+    .prev {
+        left: 10px;
+    }
+
+    .next {
+        right: 10px;
+    }
+
+    .close-btn {
+        top: 10px;
+        right: 18px;
+        font-size: 34px;
+    }
+}

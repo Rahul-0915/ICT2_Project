@@ -8,6 +8,7 @@
 
     @RenderSection("PageCss", required: false)
 
+
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
@@ -55,7 +56,19 @@
             <li><a href="#">Admission</a></li>
             <li><a href="#">Why S.V.M?</a></li>
             <li><a href="#">Staffs</a></li>
-            <li><a href="#">Notice</a></li>
+            <li>
+                <a asp-controller="UserHome"
+                   asp-action="Notice">
+                    Notice
+                </a>
+            </li>
+
+            <li>
+                <a asp-controller="UserHome"
+                   asp-action="Gallery">
+                    Gallery
+                </a>
+            </li>
             <li><a href="#">Contact Us</a></li>
         </ul>
 
