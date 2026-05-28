@@ -1,0 +1,88 @@
+﻿@model IEnumerable<SVM.Models.Updates>
+
+@{
+    ViewData["Title"] = "School Notices";
+    Layout = "~/Views/Shared/UserLayout.cshtml";
+    ViewBag.ShowPreloader = false;
+}
+
+@section PageCss {
+    <link rel="stylesheet" href="@Url.Content("~/css/UserSide_Css/UserNotice.css")" />
+}
+   
+
+
+<div class="notice-page">
+
+    <div class="notice-header">
+
+        <h4>Notice</h4>
+
+        <p>
+            Important announcements, circulars and latest school updates.
+        </p>
+
+    </div>
+
+    @if (Model.Any())
+    {
+        <div class="notice-list">
+
+            @foreach (var item in Model)
+            {
+                <div class="notice-card">
+
+                    <!-- IMAGE -->
+                    @if (!string.IsNullOrEmpty(item.FilePath))
+                    {
+                        <a href="@item.FilePath"
+                           target="_blank"
+                           class="notice-image">
+
+                            <img src="@item.FilePath"
+                                 alt="@item.Title" />
+
+                        </a>
+                    }
+
+                    <!-- CONTENT -->
+
+                    <div class="notice-content">
+
+                        <!-- TITLE -->
+
+                        <h2 class="notice-title">
+                            @item.Title
+                        </h2>
+
+                        <!-- DATE -->
+
+                        <div class="notice-date">
+
+                            <i class="fa-regular fa-calendar"></i>
+
+                            @item.CreatedAt.ToString("MMMM dd, yyyy")
+
+                        </div>
+
+                        <!-- DESCRIPTION -->
+
+                        <p class="notice-description">
+                            @item.Description
+                        </p>
+
+                    </div>
+
+                </div>
+            }
+
+        </div>
+    }
+    else
+    {
+        <div class="no-notice">
+            No Notices Available
+        </div>
+    }
+
+</div>
