@@ -53,7 +53,13 @@
         <ul class="menu" id="menu">
             <li><a asp-controller="UserHome" asp-action="UserHome">Home</a></li>
             <li><a asp-controller="UserHome" asp-action="About">About Us</a></li>
-            <li><a href="#">Admission</a></li>
+            
+            <li>
+                <a asp-controller="AdmissionInquiries"
+                   asp-action="Create">
+                    Admission
+                </a>
+            </li>
             <li><a href="#">Why S.V.M?</a></li>
             <li>
                 <a asp-controller="UserHome"
@@ -124,6 +130,6 @@
     </footer>
 
     <script src="@Url.Content("~/js/UserSide_Js/UserScript.js")"></script>
-
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

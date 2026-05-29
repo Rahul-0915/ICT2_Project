@@ -1,0 +1,225 @@
+﻿    @model SVM.Models.AdmissionInquiry
+
+    @{
+        ViewData["Title"] = "Admission Inquiry";
+
+        Layout = "~/Views/Shared/UserLayout.cshtml";
+
+        ViewBag.ShowPreloader = false;
+    }
+
+    @section PageCss {
+
+        <link rel="stylesheet"
+              href="@Url.Content("~/css/AdminSide_Css/AdmissionInquiryForm.css")" />
+
+    }
+
+    <div class="inquiry-page">
+
+        <div class="inquiry-container">
+
+            <!-- LEFT -->
+
+            <div class="inquiry-left">
+
+                <div class="tag">
+                    Admissions Open
+                </div>
+
+                <h1>
+                    Admission Inquiry Form
+                </h1>
+
+                <p>
+                    Fill out the form and our school team
+                    will contact you soon through call or message.
+                </p>
+
+                <div class="info-box">
+
+                    <div class="info-item">
+
+                        <i class="fa-solid fa-phone"></i>
+
+                        <span>
+                            Quick Response Support
+                        </span>
+
+                    </div>
+
+                    <div class="info-item">
+
+                        <i class="fa-solid fa-school"></i>
+
+                        <span>
+                            Trusted Education Environment
+                        </span>
+
+                    </div>
+
+                    <div class="info-item">
+
+                        <i class="fa-solid fa-user-graduate"></i>
+
+                        <span>
+                            Experienced Teaching Staff
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <!-- RIGHT -->
+
+            <div class="inquiry-form-box">
+
+                <h2>
+                    Inquiry Form
+                </h2>
+                @if (TempData["Success"] != null)
+                {
+                    <div class="success-message">
+
+                        @TempData["Success"]
+
+                    </div>
+                }
+                <form asp-controller="AdmissionInquiries"
+                      asp-action="Create"
+                      method="post">
+
+                    <div asp-validation-summary="ModelOnly"
+                         class="validation-summary">
+                    </div>
+
+                    <!-- STUDENT NAME -->
+
+                    <div class="form-group">
+
+                        <label asp-for="StudentName">
+                            Student Name
+                        </label>
+
+                        <input asp-for="StudentName"
+                               class="form-control"
+                               placeholder="Enter student name" />
+
+                        <span asp-validation-for="StudentName"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- PARENT NAME -->
+
+                    <div class="form-group">
+
+                        <label asp-for="ParentName">
+                            Parent Name
+                        </label>
+
+                        <input asp-for="ParentName"
+                               class="form-control"
+                               placeholder="Enter parent name" />
+
+                        <span asp-validation-for="ParentName"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- PHONE -->
+
+                    <div class="form-group">
+
+                        <label asp-for="Phone">
+                            Mobile Number
+                        </label>
+
+                        <input asp-for="Phone"
+                               class="form-control"
+                               placeholder="Enter mobile number" />
+
+                        <span asp-validation-for="Phone"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- CLASS -->
+
+                    <div class="form-group">
+
+                        <label asp-for="ClassName">
+                            Admission Class
+                        </label>
+
+                        <select asp-for="ClassName"
+                                class="form-control">
+
+                            <option value="">
+                                Select Class
+                            </option>
+
+                            <option>Nursery</option>
+                            <option>Junior KG</option>
+                            <option>Senior KG</option>
+
+                            @for (int i = 1; i <= 12; i++)
+                            {
+                                <option>Class @i</option>
+                            }
+
+                        </select>
+
+                        <span asp-validation-for="ClassName"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- MESSAGE -->
+
+                    <div class="form-group">
+
+                        <label asp-for="Message">
+                            Message
+                        </label>
+
+                        <textarea asp-for="Message"
+                                  class="form-control textarea"
+                                  placeholder="Write your inquiry here...">
+                        </textarea>
+
+                        <span asp-validation-for="Message"
+                              class="text-danger">
+                        </span>
+
+                    </div>
+
+                    <!-- BUTTON -->
+
+                    <button type="submit"
+                            class="submit-btn">
+
+                        Submit Inquiry
+
+                    </button>
+
+                </form>
+
+            </div>
+
+        </div>
+
+    </div>
+    @section Scripts {
+
+        @{
+            await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        }
+
+    }

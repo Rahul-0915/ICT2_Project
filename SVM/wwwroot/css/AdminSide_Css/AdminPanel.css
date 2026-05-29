@@ -63,7 +63,19 @@ body {
         letter-spacing: 1px;
         color: #dcdcdc;
     }
-
+.menu-badge {
+    background: red;
+    color: white;
+    font-size: 12px;
+    min-width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    margin-left: 8px;
+    padding: 0 5px;
+}
 
 /* MENU */
 .menu {
@@ -516,5 +528,56 @@ body {
 
     #mainFrame {
         height: calc(100vh - 110px);
+    }
+}
+/* Print Styles - Add this at the end of your CSS file */
+@media print {
+    /* Hide everything except table */
+    body * {
+        visibility: hidden;
+    }
+
+    .table-card, .table-card * {
+        visibility: visible;
+    }
+
+    .table-card {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        margin: 0;
+        padding: 20px;
+    }
+
+    /* Hide Action column */
+    .admin-table th:last-child,
+    .admin-table td:last-child,
+    .actions,
+    .print-header {
+        display: none !important;
+    }
+
+    /* Table print styles */
+    .admin-table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+        .admin-table th,
+        .admin-table td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+
+        .admin-table th {
+            background-color: #f2f2f2;
+        }
+
+    /* Keep badge colors */
+    .badge {
+        print-color-adjust: exact;
+        -webkit-print-color-adjust: exact;
     }
 }

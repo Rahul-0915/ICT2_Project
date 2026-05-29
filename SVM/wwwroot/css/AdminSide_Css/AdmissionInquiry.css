@@ -1,0 +1,208 @@
+﻿/* =========================
+   BASE
+========================= */
+body {
+    margin: 0;
+    font-family: "Segoe UI", sans-serif;
+    background-color: #efeae2;
+    background-image: url('/images/AdminDashboardBGImg.png');
+    background-repeat: repeat;
+}
+
+/* =========================
+   WRAPPER
+========================= */
+.admin-wrapper {
+    padding: 20px;
+    max-width: 100%;
+}
+
+/* =========================
+   HEADER
+========================= */
+.admin-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: #ffffff;
+    padding: 18px 20px;
+    border-radius: 12px;
+    box-shadow: 0 3px 12px rgba(0,0,0,0.08);
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+}
+
+    .admin-header h2 {
+        margin: 0;
+        font-size: 22px;
+        color: #1f2937;
+    }
+
+    .admin-header p {
+        margin: 5px 0 0 0;
+        color: #6b7280;
+        font-size: 14px;
+    }
+
+/* =========================
+   COUNT BADGE
+========================= */
+.count-badge {
+    background: #0d6efd;
+    color: #fff;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+}
+
+/* =========================
+   NOTIFICATION
+========================= */
+.notify-box {
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.notify-badge {
+    background: #dc2626;
+    color: #fff;
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 13px;
+    margin-left: 5px;
+}
+
+/* =========================
+   SUCCESS ALERT
+========================= */
+.alert-success {
+    background: #d1fae5;
+    color: #065f46;
+    padding: 10px 15px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    font-size: 14px;
+}
+
+/* =========================
+   TABLE CARD
+========================= */
+.table-card {
+    
+    
+    overflow: hidden;
+    box-shadow: 0 3px 15px rgba(0,0,0,0.08);
+}
+
+/* =========================
+   TABLE
+========================= */
+.admin-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background:#ffffff;
+}
+
+    .admin-table thead {
+        background:rgba(0,0,0,0.08);
+        color: black;
+    }
+
+    .admin-table th,
+    .admin-table td {
+
+        padding: 12px;
+        text-align: center;
+        border-bottom: 1px solid #eee;
+        vertical-align: middle;
+    }
+
+    /* hover effect */
+    .admin-table tbody tr:hover {
+        background: #f1f5f9;
+        transition: 0.2s;
+    }
+
+/* unseen highlight */
+.unseen-row {
+    background: #fff7e6;
+}
+
+/* =========================
+   BADGES
+========================= */
+.badge {
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.success {
+    background: #16a34a;
+    color: #fff;
+}
+
+.pending {
+    background: #f59e0b;
+    color: #fff;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+.btn {
+    padding: 6px 12px;
+    
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    text-decoration: none;
+    display: inline-block;
+    margin: 2px;
+    transition: 0.2s;
+}
+
+.view {
+    background: #2563eb;
+    color: #fff;
+}
+
+.attend {
+    background: #10b981;
+    color: #fff;
+}
+
+.btn:hover {
+    opacity: 0.85;
+    transform: scale(1.03);
+}
+
+/* =========================
+   RESPONSIVE (IMPORTANT 100% ZOOM SAFE)
+========================= */
+@media (max-width: 992px) {
+    .admin-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+
+    .admin-table {
+        font-size: 12px;
+    }
+
+        .admin-table th,
+        .admin-table td {
+            padding: 8px;
+        }
+
+    .btn {
+        font-size: 11px;
+        padding: 5px 10px;
+    }
+}
