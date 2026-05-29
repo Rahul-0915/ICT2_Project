@@ -60,7 +60,7 @@
 					Admission
 				</a>
 			</li>
-			<li><a href="#">Why S.V.M?</a></li>
+			
 			<li>
 				<a asp-controller="UserHome"
 				   asp-action="Staff">
@@ -77,13 +77,16 @@
             <li>
                 <a asp-controller="UserHome"
                    asp-action="Gallery">
-                    Gallery
+                  SVM Gallery
                 </a>
             </li>
-            <li><a href="#">Contact Us</a></li>
+            
         </ul>
-
-        <button class="login-btn">Student Login</button>
+		<a asp-controller="Account"
+		   asp-action="Login">
+			<button class="login-btn">Student Login</button>
+		</a>
+       
         <div class="menu-toggle" onclick="toggleMenu()">☰</div>
     </div>
 
