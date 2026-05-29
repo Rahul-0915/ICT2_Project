@@ -1,37 +1,44 @@
 ﻿@model SVM.Models.Class
 
 @{
-    ViewData["Title"] = "Details";
+	ViewData["Title"] = "Details";
 }
 <link rel="stylesheet" href="~/css/Detail.css" asp-append-version="true" />
 
 <h1>Details</h1>
 
 <div>
-    <h4>Class</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.ClassName)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.ClassName)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Medium)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Medium)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Session)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Session.SessionName)
-        </dd>
-    </dl>
+	<h4>Class</h4>
+	<hr />
+	<dl class="row">
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.ClassName)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.ClassName)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Medium)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Medium)
+		</dd>
+		<dt class="col-sm-2">
+			@Html.DisplayNameFor(model => model.Session)
+		</dt>
+		<dd class="col-sm-10">
+			@Html.DisplayFor(model => model.Session.SessionName)
+		</dd>
+	</dl>
 </div>
 <div>
-    <a asp-action="Edit" asp-route-id="@Model?.ClassId">Edit</a> |
-    <a asp-action="Index">Back to List</a>
+	<a asp-action="Edit"
+	   asp-route-id="@Model?.ClassId"
+	   asp-route-medium="@ViewBag.SelectedMedium"
+	   asp-route-className="@ViewBag.SelectedClassName"
+	   asp-route-sessionId="@ViewBag.SelectedSessionId">Edit</a> |
+	<a asp-action="Index"
+	   asp-route-medium="@ViewBag.SelectedMedium"
+	   asp-route-className="@ViewBag.SelectedClassName"
+	   asp-route-sessionId="@ViewBag.SelectedSessionId">Back to List</a>
 </div>

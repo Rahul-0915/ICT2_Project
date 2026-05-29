@@ -285,27 +285,27 @@ namespace SVM.Controllers
                 await GetSessionName(
                     feeStructure.SessionId ?? 0
                 );
-			var sessions = await GetSessions();
+            var sessions = await GetSessions();
 
-			ViewBag.SessionList =
-				new SelectList(
-					sessions,
-					"SessionId",
-					"SessionName",
-					feeStructure.SessionId
-				);
+            ViewBag.SessionList =
+                new SelectList(
+                    sessions,
+                    "SessionId",
+                    "SessionName",
+                    feeStructure.SessionId
+                );
 
-			ViewBag.MediumList =
-				new SelectList(
-					new[] { "Gujarati", "English" },
-					medium
-				);
+            ViewBag.MediumList =
+                new SelectList(
+                    new[] { "Gujarati", "English" },
+                    medium
+                );
 
-			ViewBag.Medium = medium;
-			ViewBag.ClassId = feeStructure.ClassId;
-			ViewBag.SessionId = feeStructure.SessionId;
+            ViewBag.Medium = medium;
+            ViewBag.ClassId = feeStructure.ClassId;
+            ViewBag.SessionId = feeStructure.SessionId;
 
-			return View(feeStructure);
+            return View(feeStructure);
         }
 
         [HttpPost]
@@ -498,15 +498,9 @@ namespace SVM.Controllers
                 ViewBag.SessionName = "No session assigned";
             }
 
-            // Ensure medium is set
-            if (string.IsNullOrEmpty(medium))
-            {
-                medium = ViewBag.MediumFromClass ?? "Gujarati";
-            }
-
-            ViewBag.Medium = medium;
-            ViewBag.ClassId = classId;
-            ViewBag.SessionId = sessionId;
+            ViewBag.Medium = !string.IsNullOrEmpty(medium) ? medium : (ViewBag.MediumFromClass ?? "Gujarati");
+            ViewBag.ClassId = classIdToFetch;  // Use the actual class ID from feeStructure
+            ViewBag.SessionId = sessionIdToFetch;  // Use the actual session ID from feeStructure
 
             return View(feeStructure);
         }

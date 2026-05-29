@@ -174,7 +174,6 @@ namespace SVM.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                TempData["Success"] = "Expense Updated Successfully!";
                 return RedirectToAction(nameof(Index));
             }
 

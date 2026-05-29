@@ -12,38 +12,16 @@ namespace SVM.Controllers
 {
     public class ClassesController : Controller
     {
-
         private readonly HttpClient _client;
+
         public ClassesController(IHttpClientFactory client)
         {
             _client = client.CreateClient();
             _client.BaseAddress = new Uri("https://localhost:7191/api/");
-
-
         }
 
-        // GET: Classes
-        //public async Task<IActionResult> Index()
-        //{
-        //    List<Class> classList = new List<Class>();
-        //    var response = await _client.GetAsync("Classes");
-        //    if (response.IsSuccessStatusCode)
-        //    {
-        //        var data = await response.Content.ReadAsStringAsync();
-        //        var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        //        classList = JsonSerializer.Deserialize<List<Class>>(data, option);
-
-        //    }
-        //    if (!response.IsSuccessStatusCode)
-        //    {
-        //        ModelState.AddModelError("", "Failed to load classes");
-        //    }
-        //    return View(classList);
-
-        //}
-
-        //RAHUL .....INDEX 
-        public async Task<IActionResult> Index()
+        [HttpGet]
+        public async Task<IActionResult> Index(string medium = "", string className = "", int? sessionId = null, int? classId = null)
         {
             List<Class> classList = new List<Class>();
 
@@ -106,40 +84,76 @@ namespace SVM.Controllers
                 }
             }
 
-            // ✅ LOAD ALL SESSIONS FOR THE FILTER DROPDOWN
+            // APPLY FILTERS
+            // Filter by session
+            if (sessionId.HasValue && sessionId.Value > 0)
+            {
+                classList = classList.Where(c => c.SessionId == sessionId.Value).ToList();
+            }
+
+            // Filter by class name
+            if (!string.IsNullOrEmpty(className))
+            {
+                classList = classList.Where(c => c.ClassName == className).ToList();
+            }
+
+            // Filter by medium
+            if (!string.IsNullOrEmpty(medium))
+            {
+                classList = classList.Where(c => c.Medium == medium).ToList();
+            }
+
+            // Filter by specific class id
+            if (classId.HasValue && classId.Value > 0)
+            {
+                classList = classList.Where(c => c.ClassId == classId.Value).ToList();
+            }
+
+            // LOAD ALL SESSIONS FOR THE FILTER DROPDOWN
             var sessionResponse = await _client.GetAsync("Sessions");
             if (sessionResponse.IsSuccessStatusCode)
             {
                 var sessionData = await sessionResponse.Content.ReadAsStringAsync();
                 var allSessions = JsonSerializer.Deserialize<List<Session>>(sessionData, option);
                 ViewBag.AllSessions = allSessions;
-                // ACTIVE SESSION AUTO SELECT
-                var activeSession = allSessions?
-                    .FirstOrDefault(s => s.IsActive == 1); // ya Current flag
 
+                // ACTIVE SESSION AUTO SELECT
+                var activeSession = allSessions?.FirstOrDefault(s => s.IsActive == 1);
                 ViewBag.ActiveSessionId = activeSession?.SessionId;
+
                 var classNames = classList
                     .Select(c => c.ClassName)
                     .Distinct()
-                    
                     .ToList();
 
                 ViewBag.ClassNames = classNames;
 
-                // MEDIUM DROPDOWN (DB SE OPTIONAL)
+                // MEDIUM DROPDOWN
                 var mediums = classList
                     .Select(c => c.Medium)
                     .Distinct()
                     .ToList();
 
                 ViewBag.MediumList = mediums;
+
+                // STORE ALL FILTERS FOR VIEW
+                ViewBag.SelectedMedium = medium;
+                ViewBag.SelectedClassName = className;
+                ViewBag.SelectedSessionId = sessionId;
+                ViewBag.SelectedClassId = classId;
             }
 
             return View(classList);
         }
+
         // GET: Classes/Details/5
-        public async Task<IActionResult> Details(int? id)
+        public async Task<IActionResult> Details(int? id, string medium = "", string className = "", int? sessionId = null)
         {
+            // Store filters for Back button
+            ViewBag.SelectedMedium = medium;
+            ViewBag.SelectedClassName = className;
+            ViewBag.SelectedSessionId = sessionId;
+
             if (id == null)
             {
                 return NotFound();
@@ -156,8 +170,13 @@ namespace SVM.Controllers
         }
 
         // GET: Classes/Create
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Create(string medium = "", string className = "", int? sessionId = null)
         {
+            // Store filters for Back button
+            ViewBag.SelectedMedium = medium;
+            ViewBag.SelectedClassName = className;
+            ViewBag.SelectedSessionId = sessionId;
+
             await LoadSessions();
             LoadMediums();
 
@@ -187,7 +206,7 @@ namespace SVM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("ClassId,ClassName,Medium,SessionId")] Class classData)
         {
-            // ✅ Duplicate check with SessionId
+            // Duplicate check with SessionId
             if (await IsClassDuplicate(classData.ClassName, classData.Medium, classData.SessionId))
             {
                 ModelState.AddModelError("ClassName", $"Class '{classData.ClassName}' with Medium '{classData.Medium}' already exists in this session!");
@@ -202,7 +221,17 @@ namespace SVM.Controllers
                 var response = await _client.PostAsJsonAsync("Classes", classData);
                 if (response.IsSuccessStatusCode)
                 {
-                    return RedirectToAction(nameof(Index));
+                    // Get the newly created class to get its ID
+                    var createdClass = await response.Content.ReadFromJsonAsync<Class>();
+
+                    // Redirect with filters including the new class ID
+                    return RedirectToAction(nameof(Index), new
+                    {
+                        medium = classData.Medium,
+                        className = classData.ClassName,
+                        sessionId = classData.SessionId,
+                        classId = createdClass?.ClassId  // Pass the new class ID
+                    });
                 }
                 if (response.StatusCode == System.Net.HttpStatusCode.Conflict)
                 {
@@ -218,9 +247,15 @@ namespace SVM.Controllers
             LoadMediums();
             return View(classData);
         }
+
         // GET: Classes/Edit/5
-        public async Task<IActionResult> Edit(int? id)
+        public async Task<IActionResult> Edit(int? id, string medium = "", string className = "", int? sessionId = null)
         {
+            // Store filters for Back button
+            ViewBag.SelectedMedium = medium;
+            ViewBag.SelectedClassName = className;
+            ViewBag.SelectedSessionId = sessionId;
+
             if (id == null)
             {
                 return NotFound();
@@ -239,7 +274,6 @@ namespace SVM.Controllers
             await LoadSessions();
             LoadMediums();
 
-            // 🔥 ADD THIS ALSO
             var classResponse = await _client.GetAsync("Classes");
 
             if (classResponse.IsSuccessStatusCode)
@@ -269,7 +303,7 @@ namespace SVM.Controllers
         {
             if (id != classData.ClassId) return NotFound();
 
-            // ✅ Duplicate check with SessionId (excluding current class)
+            // Duplicate check with SessionId (excluding current class)
             if (await IsClassDuplicate(classData.ClassName, classData.Medium, classData.SessionId, id))
             {
                 ModelState.AddModelError("ClassName", $"Class '{classData.ClassName}' with Medium '{classData.Medium}' already exists in this session!");
@@ -284,7 +318,14 @@ namespace SVM.Controllers
                 var response = await _client.PutAsJsonAsync($"Classes/{id}", classData);
                 if (response.IsSuccessStatusCode)
                 {
-                    return RedirectToAction(nameof(Index));
+                    // ✅ IMPORTANT: Pass classId also in redirect
+                    return RedirectToAction(nameof(Index), new
+                    {
+                        medium = classData.Medium,
+                        className = classData.ClassName,
+                        sessionId = classData.SessionId,
+                        classId = id  // ← YEH ADD KARO
+                    });
                 }
                 ModelState.AddModelError("", "Update failed!");
             }
@@ -294,8 +335,13 @@ namespace SVM.Controllers
         }
 
         // GET: Classes/Delete/5
-        public async Task<IActionResult> Delete(int? id)
+        public async Task<IActionResult> Delete(int? id, string medium = "", string className = "", int? sessionId = null)
         {
+            // Store filters for Back button
+            ViewBag.SelectedMedium = medium;
+            ViewBag.SelectedClassName = className;
+            ViewBag.SelectedSessionId = sessionId;
+
             if (id == null)
             {
                 return NotFound();
@@ -314,14 +360,21 @@ namespace SVM.Controllers
         // POST: Classes/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> DeleteConfirmed(int id)
+        public async Task<IActionResult> DeleteConfirmed(int id, string medium = "", string className = "", int? sessionId = null)
         {
             var response = await _client.DeleteAsync($"Classes/{id}");
             if (!response.IsSuccessStatusCode)
             {
                 ModelState.AddModelError("", "Delete failed!");
             }
-            return RedirectToAction(nameof(Index));
+
+            // Redirect with filters
+            return RedirectToAction(nameof(Index), new
+            {
+                medium = medium,
+                className = className,
+                sessionId = sessionId
+            });
         }
 
         private async Task<bool> ClassExists(int id)
@@ -329,7 +382,6 @@ namespace SVM.Controllers
             var response = await _client.GetAsync($"Classes/{id}");
             return response.IsSuccessStatusCode;
         }
-
 
         private async Task LoadSessions()
         {
@@ -342,6 +394,7 @@ namespace SVM.Controllers
                 ViewData["SessionId"] = new SelectList(sessions, "SessionId", "SessionName");
             }
         }
+
         private void LoadMediums()
         {
             var mediums = new List<SelectListItem>
@@ -351,6 +404,7 @@ namespace SVM.Controllers
             };
             ViewBag.MediumList = mediums;
         }
+
         private async Task<bool> IsClassDuplicate(string className, string medium, int? sessionId, int? excludeId = null)
         {
             // If no session is selected, duplicate doesn't make sense
@@ -366,14 +420,11 @@ namespace SVM.Controllers
                 return classes.Any(c =>
                     c.ClassName == className &&
                     c.Medium == medium &&
-                    c.SessionId == sessionId.Value &&   // Now safe because we checked null
+                    c.SessionId == sessionId.Value &&
                     (excludeId == null || c.ClassId != excludeId)
                 );
             }
             return false;
         }
-
-
     }
-
 }

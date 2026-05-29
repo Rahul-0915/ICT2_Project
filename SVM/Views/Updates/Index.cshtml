@@ -1,7 +1,7 @@
 ﻿@model IEnumerable<SVM.Models.Updates>
 
 @{
-    ViewData["Title"] = "Index";
+	ViewData["Title"] = "Index";
 
 }
 <link rel="stylesheet" href="~/css/AdminSide_Css/Updates_Notice.css" asp-append-version="true" />
@@ -12,109 +12,110 @@
 
 <div class="top-bar">
 
-    <div class="left-side">
+	<div class="left-side">
 
-        <!-- SEARCH -->
-        <input type="text" id="searchTitle" class="search-box" placeholder="Search Title..." />
+		<!-- SEARCH -->
+		<input type="text" id="searchTitle" class="search-box" placeholder="Search Title..." />
 
-        <select id="searchCategory" class="search-box">
-            <option value="">All Category</option>
-            <option value="notice">Notice</option>
-            <option value="event">Event</option>
-        </select>
+		<select id="searchCategory" class="search-box">
+			<option value="">All Category</option>
+			<option value="notice">Notice</option>
+			<option value="event">Event</option>
+			<option value="ToperStudents">Topper Student</option>
+		</select>
 
-        <input type="text" id="searchDate" placeholder="DD-MM-YYYY" class="search-box" />
+		<input type="text" id="searchDate" placeholder="DD-MM-YYYY" class="search-box" />
 
-        <button onclick="filterTable()" class="search-btn">
-            <i class="fa-solid fa-magnifying-glass"></i>
-            Search
-        </button>
+		<button onclick="filterTable()" class="search-btn">
+			<i class="fa-solid fa-magnifying-glass"></i>
+			Search
+		</button>
 
-        <button onclick="resetFilter()" class="reset-btn">Reset</button>
+		<button onclick="resetFilter()" class="reset-btn">Reset</button>
 
-    </div>
+	</div>
 
-    <!-- ADD BUTTON -->
+	<!-- ADD BUTTON -->
 
-    <a asp-action="Create"
-       class="add-btn">
-        <i class="fa-solid fa-plus"></i>
-    </a>
+	<a asp-action="Create"
+	   class="add-btn">
+		<i class="fa-solid fa-plus"></i>
+	</a>
 </div>
 
 
 <table class="table notice-table">
-    <thead>
-        <tr>
-            <th>@Html.DisplayNameFor(model => model.Title)</th>
-            <th>@Html.DisplayNameFor(model => model.Description)</th>
-            <th>@Html.DisplayNameFor(model => model.Category)</th>
-            <th>@Html.DisplayNameFor(model => model.FilePath)</th>
-            <th>@Html.DisplayNameFor(model => model.Status)</th>
-            <th>@Html.DisplayNameFor(model => model.CreatedAt)</th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody class="notice-grid">
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>@Html.DisplayFor(modelItem => item.Title)</td>
-                <td>@Html.DisplayFor(modelItem => item.Description)</td>
-                <td>@Html.DisplayFor(modelItem => item.Category)</td>
-                <td>
-                    @if (!string.IsNullOrEmpty(item.FilePath))
-                    {
-                        var ext = System.IO.Path.GetExtension(item.FilePath).ToLower();
-                        if (ext == ".jpg" || ext == ".jpeg" || ext == ".png")
-                        {
-                            <a href="@item.FilePath" target="_blank">
-                                <img src="@item.FilePath" alt="Image"
-                                     style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%; border: 1px solid #ddd;" />
-                            </a>
-                        }
-                        else if (ext == ".pdf")
-                        {
-                            <a href="@item.FilePath" target="_blank" title="View PDF">
-                                <span style="font-size: 28px;">📄</span>
-                            </a>
-                        }
-                        else
-                        {
-                            <a href="@item.FilePath" target="_blank">View File</a>
-                        }
-                    }
-                    else
-                    {
-                        <span style="color: #aaa;">No file</span>
-                    }
-                </td>
-                <td>
-                    @if (item.Status == 1)
-                    {
-                        <span>Active</span>
-                    }
-                    else
-                    {
-                        <span>Inactive</span>
-                    }
-                </td>
-                <td>@Html.DisplayFor(modelItem => item.CreatedAt)</td>
-                <td>
-                    <a asp-action="Edit" asp-route-id="@item.Id" class="action-btn edit" title="Edit">
-                        <i class="fa-solid fa-pen-to-square"></i>
-                    </a>
+	<thead>
+		<tr>
+			<th>@Html.DisplayNameFor(model => model.Title)</th>
+			<th>@Html.DisplayNameFor(model => model.Description)</th>
+			<th>@Html.DisplayNameFor(model => model.Category)</th>
+			<th>@Html.DisplayNameFor(model => model.FilePath)</th>
+			<th>@Html.DisplayNameFor(model => model.Status)</th>
+			<th>@Html.DisplayNameFor(model => model.CreatedAt)</th>
+			<th></th>
+		</tr>
+	</thead>
+	<tbody class="notice-grid">
+		@foreach (var item in Model)
+		{
+			<tr>
+				<td>@Html.DisplayFor(modelItem => item.Title)</td>
+				<td>@Html.DisplayFor(modelItem => item.Description)</td>
+				<td>@Html.DisplayFor(modelItem => item.Category)</td>
+				<td>
+					@if (!string.IsNullOrEmpty(item.FilePath))
+					{
+						var ext = System.IO.Path.GetExtension(item.FilePath).ToLower();
+						if (ext == ".jpg" || ext == ".jpeg" || ext == ".png")
+						{
+							<a href="@item.FilePath" target="_blank">
+								<img src="@item.FilePath" alt="Image"
+									 style="width: 50px; height: 50px; object-fit: cover; border-radius: 50%; border: 1px solid #ddd;" />
+							</a>
+						}
+						else if (ext == ".pdf")
+						{
+							<a href="@item.FilePath" target="_blank" title="View PDF">
+								<span style="font-size: 28px;">📄</span>
+							</a>
+						}
+						else
+						{
+							<a href="@item.FilePath" target="_blank">View File</a>
+						}
+					}
+					else
+					{
+						<span style="color: #aaa;">No file</span>
+					}
+				</td>
+				<td>
+					@if (item.Status == 1)
+					{
+						<span>Active</span>
+					}
+					else
+					{
+						<span>Inactive</span>
+					}
+				</td>
+				<td>@Html.DisplayFor(modelItem => item.CreatedAt)</td>
+				<td>
+					<a asp-action="Edit" asp-route-id="@item.Id" class="action-btn edit" title="Edit">
+						<i class="fa-solid fa-pen-to-square"></i>
+					</a>
 
-                    <a asp-action="Details" asp-route-id="@item.Id" class="action-btn view" title="Details">
-                        <i class="fa-solid fa-eye"></i>
-                    </a>
+					<a asp-action="Details" asp-route-id="@item.Id" class="action-btn view" title="Details">
+						<i class="fa-solid fa-eye"></i>
+					</a>
 
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn delete" title="Delete">
-                        <i class="fa-solid fa-trash"></i>
-                    </a>
-                </td>
-            </tr>
-        }
-    </tbody>
+					<a asp-action="Delete" asp-route-id="@item.Id" class="action-btn delete" title="Delete">
+						<i class="fa-solid fa-trash"></i>
+					</a>
+				</td>
+			</tr>
+		}
+	</tbody>
 </table>
 <script src="/js/AdminSide_Js/Updates_Notice.js"></script>
