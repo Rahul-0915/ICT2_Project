@@ -1,78 +1,78 @@
 ﻿<!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewBag.Title - SVM</title>
-    <link rel="stylesheet" href="@Url.Content("~/css/UserSide_Css/User.css")" />
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>@ViewBag.Title - SVM</title>
+	<link rel="stylesheet" href="@Url.Content("~/css/UserSide_Css/User.css")" />
 
-    @RenderSection("PageCss", required: false)
+	@RenderSection("PageCss", required: false)
 
 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 </head>
 <body>
 
-    <!-- 🔥 PRELOADER (ONLY HOME PAGE) -->
-    @if (ViewBag.ShowPreloader == true)
-    {
-        <div id="preloader">
-            <div class="loader-content">
-                <div class="coin">
-                    <div class="side front">
-                        <img src="~/images/logo1_hd.png" />
-                    </div>
-                    <div class="side back">
-                        <img src="~/images/logo2_hd.png" />
-                    </div>
-                </div>
-                <h2>S.V.M</h2>
-            </div>
-        </div>
-    }
+	<!-- 🔥 PRELOADER (ONLY HOME PAGE) -->
+	@if (ViewBag.ShowPreloader == true)
+	{
+		<div id="preloader">
+			<div class="loader-content">
+				<div class="coin">
+					<div class="side front">
+						<img src="~/images/logo1_hd.png" />
+					</div>
+					<div class="side back">
+						<img src="~/images/logo2_hd.png" />
+					</div>
+				</div>
+				<h2>S.V.M</h2>
+			</div>
+		</div>
+	}
 
-    <!-- 🔹 TOPBAR - LOGO ADDED 🔹 -->
-    <div class="topbar">
-        <div class="logo">
-            <img src="@Url.Content("~/images/logo2_hd.png")" alt="logo" style="width: 60px; height: 60px; object-fit: contain;">
-            
-            <div>
-                <h1>S.V.M</h1>
-                <p>EXCELLENCE IN EDUCATION</p>
-            </div>
-        </div>
+	<!-- 🔹 TOPBAR - LOGO ADDED 🔹 -->
+	<div class="topbar">
+		<div class="logo">
+			<img src="@Url.Content("~/images/logo2_hd.png")" alt="logo" style="width: 60px; height: 60px; object-fit: contain;">
 
-        <div class="contact">
-            <span>📞 +91 9998569069</span>
-            <span>✉️ shardaschool92@gmail.com</span>
-        </div>
-    </div>
+			<div>
+				<h1>S.V.M</h1>
+				<p>EXCELLENCE IN EDUCATION</p>
+			</div>
+		</div>
 
-    <!-- 🔹 NAVBAR -->
-    <div class="navbar">
-        <ul class="menu" id="menu">
-            <li><a asp-controller="UserHome" asp-action="UserHome">Home</a></li>
-            <li><a asp-controller="UserHome" asp-action="About">About Us</a></li>
-            
-            <li>
-                <a asp-controller="AdmissionInquiries"
-                   asp-action="Create">
-                    Admission
-                </a>
-            </li>
-            
-            <li>
-                <a asp-controller="UserHome"
-                   asp-action="Staff">
-                    Staff
-                </a>
-            </li>
-            <li>
-                <a asp-controller="UserHome"
-                   asp-action="Notice">
-                    Notice
-                </a>
-            </li>
+		<div class="contact">
+			<span>📞 +91 9998569069</span>
+			<span>✉️ shardaschool92@gmail.com</span>
+		</div>
+	</div>
+
+	<!-- 🔹 NAVBAR -->
+	<div class="navbar">
+		<ul class="menu" id="menu">
+			<li><a asp-controller="UserHome" asp-action="UserHome">Home</a></li>
+			<li><a asp-controller="UserHome" asp-action="About">About Us</a></li>
+
+			<li>
+				<a asp-controller="AdmissionInquiries"
+				   asp-action="Create">
+					Admission
+				</a>
+			</li>
+			<li><a href="#">Why S.V.M?</a></li>
+			<li>
+				<a asp-controller="UserHome"
+				   asp-action="Staff">
+					Staff
+				</a>
+			</li>
+			<li>
+				<a asp-controller="UserHome"
+				   asp-action="Notice">
+					Notice
+				</a>
+			</li>
 
             <li>
                 <a asp-controller="UserHome"
@@ -80,60 +80,56 @@
                     Gallery
                 </a>
             </li>
-            
+            <li><a href="#">Contact Us</a></li>
         </ul>
 
-        <button class="login-btn">
-       
-                Student Login
-         
-        </button>
+        <button class="login-btn">Student Login</button>
         <div class="menu-toggle" onclick="toggleMenu()">☰</div>
     </div>
 
-    <!-- 🔥 PAGE CONTENT -->
-    @RenderBody()
+	<!-- 🔥 PAGE CONTENT -->
+	@RenderBody()
 
-    <!-- 🔹 FOOTER -->
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-col">
-                <h3>S.V.M School</h3>
-                <p>
-                    Sharda Vidyamandir Gujarati Medium & S.V.M English Medium School
-                    managed by Shiv Shakti Education Trust.
-                </p>
-            </div>
+	<!-- 🔹 FOOTER -->
+	<footer class="footer">
+		<div class="footer-container">
+			<div class="footer-col">
+				<h3>S.V.M School</h3>
+				<p>
+					Sharda Vidyamandir Gujarati Medium & S.V.M English Medium School
+					managed by Shiv Shakti Education Trust.
+				</p>
+			</div>
 
-            <div class="footer-col">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="/">Home</a></li>
-                    <li><a href="/Home/About">About Us</a></li>
-                </ul>
-            </div>
+			<div class="footer-col">
+				<h3>Quick Links</h3>
+				<ul>
+					<li><a href="/">Home</a></li>
+					<li><a href="/Home/About">About Us</a></li>
+				</ul>
+			</div>
 
-            <div class="footer-col">
-                <h3>Contact</h3>
-                <p>📞 +91 9998569069</p>
-                <p>📍 290 - Gopal Nagar OPP, G.H.BORAD , Pandesara, Surat, Gujarat 394210</p>
-            </div>
+			<div class="footer-col">
+				<h3>Contact</h3>
+				<p>📞 +91 9998569069</p>
+				<p>📍 290 - Gopal Nagar OPP, G.H.BORAD , Pandesara, Surat, Gujarat 394210</p>
+			</div>
 
-            <div class="footer-col">
-                <h3>Follow</h3>
-                <div class="social-icons">
-                    <a href="https://www.facebook.com/shardavidhyamandir92" class="fb"><i class="fab fa-facebook-f"></i></a>
-                    <a href="https://www.instagram.com/shardaschool92" class="insta"><i class="fab fa-instagram"></i></a>
-                </div>
-            </div>
-        </div>
+			<div class="footer-col">
+				<h3>Follow</h3>
+				<div class="social-icons">
+					<a href="https://www.facebook.com/shardavidhyamandir92" class="fb"><i class="fab fa-facebook-f"></i></a>
+					<a href="https://www.instagram.com/shardaschool92" class="insta"><i class="fab fa-instagram"></i></a>
+				</div>
+			</div>
+		</div>
 
-        <div class="footer-bottom">
-            <p>© 2026 S.V.M School</p>
-        </div>
-    </footer>
+		<div class="footer-bottom">
+			<p>© 2026 S.V.M School</p>
+		</div>
+	</footer>
 
-    <script src="@Url.Content("~/js/UserSide_Js/UserScript.js")"></script>
-    @RenderSection("Scripts", required: false)
+	<script src="@Url.Content("~/js/UserSide_Js/UserScript.js")"></script>
+	@RenderSection("Scripts", required: false)
 </body>
 </html>
