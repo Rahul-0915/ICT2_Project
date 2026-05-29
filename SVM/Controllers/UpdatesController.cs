@@ -13,6 +13,7 @@ using SVM.Models;
 
 namespace SVM.Controllers
 {
+    [LoginCheckFilter]
     public class UpdatesController : Controller
     {
         private readonly HttpClient _client;

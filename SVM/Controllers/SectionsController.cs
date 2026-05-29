@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace SVM.Controllers
 {
+    [LoginCheckFilter]
     public class SectionsController : Controller
     {
         private readonly HttpClient _client;

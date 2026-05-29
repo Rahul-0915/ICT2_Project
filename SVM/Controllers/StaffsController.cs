@@ -15,6 +15,7 @@ using SVM.Models;
 
 namespace SVM.Controllers
 {
+    [LoginCheckFilter]
     public class StaffsController : Controller
     {
         private readonly HttpClient _client;

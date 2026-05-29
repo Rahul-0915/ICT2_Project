@@ -9,6 +9,7 @@ using QuestPDF.Infrastructure;
 
 namespace SVM.Controllers
 {
+    [LoginCheckFilter]
     public class TimetablesController : Controller
     {
         private readonly HttpClient _client;

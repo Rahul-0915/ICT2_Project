@@ -8,6 +8,7 @@ using QuestPDF.Infrastructure;
 
 namespace SVM.Controllers
 {
+    [LoginCheckFilter]
     public class FeesStructuresController : Controller
     {
         private readonly HttpClient _client;

@@ -12,6 +12,7 @@ using System.Threading.Tasks;
 
 namespace SVM.Controllers
 {
+    [LoginCheckFilter]
     public class StudentAttendancesController : Controller
     {
         private readonly HttpClient _client;

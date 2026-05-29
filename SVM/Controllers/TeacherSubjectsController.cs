@@ -9,6 +9,7 @@ using SVM.Models;
 
 namespace SVM.Controllers
 {
+    [LoginCheckFilter]
     public class TeacherSubjectsController : Controller
     {
         private readonly HttpClient _client;
