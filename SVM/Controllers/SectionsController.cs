@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace SVM.Controllers
 {
+    [LoginCheckFilter]
     public class SectionsController : Controller
     {
         private readonly HttpClient _client;
@@ -104,9 +105,7 @@ namespace SVM.Controllers
             return View();
         }
 
-        // POST: Sections/Create
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
+
         // POST: Sections/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -130,6 +129,21 @@ namespace SVM.Controllers
 
             if (response.IsSuccessStatusCode)
             {
+                // Get the class details to get the medium
+                var classResponse = await _client.GetAsync($"Classes/{section.ClassId}");
+                if (classResponse.IsSuccessStatusCode)
+                {
+                    var classData = await classResponse.Content.ReadAsStringAsync();
+                    var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var classObj = JsonSerializer.Deserialize<Class>(classData, option);
+
+                    // Redirect to Classes Index with both medium AND classId
+                    return RedirectToAction("Index", "Classes", new
+                    {
+                        medium = classObj?.Medium,
+                        classId = section.ClassId
+                    });
+                }
                 return RedirectToAction("Index", "Classes");
             }
 
@@ -168,8 +182,6 @@ namespace SVM.Controllers
             return View(section);
         }
         // POST: Sections/Edit/5
-        // To protect from overposting attacks, enable the specific properties you want to bind to.
-        // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         // POST: Sections/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -196,6 +208,21 @@ namespace SVM.Controllers
 
             if (response.IsSuccessStatusCode)
             {
+                // Get the class details to get the medium
+                var classResponse = await _client.GetAsync($"Classes/{section.ClassId}");
+                if (classResponse.IsSuccessStatusCode)
+                {
+                    var classData = await classResponse.Content.ReadAsStringAsync();
+                    var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                    var classObj = JsonSerializer.Deserialize<Class>(classData, option);
+
+                    // Redirect to Classes Index with both medium AND classId
+                    return RedirectToAction("Index", "Classes", new
+                    {
+                        medium = classObj?.Medium,
+                        classId = section.ClassId
+                    });
+                }
                 return RedirectToAction("Index", "Classes");
             }
 
@@ -204,36 +231,79 @@ namespace SVM.Controllers
             return View(section);
         }
 
-
+       
         // GET: Sections/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
 
             var response = await _client.GetAsync($"Sections/{id}");
-
             if (!response.IsSuccessStatusCode) return NotFound();
 
             var data = await response.Content.ReadAsStringAsync();
+            var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var section = JsonSerializer.Deserialize<Section>(data, option);
 
-            var section = JsonSerializer.Deserialize<Section>(data, new JsonSerializerOptions
+            // Load class details to get medium and class name
+            if (section.ClassId.HasValue)
             {
-                PropertyNameCaseInsensitive = true
-            });
+                var classResponse = await _client.GetAsync($"Classes/{section.ClassId}");
+                if (classResponse.IsSuccessStatusCode)
+                {
+                    var classData = await classResponse.Content.ReadAsStringAsync();
+                    var classObj = JsonSerializer.Deserialize<Class>(classData, option);
+                    ViewBag.CurrentMedium = classObj?.Medium;
+                    ViewBag.CurrentClassId = section.ClassId;
+                    ViewBag.ClassName = classObj?.ClassName;
+                }
+            }
 
             return View(section);
         }
-
         // POST: Sections/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
+            // Get section details before deletion to know the class medium and id
+            var sectionResponse = await _client.GetAsync($"Sections/{id}");
+            string medium = null;
+            int? classId = null;
+
+            if (sectionResponse.IsSuccessStatusCode)
+            {
+                var sectionData = await sectionResponse.Content.ReadAsStringAsync();
+                var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var section = JsonSerializer.Deserialize<Section>(sectionData, option);
+
+                if (section?.ClassId.HasValue == true)
+                {
+                    classId = section.ClassId;
+                    var classResponse = await _client.GetAsync($"Classes/{section.ClassId}");
+                    if (classResponse.IsSuccessStatusCode)
+                    {
+                        var classData = await classResponse.Content.ReadAsStringAsync();
+                        var classObj = JsonSerializer.Deserialize<Class>(classData, option);
+                        medium = classObj?.Medium;
+                    }
+                }
+            }
+
             var response = await _client.DeleteAsync($"Sections/{id}");
 
             if (!response.IsSuccessStatusCode)
             {
                 ModelState.AddModelError("", "Delete failed!");
+            }
+
+            // Redirect with both medium and classId
+            if (!string.IsNullOrEmpty(medium) && classId.HasValue)
+            {
+                return RedirectToAction("Index", "Classes", new
+                {
+                    medium = medium,
+                    classId = classId.Value
+                });
             }
 
             return RedirectToAction("Index", "Classes");

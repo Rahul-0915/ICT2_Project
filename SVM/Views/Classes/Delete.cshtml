@@ -35,6 +35,11 @@
     <form asp-action="Delete">
         <input type="hidden" asp-for="ClassId" />
         <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
+        <a asp-action="Index"
+           asp-route-medium="@ViewBag.SelectedMedium"
+           asp-route-className="@ViewBag.SelectedClassName"
+           asp-route-sessionId="@ViewBag.SelectedSessionId">
+            Back to List
+        </a>
     </form>
 </div>

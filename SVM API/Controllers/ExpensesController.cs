@@ -203,14 +203,6 @@ namespace SVM_API.Controllers
         }
 
         // =========================
-        // EXPORT CSV (Without any external package)
-        // =========================
-        // =========================
-        // EXPORT CSV WITH TOTAL SUMMARY
-        // =========================
-        // =========================
-        // EXPORT CSV WITH TOTAL SUMMARY (Fixed)
-        // =========================
         [HttpGet("ExportExcel")]
         public async Task<IActionResult> ExportToCsv()
         {

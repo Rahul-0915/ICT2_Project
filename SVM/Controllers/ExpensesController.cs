@@ -5,6 +5,7 @@ using SVM.Models;
 
 namespace SVM.Controllers
 {
+    [LoginCheckFilter]
     public class ExpensesController : Controller
     {
         private readonly HttpClient _client;
@@ -174,7 +175,6 @@ namespace SVM.Controllers
 
             if (response.IsSuccessStatusCode)
             {
-                TempData["Success"] = "Expense Updated Successfully!";
                 return RedirectToAction(nameof(Index));
             }
 

@@ -4,6 +4,7 @@ using System.Text.Json;
 
 namespace SVM.Controllers
 {
+    
     public class AdmissionInquiriesController : Controller
     {
         private readonly HttpClient _client;
@@ -29,6 +30,8 @@ namespace SVM.Controllers
         public async Task<IActionResult> Create(
     AdmissionInquiry admissionInquiry)
         {
+          
+
             if (string.IsNullOrWhiteSpace(
                 admissionInquiry.StudentName))
             {
@@ -122,6 +125,7 @@ namespace SVM.Controllers
         ========================= */
 
         // LIST
+        [LoginCheckFilter]
         public async Task<IActionResult> Index()
         {
             List<AdmissionInquiry> inquiryList = new();
@@ -159,7 +163,7 @@ namespace SVM.Controllers
         /* =========================
            DETAILS
         ========================= */
-
+        [LoginCheckFilter]
         public async Task<IActionResult> Details(int id)
         {
             var response =
@@ -205,7 +209,7 @@ namespace SVM.Controllers
         /* =========================
            ATTEND INQUIRY
         ========================= */
-
+        [LoginCheckFilter]
         [HttpPost]
         public async Task<IActionResult> Attend(
             int id,
@@ -256,7 +260,7 @@ namespace SVM.Controllers
         /* =========================
            DELETE
         ========================= */
-
+        [LoginCheckFilter]
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
         {
@@ -269,11 +273,11 @@ namespace SVM.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-		/* =========================
+        /* =========================
            NOTIFICATION COUNT
         ========================= */
-
-		[HttpGet]
+        [LoginCheckFilter]
+        [HttpGet]
 		public async Task<JsonResult> GetUnseenInquiryCount()
 		{
 			var response = await _client.GetAsync("AdmissionInquiries");
