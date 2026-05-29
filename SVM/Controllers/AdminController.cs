@@ -5,6 +5,7 @@ using System.Net.Http;
 using System.Text.Json;
 using System.Threading.Tasks;
 using SVM.Models;
+using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace SVM.Controllers
 {
@@ -159,6 +160,25 @@ namespace SVM.Controllers
             ViewBag.TotalExpense = totalExpense;
             ViewBag.ActiveSessionName = activeSessionName;
 			ViewBag.TotalClasses = totalClasses;
+
+			// =========================
+			// ADMISSION INQUIRIES LOAD
+			// =========================
+			var inquiryResp = await _client.GetAsync("AdmissionInquiries");
+
+			var inquiryJson = await inquiryResp.Content.ReadAsStringAsync();
+
+			var inquiries = JsonSerializer.Deserialize<List<AdmissionInquiry>>(
+				inquiryJson,
+				new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+			);
+
+			// TOTAL
+			ViewBag.TotalInquiries = inquiries?.Count ?? 0;
+
+			// UNSEEN
+			ViewBag.UnseenCount = inquiries?.Count(x => x.IsSeen == false) ?? 0;
+
 			return View(updatesList ?? new List<Updates>());
         }
 
@@ -193,5 +213,8 @@ namespace SVM.Controllers
 
             return View(updatesList ?? new List<Updates>());
         }
-    }
+
+
+		
+	}
 }

@@ -46,7 +46,22 @@
 			<h2>25</h2>
 			Exams
 		</div> *@
-		
+		<div class="panel">
+			<div class="iconBox c8">	
+				<i class="fa fa-list"></i>
+			</div>
+			<h2>@ViewBag.TotalInquiries</h2>
+			Total Inquiries
+		</div>
+			<div class="panel">
+				<div class="iconBox c1">
+					<i class="fa fa-bell"></i>
+				</div>
+
+			<h2 class="inq-count">0</h2>
+
+				New Inquiries
+			</div>
 		<div class="panel">
 			<div class="iconBox c7"><i class="fa fa-school"></i></div>
 			<h2>@ViewBag.TotalClasses</h2>
@@ -113,3 +128,36 @@
 	</div>
 </div>
 </html>
+<script>
+	let lastCount = -1;
+
+	async function loadInquiryCount() {
+		try {
+			const res = await fetch('/AdmissionInquiries/GetUnseenInquiryCount');
+			const count = await res.json();
+
+			// 🚀 ONLY update DOM if value changed
+			if (count !== lastCount) {
+				lastCount = count;
+
+				document.querySelectorAll(".inq-count").forEach(el => {
+					if (count > 0) {
+						el.style.display = "inline-flex";
+						el.innerText = count;
+					} else {
+						el.style.display = "none";
+					}
+				});
+			}
+
+		} catch (e) {
+			console.log("notification error", e);
+		}
+	}
+
+	// initial load
+	loadInquiryCount();
+
+	// real-time polling
+	setInterval(loadInquiryCount, 3000);
+</script>

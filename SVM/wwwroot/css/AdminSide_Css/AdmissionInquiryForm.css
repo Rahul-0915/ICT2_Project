@@ -1,0 +1,253 @@
+﻿/* =========================
+   ADMISSION INQUIRY PAGE
+========================= */
+
+.inquiry-page {
+    width: 100%;
+    min-height: 100vh;
+    padding: 30px 14px;
+    background: #f5f7fb;
+    box-sizing: border-box;
+}
+
+/* MAIN */
+
+.inquiry-container {
+    width: 100%;
+    max-width: 920px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 0.9fr 1fr;
+    gap: 22px;
+    align-items: center;
+}
+
+/* =========================
+   LEFT SIDE
+========================= */
+
+.inquiry-left {
+    padding-right: 6px;
+}
+
+.tag {
+    display: inline-block;
+    padding: 6px 14px;
+    background: #e8eefc;
+    color: #1d4ed8;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+
+.inquiry-left h1 {
+    margin: 0;
+    font-size: 30px;
+    line-height: 1.3;
+    color: #102542;
+    font-weight: 800;
+}
+
+.inquiry-left p {
+    margin-top: 12px;
+    font-size: 13px;
+    line-height: 1.7;
+    color: #64748b;
+    max-width: 420px;
+}
+
+/* INFO BOX */
+
+.info-box {
+    margin-top: 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.info-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: white;
+    padding: 12px 14px;
+    border-radius: 12px;
+    border: 1px solid #e7edf5;
+}
+
+    .info-item i {
+        width: 38px;
+        height: 38px;
+        border-radius: 10px;
+        background: #1d4ed8;
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 13px;
+        flex-shrink: 0;
+    }
+
+    .info-item span {
+        font-size: 12px;
+        color: #1e293b;
+        font-weight: 600;
+    }
+
+/* =========================
+   FORM BOX
+========================= */
+
+.inquiry-form-box {
+    background: white;
+    border-radius: 16px;
+    padding: 24px;
+    border: 1px solid #e6ebf3;
+    box-shadow: 0 5px 20px rgba(15, 23, 42, 0.04);
+}
+
+    .inquiry-form-box h2 {
+        margin: 0 0 18px;
+        font-size: 23px;
+        text-align: center;
+        color: #102542;
+        font-weight: 800;
+    }
+
+/* FORM GROUP */
+
+.form-group {
+    margin-bottom: 15px;
+}
+
+    .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-size: 12px;
+        font-weight: 700;
+        color: #334155;
+    }
+
+/* INPUT */
+
+.form-control {
+    width: 100%;
+    height: 42px;
+    border: 1px solid #dbe3ef;
+    border-radius: 10px;
+    padding: 0 12px;
+    font-size: 12px;
+    color: #0f172a;
+    background: #fbfcfe;
+    transition: 0.2s ease;
+    box-sizing: border-box;
+    font-family: inherit;
+}
+
+    .form-control:focus {
+        outline: none;
+        border-color: #2563eb;
+        background: white;
+    }
+
+/* TEXTAREA */
+
+.textarea {
+    min-height: 90px;
+    resize: vertical;
+    padding-top: 12px;
+}
+
+/* BUTTON */
+
+.submit-btn {
+    width: 100%;
+    height: 44px;
+    border: none;
+    border-radius: 10px;
+    background: #1d4ed8;
+    color: white;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    margin-top: 4px;
+    transition: 0.2s ease;
+}
+
+    .submit-btn:hover {
+        background: #1e40af;
+    }
+
+/* VALIDATION */
+
+.text-danger {
+    display: block;
+    margin-top: 5px;
+    color: #dc2626;
+    font-size: 11px;
+    font-weight: 600;
+}
+
+.validation-summary {
+    color: #dc2626;
+    margin-bottom: 14px;
+    font-size: 11px;
+}
+
+/* SUCCESS */
+
+.success-message {
+    background: #dcfce7;
+    color: #166534;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 16px;
+    font-size: 12px;
+    font-weight: 600;
+    border: 1px solid #bbf7d0;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media(max-width:768px) {
+
+    .inquiry-container {
+        grid-template-columns: 1fr;
+        gap: 22px;
+    }
+
+    .inquiry-left {
+        text-align: center;
+        padding-right: 0;
+    }
+
+        .inquiry-left p {
+            margin: 12px auto 0;
+        }
+
+    .inquiry-page {
+        padding: 24px 10px;
+    }
+
+    .inquiry-left h1 {
+        font-size: 24px;
+    }
+
+    .inquiry-form-box {
+        padding: 18px 14px;
+    }
+
+        .inquiry-form-box h2 {
+            font-size: 20px;
+        }
+}
+
+
+
+
+
+
+
