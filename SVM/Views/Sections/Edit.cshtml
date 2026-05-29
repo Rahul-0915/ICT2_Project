@@ -1,144 +1,147 @@
 ﻿@model SVM.Models.Section
 
 @{
-    ViewData["Title"] = "Edit Section";
+	ViewData["Title"] = "Edit Section";
 }
 
 <!DOCTYPE html>
 <html>
 <head>
-    <link rel="stylesheet" href="~/css/AdminSide_Css/Forms.css" asp-append-version="true" />
-    <title>Edit Section</title>
+	<link rel="stylesheet" href="~/css/AdminSide_Css/Forms.css" asp-append-version="true" />
+	<title>Edit Section</title>
 </head>
 
 <body>
 
-    <div class="session-page">
+	<div class="session-page">
 
-        <div class="session-card">
+		<div class="session-card">
 
-            <h3 class="card-title">Edit Section</h3>
+			<h3 class="card-title">Edit Section</h3>
 
-            <form asp-action="Edit">
+			<form asp-action="Edit">
 
-                <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+				<div asp-validation-summary="ModelOnly" class="text-danger"></div>
 
-                <input type="hidden" asp-for="SectionId" />
+				<input type="hidden" asp-for="SectionId" />
 
-                <div class="form-grid">
+				<div class="form-grid">
 
-                    <!-- MEDIUM -->
-                    <div class="form-group">
-                        <label>Medium</label>
+					<!-- MEDIUM -->
+					<div class="form-group">
+						<label>Medium</label>
 
-                        <select id="Medium" class="form-control">
-                            <option value="">-- Select Medium --</option>
-                            <option value="Gujarati">Gujarati</option>
-                            <option value="English">English</option>
-                        </select>
-                    </div>
+						<select id="Medium" class="form-control">
+							<option value="">-- Select Medium --</option>
+							<option value="Gujarati">Gujarati</option>
+							<option value="English">English</option>
+						</select>
+					</div>
 
-                    <!-- CLASS -->
-                    <div class="form-group">
-                        <label>Select Class</label>
+					<!-- CLASS -->
+					<div class="form-group">
+						<label>Select Class</label>
 
-                        <select asp-for="ClassId"
-                                id="ClassId"
-                                class="form-control">
+						<select asp-for="ClassId"
+								id="ClassId"
+								class="form-control">
 
-                            <option value="">-- Select Class --</option>
+							<option value="">-- Select Class --</option>
 
-                        </select>
+						</select>
 
-                        <span asp-validation-for="ClassId" class="text-danger"></span>
-                    </div>
+						<span asp-validation-for="ClassId" class="text-danger"></span>
+					</div>
 
-                    <!-- SECTION NAME -->
-                    <div class="form-group">
-                        <label>Section Name</label>
+					<!-- SECTION NAME -->
+					<div class="form-group">
+						<label>Section Name</label>
 
-                        <input asp-for="SectionName"
-                               class="form-control"
-                               placeholder="Enter A, B, C..." />
+						<input asp-for="SectionName"
+							   class="form-control"
+							   placeholder="Enter A, B, C..." />
 
-                        <span asp-validation-for="SectionName" class="text-danger"></span>
-                    </div>
+						<span asp-validation-for="SectionName" class="text-danger"></span>
+					</div>
 
-                </div>
+				</div>
 
-                <!-- BUTTONS -->
-                <div style="display:flex; gap:15px; flex-wrap:wrap;">
+				<!-- BUTTONS -->
+				<div style="display:flex; gap:15px; flex-wrap:wrap;">
 
-                    <input type="submit" value="Save Changes" class="create-btn" />
+					<input type="submit" value="Save Changes" class="create-btn" />
 
-                    <a asp-controller="Classes" asp-action="Index">
-                        <button type="button" class="Back-btn">← Back to List</button>
-                    </a>
+					<a asp-controller="Classes"
+					   asp-action="Index"
+					   asp-route-medium="@ViewBag.CurrentMedium"
+					   asp-route-classId="@ViewBag.CurrentClassId">
+						<button type="button" class="Back-btn">← Back to List</button>
+					</a>
 
-                </div>
+				</div>
 
-            </form>
+			</form>
 
-        </div>
+		</div>
 
-    </div>
+	</div>
 
-    <!-- JS -->
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<!-- JS -->
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
-    <script>
-        $(document).ready(function () {
+	<script>
+		$(document).ready(function () {
 
-            var currentMedium = '@ViewBag.CurrentMedium';
-            var currentClassId = '@ViewBag.CurrentClassId';
+			var currentMedium = '@ViewBag.CurrentMedium';
+			var currentClassId = '@ViewBag.CurrentClassId';
 
-            if (currentMedium) {
-                $('#Medium').val(currentMedium);
-                loadClasses(currentMedium, currentClassId);
-            }
+			if (currentMedium) {
+				$('#Medium').val(currentMedium);
+				loadClasses(currentMedium, currentClassId);
+			}
 
-            $('#Medium').change(function () {
-                var medium = $(this).val();
+			$('#Medium').change(function () {
+				var medium = $(this).val();
 
-                if (medium === '') {
-                    $('#ClassId').html('<option value="">-- Select Class --</option>');
-                    return;
-                }
+				if (medium === '') {
+					$('#ClassId').html('<option value="">-- Select Class --</option>');
+					return;
+				}
 
-                loadClasses(medium, null);
-            });
+				loadClasses(medium, null);
+			});
 
-            function loadClasses(medium, selectedClassId) {
+			function loadClasses(medium, selectedClassId) {
 
-                var ddl = $('#ClassId');
-                ddl.html('<option>Loading...</option>');
+				var ddl = $('#ClassId');
+				ddl.html('<option>Loading...</option>');
 
-                $.ajax({
-                    url: '/Sections/GetClassesByMedium',
-                    type: 'GET',
-                    data: { medium: medium },
+				$.ajax({
+					url: '/Sections/GetClassesByMedium',
+					type: 'GET',
+					data: { medium: medium },
 
-                    success: function (data) {
+					success: function (data) {
 
-                        ddl.empty();
-                        ddl.append('<option value="">-- Select Class --</option>');
+						ddl.empty();
+						ddl.append('<option value="">-- Select Class --</option>');
 
-                        $.each(data, function (i, item) {
+						$.each(data, function (i, item) {
 
-                            var selected = selectedClassId == item.value ? 'selected' : '';
+							var selected = selectedClassId == item.value ? 'selected' : '';
 
-                            ddl.append('<option value="' + item.value + '" ' + selected + '>' + item.text + '</option>');
-                        });
-                    },
+							ddl.append('<option value="' + item.value + '" ' + selected + '>' + item.text + '</option>');
+						});
+					},
 
-                    error: function () {
-                        ddl.html('<option>Error loading classes</option>');
-                    }
-                });
-            }
+					error: function () {
+						ddl.html('<option>Error loading classes</option>');
+					}
+				});
+			}
 
-        });
-    </script>
+		});
+	</script>
 
 </body>
 </html>
