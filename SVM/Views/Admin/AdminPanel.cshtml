@@ -1,8 +1,28 @@
-﻿@using Microsoft.AspNetCore.Http
+﻿@model List<SVM.Models.Updates>
+
+@using Microsoft.AspNetCore.Http
+
 @{
 	Layout = null;
-}
 
+	// Session Check
+	if (Context.Session.GetString("UserId") == null)
+	{
+		Context.Response.Redirect("/Account/Login");
+	}
+
+	// Only Admin Allowed
+	if (Context.Session.GetString("GroupId") != "1")
+	{
+		Context.Session.Clear();
+		Context.Response.Redirect("/Account/Login");
+	}
+
+	// Prevent Back After Logout
+	Context.Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
+	Context.Response.Headers["Pragma"] = "no-cache";
+	Context.Response.Headers["Expires"] = "0";
+}
 <!DOCTYPE html>
 <html>
 
@@ -38,10 +58,10 @@
 				<i class="fa fa-chevron-down"></i>
 			</a>
 			<div class="admin-dropdown-menu">
-				<a asp-action="Create" asp-route-fixedGroupId="1" target="mainFrame"  asp-controller="Users" asp-route-groupId="1">
+				<a asp-action="Create" asp-route-fixedGroupId="1" target="mainFrame" asp-controller="Users" asp-route-groupId="1">
 					<i class="fa fa-user-plus"></i> Add Admin
 				</a>
-					
+
 				<a asp-controller="Account" asp-action="Logout">
 					<i class="fa fa-sign-out-alt"></i> Logout
 				</a>
@@ -74,7 +94,7 @@
 							<span class="menu-badge inq-count" style="display:none;">0</span>
 						</a>
 						<div class="submenu2">
-							<a asp-controller="Students" asp-action="Create" target="mainFrame" >New Admission</a>
+							<a asp-controller="Students" asp-action="Create" target="mainFrame">New Admission</a>
 							<a asp-controller="AdmissionInquiries"
 							   asp-action="Index"
 							   target="mainFrame">
