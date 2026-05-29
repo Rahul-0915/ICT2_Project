@@ -30,16 +30,26 @@ namespace SVM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Login(LoginViewModel model)
         {
-            if (!ModelState.IsValid) return View(model);
+            if (!ModelState.IsValid)
+                return View(model);
 
-            // ✅ Call the new login API
-            var loginData = new { Username = model.Username, Password = model.Password };
+            var loginData = new
+            {
+                Username = model.Username,
+                Password = model.Password
+            };
+
             var response = await _client.PostAsJsonAsync("Users/login", loginData);
 
             if (response.IsSuccessStatusCode)
             {
                 var json = await response.Content.ReadAsStringAsync();
-                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+
+                var options = new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                };
+
                 var user = JsonSerializer.Deserialize<User>(json, options);
 
                 if (user != null)
@@ -48,11 +58,32 @@ namespace SVM.Controllers
                     HttpContext.Session.SetString("Username", user.Username);
                     HttpContext.Session.SetString("FullName", user.FullName ?? user.Username);
                     HttpContext.Session.SetString("GroupId", user.GroupId?.ToString() ?? "");
-                    return RedirectToAction("AdminPanel", "Admin");
+
+                    // ROLE BASED LOGIN
+                    if (user.GroupId == 1)
+                    {
+                        return RedirectToAction("AdminPanel", "Admin");
+                    }
+                    else if (user.GroupId == 3)
+                    {
+                        return RedirectToAction("Student", "StudentPanel");
+                    }
+                    else if (user.GroupId == 2)
+                    {
+                        HttpContext.Session.Clear();
+                        ViewBag.Error = "You are not allowed to login.";
+                        return View(model);
+                    }
+                    else
+                    {
+                        HttpContext.Session.Clear();
+                        ViewBag.Error = "Invalid role.";
+                        return View(model);
+                    }
                 }
             }
 
-            ViewBag.Error = "Invalid username or password";
+            ViewBag.Error = "Invalid username/email or password";
             return View(model);
         }
 
@@ -66,6 +97,65 @@ namespace SVM.Controllers
             Response.Headers["Expires"] = "0";
 
             return RedirectToAction("Login");
+        }
+        [HttpGet]
+        public IActionResult ForgotPassword()
+        {
+            return View();
+        }
+        [HttpPost]
+        public async Task<IActionResult> ForgotPassword(string identifier)
+        {
+            var response = await _client.PostAsJsonAsync("Users/forgot-password", new
+            {
+                Identifier = identifier
+            });
+
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["Identifier"] = identifier;
+                return RedirectToAction("ResetPassword");
+            }
+
+            ViewBag.Error = "User not found or email not registered";
+            return View();
+        }
+        [HttpGet]
+        public IActionResult ResetPassword()
+        {
+            ViewBag.Identifier = TempData["Identifier"]?.ToString();
+
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPassword(string identifier, string otp, string newPassword)
+        {
+            Console.WriteLine("IDENTIFIER = " + identifier);
+            Console.WriteLine("OTP = " + otp);
+            Console.WriteLine("NEW PASSWORD = " + newPassword);
+
+            var response = await _client.PostAsJsonAsync("Users/reset-password", new
+            {
+                Identifier = identifier,
+                OTP = otp,
+                NewPassword = newPassword
+            });
+
+            var result = await response.Content.ReadAsStringAsync();
+
+            Console.WriteLine(result);
+
+            if (response.IsSuccessStatusCode)
+            {
+                TempData["Success"] = "Password reset successful";
+                return RedirectToAction("Login");
+            }
+
+            ViewBag.Error = result;
+            ViewBag.Identifier = identifier;
+
+            return View();
         }
     }
 }
