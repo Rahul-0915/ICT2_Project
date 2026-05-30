@@ -3,93 +3,103 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace SVM.Controllers
 {
-    public class LoginCheckFilter : ActionFilterAttribute
-    {
-        public override void OnActionExecuting(ActionExecutingContext context)
-        {
-            var userId = context.HttpContext.Session.GetString("UserId");
-            var groupId = context.HttpContext.Session.GetString("GroupId");
+	public class LoginCheckFilter : ActionFilterAttribute
+	{
+		public override void OnActionExecuting(ActionExecutingContext context)
+		{
+			var userId = context.HttpContext.Session.GetString("UserId");
+			var groupId = context.HttpContext.Session.GetString("GroupId");
 
-            var controller =
-                context.RouteData.Values["controller"]?.ToString();
+			var controller =
+				context.RouteData.Values["controller"]?.ToString();
 
-            var action =
-                context.RouteData.Values["action"]?.ToString();
+			var action =
+				context.RouteData.Values["action"]?.ToString();
 
-            // No Cache
-            context.HttpContext.Response.Headers["Cache-Control"] =
-                "no-cache, no-store, must-revalidate";
+			// No Cache
+			context.HttpContext.Response.Headers["Cache-Control"] =
+				"no-cache, no-store, must-revalidate";
 
-            context.HttpContext.Response.Headers["Pragma"] = "no-cache";
-            context.HttpContext.Response.Headers["Expires"] = "0";
+			context.HttpContext.Response.Headers["Pragma"] = "no-cache";
+			context.HttpContext.Response.Headers["Expires"] = "0";
 
-            // Login page
-            if (controller == "Account" && action == "Login")
-            {
-                if (!string.IsNullOrEmpty(userId))
-                {
-                    if (groupId == "1")
-                    {
-                        context.Result =
-                            new RedirectToActionResult(
-                                "AdminDashboard",
-                                "Admin",
-                                null);
-                    }
-                    else if (groupId == "3")
-                    {
-                        context.Result =
-                            new RedirectToActionResult(
-                                "Index",
-                                "Student",
-                                null);
-                    }
-                }
+			// Login Page
+			if (controller == "Account" && action == "Login")
+			{
+				if (!string.IsNullOrEmpty(userId))
+				{
+					if (groupId == "1")
+					{
+						context.Result =
+							new RedirectToActionResult(
+								"AdminDashboard",
+								"Admin",
+								null);
+					}
+					else if (groupId == "3")
+					{
+						context.Result =
+							new RedirectToActionResult(
+								"Student",
+								"StudentPanel",
+								null);
+					}
+				}
 
-                return;
-            }
+				return;
+			}
 
-            // Not Logged In
-            if (string.IsNullOrEmpty(userId))
-            {
-                context.Result =
-                    new RedirectToActionResult(
-                        "Login",
-                        "Account",
-                        null);
+			// Not Logged In
+			if (string.IsNullOrEmpty(userId))
+			{
+				context.Result =
+					new RedirectToActionResult(
+						"Login",
+						"Account",
+						null);
 
-                return;
-            }
+				return;
+			}
 
-            // STUDENT AREA PROTECTION
-            if (controller == "Student" && groupId != "3")
-            {
-                context.HttpContext.Session.Clear();
+			// =========================
+			// STUDENT AREA PROTECTION
+			// =========================
 
-                context.Result =
-                    new RedirectToActionResult(
-                        "Login",
-                        "Account",
-                        null);
+			if (controller != null &&
+				controller.StartsWith("Student") &&
+				groupId != "3")
+			{
+				context.HttpContext.Session.Clear();
 
-                return;
-            }
+				context.Result =
+					new RedirectToActionResult(
+						"Login",
+						"Account",
+						null);
 
-            // ADMIN AREA PROTECTION
-            if (controller == "Admin" && groupId != "1")
-            {
-                context.HttpContext.Session.Clear();
+				return;
+			}
 
-                context.Result =
-                    new RedirectToActionResult(
-                        "Login",
-                        "Account",
-                        null);
+			// =========================
+			// ADMIN AREA PROTECTION
+			// =========================
 
-                return;
-            }
+			if (controller != null &&
+				controller.StartsWith("Admin") &&
+				groupId != "1")
+			{
+				context.HttpContext.Session.Clear();
 
-            base.OnActionExecuting(context);
-        }
-    }
+				context.Result =
+					new RedirectToActionResult(
+						"Login",
+						"Account",
+						null);
+
+				return;
+			}
+
+			base.OnActionExecuting(context);
+		}
+	}
 }
