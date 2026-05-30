@@ -7,30 +7,86 @@ namespace SVM.Controllers
     {
         public override void OnActionExecuting(ActionExecutingContext context)
         {
-            var user = context.HttpContext.Session.GetString("UserId");
+            var userId = context.HttpContext.Session.GetString("UserId");
+            var groupId = context.HttpContext.Session.GetString("GroupId");
 
-            // Current controller/action
-            var controller = context.RouteData.Values["controller"]?.ToString();
-            var action = context.RouteData.Values["action"]?.ToString();
+            var controller =
+                context.RouteData.Values["controller"]?.ToString();
 
-            // LOGIN NAHI HAI
-            if (string.IsNullOrEmpty(user))
+            var action =
+                context.RouteData.Values["action"]?.ToString();
+
+            // No Cache
+            context.HttpContext.Response.Headers["Cache-Control"] =
+                "no-cache, no-store, must-revalidate";
+
+            context.HttpContext.Response.Headers["Pragma"] = "no-cache";
+            context.HttpContext.Response.Headers["Expires"] = "0";
+
+            // Login page
+            if (controller == "Account" && action == "Login")
             {
-                // Login page allow karo
-                if (controller != "Account" || action != "Login")
+                if (!string.IsNullOrEmpty(userId))
                 {
-                    context.Result =
-                        new RedirectToActionResult("Login", "Account", null);
+                    if (groupId == "1")
+                    {
+                        context.Result =
+                            new RedirectToActionResult(
+                                "AdminDashboard",
+                                "Admin",
+                                null);
+                    }
+                    else if (groupId == "3")
+                    {
+                        context.Result =
+                            new RedirectToActionResult(
+                                "Index",
+                                "Student",
+                                null);
+                    }
                 }
+
+                return;
             }
-            else
+
+            // Not Logged In
+            if (string.IsNullOrEmpty(userId))
             {
-                // LOGIN HAI aur fir bhi login page pe ja raha hai
-                if (controller == "Account" && action == "Login")
-                {
-                    context.Result =
-                        new RedirectToActionResult("AdminDashboard", "Admin", null);
-                }
+                context.Result =
+                    new RedirectToActionResult(
+                        "Login",
+                        "Account",
+                        null);
+
+                return;
+            }
+
+            // STUDENT AREA PROTECTION
+            if (controller == "Student" && groupId != "3")
+            {
+                context.HttpContext.Session.Clear();
+
+                context.Result =
+                    new RedirectToActionResult(
+                        "Login",
+                        "Account",
+                        null);
+
+                return;
+            }
+
+            // ADMIN AREA PROTECTION
+            if (controller == "Admin" && groupId != "1")
+            {
+                context.HttpContext.Session.Clear();
+
+                context.Result =
+                    new RedirectToActionResult(
+                        "Login",
+                        "Account",
+                        null);
+
+                return;
             }
 
             base.OnActionExecuting(context);

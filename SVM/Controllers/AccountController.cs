@@ -71,7 +71,7 @@ namespace SVM.Controllers
                     else if (user.GroupId == 2)
                     {
                         HttpContext.Session.Clear();
-                        ViewBag.Error = "You are not allowed to login.";
+                        ViewBag.Error = "Teacher login is supported on the S.V.M Mobile App only.   ";
                         return View(model);
                     }
                     else
