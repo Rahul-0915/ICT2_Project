@@ -1,0 +1,1089 @@
+﻿/* =========================
+   SVM STUDENT PORTAL
+   CLASSIC PREMIUM DESIGN
+========================= */
+
+:root {
+    --primary: #163b65;
+    --secondary: #24548c;
+    --gold: #d4af37;
+    --light: #f6f8fb;
+    --text: #2d3748;
+    --border: #e6ebf2;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    background: linear-gradient(to bottom, #f8fafc, #eef3f8);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+    width: 100%;
+    height: 78px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 35px;
+    color: white;
+    box-shadow: 0 4px 18px rgba(0,0,0,.12);
+}
+
+/* =========================
+   LOGO
+========================= */
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+    .logo img {
+        width: 56px;
+        height: 56px;
+        object-fit: contain;
+        background: white;
+        border-radius: 50%;
+        padding: 3px;
+        border: 2px solid var(--gold);
+    }
+
+.logo-text h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+    line-height: 1;
+}
+
+.logo-text span {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+    color: rgba(255,255,255,.85);
+}
+
+/* =========================
+   STUDENT MENU
+========================= */
+
+.student-box {
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.student-btn {
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.20);
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: .3s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+    .student-btn:hover {
+        background: rgba(255,255,255,.25);
+    }
+
+    .student-btn i {
+        font-size: 14px;
+    }
+
+/* =========================
+   DROPDOWN
+========================= */
+
+/* =========================
+   SVM STUDENT PORTAL
+   CLASSIC PREMIUM DESIGN
+========================= */
+
+:root {
+    --primary: #163b65;
+    --secondary: #24548c;
+    --gold: #d4af37;
+    --light: #f6f8fb;
+    --text: #2d3748;
+    --border: #e6ebf2;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: "Segoe UI", sans-serif;
+}
+
+body {
+    background: linear-gradient(to bottom, #f8fafc, #eef3f8);
+    color: var(--text);
+    min-height: 100vh;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+    width: 100%;
+    height: 78px;
+    background: linear-gradient(135deg, var(--primary), var(--secondary));
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 35px;
+    color: white;
+    box-shadow: 0 4px 18px rgba(0,0,0,.12);
+}
+
+/* =========================
+   LOGO
+========================= */
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+    .logo img {
+        width: 56px;
+        height: 56px;
+        object-fit: contain;
+        background: white;
+        border-radius: 50%;
+        padding: 3px;
+        border: 2px solid var(--gold);
+    }
+
+.logo-text h2 {
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+    line-height: 1;
+}
+
+.logo-text span {
+    display: block;
+    margin-top: 4px;
+    font-size: 13px;
+    color: rgba(255,255,255,.85);
+}
+
+/* =========================
+   STUDENT MENU
+========================= */
+
+.student-box {
+    position: relative;
+    padding-bottom: 10px;
+}
+
+.student-btn {
+    background: rgba(255,255,255,.15);
+    border: 1px solid rgba(255,255,255,.20);
+    backdrop-filter: blur(10px);
+    color: white;
+    padding: 10px 18px;
+    border-radius: 50px;
+    cursor: pointer;
+    transition: .3s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 600;
+}
+
+    .student-btn:hover {
+        background: rgba(255,255,255,.25);
+    }
+
+    .student-btn i {
+        font-size: 14px;
+    }
+
+/* =========================
+   DROPDOWN
+========================= */
+
+.dropdown {
+    position: absolute;
+    right: 0;
+    top: 58px;
+    width: 220px;
+    background: #fff;
+    border-radius: 14px;
+    display: none;
+    overflow: visible; /* hidden hata do */
+
+    box-shadow: 0 15px 35px rgba(0,0,0,.12);
+    border: 1px solid #edf2f7;
+    z-index: 99999;
+}
+
+.student-box:hover .dropdown {
+    display: block;
+}
+
+.dropdown a {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 18px;
+    text-decoration: none;
+    color: var(--text);
+    font-size: 14px;
+    transition: .3s;
+}
+
+    .dropdown a:hover {
+        background: #f8fafc;
+        color: var(--primary);
+    }
+
+    .dropdown a i {
+        width: 18px;
+    }
+
+/* =========================
+   CONTENT
+========================= */
+
+.content {
+    padding: 35px;
+}
+
+/* =========================
+   WELCOME CARD
+========================= */
+
+.welcome-card {
+    background: white;
+    border-radius: 18px;
+    padding: 40px;
+    border-top: 5px solid var(--gold);
+    box-shadow: 0 8px 25px rgba(0,0,0,.06);
+}
+
+    .welcome-card h1 {
+        color: var(--primary);
+        font-size: 32px;
+        margin-bottom: 12px;
+    }
+
+    .welcome-card p {
+        color: #64748b;
+        font-size: 16px;
+        line-height: 1.8;
+    }
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+
+    .header {
+        height: 72px;
+        padding: 0 15px;
+    }
+
+    .logo img {
+        width: 46px;
+        height: 46px;
+    }
+
+    .logo-text h2 {
+        font-size: 20px;
+    }
+
+    .logo-text span {
+        font-size: 11px;
+    }
+
+    .student-btn {
+        padding: 8px 14px;
+        font-size: 14px;
+    }
+
+    .content {
+        padding: 18px;
+    }
+
+    .welcome-card {
+        padding: 25px;
+    }
+
+        .welcome-card h1 {
+            font-size: 24px;
+        }
+
+        .welcome-card p {
+            font-size: 14px;
+        }
+
+    .dropdown {
+        width: 200px;
+    }
+}
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+
+    .header {
+        height: auto;
+        min-height: 72px;
+        padding: 12px 15px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .logo {
+        flex: 1;
+        min-width: 0;
+        gap: 10px;
+    }
+
+        .logo img {
+            width: 46px;
+            height: 46px;
+        }
+
+    .logo-text h2 {
+        font-size: 18px;
+    }
+
+    .logo-text span {
+        font-size: 11px;
+    }
+
+    .student-btn {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+        .student-btn span {
+            display: block;
+            max-width: 110px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+    .dropdown {
+        width: 200px;
+        right: 0;
+    }
+
+    .content {
+        padding: 15px;
+    }
+
+    .welcome-card {
+        padding: 22px;
+        border-radius: 14px;
+    }
+
+        .welcome-card h1 {
+            font-size: 24px;
+        }
+
+        .welcome-card p {
+            font-size: 14px;
+            line-height: 1.7;
+        }
+}
+
+/* SMALL MOBILE */
+
+@media (max-width: 576px) {
+
+    .header {
+        padding: 10px 12px;
+    }
+
+    .logo img {
+        width: 42px;
+        height: 42px;
+    }
+
+    .logo-text h2 {
+        font-size: 16px;
+    }
+
+    .logo-text span {
+        display: none;
+    }
+
+    .student-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        padding: 0;
+        justify-content: center;
+        gap: 0;
+    }
+
+        .student-btn span {
+            display: none;
+        }
+
+        .student-btn i:last-child {
+            display: none;
+        }
+
+    .dropdown {
+        width: 180px;
+        top: 50px;
+    }
+
+    .content {
+        padding: 12px;
+    }
+
+    .welcome-card {
+        padding: 18px;
+    }
+
+        .welcome-card h1 {
+            font-size: 20px;
+        }
+}
+
+
+/* ======================
+   NAVBAR
+====================== */
+
+.main-navbar {
+    background: #fff;
+    border-bottom: 1px solid #e7ebf0;
+    position: relative;
+}
+
+.menu-toggle {
+    display: none;
+    width: 100%;
+    height: 52px;
+    border: none;
+    background: #fff;
+    color: #163b65;
+    font-size: 22px;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-menu {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0 20px;
+}
+
+    .nav-menu > li {
+        position: relative;
+    }
+
+        .nav-menu > li > a {
+            text-decoration: none;
+            color: #2d3748;
+            padding: 15px 18px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+            .nav-menu > li > a:hover {
+                color: #163b65;
+            }
+
+.nav-arrow {
+    font-size: 11px;
+    transition: .3s;
+}
+
+/* Desktop Hover Underline */
+
+.nav-menu > li > a {
+    position: relative;
+}
+
+    .nav-menu > li > a::after {
+        content: "";
+        position: absolute;
+        left: 18px;
+        bottom: 8px;
+        width: 0;
+        height: 3px;
+        background: var(--gold);
+        border-radius: 20px;
+        transition: width .3s ease;
+    }
+
+    .nav-menu > li > a:hover::after {
+        width: calc(100% - 36px);
+    }
+
+/* ======================
+   SUBMENU
+====================== */
+
+.submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 220px;
+    background: white;
+    list-style: none;
+    display: none;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #edf2f7;
+    box-shadow: 0 12px 30px rgba(0,0,0,.08);
+    z-index: 999;
+}
+
+.has-submenu:hover .submenu {
+    display: block;
+}
+
+.submenu a {
+    display: block;
+    padding: 13px 16px;
+    text-decoration: none;
+    color: #444;
+    font-size: 13px;
+}
+
+    .submenu a:hover {
+        background: #f8fafc;
+        color: #163b65;
+    }
+
+/* ======================
+   MOBILE
+====================== */
+
+@media (max-width:768px) {
+
+    .main-navbar {
+        position: relative;
+        z-index: 9999;
+    }
+
+    .menu-toggle {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding-left: 20px;
+        width: 100%;
+        height: 55px;
+        border: none;
+        background: rgba(255,255,255,.88);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        color: #163b65;
+        font-size: 22px;
+        cursor: pointer;
+    }
+
+    .nav-menu {
+        position: absolute;
+        top: 55px;
+        left: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        background: rgba(255,255,255,.85);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: 0 15px 40px rgba(0,0,0,.15);
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-15px);
+        transition: .35s ease;
+        padding: 0;
+        z-index: 9999;
+    }
+
+        .nav-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .nav-menu > li > a {
+            justify-content: space-between;
+            padding: 15px 18px;
+        }
+
+    .submenu {
+        position: static;
+        min-width: 100%;
+        border: none;
+        box-shadow: none;
+        border-radius: 0;
+        background: rgba(248,250,252,.8);
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height .35s ease;
+    }
+
+    .has-submenu.open .submenu {
+        max-height: 300px;
+    }
+
+    .has-submenu.open .nav-arrow {
+        transform: rotate(180deg);
+    }
+
+    .submenu a {
+        padding: 12px 20px 12px 45px;
+    }
+}
+/* =========================
+   CONTENT
+========================= */
+
+.content {
+    padding: 35px;
+}
+
+/* =========================
+   WELCOME CARD
+========================= */
+
+.welcome-card {
+    background: white;
+    border-radius: 18px;
+    padding: 40px;
+    border-top: 5px solid var(--gold);
+    box-shadow: 0 8px 25px rgba(0,0,0,.06);
+}
+
+    .welcome-card h1 {
+        color: var(--primary);
+        font-size: 32px;
+        margin-bottom: 12px;
+    }
+
+    .welcome-card p {
+        color: #64748b;
+        font-size: 16px;
+        line-height: 1.8;
+    }
+
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+
+    .header {
+        height: 72px;
+        padding: 0 15px;
+    }
+
+    .logo img {
+        width: 46px;
+        height: 46px;
+    }
+
+    .logo-text h2 {
+        font-size: 20px;
+    }
+
+    .logo-text span {
+        font-size: 11px;
+    }
+
+    .student-btn {
+        padding: 8px 14px;
+        font-size: 14px;
+    }
+
+    .content {
+        padding: 18px;
+    }
+
+    .welcome-card {
+        padding: 25px;
+    }
+
+        .welcome-card h1 {
+            font-size: 24px;
+        }
+
+        .welcome-card p {
+            font-size: 14px;
+        }
+
+    .dropdown {
+        width: 200px;
+    }
+}
+/* =========================
+   RESPONSIVE
+========================= */
+
+@media (max-width: 768px) {
+
+    .header {
+        height: auto;
+        min-height: 72px;
+        padding: 12px 15px;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+
+    .logo {
+        flex: 1;
+        min-width: 0;
+        gap: 10px;
+    }
+
+        .logo img {
+            width: 46px;
+            height: 46px;
+        }
+
+    .logo-text h2 {
+        font-size: 18px;
+    }
+
+    .logo-text span {
+        font-size: 11px;
+    }
+
+    .student-btn {
+        padding: 8px 12px;
+        font-size: 13px;
+    }
+
+        .student-btn span {
+            display: block;
+            max-width: 110px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+    .dropdown {
+        width: 200px;
+        right: 0;
+    }
+
+    .content {
+        padding: 15px;
+    }
+
+    .welcome-card {
+        padding: 22px;
+        border-radius: 14px;
+    }
+
+        .welcome-card h1 {
+            font-size: 24px;
+        }
+
+        .welcome-card p {
+            font-size: 14px;
+            line-height: 1.7;
+        }
+}
+
+/* SMALL MOBILE */
+
+@media (max-width: 576px) {
+
+    .header {
+        padding: 10px 12px;
+    }
+
+    .logo img {
+        width: 42px;
+        height: 42px;
+    }
+
+    .logo-text h2 {
+        font-size: 16px;
+    }
+
+    .logo-text span {
+        display: none;
+    }
+
+    .student-btn {
+        width: 42px;
+        height: 42px;
+        border-radius: 50%;
+        padding: 0;
+        justify-content: center;
+        gap: 0;
+    }
+
+        .student-btn span {
+            display: none;
+        }
+
+        .student-btn i:last-child {
+            display: none;
+        }
+
+    .dropdown {
+        width: 180px;
+        top: 50px;
+    }
+
+    .content {
+        padding: 12px;
+    }
+
+    .welcome-card {
+        padding: 18px;
+    }
+
+        .welcome-card h1 {
+            font-size: 20px;
+        }
+}
+
+
+/* ======================
+   NAVBAR
+====================== */
+
+.main-navbar {
+    background: #fff;
+    border-bottom: 1px solid #e7ebf0;
+    position: relative;
+}
+
+.menu-toggle {
+    display: none;
+    width: 100%;
+    height: 52px;
+    border: none;
+    background: #fff;
+    color: #163b65;
+    font-size: 22px;
+    cursor: pointer;
+    justify-content: center;
+    align-items: center;
+}
+
+.nav-menu {
+    list-style: none;
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0 20px;
+}
+
+.nav-menu > li {
+    position: relative;
+}
+
+.nav-menu > li > a {
+    text-decoration: none;
+    color: #2d3748;
+    padding: 15px 18px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+.nav-menu > li > a:hover {
+    color: #163b65;
+}
+
+.nav-arrow {
+    font-size: 11px;
+    transition: .3s;
+}
+
+/* ======================
+   SUBMENU
+====================== */
+/* ======================
+   SUBMENU
+====================== */
+
+.submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    min-width: 220px;
+    background: #fff;
+    list-style: none;
+    display: none;
+    border-radius: 10px;
+    overflow: hidden;
+    border: 1px solid #edf2f7;
+    box-shadow: 0 12px 30px rgba(0,0,0,.08);
+    z-index: 999;
+}
+
+.has-submenu:hover .submenu {
+    display: block;
+}
+
+.submenu a {
+    display: block;
+    padding: 13px 16px;
+    text-decoration: none;
+    color: #444;
+    font-size: 13px;
+    transition: all .25s ease;
+}
+
+    /* LIGHT BLUE HOVER */
+
+    .submenu a:hover {
+        background: #eaf4ff;
+        color: #163b65;
+        padding-left: 22px;
+    }
+
+/* ======================
+   MOBILE
+====================== */
+
+@media (max-width:768px) {
+
+    .main-navbar {
+        position: relative;
+        z-index: 9999;
+    }
+
+    /* 3 line icon left side */
+
+    .menu-toggle {
+        display: flex;
+        justify-content: flex-start;
+        align-items: center;
+        padding-left: 18px;
+        width: 100%;
+        height: 55px;
+        border: none;
+        cursor: pointer;
+        background: rgba(255,255,255,.78);
+        backdrop-filter: blur(18px);
+        -webkit-backdrop-filter: blur(18px);
+        color: #163b65;
+        font-size: 22px;
+    }
+
+    /* Overlay Menu */
+
+    .nav-menu {
+        position: absolute;
+        top: 55px;
+        left: 0;
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: stretch;
+        padding: 0;
+        background: rgba(255,255,255,.80);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        box-shadow: 0 15px 40px rgba(0,0,0,.15);
+        z-index: 99999;
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-15px);
+        transition: .35s ease;
+    }
+
+        .nav-menu.active {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .nav-menu > li > a {
+            justify-content: space-between;
+            padding: 15px 18px;
+        }
+
+    /* Mobile Submenu */
+
+    .submenu {
+        position: static;
+        display: block;
+        min-width: 100%;
+        border: none;
+        border-radius: 0;
+        box-shadow: none;
+        background: rgba(248,250,252,.75);
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height .35s ease;
+    }
+
+    .has-submenu.open .submenu {
+        max-height: 300px;
+    }
+
+    .has-submenu.open .nav-arrow {
+        transform: rotate(180deg);
+    }
+
+    .submenu a {
+        padding: 12px 20px 12px 45px;
+    }
+        .submenu a:hover {
+            background: #eaf4ff;
+            
+            
+        }
+
+    /* Header */
+
+    .header {
+        padding: 12px 15px;
+        min-height: 72px;
+        height: auto;
+    }
+
+    .logo img {
+        width: 46px;
+        height: 46px;
+    }
+
+    .logo-text h2 {
+        font-size: 18px;
+    }
+
+    .logo-text span {
+        font-size: 11px;
+    }
+}

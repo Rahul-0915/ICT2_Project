@@ -9,6 +9,7 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+	  <_ContentIncludedByDefault Remove="Views\Shared\_StudentsLayout.cshtml" />
 	  <_ContentIncludedByDefault Remove="wwwroot\css\AdminSide_Css\AddAdmin.css" />
 	  <_ContentIncludedByDefault Remove="wwwroot\css\AdminSide_Css\Daily_Attendance.css" />
 	  <_ContentIncludedByDefault Remove="wwwroot\css\AdminSide_Css\Fees_Structure_CreateForm.css" />
@@ -32,6 +33,10 @@
 		<PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
 		<PackageReference Include="QuestPDF" Version="2026.2.4" />
 		<PackageReference Include="Rotativa.AspNetCore" Version="1.4.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <UpToDateCheckInput Remove="Views\Shared\_StudentsLayout.cshtml" />
 	</ItemGroup>
 
 </Project>
