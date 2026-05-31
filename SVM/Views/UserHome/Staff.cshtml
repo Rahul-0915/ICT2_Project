@@ -1,4 +1,4 @@
-﻿@model IEnumerable<SVM.Models.Staff>
+﻿@model SVM.Models.StaffViewModel
 
 @{
     Layout = "~/Views/Shared/UserLayout.cshtml";
@@ -6,81 +6,178 @@
 }
 
 @section PageCss {
-    <link rel="stylesheet"
-          href="~/css/UserSide_Css/Staff_Info.css" />
+    <link rel="stylesheet" href="~/css/UserSide_Css/Staff_Info.css" />
 }
 
 <section class="staff-page">
 
+    <!-- TEACHING STAFF SECTION -->
     <div class="staff-header">
-
         <h1>Our Teaching Staff</h1>
-
-        <p>
-            Meet our experienced and dedicated teachers.
-        </p>
-
+        <p>Meet our experienced and dedicated teachers.</p>
     </div>
 
-    <div class="staff-grid">
+    <div class="staff-grid" id="teachingStaffGrid">
+        @{
+            var teachingStaff = Model.TeachingStaff ?? new List<Staff>();
+            var initialTeachingCount = 8;
+            var teachingToShow = teachingStaff.Take(initialTeachingCount).ToList();
+        }
 
-        @foreach (var item in Model)
+        @foreach (var item in teachingToShow)
         {
             <div class="staff-card">
-
-                <!-- IMAGE -->
-
                 <div class="staff-image">
-
                     @if (!string.IsNullOrEmpty(item.StafPhoto))
                     {
-                        <img src="@item.StafPhoto"
-                             alt="@item.FirstName" />
+                        <img src="@item.StafPhoto" alt="@item.FirstName" />
                     }
                     else
                     {
-                        <img src="~/images/no-image.png"
-                             alt="No Image" />
+                        <img src="~/images/no-image.png" alt="No Image" />
                     }
-
                 </div>
-
-                <!-- CONTENT -->
-
                 <div class="staff-content">
-
-                    <h2>
-                        @item.FirstName @item.LastName
-                    </h2>
-
-                    <span class="designation">
-                        @item.Designation
-                    </span>
-
+                    <h2>@item.FirstName @item.LastName</h2>
+                    <span class="designation">@item.Designation</span>
                     <div class="staff-info">
-
-                        <p>
-                            <strong>Qualification :</strong>
-                            @item.Qualification
-                        </p>
-
-                        <p>
-                            <strong>Experience :</strong>
-                            @item.ExperienceYears Years
-                        </p>
-
-                        <p>
-                            <strong>Email :</strong>
-                            @item.Email
-                        </p>
-
+                        <p><strong>Qualification :</strong> @item.Qualification</p>
+                        <p><strong>Experience :</strong> @item.ExperienceYears Years</p>
+                        <p><strong>Email :</strong> @item.Email</p>
                     </div>
-
                 </div>
-
             </div>
         }
-
     </div>
 
+    @if (teachingStaff.Count > initialTeachingCount)
+    {
+        <div class="see-more-container">
+            <button class="see-more-btn" onclick="loadMoreTeaching()">See More (@(teachingStaff.Count - initialTeachingCount) more)</button>
+        </div>
+    }
+
+    <!-- ADMIN STAFF SECTION -->
+    <div class="staff-header" style="margin-top: 60px;">
+        <h1>Admin Staff</h1>
+        <p>Our administrative team keeping everything running smoothly.</p>
+    </div>
+
+    <div class="staff-grid" id="adminStaffGrid">
+        @{
+            var adminStaff = Model.AdminStaff ?? new List<Staff>();
+            var initialAdminCount = 8;
+            var adminToShow = adminStaff.Take(initialAdminCount).ToList();
+        }
+
+        @foreach (var item in adminToShow)
+        {
+            <div class="staff-card">
+                <div class="staff-image">
+                    @if (!string.IsNullOrEmpty(item.StafPhoto))
+                    {
+                        <img src="@item.StafPhoto" alt="@item.FirstName" />
+                    }
+                    else
+                    {
+                        <img src="~/images/no-image.png" alt="No Image" />
+                    }
+                </div>
+                <div class="staff-content">
+                    <h2>@item.FirstName @item.LastName</h2>
+                    <span class="designation">@item.Designation</span>
+                    <div class="staff-info">
+                        <p><strong>Qualification :</strong> @item.Qualification</p>
+                        <p><strong>Experience :</strong> @item.ExperienceYears Years</p>
+                        <p><strong>Email :</strong> @item.Email</p>
+                    </div>
+                </div>
+            </div>
+        }
+    </div>
+
+    @if (adminStaff.Count > initialAdminCount)
+    {
+        <div class="see-more-container">
+            <button class="see-more-btn" onclick="loadMoreAdmin()">See More (@(adminStaff.Count - initialAdminCount) more)</button>
+        </div>
+    }
+
 </section>
+
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Store complete staff data
+        var teachingStaffData = @Html.Raw(Json.Serialize(Model.TeachingStaff));
+        var adminStaffData = @Html.Raw(Json.Serialize(Model.AdminStaff));
+
+        var teachingCurrentCount = 8;
+        var adminCurrentCount = 8;
+
+        function createStaffCard(staff) {
+            var photoUrl = staff.stafPhoto && staff.stafPhoto !== ""
+                ? staff.stafPhoto
+                : "/images/no-image.png";
+
+            return `
+                        <div class="staff-card">
+                            <div class="staff-image">
+                                <img src="${photoUrl}" alt="${staff.firstName}" />
+                            </div>
+                            <div class="staff-content">
+                                <h2>${staff.firstName} ${staff.lastName || ''}</h2>
+                                <span class="designation">${staff.designation || ''}</span>
+                                <div class="staff-info">
+                                    <p><strong>Qualification :</strong> ${staff.qualification || 'N/A'}</p>
+                                    <p><strong>Experience :</strong> ${staff.experienceYears || 0} Years</p>
+                                    <p><strong>Email :</strong> ${staff.email || 'N/A'}</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+        }
+
+        function loadMoreTeaching() {
+            var remaining = teachingStaffData.slice(teachingCurrentCount);
+            var toLoad = remaining.slice(0, 8);
+
+            if (toLoad.length > 0) {
+                toLoad.forEach(function (staff) {
+                    var cardHtml = createStaffCard(staff);
+                    $('#teachingStaffGrid').append(cardHtml);
+                });
+
+                teachingCurrentCount += toLoad.length;
+
+                if (teachingCurrentCount >= teachingStaffData.length) {
+                    $('.see-more-container:first').remove();
+                } else {
+                    var remainingCount = teachingStaffData.length - teachingCurrentCount;
+                    $('.see-more-container:first .see-more-btn').text('See More (' + remainingCount + ' more)');
+                }
+            }
+        }
+
+        function loadMoreAdmin() {
+            var remaining = adminStaffData.slice(adminCurrentCount);
+            var toLoad = remaining.slice(0, 8);
+
+            if (toLoad.length > 0) {
+                toLoad.forEach(function (staff) {
+                    var cardHtml = createStaffCard(staff);
+                    $('#adminStaffGrid').append(cardHtml);
+                });
+
+                adminCurrentCount += toLoad.length;
+
+                if (adminCurrentCount >= adminStaffData.length) {
+                    $('.see-more-container:last').remove();
+                } else {
+                    var remainingCount = adminStaffData.length - adminCurrentCount;
+                    $('.see-more-container:last .see-more-btn').text('See More (' + remainingCount + ' more)');
+                }
+            }
+        }
+    </script>
+}

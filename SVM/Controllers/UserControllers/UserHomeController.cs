@@ -270,17 +270,32 @@ namespace SVM.Controllers.UserControllers
                 };
 
                 staffList = JsonSerializer.Deserialize<List<Staff>>(data, options);
-
-                // 🔥 PRINCIPAL FIRST
-                staffList = staffList
-                    .OrderByDescending(x =>
-                        x.Designation != null &&
-                        x.Designation.ToLower().Contains("principal"))
-                    .ThenBy(x => x.FirstName)
-                    .ToList();
             }
 
-            return View(staffList);
+            // Organize staff into sections
+            var organizedStaff = new StaffViewModel
+            {
+                // Teaching Staff Section: Principal first, then Teachers
+                TeachingStaff = staffList
+                    .Where(x => x.Designation != null &&
+                               (x.Designation.ToLower() == "principal" ||
+                                x.Designation.ToLower() == "teacher" ||
+                                x.Designation.ToLower().Contains("teaching")))
+                    .OrderByDescending(x => x.Designation.ToLower() == "principal")
+                    .ThenBy(x => x.FirstName)
+                    .ToList(),
+
+                // Admin Staff Section: All admin/clerk staff
+                AdminStaff = staffList
+                    .Where(x => x.Designation != null &&
+                               (x.Designation.ToLower() == "clerk" ||
+                                x.Designation.ToLower() == "admin" ||
+                                x.Designation.ToLower().Contains("admin")))
+                    .OrderBy(x => x.FirstName)
+                    .ToList()
+            };
+
+            return View(organizedStaff);
         }
     }
 }
