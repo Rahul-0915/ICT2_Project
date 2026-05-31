@@ -9,6 +9,7 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace SVM.Controllers
 {
+    [LoginCheckFilter]
     public class AdminController : Controller
     {
         private readonly HttpClient _client;

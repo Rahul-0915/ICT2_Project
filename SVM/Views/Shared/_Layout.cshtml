@@ -62,5 +62,13 @@
     
     <script src="~/js/site.js" asp-append-version="true"></script>
     <script src="/js/Preloader.js"></script>
+    <script>
+        // Global AJAX error handler
+        $(document).ajaxError(function (event, xhr, settings, error) {
+            if (xhr.status === 401 || xhr.status === 403) {
+                window.location.href = '/Account/Login';
+            }
+        });
+    </script>
 </body>
 </html>
