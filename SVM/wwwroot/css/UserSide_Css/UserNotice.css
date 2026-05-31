@@ -62,13 +62,13 @@ body {
 /* CARD */
 
 .notice-card {
-    background: white;
-    
+    background-color:white;
+    border-radius:9px;
     padding: 16px;
     display: flex;
     align-items: flex-start;
     gap: 18px;
-    border: 1px solid #edf1f7;
+    border: 1px solid rgba(0,0,0,0.08);
     box-shadow: 0 4px 18px rgba(0,0,0,0.04);
     transition: 0.3s ease;
 }
@@ -106,18 +106,24 @@ body {
 /* CONTENT */
 
 .notice-content {
+    text-align:left;
     flex: 1;
-    padding-top: 2px;
+    padding: 16px 18px;
+    min-width: 0;
 }
 
 /* TITLE */
 
 .notice-title {
-    margin: 0 0 10px;
-    font-size: 22px;
-    line-height: 1.45;
-    color: #163a70;
-    font-weight: 700;
+    margin: -12px;
+    font-size: 18px;
+    font-weight: 500;
+    background: #fafafa;
+    border-radius: 5px;
+    border: 1px solid rgba(0,0,0,.08);
+    padding: 5px;
+    color: darkblue;
+    margin-bottom: 8px;
 }
 
 /* DATE */
@@ -136,6 +142,7 @@ body {
 
 .notice-description {
     color: #555;
+    
     font-size: 14px;
     line-height: 1.8;
     margin: 0;
@@ -204,3 +211,24 @@ body {
         line-height: 1.7;
     }
 }
+
+.notice-file {
+    padding: 15px 6px;
+    
+    text-align: center;
+}
+
+.view-file-btn {
+    
+    display: inline-block;
+    padding: 10px 8px;
+    background: #83a7da;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 6px;
+    font-weight: 200;
+}
+
+    .view-file-btn:hover {
+        opacity: .9;
+    }

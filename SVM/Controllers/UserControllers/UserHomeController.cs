@@ -39,8 +39,8 @@ namespace SVM.Controllers.UserControllers
 
                 // sirf events + latest 10
                 var latestEvents = updates
-                    .Where(x => x.Category == "event")
-                    .OrderByDescending(x => x.CreatedAt)
+					.Where(x => x.Category == "Event")
+					.OrderByDescending(x => x.CreatedAt)
                     .Take(10)
                     .ToList();
 
@@ -81,12 +81,68 @@ namespace SVM.Controllers.UserControllers
             var updates = JsonSerializer.Deserialize<List<Updates>>(data, options);
 
             var notices = updates
-                .Where(x => x.Category != null &&
-                            x.Category.ToLower() == "notice")
-                .OrderByDescending(x => x.CreatedAt)
+				.Where(x => x.Category != null &&
+			x.Category.ToLower() == "publicnotice")
+				.OrderByDescending(x => x.CreatedAt)
                 .ToList();
 
             return View(notices);
+        }
+
+
+        //for notice count alert
+        [HttpGet]
+        public async Task<IActionResult> GetPublicNotices()
+        {
+            var response = await _client.GetAsync("Updates/active");
+
+            if (!response.IsSuccessStatusCode)
+                return Json(new List<Updates>());
+
+            var data = await response.Content.ReadAsStringAsync();
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var updates = JsonSerializer.Deserialize<List<Updates>>(data, options);
+
+            var notices = updates?
+                .Where(x => x.Category != null && x.Category.ToLower() == "publicnotice")
+                .OrderByDescending(x => x.CreatedAt)
+                .ToList();
+
+            return Json(notices ?? new List<Updates>());
+        }
+        // New method: Get latest notice date (timestamp based)
+        [HttpGet]
+        public async Task<IActionResult> GetLatestNoticeTimestamp()
+        {
+            var response = await _client.GetAsync("Updates/active");
+
+            if (!response.IsSuccessStatusCode)
+                return Json(new { lastRead = DateTime.MinValue.ToString("o") });
+
+            var data = await response.Content.ReadAsStringAsync();
+
+            var options = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
+
+            var updates = JsonSerializer.Deserialize<List<Updates>>(data, options);
+
+            var latestNotice = updates?
+                .Where(x => x.Category != null && x.Category.ToLower() == "publicnotice")
+                .OrderByDescending(x => x.CreatedAt)
+                .FirstOrDefault();
+
+            return Json(new
+            {
+                lastRead = DateTime.UtcNow.ToString("o"),
+                latestTimestamp = latestNotice?.CreatedAt.ToString("o") ?? DateTime.MinValue.ToString("o")
+            });
         }
 
         // =========================
@@ -115,8 +171,8 @@ namespace SVM.Controllers.UserControllers
 
             var gallery = updates
                 .Where(x => x.Category != null &&
-                            x.Category.ToLower() == "event")
-                .OrderByDescending(x => x.CreatedAt)
+							x.Category.ToLower() == "event")
+				.OrderByDescending(x => x.CreatedAt)
                 .ToList();
 
             return View(gallery);
@@ -247,8 +303,8 @@ namespace SVM.Controllers.UserControllers
                     //x.Title != null &&
                     //x.Title.ToLower() == "toperstudents")
                 x.Category != null &&
-                x.Category.ToLower() == "toperstudents")
-                .OrderByDescending(x => x.CreatedAt)
+				x.Category.ToLower() == "topperstudents")
+				.OrderByDescending(x => x.CreatedAt)
                 .ToList();
 
             ViewBag.TopperStudents = topperStudents;

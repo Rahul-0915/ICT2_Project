@@ -30,42 +30,66 @@
 
             @foreach (var item in Model)
             {
+                var extension = "";
+
+                if (!string.IsNullOrEmpty(item.FilePath))
+                {
+                    extension = System.IO.Path
+                    .GetExtension(item.FilePath)
+                    .ToLower();
+                }
+
                 <div class="notice-card">
 
-                    <!-- IMAGE -->
                     @if (!string.IsNullOrEmpty(item.FilePath))
                     {
-                        <a href="@item.FilePath"
-                           target="_blank"
-                           class="notice-image">
+                        // IMAGE FILES
+                        if (extension == ".jpg" ||
+                        extension == ".jpeg" ||
+                        extension == ".png" ||
+                        extension == ".gif" ||
+                        extension == ".webp")
+                        {
+                            <a href="@item.FilePath"
+                               target="_blank"
+                               class="notice-image">
 
-                            <img src="@item.FilePath"
-                                 alt="@item.Title" />
+                                <img src="@item.FilePath"
+                                     alt="@item.Title" />
 
-                        </a>
+                            </a>
+                        }
+                        else
+                        {
+                            // PDF / WORD / EXCEL
+                            <div class="notice-file">
+
+                                <div class="notice-file">
+                                 
+                                    <a href="@item.FilePath"
+                                       target="_blank"
+                                       class="view-file-btn">
+
+                                        <i class="fa-solid fa-paperclip"></i>
+                                        View Attachment
+
+                                    </a>
+                                </div>
+
+                            </div>
+                        }
                     }
 
-                    <!-- CONTENT -->
-
                     <div class="notice-content">
-
-                        <!-- TITLE -->
 
                         <h2 class="notice-title">
                             @item.Title
                         </h2>
 
-                        <!-- DATE -->
-
                         <div class="notice-date">
-
                             <i class="fa-regular fa-calendar"></i>
-
                             @item.CreatedAt.ToString("MMMM dd, yyyy")
-
                         </div>
-
-                        <!-- DESCRIPTION -->
 
                         <p class="notice-description">
                             @item.Description
@@ -86,3 +110,18 @@
     }
 
 </div>
+$(function () {
+
+    let latestId = @(
+        Model.Any()
+        ? Model.Max(x => x.Id)
+        : 0
+    );
+
+    let seenId = parseInt(localStorage.getItem("PublicNoticeSeen") || "0");
+
+    if (latestId > seenId) {
+        localStorage.setItem("PublicNoticeSeen", latestId);
+    }
+
+});

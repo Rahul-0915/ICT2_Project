@@ -1,218 +1,254 @@
 ﻿@{
-	Layout = "~/Views/Shared/_StudentsLayout.cshtml";
+    Layout = "~/Views/Shared/_StudentsLayout.cshtml";
 }
-<style>
 
-	.notice-container {
-		max-width: 850px;
-		margin: 20px auto;
-		padding: 15px;
-	}
 
-	.notice-card {
-		background: #fff;
-		border-radius: 16px;
-		padding: 16px;
-		margin-bottom: 16px;
-		box-shadow: 0 8px 22px rgba(0,0,0,.08);
-		border-left: 5px solid #2563eb;
-		transition: 0.3s;
-	}
-
-		.notice-card:hover {
-			transform: translateY(-3px);
-		}
-
-	.notice-media {
-		width: 100%;
-		height: auto;
-		max-height: 260px;
-		object-fit: contain;
-		border-radius: 12px;
-		margin-bottom: 12px;
-		cursor: pointer;
-	}
-
-	/* PDF */
-	.pdf-box {
-		display: block;
-		padding: 12px;
-		background: #f3f4f6;
-		border-radius: 10px;
-		text-decoration: none;
-		color: #111827;
-		font-weight: 600;
-		margin-bottom: 12px;
-		border: 1px dashed #9ca3af;
-	}
-
-		.pdf-box:hover {
-			background: #e5e7eb;
-		}
-
-	.notice-title {
-		font-size: 18px;
-		font-weight: 700;
-		display: flex;
-		justify-content: space-between;
-		align-items: center;
-	}
-
-	.notice-desc {
-		font-size: 14px;
-		color: #4b5563;
-		margin-top: 10px;
-		line-height: 1.6;
-		text-align: left;
-	}
-
-	.badge {
-		background: #22c55e;
-		color: #fff;
-		font-size: 11px;
-		padding: 4px 10px;
-		border-radius: 12px;
-	}
-
-	/* LOADING */
-	.loading {
-		text-align: center;
-		padding: 25px;
-		color: #6b7280;
-	}
-
-	/* MODAL */
-	.img-modal {
-		display: none;
-		position: fixed;
-		z-index: 9999;
-		left: 0;
-		top: 0;
-		width: 100%;
-		height: 100%;
-		background-color: rgba(0,0,0,0.9);
-	}
-
-	.modal-content {
-		margin: auto;
-		display: block;
-		max-width: 90%;
-		max-height: 85%;
-		border-radius: 10px;
-		margin-top: 60px;
-	}
-
-	.img-modal .close {
-		position: absolute;
-		top: 20px;
-		right: 35px;
-		color: white;
-		font-size: 40px;
-		cursor: pointer;
-	}
-
-</style>
+<link rel="stylesheet"
+      href="~/css/StudentsSide_Css/StudentsNotice.css"
+      asp-append-version="true" />
 
 <div class="notice-container">
 
-	<h2>📢 Notice Board</h2>
+    <div class="notice-heading">
+       E-Notice Board
+        <p class="notice-subheading">
+            Important updates, examination notices, events and official circulars for students and parents.
+        </p>
+    </div>
+    <hr /><br /><hr />
+    <div id="noticeList" class="loading">
+        Loading Notices...
+    </div>
 
-	<div id="noticeList" class="loading">
-		Loading notices...
-	</div>
+    <div class="more-notices" id="moreSection" style="display:none;">
+        <button class="more-btn" id="showMoreBtn">
+            View More
+        </button>
+    </div>
 
 </div>
 
-<!-- IMAGE MODAL -->
 <div id="imgModal" class="img-modal">
-	<span class="close">&times;</span>
-	<img class="modal-content" id="modalImg">
+    <span class="close">&times;</span>
+    <img class="modal-content" id="modalImg">
 </div>
+
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 
 <script>
 
-	$(document).ready(function () {
+    $(function () {
 
-		let baseUrl = "https://localhost:7191";
+        let baseUrl = "https://localhost:7191";
 
-		$.ajax({
-			url: '/StudentPanel/GetActiveNotices',
-			type: 'GET',
+        let allNotices = [];
+        let visibleCount = 15;
 
-			success: function (data) {
+        loadNotices();
 
-				let html = "";
+        function loadNotices() {
 
-				if (!data || data.length === 0) {
-					$("#noticeList").html("<p>No active notices</p>");
-					return;
-				}
+            $.get('/StudentPanel/GetActiveNotices', function (data) {
 
-				data.forEach(item => {
+                allNotices = data || [];
 
-					let file = item.filePath ? baseUrl + item.filePath : "";
-					let fileHtml = "";
+                renderNotices();
 
-					// IMAGE
-					if (file && (file.endsWith(".jpg") || file.endsWith(".png") || file.endsWith(".jpeg"))) {
+            }).fail(function () {
 
-						fileHtml = `<img src="${file}" class="notice-media preview-img" />`;
-					}
+                $("#noticeList").html(
+                    "<div class='loading'>Unable to load notices.</div>"
+                );
+            });
+        }
 
-					// PDF
-					else if (file && file.endsWith(".pdf")) {
+        function renderNotices() {
 
-						fileHtml = `
-							<a href="${file}" target="_blank" class="pdf-box">
-								📄 View PDF Attachment
-							</a>
-						`;
-					}
+            let html = "";
+            if (allNotices.length > 0) {
 
-					html += `
-						<div class="notice-card">
+                let latestId = Math.max(
+                    ...allNotices.map(x => x.id)
+                );
 
-							${fileHtml}
+                localStorage.setItem(
+                    "StudentNoticeSeen",
+                    latestId
+                );
+            }
 
-							<div class="notice-title">
-								${item.title || "Notice"}
-								<span class="badge">${item.category || "Active"}</span>
-							</div>
+            let noticesToShow = allNotices.slice(0, visibleCount);
 
-							<div class="notice-desc">
-								${item.description || ""}
-							</div>
+            noticesToShow.forEach(item => {
 
-						</div>
-					`;
-				});
+                let date = new Date(item.createdAt);
 
-				$("#noticeList").html(html);
-			},
+                let day = date.getDate();
 
-			error: function () {
-				$("#noticeList").html("<p>Error loading notices</p>");
-			}
-		});
+                let month = date.toLocaleString('en-US',
+                    {
+                        month: 'short'
+                    }).toUpperCase();
 
-	});
+                let year = date.getFullYear();
 
-	/* IMAGE CLICK OPEN */
-	$(document).on("click", ".preview-img", function () {
-		$("#imgModal").show();
-		$("#modalImg").attr("src", $(this).attr("src"));
-	});
+                let file = item.filePath
+                    ? baseUrl + item.filePath
+                    : "";
 
-	/* CLOSE MODAL */
-	$(".close").click(function () {
-		$("#imgModal").hide();
-	});
+                let previewHtml = "";
 
-	$(window).click(function (e) {
-		if (e.target.id === "imgModal") {
-			$("#imgModal").hide();
-		}
-	});
+                if (file) {
+
+                    let ext = file.split('.').pop().toLowerCase();
+
+                    if (["jpg", "jpeg", "png", "webp"].includes(ext)) {
+
+                        previewHtml = `
+                            <div class="notice-preview">
+                                <img src="${file}"
+                                     class="preview-img" />
+                            </div>
+                        `;
+                    }
+
+                    else if (ext === "pdf") {
+
+                        previewHtml = `
+                        <div class="notice-preview">
+                            <a href="${file}"
+                               target="_blank"
+                               class="file-box">
+
+                                <span class="file-icon">📄</span>
+                                <span class="file-text">
+                                    View PDF
+                                </span>
+
+                            </a>
+                        </div>`;
+                    }
+
+                    else if (["doc", "docx"].includes(ext)) {
+
+                        previewHtml = `
+                        <div class="notice-preview">
+                            <a href="${file}"
+                               target="_blank"
+                               class="file-box">
+
+                                <span class="file-icon">📝</span>
+                                <span class="file-text">
+                                    View Word
+                                </span>
+
+                            </a>
+                        </div>`;
+                    }
+
+                    else if (["xls", "xlsx"].includes(ext)) {
+
+                        previewHtml = `
+                        <div class="notice-preview">
+                            <a href="${file}"
+                               target="_blank"
+                               class="file-box">
+
+                                <span class="file-icon">📊</span>
+                                <span class="file-text">
+                                    View Excel
+                                </span>
+
+                            </a>
+                        </div>`;
+                    }
+                }
+
+                html += `
+
+                <div class="notice-card">
+
+                    <div class="notice-row">
+
+                        <div class="notice-date">
+
+                            <div>
+                                <div class="day">${day}</div>
+                                <div class="month">${month}</div>
+                                <div class="year">${year}</div>
+                            </div>
+
+                        </div>
+
+                        <div class="notice-content">
+
+                            <div class="notice-title">
+                                ${item.title || 'Notice'}
+                            </div>
+
+                            <div class="notice-desc collapsed">
+                                ${item.description || ''}
+                            </div>
+
+                        </div>
+
+                        ${previewHtml}
+
+                    </div>
+
+                </div>
+                `;
+            });
+
+            $("#noticeList").html(html);
+
+            if (allNotices.length > visibleCount) {
+
+                $("#moreSection").show();
+
+            } else {
+
+                $("#moreSection").hide();
+            }
+        }
+
+        $("#showMoreBtn").on("click", function () {
+
+            visibleCount += 15;
+
+            renderNotices();
+
+            if (visibleCount >= allNotices.length) {
+
+                $("#moreSection").hide();
+            }
+        });
+
+    });
+
+    /* IMAGE PREVIEW */
+
+    $(document).on("click", ".preview-img", function () {
+
+        $("#modalImg").attr(
+            "src",
+            $(this).attr("src")
+        );
+
+        $("#imgModal").show();
+    });
+
+    $(".close").click(function () {
+
+        $("#imgModal").hide();
+    });
+
+    $(window).click(function (e) {
+
+        if (e.target.id === "imgModal") {
+
+            $("#imgModal").hide();
+        }
+    });
 
 </script>

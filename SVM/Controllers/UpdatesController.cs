@@ -232,15 +232,41 @@ namespace SVM.Controllers
 
         private void LoadCategoriesAndStatus(string selectedCategory = null, int? selectedStatus = null)
         {
-            var categories = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "", Text = "-- Select Category --" },
-                new SelectListItem { Value = "notice", Text = "Notice" },
-                new SelectListItem { Value = "event", Text = "Event" },
-                new SelectListItem { Value = "ToperStudents", Text = "ToperStudents" }
+			var categories = new List<SelectListItem>
+                {
+	                new SelectListItem { Value = "", Text = "-- Select Category --" },
 
-            };
-            ViewBag.CategoryList = new SelectList(categories, "Value", "Text", selectedCategory);
+	                new SelectListItem
+	                {
+		                Value = "PublicNotice",
+		                Text = "Public Notice"
+	                },
+
+	                new SelectListItem
+	                {
+		                Value = "Event",
+		                Text = "Event"
+	                },
+
+	                new SelectListItem
+	                {
+		                Value = "TopperStudents",
+		                Text = "Topper Students"
+	                },
+
+	                new SelectListItem
+	                {
+		                Value = "StudentNotice",
+		                Text = "Student Notice"
+	                },
+
+	                new SelectListItem
+	                {
+		                Value = "StaffNotice",
+		                Text = "Staff Notice"
+	                }
+                };
+			ViewBag.CategoryList = new SelectList(categories, "Value", "Text", selectedCategory);
 
             var statuses = new List<SelectListItem>
             {

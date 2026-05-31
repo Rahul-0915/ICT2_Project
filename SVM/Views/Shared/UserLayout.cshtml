@@ -1,139 +1,249 @@
-﻿<!DOCTYPE html>
-<html lang="en">
-<head>
-	<meta charset="utf-8" />
-	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-	<title>@ViewBag.Title - SVM</title>
-	<link rel="stylesheet" href="@Url.Content("~/css/UserSide_Css/User.css")" />
+﻿	<!DOCTYPE html>
+	<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<title>@ViewBag.Title - SVM</title>
+		<link rel="stylesheet" href="@Url.Content("~/css/UserSide_Css/User.css")" />
 
-	@RenderSection("PageCss", required: false)
+		@RenderSection("PageCss", required: false)
 
+		<style>
+			.notice-badge {
+				position: relative;
+				top: -8px;
+				margin-left: 3px;
+				background: #ef4444;
+				color: #fff;
+				min-width: 18px;
+				height: 18px;
+				line-height: 18px;
+				text-align: center;
+				border-radius: 999px;
+				font-size: 10px;
+				font-weight: 700;
+				display: none;
+				padding: 0 5px;
+			}
+		</style>
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+	</head>
+	<body>
 
-	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
-</head>
-<body>
-
-	<!-- 🔥 PRELOADER (ONLY HOME PAGE) -->
-	@if (ViewBag.ShowPreloader == true)
-	{
-		<div id="preloader">
-			<div class="loader-content">
-				<div class="coin">
-					<div class="side front">
-						<img src="~/images/logo1_hd.png" />
+		<!-- 🔥 PRELOADER (ONLY HOME PAGE) -->
+		@if (ViewBag.ShowPreloader == true)
+		{
+			<div id="preloader">
+				<div class="loader-content">
+					<div class="coin">
+						<div class="side front">
+							<img src="~/images/logo1_hd.png" />
+						</div>
+						<div class="side back">
+							<img src="~/images/logo2_hd.png" />
+						</div>
 					</div>
-					<div class="side back">
-						<img src="~/images/logo2_hd.png" />
-					</div>
+					<h2>S.V.M</h2>
 				</div>
-				<h2>S.V.M</h2>
+			</div>
+		}
+
+		<!-- 🔹 TOPBAR - LOGO ADDED 🔹 -->
+		<div class="topbar">
+			<div class="logo">
+				<img src="@Url.Content("~/images/logo2_hd.png")" alt="logo" style="width: 60px; height: 60px; object-fit: contain;">
+
+				<div>
+					<h1>S.V.M</h1>
+					<p>EXCELLENCE IN EDUCATION</p>
+				</div>
+			</div>
+
+			<div class="contact">
+				<span>📞 +91 9998569069</span>
+				<span>✉️ shardaschool92@gmail.com</span>
 			</div>
 		</div>
-	}
 
-	<!-- 🔹 TOPBAR - LOGO ADDED 🔹 -->
-	<div class="topbar">
-		<div class="logo">
-			<img src="@Url.Content("~/images/logo2_hd.png")" alt="logo" style="width: 60px; height: 60px; object-fit: contain;">
+		<!-- 🔹 NAVBAR -->
+		<div class="navbar">
+			<ul class="menu" id="menu">
+				<li><a asp-controller="UserHome" asp-action="UserHome">Home</a></li>
+				<li><a asp-controller="UserHome" asp-action="About">About Us</a></li>
 
-			<div>
-				<h1>S.V.M</h1>
-				<p>EXCELLENCE IN EDUCATION</p>
-			</div>
-		</div>
-
-		<div class="contact">
-			<span>📞 +91 9998569069</span>
-			<span>✉️ shardaschool92@gmail.com</span>
-		</div>
-	</div>
-
-	<!-- 🔹 NAVBAR -->
-	<div class="navbar">
-		<ul class="menu" id="menu">
-			<li><a asp-controller="UserHome" asp-action="UserHome">Home</a></li>
-			<li><a asp-controller="UserHome" asp-action="About">About Us</a></li>
-
-			<li>
-				<a asp-controller="AdmissionInquiries"
-				   asp-action="Create">
-					Admission
-				</a>
-			</li>
+				<li>
+					<a asp-controller="AdmissionInquiries"
+					   asp-action="Create">
+						Admission
+					</a>
+				</li>
 			
-			<li>
-				<a asp-controller="UserHome"
-				   asp-action="Staff">
-					Staff
-				</a>
-			</li>
-			<li>
-				<a asp-controller="UserHome"
-				   asp-action="Notice">
-					Notice
-				</a>
-			</li>
+				<li>
+					<a asp-controller="UserHome"
+					   asp-action="Staff">
+						Staff
+					</a>
+				</li>
+				<li>
+					<a asp-controller="UserHome"
+					   asp-action="Notice">
 
-            <li>
-                <a asp-controller="UserHome"
-                   asp-action="Gallery">
-                  SVM Gallery
-                </a>
-            </li>
+						Notice
+
+						<span id="publicNoticeBadge"
+							  class="notice-badge"
+							  style="display:none;">
+						</span>
+
+					</a>
+				</li>
+
+				<li>
+					<a asp-controller="UserHome"
+					   asp-action="Gallery">
+					  SVM Gallery
+					</a>
+				</li>
             
-        </ul>
-		<div class="menu-toggle" onclick="toggleMenu()">☰</div>
-		<a asp-controller="Account"
-		   asp-action="Login">
-			<button class="login-btn">Student Login</button>
-		</a>
+			</ul>
+			<div class="menu-toggle" onclick="toggleMenu()">☰</div>
+			<a asp-controller="Account"
+			   asp-action="Login">
+				<button class="login-btn">Student Login</button>
+			</a>
        
       
-    </div>
+		</div>
 
-	<!-- 🔥 PAGE CONTENT -->
-	@RenderBody()
+		<!-- 🔥 PAGE CONTENT -->
+		@RenderBody()
 
-	<!-- 🔹 FOOTER -->
-	<footer class="footer">
-		<div class="footer-container">
-			<div class="footer-col">
-				<h3>S.V.M School</h3>
-				<p>
-					Sharda Vidyamandir Gujarati Medium & S.V.M English Medium School
-					managed by Shiv Shakti Education Trust.
-				</p>
-			</div>
+		<!-- 🔹 FOOTER -->
+		<footer class="footer">
+			<div class="footer-container">
+				<div class="footer-col">
+					<h3>S.V.M School</h3>
+					<p>
+						Sharda Vidyamandir Gujarati Medium & S.V.M English Medium School
+						managed by Shiv Shakti Education Trust.
+					</p>
+				</div>
 
-			<div class="footer-col">
-				<h3>Quick Links</h3>
-				<ul>
-					<li><a href="/">Home</a></li>
-					<li><a href="/Home/About">About Us</a></li>
-				</ul>
-			</div>
+				<div class="footer-col">
+					<h3>Quick Links</h3>
+					<ul>
+						<li><a href="/">Home</a></li>
+						<li><a href="/Home/About">About Us</a></li>
+					</ul>
+				</div>
 
-			<div class="footer-col">
-				<h3>Contact</h3>
-				<p>📞 +91 9998569069</p>
-				<p>📍 290 - Gopal Nagar OPP, G.H.BORAD , Pandesara, Surat, Gujarat 394210</p>
-			</div>
+				<div class="footer-col">
+					<h3>Contact</h3>
+					<p>📞 +91 9998569069</p>
+					<p>📍 290 - Gopal Nagar OPP, G.H.BORAD , Pandesara, Surat, Gujarat 394210</p>
+				</div>
 
-			<div class="footer-col">
-				<h3>Follow</h3>
-				<div class="social-icons">
-					<a href="https://www.facebook.com/shardavidhyamandir92" class="fb"><i class="fab fa-facebook-f"></i></a>
-					<a href="https://www.instagram.com/shardaschool92" class="insta"><i class="fab fa-instagram"></i></a>
+				<div class="footer-col">
+					<h3>Follow</h3>
+					<div class="social-icons">
+						<a href="https://www.facebook.com/shardavidhyamandir92" class="fb"><i class="fab fa-facebook-f"></i></a>
+						<a href="https://www.instagram.com/shardaschool92" class="insta"><i class="fab fa-instagram"></i></a>
+					</div>
 				</div>
 			</div>
-		</div>
 
-		<div class="footer-bottom">
-			<p>© 2026 S.V.M School</p>
-		</div>
-	</footer>
+			<div class="footer-bottom">
+				<p>© 2026 S.V.M School</p>
+			</div>
+		</footer>
 
-	<script src="@Url.Content("~/js/UserSide_Js/UserScript.js")"></script>
-	@RenderSection("Scripts", required: false)
-</body>
-</html>
+		<script src="@Url.Content("~/js/UserSide_Js/UserScript.js")"></script>
+		@RenderSection("Scripts", required: false)
+
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script>
+
+		$(function () {
+
+			// NOTICE BADGE - DATE BASED TRACKING
+			function updateNoticeBadge() {
+				$.get('/UserHome/GetPublicNotices', function (notices) {
+
+					if (!notices || notices.length === 0) {
+						$("#publicNoticeBadge").hide();
+						return;
+					}
+
+					// Last read timestamp from localStorage
+					let lastReadStr = localStorage.getItem("PublicNoticeLastRead");
+					let lastReadDate = lastReadStr ? new Date(lastReadStr) : null;
+
+					// Count unread notices
+					let unreadCount = 0;
+
+					for (let i = 0; i < notices.length; i++) {
+						let noticeDate = new Date(notices[i].createdAt);
+
+						if (lastReadDate === null) {
+							unreadCount = notices.length;
+							break;
+						}
+
+						if (noticeDate > lastReadDate) {
+							unreadCount++;
+						}
+					}
+
+					if (unreadCount > 0) {
+						$("#publicNoticeBadge")
+							.text(unreadCount)
+							.show();
+					} else {
+						$("#publicNoticeBadge").hide();
+					}
+				});
+			}
+
+			// MARK AS READ - jab notice page open kare
+			function markNoticesAsRead() {
+				$.get('/UserHome/GetPublicNotices', function (notices) {
+					if (notices && notices.length > 0) {
+						let latestDate = null;
+						for (let i = 0; i < notices.length; i++) {
+							let noticeDate = new Date(notices[i].createdAt);
+							if (latestDate === null || noticeDate > latestDate) {
+								latestDate = noticeDate;
+							}
+						}
+
+						if (latestDate) {
+							localStorage.setItem("PublicNoticeLastRead", latestDate.toISOString());
+							$("#publicNoticeBadge").hide();
+						}
+					}
+				});
+			}
+
+			// Initial badge update
+			updateNoticeBadge();
+
+			// Agar Notice page pe ho toh mark as read
+			if (window.location.pathname.toLowerCase().includes('notice')) {
+				markNoticesAsRead();
+			}
+
+			// Notice link click pe badge clear
+			$('a[href*="Notice"]').on('click', function () {
+				setTimeout(function () {
+					markNoticesAsRead();
+				}, 500);
+			});
+
+			// Har 1 minute me badge refresh
+			setInterval(updateNoticeBadge, 60000);
+		});
+
+	</script>
+	</body>
+	</html>

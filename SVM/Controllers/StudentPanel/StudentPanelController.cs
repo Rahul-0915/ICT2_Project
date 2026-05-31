@@ -324,7 +324,12 @@ namespace SVM.Controllers.StudentPanel
                 responseData,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-            return Json(notices ?? new List<Updates>());
-        }
+			var studentNotices = notices?
+	.Where(x => x.Category == "StudentNotice")
+	.OrderByDescending(x => x.CreatedAt)
+	.ToList();
+
+			return Json(studentNotices ?? new List<Updates>());
+		}
     }
 }

@@ -21,7 +21,24 @@
 	<link rel="stylesheet"
 		  href="~/css/StudentsSide_Css/Navbar.css"
 		  asp-append-version="true" />
-
+		  <style>
+		.notice-badge {
+			position: relative;
+			top: -8px;
+			margin-left: 3px;
+			background: #ef4444;
+			color: #fff;
+			min-width: 18px;
+			height: 18px;
+			line-height: 18px;
+			text-align: center;
+			border-radius: 999px;
+			font-size: 10px;
+			font-weight: 700;
+			display: none;
+			padding: 0 5px;
+		}
+		  </style>
 </head>
 <body>
 	<header>
@@ -116,13 +133,23 @@
 				</li>
 
 				<li><a href="#">Timetable</a></li>
+				
 				<li>
-					<a asp-controller="StudentPanel" asp-action="NoticeBoard">
+					<a asp-controller="StudentPanel"
+					   asp-action="NoticeBoard">
+
 						<i class="fas fa-bell"></i>
 						Notice Board
+
+						<span id="noticeBadge"
+							  class="notice-badge"
+							  style="display:none;">
+						</span>
+
 					</a>
 				</li>
-				<li><a href="#">Gallery</a></li>
+				</li>
+				
 
 			</ul>
 
@@ -145,6 +172,7 @@
 
 </body>
 </html>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 <script>
 
 	const menuBtn = document.querySelector(".menu-toggle");
@@ -216,5 +244,30 @@
 			dropdown.classList.remove("show");
 		}
 	});
+	$(function () {
 
+		$.get('/StudentPanel/GetActiveNotices', function (data) {
+
+			console.log("Notices:", data);
+
+			let seenId = parseInt(
+				localStorage.getItem("StudentNoticeSeen") || "0"
+			);
+
+			console.log("Seen:", seenId);
+
+			let unreadCount =
+				data.filter(x => x.id > seenId).length;
+
+			console.log("Unread:", unreadCount);
+
+			if (unreadCount > 0) {
+
+				$("#noticeBadge")
+					.text(unreadCount)
+					.show();
+			}
+		});
+
+	});
 </script>

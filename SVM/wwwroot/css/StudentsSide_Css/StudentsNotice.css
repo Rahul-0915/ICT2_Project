@@ -1,0 +1,255 @@
+﻿/* ==========================
+   PAGE
+========================== */
+
+.notice-container {
+    max-width: 950px;
+    margin: 20px auto;
+    padding: 0 12px;
+}
+
+.notice-heading {
+    font-size: 26px;
+    font-weight: 700;
+    color: #1e293b;
+    margin-bottom: 15px;
+}
+.notice-subheading {
+    margin-top: 6px;
+    font-size: 14px;
+    color: #64748b;
+}
+/* ==========================
+   NOTICE CARD
+========================== */
+
+.notice-card {
+    background: #fff;
+    border: 1px solid #e5e7eb;
+    border-radius: 14px;
+    margin-bottom: 14px;
+    overflow: hidden;
+    transition: .25s;
+}
+
+
+    .notice-card:hover {
+        box-shadow: 0 5px 18px rgba(0,0,0,.08);
+    }
+
+.notice-row {
+    display: flex;
+    align-items: stretch;
+    min-height: 130px;
+}
+
+/* ==========================
+   DATE BOX
+========================== */
+
+.notice-date {
+    width: 90px;
+    flex-shrink: 0;
+    text-align: center;
+    border-right: 1px solid #eef2f7;
+    background: #fafafa;
+    padding: 12px 8px;
+}
+
+.day {
+    font-size: 34px;
+    font-weight: 700;
+    color: #2563eb;
+    line-height: 1;
+}
+
+.month {
+    margin-top: 6px;
+    font-size: 13px;
+    font-weight: 600;
+    color: #475569;
+    text-transform: uppercase;
+}
+
+.year {
+    margin-top: 4px;
+    font-size: 13px;
+    color: #64748b;
+}
+
+/* ==========================
+   CONTENT
+========================== */
+
+.notice-content {
+    text-align:left;
+    flex: 1;
+    padding: 16px 18px;
+    min-width: 0;
+}
+
+.notice-title {
+    margin:-12px;
+    font-size: 18px;
+    font-weight: 500;
+    background: #fafafa;
+    border-radius: 5px;
+    border:1px solid rgba(0,0,0,.08);
+    padding: 5px;
+    color:darkblue;
+    margin-bottom: 8px;
+}
+
+.notice-desc {
+    color: #475569;
+    line-height: 1.6;
+    font-size: 14px;
+    word-break: break-word;
+}
+
+  
+
+.view-more {
+    display: inline-block;
+    margin-top: 8px;
+    color: #2563eb;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+/* ==========================
+   FILE SECTION
+========================== */
+
+.notice-preview {
+    width: 130px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-left: 1px solid #eef2f7;
+    background: #fafafa;
+    padding: 12px;
+}
+
+    .notice-preview img {
+        width: 100px;
+        
+        object-fit: cover;
+        
+        cursor: pointer;
+    }
+
+.file-box {
+    text-align: center;
+    text-decoration: none;
+    color: #334155;
+}
+
+.file-icon {
+    font-size: 42px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.file-text {
+    font-size: 12px;
+    font-weight: 600;
+}
+
+/* ==========================
+   VIEW MORE BUTTON
+========================== */
+
+.more-notices {
+    text-align: center;
+    margin-top: 20px;
+}
+
+.more-btn {
+    border: none;
+    background: #2563eb;
+    color: white;
+    padding: 10px 22px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+}
+
+    .more-btn:hover {
+        background: #1d4ed8;
+    }
+
+/* ==========================
+   LOADING
+========================== */
+
+.loading {
+    text-align: center;
+    padding: 40px;
+    color: #64748b;
+}
+
+/* ==========================
+   MODAL
+========================== */
+
+.img-modal {
+    display: none;
+    position: fixed;
+    z-index: 99999;
+    inset: 0;
+    background: rgba(0,0,0,.85);
+}
+
+.modal-content {
+    display: block;
+    margin: 40px auto;
+    max-width: 90%;
+    max-height: 85%;
+}
+
+.close {
+    position: absolute;
+    right: 30px;
+    top: 20px;
+    color: white;
+    font-size: 40px;
+    cursor: pointer;
+}
+
+/* ==========================
+   MOBILE
+========================== */
+
+@media(max-width:768px) {
+
+    .notice-row {
+        flex-direction: column;
+    }
+
+    .notice-date {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid #eef2f7;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .notice-preview {
+        width: 100%;
+        border-left: none;
+        border-top: 1px solid #eef2f7;
+    }
+
+    .day {
+        font-size: 24px;
+    }
+
+    .notice-title {
+        font-size: 16px;
+    }
+}
