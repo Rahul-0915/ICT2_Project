@@ -1,0 +1,161 @@
+﻿@{
+	Layout = "~/Views/Shared/_StudentsLayout.cshtml";
+}
+@model SVM.Models.Student
+<style>
+	.dashboard-container {
+		max-width: 1000px;
+		margin: 20px auto;
+		padding: 20px;
+	}
+
+	.student-card {
+		text-align: center;
+		background: #fff;
+		padding: 20px;
+		border-radius: 15px;
+		box-shadow: 0 3px 12px rgba(0,0,0,.12);
+	}
+
+	.student-photo {
+		width: 120px;
+		height: 120px;
+		border-radius: 50%;
+		object-fit: cover;
+		border: 4px solid #fff;
+		box-shadow: 0 0 12px rgba(0,0,0,.15);
+	}
+
+	.student-card h2 {
+		margin-top: 12px;
+		font-size: 22px;
+		color: #333;
+	}
+
+	.menu-grid {
+		margin-top: 20px;
+		display: grid;
+		grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
+		gap: 15px;
+	}
+
+	.menu-box {
+		background: #fff;
+		padding: 18px;
+		border-radius: 12px;
+		text-decoration: none;
+		color: #333;
+		font-size: 18px;
+		display: flex;
+		align-items: center;
+		gap: 15px;
+		box-shadow: 0 3px 10px rgba(0,0,0,.08);
+		transition: all .3s ease;
+	}
+
+		.menu-box:hover {
+			transform: translateY(-3px);
+		}
+
+		.menu-box i {
+			font-size: 28px;
+			color: #2a5298;
+		}
+
+	.student-card h2 {
+		margin-top: 12px;
+		font-size: 24px;
+		color: #333;
+		font-weight: 600;
+	}
+
+	.father-name {
+		margin-top: 5px;
+		color: #666;
+		font-size: 15px;
+	}
+</style>
+@* <div class="profile-card">
+
+	<div class="profile-header">
+
+		<img src="@Model.StudentPhoto"
+			 class="profile-img" />
+
+		<h2>
+			@Model.FirstName @Model.LastName
+		</h2>
+
+		<p>Student Profile</p>
+
+	</div>
+
+	<div class="profile-body">
+
+		<div class="info-row">
+			<label>Full Name</label>
+			<span>@Model.FirstName @Model.LastName</span>
+		</div>
+
+		<div class="info-row">
+			<label>Father Name</label>
+			<span>@Model.FatherName</span>
+		</div>
+
+		<div class="info-row">
+			<label>Email</label>
+			<span>@Model.Email</span>
+		</div>
+
+		<div class="info-row">
+			<label>Phone</label>
+			<span>@Model.Phone</span>
+		</div>
+
+		<div class="info-row">
+			<label>Address</label>
+			<span>@Model.Address</span>
+		</div>
+
+	</div>
+
+</div>*@
+<div class="dashboard-container">
+
+	<div class="student-card">
+
+		<img src="@Model.StudentPhoto" class="student-photo" />
+		@{
+			string fatherName = Model.FatherName ?? "";
+			string lastName = Model.LastName ?? "";
+
+			if (fatherName.EndsWith(lastName, StringComparison.OrdinalIgnoreCase))
+			{
+				fatherName = fatherName.Substring(0, fatherName.Length - lastName.Length).Trim();
+			}
+		}
+
+		<h2>
+			@Model.FirstName @fatherName @Model.LastName
+		</h2>
+
+
+	</div>
+
+	<div class="menu-grid">
+
+		<a href="#" class="menu-box">
+			<i class="fa-solid fa-house"></i>
+			<span>Student Dashboard</span>
+		</a>
+
+		<a asp-controller="StudentPanel"
+		   asp-action="DigitalICard"
+		   class="menu-box">
+			<i class="fa-solid fa-id-card"></i>
+			<span>Digital I-Card</span>
+		</a>
+
+	</div>
+
+</div>
