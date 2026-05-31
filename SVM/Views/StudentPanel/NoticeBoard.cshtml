@@ -1,0 +1,218 @@
+﻿@{
+	Layout = "~/Views/Shared/_StudentsLayout.cshtml";
+}
+<style>
+
+	.notice-container {
+		max-width: 850px;
+		margin: 20px auto;
+		padding: 15px;
+	}
+
+	.notice-card {
+		background: #fff;
+		border-radius: 16px;
+		padding: 16px;
+		margin-bottom: 16px;
+		box-shadow: 0 8px 22px rgba(0,0,0,.08);
+		border-left: 5px solid #2563eb;
+		transition: 0.3s;
+	}
+
+		.notice-card:hover {
+			transform: translateY(-3px);
+		}
+
+	.notice-media {
+		width: 100%;
+		height: auto;
+		max-height: 260px;
+		object-fit: contain;
+		border-radius: 12px;
+		margin-bottom: 12px;
+		cursor: pointer;
+	}
+
+	/* PDF */
+	.pdf-box {
+		display: block;
+		padding: 12px;
+		background: #f3f4f6;
+		border-radius: 10px;
+		text-decoration: none;
+		color: #111827;
+		font-weight: 600;
+		margin-bottom: 12px;
+		border: 1px dashed #9ca3af;
+	}
+
+		.pdf-box:hover {
+			background: #e5e7eb;
+		}
+
+	.notice-title {
+		font-size: 18px;
+		font-weight: 700;
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+	}
+
+	.notice-desc {
+		font-size: 14px;
+		color: #4b5563;
+		margin-top: 10px;
+		line-height: 1.6;
+		text-align: left;
+	}
+
+	.badge {
+		background: #22c55e;
+		color: #fff;
+		font-size: 11px;
+		padding: 4px 10px;
+		border-radius: 12px;
+	}
+
+	/* LOADING */
+	.loading {
+		text-align: center;
+		padding: 25px;
+		color: #6b7280;
+	}
+
+	/* MODAL */
+	.img-modal {
+		display: none;
+		position: fixed;
+		z-index: 9999;
+		left: 0;
+		top: 0;
+		width: 100%;
+		height: 100%;
+		background-color: rgba(0,0,0,0.9);
+	}
+
+	.modal-content {
+		margin: auto;
+		display: block;
+		max-width: 90%;
+		max-height: 85%;
+		border-radius: 10px;
+		margin-top: 60px;
+	}
+
+	.img-modal .close {
+		position: absolute;
+		top: 20px;
+		right: 35px;
+		color: white;
+		font-size: 40px;
+		cursor: pointer;
+	}
+
+</style>
+
+<div class="notice-container">
+
+	<h2>📢 Notice Board</h2>
+
+	<div id="noticeList" class="loading">
+		Loading notices...
+	</div>
+
+</div>
+
+<!-- IMAGE MODAL -->
+<div id="imgModal" class="img-modal">
+	<span class="close">&times;</span>
+	<img class="modal-content" id="modalImg">
+</div>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+
+	$(document).ready(function () {
+
+		let baseUrl = "https://localhost:7191";
+
+		$.ajax({
+			url: '/StudentPanel/GetActiveNotices',
+			type: 'GET',
+
+			success: function (data) {
+
+				let html = "";
+
+				if (!data || data.length === 0) {
+					$("#noticeList").html("<p>No active notices</p>");
+					return;
+				}
+
+				data.forEach(item => {
+
+					let file = item.filePath ? baseUrl + item.filePath : "";
+					let fileHtml = "";
+
+					// IMAGE
+					if (file && (file.endsWith(".jpg") || file.endsWith(".png") || file.endsWith(".jpeg"))) {
+
+						fileHtml = `<img src="${file}" class="notice-media preview-img" />`;
+					}
+
+					// PDF
+					else if (file && file.endsWith(".pdf")) {
+
+						fileHtml = `
+							<a href="${file}" target="_blank" class="pdf-box">
+								📄 View PDF Attachment
+							</a>
+						`;
+					}
+
+					html += `
+						<div class="notice-card">
+
+							${fileHtml}
+
+							<div class="notice-title">
+								${item.title || "Notice"}
+								<span class="badge">${item.category || "Active"}</span>
+							</div>
+
+							<div class="notice-desc">
+								${item.description || ""}
+							</div>
+
+						</div>
+					`;
+				});
+
+				$("#noticeList").html(html);
+			},
+
+			error: function () {
+				$("#noticeList").html("<p>Error loading notices</p>");
+			}
+		});
+
+	});
+
+	/* IMAGE CLICK OPEN */
+	$(document).on("click", ".preview-img", function () {
+		$("#imgModal").show();
+		$("#modalImg").attr("src", $(this).attr("src"));
+	});
+
+	/* CLOSE MODAL */
+	$(".close").click(function () {
+		$("#imgModal").hide();
+	});
+
+	$(window).click(function (e) {
+		if (e.target.id === "imgModal") {
+			$("#imgModal").hide();
+		}
+	});
+
+</script>

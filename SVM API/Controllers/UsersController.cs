@@ -114,22 +114,47 @@ namespace SVM_API.Controllers
             return NoContent();
         }
 
+        //[HttpPost("login")]
+        //public async Task<ActionResult> Login([FromBody] LoginRequest request)
+        //{
+        //    var user = await _context.Users
+        //        .FirstOrDefaultAsync(u => u.Username == request.Username || u.Email == request.Username);
+        //    if (user == null)
+        //        return Unauthorized(new { error = "Invalid username/email or password" });
+
+        //    // Verify password
+        //    if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
+        //        return Unauthorized(new { error = "Invalid username/email or password" });
+
+        //    user.Password = null;
+        //    return Ok(user);
+        //}
         [HttpPost("login")]
         public async Task<ActionResult> Login([FromBody] LoginRequest request)
         {
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Username == request.Username || u.Email == request.Username);
+                .FirstOrDefaultAsync(u =>
+                    u.Username == request.Username ||
+                    u.Email == request.Username);
+
             if (user == null)
                 return Unauthorized(new { error = "Invalid username/email or password" });
 
-            // Verify password
             if (!BCrypt.Net.BCrypt.Verify(request.Password, user.Password))
                 return Unauthorized(new { error = "Invalid username/email or password" });
 
             user.Password = null;
-            return Ok(user);
-        }
 
+            return Ok(new
+            {
+                user.UserId,
+                user.Username,
+                user.Email,
+                user.FullName,
+                user.GroupId   // ✅ IMPORTANT
+            });
+
+        }
         private bool UserExists(int id) => _context.Users.Any(e => e.UserId == id);
 
         [HttpPost("forgot-password")]

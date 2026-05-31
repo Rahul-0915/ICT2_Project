@@ -1,0 +1,166 @@
+﻿@model SVM.Models.Student
+@{
+    Layout = "~/Views/Shared/_StudentsLayout.cshtml";
+}
+
+<style>
+
+    body {
+        background: #f1f5f9;
+        margin: 0;
+        padding: 20px;
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .id-card {
+        width: 340px;
+        max-width: 95%;
+        margin: 15px auto;
+        background: #ffffff;
+        border-radius: 18px;
+        overflow: hidden;
+        box-shadow: 0 6px 18px rgba(0,0,0,.12);
+    }
+
+    .top-section {
+        background: linear-gradient(135deg, #dbeafe, #e0e7ff);
+        text-align: center;
+        padding: 18px 12px;
+    }
+
+    .student-photo {
+        width: 110px;
+        height: 130px;
+        object-fit: cover;
+        border-radius: 12px;
+        border: 3px solid #fff;
+        box-shadow: 0 3px 10px rgba(0,0,0,.15);
+    }
+
+    .top-section h2 {
+        margin: 10px 0 0;
+        font-size: 18px;
+        font-weight: 700;
+        color: #1f2937;
+        line-height: 1.2;
+    }
+
+    .qr-section {
+        display: flex;
+        justify-content: center;
+        padding: 14px 0;
+    }
+
+    .qr-box {
+        background: #ffffff;
+        border: 2px dashed #4f46e5;
+        border-radius: 14px;
+        padding: 10px 12px;
+        text-align: center;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        width: fit-content;
+    }
+
+        .qr-box img {
+            width: 120px;
+            height: 120px;
+            display: block;
+            margin: auto;
+        }
+
+        .qr-box p {
+            margin: 6px 0 0;
+            font-size: 11px;
+            font-weight: 600;
+            color: #4f46e5;
+            letter-spacing: 0.5px;
+        }
+
+    .details {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px 15px;
+        padding: 15px 18px 20px;
+    }
+
+        .details div {
+            background: #f9fafb;
+            padding: 8px;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .details label {
+            display: block;
+            font-size: 11px;
+            color: #6b7280;
+            margin-bottom: 3px;
+        }
+
+        .details span {
+            display: block;
+            font-size: 14px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+</style>
+
+<div class="id-card">
+
+    <div class="top-section">
+
+        @{
+            string fatherName = Model.FatherName ?? "";
+            string lastName = Model.LastName ?? "";
+
+            if (fatherName.EndsWith(lastName, StringComparison.OrdinalIgnoreCase))
+            {
+                fatherName = fatherName.Substring(0, fatherName.Length - lastName.Length).Trim();
+            }
+        }
+
+        <img src="@Model.StudentPhoto" class="student-photo" />
+
+        <h2>
+            @Model.FirstName @fatherName @Model.LastName
+        </h2>
+
+    </div>
+
+    <!-- ✅ QR CODE PROFESSIONAL DESIGN -->
+    <div class="qr-section">
+        @if (ViewBag.QRCode != null)
+        {
+            <div class="qr-box">
+                <img src="@ViewBag.QRCode" />
+                <p>SCAN TO VERIFY</p>
+            </div>
+        }
+    </div>
+
+    <div class="details">
+
+        <div>
+            <label>Class</label>
+            <span>@ViewBag.ClassName</span>
+        </div>
+
+        <div>
+            <label>Roll No</label>
+            <span>@Model.RollNo</span>
+        </div>
+
+        <div>
+            <label>Stud ID</label>
+            <span>@Model.StudentId</span>
+        </div>
+
+        <div>
+            <label>GR Number</label>
+            <span>@Model.Grno</span>
+        </div>
+
+    </div>
+
+</div>

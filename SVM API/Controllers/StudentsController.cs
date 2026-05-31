@@ -289,6 +289,69 @@ namespace SVM_API.Controllers
 
             return Ok(JsonSerializer.Serialize(result, options));
         }
+        [HttpGet("ByUser/{userId}")]
+        public async Task<ActionResult<Student>> GetStudentByUser(int userId)
+        {
+            return await GetStudentByUserWithOptionalSession(userId, checkSession: true);
+        }
+        [HttpGet("ByUserNoSession/{userId}")]
+        public async Task<ActionResult<Student>> GetStudentByUserNoSession(int userId)
+        {
+            return await GetStudentByUserWithOptionalSession(userId, checkSession: false);
+        }
+        private async Task<ActionResult<Student>> GetStudentByUserWithOptionalSession(int userId, bool checkSession)
+        {
+            IQueryable<Student> query = _context.Students;
+
+            // Sirf tabhi session filter lagao jab checkSession = true ho
+            if (checkSession)
+            {
+                var activeSession = await _context.Sessions
+                    .FirstOrDefaultAsync(s => s.IsActive == 1);
+
+                if (activeSession != null)
+                {
+                    query = query.Where(x => x.SessionId == activeSession.SessionId);
+                }
+                else
+                {
+                    // Agar active session nahi hai toh koi student nahi milega
+                    return NotFound(new { error = "No active session found" });
+                }
+            }
+
+            var student = await query.FirstOrDefaultAsync(x => x.UserId == userId);
+
+            if (student == null)
+            {
+                // Try by email as fallback
+                var user = await _context.Users.FindAsync(userId);
+                if (user != null && !string.IsNullOrEmpty(user.Email))
+                {
+                    if (checkSession && student == null)
+                    {
+                        query = _context.Students;
+                        var activeSession = await _context.Sessions
+                            .FirstOrDefaultAsync(s => s.IsActive == 1);
+                        if (activeSession != null)
+                        {
+                            query = query.Where(x => x.SessionId == activeSession.SessionId);
+                        }
+                        student = await query.FirstOrDefaultAsync(x => x.Email == user.Email);
+                    }
+                    else
+                    {
+                        student = await _context.Students
+                            .FirstOrDefaultAsync(x => x.Email == user.Email);
+                    }
+                }
+            }
+
+            if (student == null)
+                return NotFound(new { message = $"No student found for UserId: {userId}" });
+
+            return student;
+        }
         // DTO for response
         public class StudentWithDetails
         {
