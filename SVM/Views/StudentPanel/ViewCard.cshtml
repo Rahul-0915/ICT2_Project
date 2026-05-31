@@ -1,244 +1,213 @@
 ﻿@model SVM.Models.Student
 
 @{
-	Layout = null;
+    Layout = null;
 
-	string fatherName = Model.FatherName ?? "";
-	string lastName = Model.LastName ?? "";
+    string fatherName = Model.FatherName ?? "";
+    string lastName = Model.LastName ?? "";
 
-	if (fatherName.EndsWith(lastName, StringComparison.OrdinalIgnoreCase))
-	{
-		fatherName = fatherName.Substring(0, fatherName.Length - lastName.Length).Trim();
-	}
+    if (fatherName.EndsWith(lastName, StringComparison.OrdinalIgnoreCase))
+    {
+        fatherName = fatherName.Substring(0, fatherName.Length - lastName.Length).Trim();
+    }
 
-	var medium = Model.Class?.Medium ?? "";
+    // ✅ Use ViewBag.Medium from controller (not Model.Class)
+    var medium = ViewBag.Medium as string ?? "";
 
-	var schoolName =
-		medium == "English"
-		? "S.V.M ENGLISH MEDIUM SCHOOL"
-		: "શારદા વિદ્યામંદિર";
+    var schoolName = medium == "English"
+        ? "S.V.M ENGLISH MEDIUM SCHOOL"
+        : "શારદા વિદ્યામંદિર";
 
-	var logo =
-		medium == "English"
-		? "/images/SVMEng_logo.png"
-		: "/images/SVMGuj_logo.png";
+    var logo = medium == "English"
+        ? "/images/SVMEng_logo.png"
+        : "/images/SVMGuj_logo.png";
 }
 
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Student ID Card</title>
+    <title>Student ID Card</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 30px;
+            background: linear-gradient(135deg, #e9eef5, #f7f9fc);
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
 
-	<style>
+        .id-card {
+            width: 420px;
+            margin: auto;
+            background: #fff;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: 0 12px 30px rgba(0,0,0,.12);
+            border: 1px solid #e5e7eb;
+        }
 
-		body {
-			margin: 0;
-			padding: 30px;
-			background: linear-gradient(135deg, #e9eef5, #f7f9fc);
-			font-family: 'Segoe UI', Arial, sans-serif;
-		}
+        .header {
+            background: linear-gradient(135deg, #1e3a8a, #2563eb);
+            color: white;
+            padding: 14px;
+        }
 
-		.id-card {
-			width: 420px;
-			margin: auto;
-			background: #fff;
-			border-radius: 18px;
-			overflow: hidden;
-			box-shadow: 0 12px 30px rgba(0,0,0,.12);
-			border: 1px solid #e5e7eb;
-		}
+        .header-content {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            justify-content: center;
+        }
 
-		/* HEADER */
-		.header {
-			background: linear-gradient(135deg, #1e3a8a, #2563eb);
-			color: white;
-			padding: 14px;
-		}
+        .header img {
+            width: 55px;
+            height: 55px;
+            object-fit: contain;
+            background: white;
+            border-radius: 10px;
+            padding: 3px;
+        }
 
-		.header-content {
-			display: flex;
-			align-items: center;
-			gap: 12px;
-			justify-content: center;
-		}
+        .header h2 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 700;
+        }
 
-		.header img {
-			width: 55px;
-			height: 55px;
-			object-fit: contain;
-			background: white;
-			border-radius: 10px;
-			padding: 3px;
-		}
+        .header p {
+            margin: 3px 0 0;
+            font-size: 12px;
+            opacity: .9;
+        }
 
-		.header h2 {
-			margin: 0;
-			font-size: 18px;
-			font-weight: 700;
-		}
+        .photo-section {
+            text-align: center;
+            padding: 18px 20px 10px;
+        }
 
-		.header p {
-			margin: 3px 0 0;
-			font-size: 12px;
-			opacity: .9;
-		}
+        .student-photo {
+            width: 120px;
+            height: 150px;
+            object-fit: cover;
+            border-radius: 12px;
+            border: 3px solid #e5e7eb;
+            box-shadow: 0 4px 10px rgba(0,0,0,.1);
+        }
 
-		/* BODY */
-		.photo-section {
-			text-align: center;
-			padding: 18px 20px 10px;
-		}
+        .student-name {
+            margin-top: 10px;
+            font-size: 20px;
+            font-weight: 700;
+            color: #111827;
+        }
 
-		.student-photo {
-			width: 120px;
-			height: 150px;
-			object-fit: cover;
-			border-radius: 12px;
-			border: 3px solid #e5e7eb;
-			box-shadow: 0 4px 10px rgba(0,0,0,.1);
-		}
+        .details {
+            padding: 15px 20px 20px;
+        }
 
-		.student-name {
-			margin-top: 10px;
-			font-size: 20px;
-			font-weight: 700;
-			color: #111827;
-		}
+        .row {
+            display: flex;
+            justify-content: space-between;
+            padding: 7px 0;
+            border-bottom: 1px dashed #e5e7eb;
+        }
 
-		/* DETAILS */
-		.details {
-			padding: 15px 20px 20px;
-		}
+        .label {
+            font-weight: 600;
+            color: #6b7280;
+            font-size: 13px;
+        }
 
-		.row {
-			display: flex;
-			justify-content: space-between;
-			padding: 7px 0;
-			border-bottom: 1px dashed #e5e7eb;
-		}
+        .value {
+            font-weight: 500;
+            color: #111827;
+            font-size: 13px;
+            text-align: right;
+            max-width: 220px;
+        }
 
-		.label {
-			font-weight: 600;
-			color: #6b7280;
-			font-size: 13px;
-		}
+        .footer {
+            background: #f3f4f6;
+            text-align: center;
+            padding: 10px;
+            font-size: 12px;
+            color: #6b7280;
+        }
 
-		.value {
-			font-weight: 500;
-			color: #111827;
-			font-size: 13px;
-			text-align: right;
-			max-width: 220px;
-		}
-
-		/* FOOTER */
-		.footer {
-			background: #f3f4f6;
-			text-align: center;
-			padding: 10px;
-			font-size: 12px;
-			color: #6b7280;
-		}
-
-		.badge {
-			display: inline-block;
-			background: #2563eb;
-			color: white;
-			padding: 3px 10px;
-			border-radius: 20px;
-			font-size: 11px;
-			margin-top: 5px;
-		}
-
-	</style>
+        .badge {
+            display: inline-block;
+            background: #2563eb;
+            color: white;
+            padding: 3px 10px;
+            border-radius: 20px;
+            font-size: 11px;
+            margin-top: 5px;
+        }
+    </style>
 </head>
-
 <body>
+    <div class="id-card">
+        <!-- HEADER -->
+        <div class="header">
+            <div class="header-content">
+                <img src="@logo" />
+                <div>
+                    <h2>@schoolName</h2>
+                    <p>Student Identity Card</p>
+                </div>
+            </div>
+        </div>
 
-	<div class="id-card">
+        <!-- PHOTO -->
+        <div class="photo-section">
+            <img src="@Model.StudentPhoto" class="student-photo" />
+            <div class="student-name">
+                @Model.FirstName @fatherName @Model.LastName
+            </div>
+            <div class="badge">
+                ID: @Model.StudentId
+            </div>
+        </div>
 
-		<!-- HEADER -->
-		<div class="header">
+        <!-- DETAILS -->
+        <div class="details">
+            <div class="row">
+                <div class="label">GR No</div>
+                <div class="value">@Model.Grno</div>
+            </div>
+            <div class="row">
+                <div class="label">Roll No</div>
+                <div class="value">@Model.RollNo</div>
+            </div>
+            <div class="row">
+                <div class="label">Class</div>
+                <div class="value">@ViewBag.ClassName</div>   <!-- ✅ from controller -->
+            </div>
+            <div class="row">
+                <div class="label">Section</div>
+                <div class="value">@ViewBag.SectionName</div> <!-- ✅ from controller -->
+            </div>
+            <div class="row">
+                <div class="label">Medium</div>
+                <div class="value">@ViewBag.Medium</div>      <!-- ✅ from controller -->
+            </div>
+            <div class="row">
+                <div class="label">DOB</div>
+                <div class="value">@(Model.Dob?.ToString("dd-MM-yyyy"))</div>
+            </div>
+            <div class="row">
+                <div class="label">Phone</div>
+                <div class="value">@Model.Phone</div>
+            </div>
+            <div class="row" style="border-bottom:none;">
+                <div class="label">Address</div>
+                <div class="value">@Model.Address</div>
+            </div>
+        </div>
 
-			<div class="header-content">
-
-				<img src="@logo" />
-
-				<div>
-					<h2>@schoolName</h2>
-					<p>Student Identity Card</p>
-				</div>
-
-			</div>
-
-		</div>
-
-		<!-- PHOTO -->
-		<div class="photo-section">
-
-			<img src="@Model.StudentPhoto" class="student-photo" />
-
-			<div class="student-name">
-				@Model.FirstName @fatherName @Model.LastName
-			</div>
-
-			<div class="badge">
-				ID: @Model.StudentId
-			</div>
-
-		</div>
-
-		<!-- DETAILS -->
-		<div class="details">
-
-			<div class="row">
-				<div class="label">GR No</div>
-				<div class="value">@Model.Grno</div>
-			</div>
-
-			<div class="row">
-				<div class="label">Roll No</div>
-				<div class="value">@Model.RollNo</div>
-			</div>
-
-			<div class="row">
-				<div class="label">Class</div>
-				<div class="value">@Model.Class?.ClassName</div>
-			</div>
-
-			<div class="row">
-				<div class="label">Section</div>
-				<div class="value">@Model.Section?.SectionName</div>
-			</div>
-
-			<div class="row">
-				<div class="label">Medium</div>
-				<div class="value">@Model.Class?.Medium</div>
-			</div>
-
-			<div class="row">
-				<div class="label">DOB</div>
-				<div class="value">@(Model.Dob?.ToString("dd-MM-yyyy"))</div>
-			</div>
-
-			<div class="row">
-				<div class="label">Phone</div>
-				<div class="value">@Model.Phone</div>
-			</div>
-
-			<div class="row" style="border-bottom:none;">
-				<div class="label">Address</div>
-				<div class="value">@Model.Address</div>
-			</div>
-
-		</div>
-
-		<!-- FOOTER -->
-		<div class="footer">
-			Gujarat Housing Board, Pandesara, Surat
-		</div>
-
-	</div>
-
+        <!-- FOOTER -->
+        <div class="footer">
+            Gujarat Housing Board, Pandesara, Surat
+        </div>
+    </div>
 </body>
 </html>
