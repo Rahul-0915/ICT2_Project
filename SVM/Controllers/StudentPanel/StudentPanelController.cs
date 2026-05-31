@@ -150,8 +150,6 @@ namespace SVM.Controllers.StudentPanel
 
             return View(student);
         }
-
-       
         public async Task<IActionResult> DigitalICard()
         {
             string? userId = HttpContext.Session.GetString("UserId");
@@ -210,15 +208,26 @@ namespace SVM.Controllers.StudentPanel
                         classJson,
                         new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                     ViewBag.ClassName = classObj?.ClassName;
-                    ViewBag.Medium = classObj?.Medium;
+                    ViewBag.Medium = classObj?.Medium;   // ✅ Used for logo & school name
+                }
+            }
+
+            // ================= SECTION DETAILS =================
+            if (student.SectionId.HasValue)
+            {
+                var sectionResponse = await _client.GetAsync($"Sections/{student.SectionId}");
+                if (sectionResponse.IsSuccessStatusCode)
+                {
+                    var sectionJson = await sectionResponse.Content.ReadAsStringAsync();
+                    var sectionObj = JsonSerializer.Deserialize<Section>(
+                        sectionJson,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    ViewBag.SectionName = sectionObj?.SectionName;
                 }
             }
 
             // ================= QR CODE GENERATION =================
-            // Generate URL for verification (ViewCard action)
-       
             string qrText = $"http://192.168.1.70:5269/StudentPanel/ViewCard?id={student.StudentId}";
-
             using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
             {
                 QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrText, QRCodeGenerator.ECCLevel.Q);
@@ -233,10 +242,12 @@ namespace SVM.Controllers.StudentPanel
         public async Task<IActionResult> ViewCard(int id)
         {
             var response = await _client.GetAsync($"Students/{id}");
+
             if (!response.IsSuccessStatusCode)
                 return NotFound("Student not found");
 
             var responseJson = await response.Content.ReadAsStringAsync();
+
             var student = JsonSerializer.Deserialize<Student>(
                 responseJson,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
@@ -244,23 +255,55 @@ namespace SVM.Controllers.StudentPanel
             if (student == null)
                 return NotFound("Student data invalid");
 
-            // Fetch Class details if needed
+            // ================= CLASS DETAILS =================
             if (student.ClassId.HasValue)
             {
                 var classResponse = await _client.GetAsync($"Classes/{student.ClassId}");
+
                 if (classResponse.IsSuccessStatusCode)
                 {
                     var classJson = await classResponse.Content.ReadAsStringAsync();
+
                     var classObj = JsonSerializer.Deserialize<Class>(
                         classJson,
                         new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
                     ViewBag.ClassName = classObj?.ClassName;
                     ViewBag.Medium = classObj?.Medium;
                 }
+                else
+                {
+                    ViewBag.ClassName = "N/A";
+                    ViewBag.Medium = "";
+                }
+            }
+
+            // ================= SECTION DETAILS =================
+            if (student.SectionId.HasValue)
+            {
+                var sectionResponse = await _client.GetAsync($"Sections/{student.SectionId}");
+
+                if (sectionResponse.IsSuccessStatusCode)
+                {
+                    var sectionJson = await sectionResponse.Content.ReadAsStringAsync();
+
+                    var sectionObj = JsonSerializer.Deserialize<Section>(
+                        sectionJson,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                    ViewBag.SectionName = sectionObj?.SectionName;
+                }
+                else
+                {
+                    ViewBag.SectionName = "N/A";
+                }
+            }
+            else
+            {
+                ViewBag.SectionName = "N/A";
             }
 
             return View(student);
-        
         }
         public IActionResult NoticeBoard()
         {
