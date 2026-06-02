@@ -21,7 +21,7 @@
 	<link rel="stylesheet"
 		  href="~/css/StudentsSide_Css/Navbar.css"
 		  asp-append-version="true" />
-		  <style>
+	<style>
 		.notice-badge {
 			position: relative;
 			top: -8px;
@@ -38,7 +38,7 @@
 			display: none;
 			padding: 0 5px;
 		}
-		  </style>
+	</style>
 </head>
 <body>
 	<header>
@@ -70,7 +70,7 @@
 						My Profile
 					</a>
 
-					<a asp-controller="UserHome" asp-action="UserHome">
+					<a asp-controller="Account" asp-action="Logout">
 						<i class="fa fa-sign-out-alt"></i>
 						Logout
 					</a>
@@ -131,9 +131,16 @@
 					</ul>
 
 				</li>
+				<li>
+					<a asp-controller="StudentPanel"
+					   asp-action="MyTimetable">
 
-				<li><a href="#">Timetable</a></li>
-				
+						<i class="fas fa-calendar-alt"></i>
+						Timetable
+
+					</a>
+				</li>
+
 				<li>
 					<a asp-controller="StudentPanel"
 					   asp-action="NoticeBoard">
@@ -149,7 +156,7 @@
 					</a>
 				</li>
 				</li>
-				
+
 
 			</ul>
 

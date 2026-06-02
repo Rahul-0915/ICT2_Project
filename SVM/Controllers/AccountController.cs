@@ -168,18 +168,25 @@ namespace SVM.Controllers
             }
         }
 
-        // Logout
         public IActionResult Logout()
         {
+            var groupId = HttpContext.Session.GetString("GroupId");
+
             HttpContext.Session.Clear();
+            Response.Cookies.Delete(".AspNetCore.Session");
 
             Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
             Response.Headers["Pragma"] = "no-cache";
             Response.Headers["Expires"] = "0";
 
-            return RedirectToAction("Login");
-        }
+            if (groupId == "1") // Admin
+            {
+                return RedirectToAction("Login", "Account");
+            }
 
+            // Student aur baki users
+            return RedirectToAction("UserHome", "UserHome");
+        }
         [HttpGet]
         public IActionResult ForgotPassword()
         {

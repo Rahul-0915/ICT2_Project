@@ -1,0 +1,213 @@
+﻿@model List<SVM.Models.Timetable>
+
+@{
+	ViewData["Title"] = "My Timetable";
+	Layout = "~/Views/Shared/_StudentsLayout.cshtml";
+
+	var days = new List<string>
+	{
+		"Monday",
+		"Tuesday",
+		"Wednesday",
+		"Thursday",
+		"Friday",
+		"Saturday"
+	};
+
+	int maxPeriod = Model.Any()
+		? Model.Max(x => x.LectureNo)
+		: 0;
+}
+
+<style>
+
+	.tt-container {
+		max-width: 1400px;
+		margin: 20px auto;
+		padding: 10px;
+	}
+
+	.tt-header {
+		background: linear-gradient(135deg,#dbeafe,#e0e7ff);
+		border-radius: 18px;
+		padding: 20px;
+		margin-bottom: 20px;
+		box-shadow: 0 4px 15px rgba(0,0,0,.08);
+	}
+
+		.tt-header h2 {
+			margin: 0;
+			color: #1f2937;
+			font-size: 24px;
+			font-weight: 700;
+		}
+
+		.tt-header p {
+			margin-top: 5px;
+			color: #64748b;
+			font-size: 13px;
+		}
+
+	.table-wrapper {
+		background: white;
+		border-radius: 18px;
+		overflow: hidden;
+		box-shadow: 0 6px 18px rgba(0,0,0,.08);
+	}
+
+	.tt-table {
+		width: 100%;
+		border-collapse: collapse;
+	}
+
+		.tt-table th {
+			background: #2563eb;
+			color: white;
+			padding: 14px;
+			text-align: center;
+			font-size: 13px;
+			font-weight: 600;
+		}
+
+		.tt-table td {
+			border: 1px solid #e5e7eb;
+			padding: 12px;
+			text-align: center;
+			vertical-align: middle;
+		}
+
+	.day-col {
+		background: #f8fafc;
+		font-weight: 700;
+		color: #1f2937;
+		min-width: 130px;
+	}
+
+	.today-row {
+		background: #f0fdf4;
+	}
+
+	.subject {
+		font-weight: 600;
+		color: #111827;
+		font-size: 13px;
+	}
+
+	.teacher {
+		font-size: 11px;
+		color: #64748b;
+		margin-top: 4px;
+	}
+
+	.time {
+		margin-top: 5px;
+		font-size: 11px;
+		color: #2563eb;
+	}
+
+	.empty-cell {
+		color: #cbd5e1;
+	}
+
+	@@media(max-width:768px) {
+
+		.table-wrapper {
+			overflow-x: auto;
+		}
+
+		.tt-table {
+			min-width: 1000px;
+		}
+	}
+
+</style>
+
+<div class="tt-container">
+
+	<div class="tt-header">
+		<h2>
+			<i class="fas fa-calendar-alt"></i>
+			My Timetable
+		</h2>
+		<p>Weekly Academic Schedule</p>
+	</div>
+
+	@if (!Model.Any())
+	{
+		<div class="alert alert-warning">
+			No timetable available.
+		</div>
+	}
+	else
+	{
+		<div class="table-wrapper">
+
+			<table class="tt-table">
+
+				<thead>
+					<tr>
+						<th>Day</th>
+
+						@for (int p = 1; p <= maxPeriod; p++)
+						{
+							<th>Period @p</th>
+						}
+					</tr>
+				</thead>
+
+				<tbody>
+
+					@foreach (var day in days)
+					{
+						var isToday = DateTime.Now.DayOfWeek.ToString()
+						.Equals(day, StringComparison.OrdinalIgnoreCase);
+
+						<tr class="@(isToday ? "today-row" : "")">
+
+							<td class="day-col">
+								@day
+							</td>
+
+							@for (int p = 1; p <= maxPeriod; p++)
+							{
+								var lecture = Model.FirstOrDefault(x =>
+								x.DayName == day &&
+								x.LectureNo == p);
+
+								<td>
+
+									@if (lecture != null)
+									{
+										<div class="subject">
+											@lecture.Subject?.SubjectName
+										</div>
+
+										<div class="teacher">
+											@lecture.Staff?.FirstName
+										</div>
+
+										<div class="time">
+											@lecture.StartTime.ToString(@"hh\:mm")
+											-
+											@lecture.EndTime.ToString(@"hh\:mm")
+										</div>
+									}
+									else
+									{
+										<span class="empty-cell">—</span>
+									}
+
+								</td>
+							}
+
+						</tr>
+					}
+
+				</tbody>
+
+			</table>
+
+		</div>
+	}
+
+</div>
