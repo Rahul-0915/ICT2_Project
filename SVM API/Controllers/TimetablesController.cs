@@ -114,6 +114,16 @@ namespace SVM_API.Controllers
 
             return mapping;
         }
-
+        [HttpGet("filter")]
+        public async Task<ActionResult<IEnumerable<TeacherSubject>>> GetFiltered(
+    int? subjectId, int? classId, int? sessionId, int? staffId)
+        {
+            var query = _context.TeacherSubjects.AsQueryable();
+            if (subjectId.HasValue) query = query.Where(ts => ts.SubjectId == subjectId);
+            if (classId.HasValue) query = query.Where(ts => ts.ClassId == classId);
+            if (sessionId.HasValue) query = query.Where(ts => ts.SessionId == sessionId);
+            if (staffId.HasValue) query = query.Where(ts => ts.StaffId == staffId);
+            return await query.ToListAsync();
+        }
     }
 }

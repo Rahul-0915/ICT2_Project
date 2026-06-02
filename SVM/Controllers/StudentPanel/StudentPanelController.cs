@@ -324,12 +324,58 @@ namespace SVM.Controllers.StudentPanel
                 responseData,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-			var studentNotices = notices?
-	.Where(x => x.Category == "StudentNotice")
-	.OrderByDescending(x => x.CreatedAt)
-	.ToList();
+            var studentNotices = notices?
+    .Where(x => x.Category == "StudentNotice")
+    .OrderByDescending(x => x.CreatedAt)
+    .ToList();
 
-			return Json(studentNotices ?? new List<Updates>());
-		}
+            return Json(studentNotices ?? new List<Updates>());
+        }
+        public async Task<IActionResult> MyTimetable()
+        {
+            string? classId = HttpContext.Session.GetString("ClassId");
+            string? studentId = HttpContext.Session.GetString("StudentId");
+
+            if (string.IsNullOrEmpty(classId))
+                return RedirectToAction("Login", "Account");
+
+            // Student detail nikalo
+            var studentResponse =
+                await _client.GetAsync($"Students/{studentId}");
+
+            if (!studentResponse.IsSuccessStatusCode)
+                return View(new List<Timetable>());
+
+            var studentJson =
+                await studentResponse.Content.ReadAsStringAsync();
+
+            var student = JsonSerializer.Deserialize<Student>(
+                studentJson,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+            if (student == null)
+                return View(new List<Timetable>());
+
+            // Timetable fetch
+            var response = await _client.GetAsync(
+                $"Timetables?sessionId={student.SessionId}&classId={student.ClassId}&sectionId={student.SectionId}");
+
+            if (!response.IsSuccessStatusCode)
+                return View(new List<Timetable>());
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            var timetable = JsonSerializer.Deserialize<List<Timetable>>(
+                json,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+            return View(timetable);
+        }
     }
 }
