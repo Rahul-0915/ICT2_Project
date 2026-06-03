@@ -26,7 +26,13 @@ namespace SVM_API
             builder.Services.AddSwaggerGen();
             //builder.WebHost.UseUrls("http://0.0.0.0:7191");
             builder.Services.AddScoped<IEmailService, EmailService>();
-            //builder.Services.AddScoped<IGeminiService, GeminiService>();
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("AllowAll",
+                    policy => policy.AllowAnyOrigin()
+                                    .AllowAnyMethod()
+                                    .AllowAnyHeader());
+            });
             var app = builder.Build();
 
 
@@ -48,6 +54,8 @@ namespace SVM_API
 
                 RequestPath = "/images/updates"
             });
+            app.UseCors("AllowAll");
+
             app.UseStaticFiles(new StaticFileOptions
             {
                 ServeUnknownFileTypes = true

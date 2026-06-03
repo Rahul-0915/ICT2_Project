@@ -1,0 +1,205 @@
+﻿@model ReceiptViewModel
+@{
+    ViewData["Title"] = "Payment Receipt";
+    Layout = "~/Views/Shared/_StudentsLayout.cshtml";
+}
+
+<style>
+    body {
+        background: #f4f7fb;
+    }
+
+    .fee-container {
+        max-width: 850px;
+        margin: 2rem auto;
+        display: flex;
+        justify-content: center;
+    }
+
+    /* LEFT DARK PANEL */
+    .fee-card {
+        width: 100%;
+        border-radius: 25px;
+        overflow: hidden;
+        display: flex;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.15);
+    }
+
+    .fee-left {
+        width: 40%;
+        background: linear-gradient(135deg, #0f172a, #1e3c72);
+        color: white;
+        padding: 2rem;
+        position: relative;
+    }
+
+        .fee-left h2 {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .fee-left p {
+            opacity: 0.8;
+            font-size: 0.95rem;
+        }
+
+    .circle {
+        position: absolute;
+        top: -50px;
+        right: -50px;
+        width: 120px;
+        height: 120px;
+        background: rgba(255,255,255,0.08);
+        border-radius: 50%;
+    }
+
+    /* RIGHT CARD */
+    .fee-right {
+        width: 60%;
+        background: white;
+        padding: 2rem;
+    }
+
+    .summary-card {
+        background: #f8fafc;
+        border-radius: 18px;
+        padding: 1.5rem;
+        box-shadow: inset 0 0 0 1px #e5e7eb;
+    }
+
+    .summary-title {
+        font-size: 1.2rem;
+        font-weight: 700;
+        margin-bottom: 1rem;
+        color: #111827;
+    }
+
+    .fee-row {
+        display: flex;
+        justify-content: space-between;
+        padding: 0.7rem 0;
+        border-bottom: 1px solid #eaeaea;
+        font-size: 0.95rem;
+    }
+
+        .fee-row:last-child {
+            border-bottom: none;
+        }
+
+    .label {
+        color: #374151;
+    }
+
+    .value {
+        font-weight: 600;
+        color: #111827;
+    }
+
+    .total {
+        margin-top: 1rem;
+        padding-top: 1rem;
+        border-top: 2px dashed #cbd5e1;
+        display: flex;
+        justify-content: space-between;
+        font-size: 1.2rem;
+        font-weight: 800;
+        color: #0f172a;
+    }
+
+    .btns {
+        margin-top: 1.5rem;
+        display: flex;
+        gap: 1rem;
+    }
+
+    .btn {
+        padding: 0.6rem 1.2rem;
+        border-radius: 30px;
+        border: none;
+        cursor: pointer;
+        font-weight: 600;
+    }
+
+    .print {
+        background: #2563eb;
+        color: white;
+    }
+
+    .back {
+        background: #e5e7eb;
+        color: #111827;
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    @@media (max-width: 768px) {
+        .fee-card {
+            flex-direction: column;
+        }
+
+        .fee-left, .fee-right {
+            width: 100%;
+        }
+    }
+</style>
+
+<div class="fee-container">
+    <div class="fee-card">
+
+        <!-- LEFT SIDE -->
+        <div class="fee-left">
+            <div class="circle"></div>
+
+            <h2>S.V.M</h2>
+            <p>Fee Structures</p>
+
+            <hr style="border:1px solid rgba(255,255,255,0.2); margin:1rem 0;" />
+
+            <p><b>Student:</b> @Model.StudentName</p>
+            <p><b>Class:</b> @Model.ClassName</p>
+            <p><b>Date:</b> @Model.PaymentDate</p>
+            <p><b>Mode:</b> @Model.PaymentMode</p>
+        </div>
+
+        <!-- RIGHT SIDE -->
+        <div class="fee-right">
+
+            <div class="summary-card">
+                <div class="summary-title">Fee Summary</div>
+
+                <div class="fee-row">
+                    <span class="label">Admission Fees</span>
+                    <span class="value">₹ @Model.AdmissionFees.ToString("N2")</span>
+                </div>
+
+                <div class="fee-row">
+                    <span class="label">Monthly Fees (Yearly)</span>
+                    <span class="value">₹ @Model.MonthlyFees.ToString("N2")</span>
+                </div>
+
+                <div class="fee-row">
+                    <span class="label">Activity Fees</span>
+                    <span class="value">₹ @Model.OtherActivityFees.ToString("N2")</span>
+                </div>
+
+                <div class="fee-row">
+                    <span class="label">Computer Fees</span>
+                    <span class="value">₹ @Model.ComputerFees.ToString("N2")</span>
+                </div>
+
+                <div class="total">
+                    <span>Total</span>
+                    <span>₹ @Model.TotalAmount.ToString("N2")</span>
+                </div>
+            </div>
+
+            <div class="btns">
+                <button class="btn print" onclick="window.print()">Print</button>
+                <a class="btn back" href="@Url.Action("Student", "StudentPanel")">Back</a>
+            </div>
+
+        </div>
+    </div>
+</div>

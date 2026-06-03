@@ -13,10 +13,9 @@ public partial class FeePayment
 
     public decimal? AmountPaid { get; set; }
 
-    public DateOnly? PaymentDate { get; set; }
-
+    public DateTime? PaymentDate { get; set; }
     public string? PaymentMode { get; set; }
-
+    public string? TransactionId { get; set; }
     public virtual FeeStructure? Fee { get; set; }
 
     public virtual Student? Student { get; set; }
