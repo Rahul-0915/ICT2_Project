@@ -4,15 +4,15 @@ using SVM.Models;
 using SVM.Services;
 using System.Text.Json;
 using System.Linq;
-
 namespace SVM.Controllers.StudentPanel
 {
     public class StudentPanelController : Controller
     {
         private readonly HttpClient _client;
-
+        private readonly IHttpClientFactory _httpClientFactory;
         public StudentPanelController(IHttpClientFactory clientFactory)
         {
+            _httpClientFactory = clientFactory;
             _client = clientFactory.CreateClient();
             _client.BaseAddress = new Uri("https://localhost:7191/api/");
         }
@@ -546,7 +546,51 @@ Student Question:
 
             return Json(new { reply, options });
         }
+        public async Task<IActionResult> FeesPayment()
+        {
+            string? studentId =
+                HttpContext.Session.GetString("StudentId");
 
+            if (string.IsNullOrEmpty(studentId))
+                return RedirectToAction("Login", "Account");
+
+            var response =
+                await _client.GetAsync(
+                    $"FeeStructures/StudentFee/{studentId}");
+
+            if (!response.IsSuccessStatusCode)
+                return View();
+
+            var json =
+                await response.Content.ReadAsStringAsync();
+
+            var fee =
+                JsonSerializer.Deserialize<StudentFeeVM>(
+                    json,
+                    new JsonSerializerOptions
+                    {
+                        PropertyNameCaseInsensitive = true
+                    });
+
+            return View(fee);
+        }
+        public async Task<IActionResult> Receipt()
+        {
+            var studentIdStr = HttpContext.Session.GetString("StudentId");
+            if (string.IsNullOrEmpty(studentIdStr) || !int.TryParse(studentIdStr, out int studentId))
+                return RedirectToAction("Login", "Account");
+
+            var paymentClient = _httpClientFactory.CreateClient();
+            paymentClient.BaseAddress = new Uri("http://localhost:5175/api/");
+            var response = await paymentClient.GetAsync($"Payment/receipt/{studentId}");
+
+            if (!response.IsSuccessStatusCode)
+                return NotFound("Receipt not found.");
+
+            var json = await response.Content.ReadAsStringAsync();
+            var receipt = JsonSerializer.Deserialize<ReceiptViewModel>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+            return View(receipt);
+        }
         public class AiResponse
         {
             public string reply { get; set; } = "";
@@ -557,7 +601,6 @@ Student Question:
             public string text { get; set; } = "";
             public string action { get; set; } = "";
         }
-
 
     }
 }

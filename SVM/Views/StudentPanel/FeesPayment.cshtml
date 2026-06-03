@@ -1,0 +1,264 @@
+﻿@model StudentFeeVM
+
+@{
+    ViewData["Title"] = "Fees Payment";
+    Layout = "~/Views/Shared/_StudentsLayout.cshtml";
+}
+
+<style>
+    .fee-card {
+        max-width: 650px;
+        margin: 2rem auto;
+        border: none;
+        border-radius: 1.5rem;
+        overflow: hidden;
+        transition: transform 0.2s;
+        box-shadow: 0 15px 35px rgba(0,0,0,0.1);
+    }
+
+        .fee-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .fee-header {
+        background: linear-gradient(135deg, #1e3c72 0%, #2b4c8a 100%);
+        padding: 1.8rem;
+        text-align: center;
+        color: white;
+    }
+
+        .fee-header h3 {
+            font-weight: 700;
+            letter-spacing: 1px;
+            margin: 0;
+            font-size: 1.8rem;
+        }
+
+        .fee-header p {
+            margin: 0.5rem 0 0;
+            opacity: 0.9;
+            font-size: 0.9rem;
+        }
+
+    .fee-body {
+        padding: 2rem;
+        background: white;
+    }
+
+    .fee-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 0.9rem 0;
+        border-bottom: 1px solid #f0f0f0;
+        font-size: 1.05rem;
+    }
+
+        .fee-item:last-of-type {
+            border-bottom: none;
+        }
+
+    .fee-label {
+        font-weight: 500;
+        color: #2c3e50;
+    }
+
+    .fee-amount {
+        font-weight: 600;
+        color: #2c3e50;
+    }
+
+    .total-row {
+        background: #f8f9fc;
+        margin-top: 1rem;
+        padding: 1rem 1.2rem;
+        border-radius: 1rem;
+        display: flex;
+        justify-content: space-between;
+        font-weight: 800;
+        font-size: 1.35rem;
+        border: 1px dashed #2b4c8a;
+    }
+
+    .total-label {
+        color: #1e3c72;
+    }
+
+    .total-amount {
+        color: #e67e22;
+    }
+
+    .btn-pay {
+        background: linear-gradient(100deg, #27ae60, #2ecc71);
+        border: none;
+        padding: 12px 30px;
+        font-size: 1.2rem;
+        font-weight: 600;
+        width: 100%;
+        border-radius: 50px;
+        transition: all 0.3s;
+        color: white;
+        box-shadow: 0 4px 12px rgba(39,174,96,0.3);
+    }
+
+        .btn-pay:hover {
+            transform: scale(1.02);
+            background: linear-gradient(100deg, #219653, #27ae60);
+            color: white;
+        }
+
+    .btn-receipt {
+        background: #3498db;
+        border: none;
+        padding: 10px 25px;
+        border-radius: 50px;
+        color: white;
+        font-weight: 500;
+        transition: 0.2s;
+    }
+
+        .btn-receipt:hover {
+            background: #2980b9;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+    .already-paid-badge {
+        background: #d4edda;
+        color: #155724;
+        border-radius: 40px;
+        padding: 8px 20px;
+        display: inline-block;
+        font-weight: 600;
+        margin-bottom: 1.5rem;
+        text-align: center;
+        width: 100%;
+    }
+
+    hr.dashed {
+        border-top: 2px dashed #e0e6ed;
+        margin: 1.2rem 0;
+    }
+
+    @@media (max-width: 576px) {
+        .fee-body {
+            padding: 1.2rem;
+        }
+
+        .fee-item {
+            font-size: 0.9rem;
+        }
+
+        .total-row {
+            font-size: 1.1rem;
+        }
+    }
+</style>
+
+<div class="container">
+    <div class="fee-card">
+        <div class="fee-header">
+            <h3>S.V.M. School</h3>
+            <p>Fee Structure & Payment</p>
+        </div>
+        <div class="fee-body">
+            @if (Model.AlreadyPaid)
+            {
+                <div class="already-paid-badge">
+                    ✅ Fees Already Paid
+                </div>
+                <div class="text-center mt-3">
+                    <a href="@Url.Action("Receipt", "StudentPanel")" class="btn btn-receipt">
+                        📄 Download Receipt
+                    </a>
+                </div>
+            }
+            else
+            {
+                <!-- Fee List -->
+                <div class="fee-item">
+                    <span class="fee-label">🏫 Admission Fee</span>
+                    <span class="fee-amount">₹ @Model.AdmissionFees.ToString("N2")</span>
+                </div>
+                <div class="fee-item">
+                    <span class="fee-label">📚 Monthly Fee (Yearly)</span>
+                    <span class="fee-amount">₹ @Model.MonthlyFees.ToString("N2")</span>
+                </div>
+                <div class="fee-item">
+                    <span class="fee-label">🎭 Activity Fee</span>
+                    <span class="fee-amount">₹ @Model.OtherActivityFees.ToString("N2")</span>
+                </div>
+                <div class="fee-item">
+                    <span class="fee-label">💻 Computer Fee</span>
+                    <span class="fee-amount">₹ @Model.ComputerFees.ToString("N2")</span>
+                </div>
+
+                <hr class="dashed" />
+
+                <div class="total-row">
+                    <span class="total-label">💰 Total Amount</span>
+                    <span class="total-amount">₹ @Model.TotalAmount.ToString("N2")</span>
+                </div>
+
+                <div class="text-center mt-4">
+                    <button id="payBtn" class="btn-pay">🔒 Pay Now</button>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script>
+    $("#payBtn").on("click", function () {
+        var studentId = parseInt('@Context.Session.GetString("StudentId")');
+        if (isNaN(studentId) || studentId === 0) {
+            alert("Student login session expired or invalid. Please login again.");
+            return;
+        }
+
+        $.ajax({
+            url: "http://localhost:5175/api/Payment/create-order",
+            type: "POST",
+            contentType: "application/json",
+            data: JSON.stringify(parseFloat(@Model.TotalAmount)),
+            success: function (data) {
+                var options = {
+                    key: data.key,
+                    amount: @Model.TotalAmount * 100,
+                    currency: "INR",
+                    name: "SVM School",
+                    order_id: data.orderId,
+                    handler: function (response) {
+                        $.ajax({
+                            url: "http://localhost:5175/api/Payment/success",
+                            type: "POST",
+                            contentType: "application/json",
+                            data: JSON.stringify({
+                                studentId: studentId,
+                                feeId: @Model.FeeId,
+                                amount: @Model.TotalAmount,
+                                PaymentId: response.razorpay_payment_id
+                            }),
+                            success: function () {
+                                alert("Payment Successful!");
+                                location.reload();
+                            },
+                            error: function (xhr) {
+                                console.log("Status:", xhr.status);
+                                console.log("Response:", xhr.responseText);
+                                alert("Payment save failed: " + (xhr.responseJSON?.title || xhr.responseText));
+                            }
+                        });
+                    }
+                };
+                var rzp = new Razorpay(options);
+                rzp.open();
+            },
+            error: function (xhr) {
+                alert("Order creation failed: " + (xhr.responseJSON?.error || xhr.status));
+            }
+        });
+    });
+</script>
