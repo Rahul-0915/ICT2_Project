@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk.Web">
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
 	<PropertyGroup>
 		<TargetFramework>net8.0</TargetFramework>
@@ -6,7 +6,8 @@
 		<ImplicitUsings>enable</ImplicitUsings>
 
 		<Nullable>disable</Nullable>
-	</PropertyGroup>
+	  <UserSecretsId>68d08115-3d9e-4d63-ad24-a2beda36da96</UserSecretsId>
+  </PropertyGroup>
 
 	<ItemGroup>
 	  <_ContentIncludedByDefault Remove="Views\Shared\_StudentsLayout.cshtml" />
@@ -23,6 +24,7 @@
 
 	<ItemGroup>
 		<PackageReference Include="BCrypt.Net-Next" Version="4.1.0" />
+		<PackageReference Include="Google.Cloud.AIPlatform.V1" Version="3.72.0" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="8.0.23" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="8.0.23" />
 		<PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="8.0.23">

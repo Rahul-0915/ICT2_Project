@@ -1,0 +1,285 @@
+﻿@model StudentAttendanceVM
+@{
+	Layout = "~/Views/Shared/_StudentsLayout.cshtml";
+}
+
+<style>
+	.attendance-box {
+		max-width: 900px;
+		margin: 20px auto;
+		background: #fff;
+		border-radius: 12px;
+		padding: 18px;
+		box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+	}
+
+	/* HEADER SIMPLE (match admin style) */
+	.header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		padding-bottom: 10px;
+		border-bottom: 1px solid #eee;
+		margin-bottom: 15px;
+	}
+
+		.header h2 {
+			color: inherit;
+		}
+
+	.month-nav a {
+		text-decoration: none;
+		padding: 4px 8px;
+		border: 1px solid #e5e7eb;
+		border-radius: 6px;
+		color: #374151;
+		font-size: 13px;
+		margin: 0 2px;
+		background: #fff;
+	}
+
+		.month-nav a:hover {
+			background: #f3f4f6;
+		}
+
+	/* SUMMARY CLEAN GRID */
+	.summary {
+		display: grid;
+		grid-template-columns: repeat(4, 1fr);
+		gap: 10px;
+		margin-top: 15px;
+	}
+
+	.box {
+		background: #f9fafb;
+		border: 1px solid #eee;
+		border-radius: 10px;
+		padding: 12px;
+		text-align: center;
+	}
+
+		.box h3 {
+			margin: 0;
+			font-size: 18px;
+			color: #111;
+		}
+
+		.box p {
+			margin: 3px 0 0;
+			font-size: 12px;
+			color: #6b7280;
+		}
+
+	/* ONLY SIMPLE ACCENT BORDER (no fancy colors) */
+	.present-box {
+		border-top: 3px solid #22c55e;
+	}
+
+	.absent-box {
+		border-top: 3px solid #ef4444;
+	}
+
+	.total-box {
+		border-top: 3px solid #3b82f6;
+	}
+
+	.percent-box {
+		border-top: 3px solid #8b5cf6;
+	}
+
+	/* LEGEND SIMPLE */
+	.legend {
+		display: flex;
+		gap: 15px;
+		font-size: 13px;
+		margin: 10px 0;
+		color: #555;
+	}
+
+	.dot {
+		width: 10px;
+		height: 10px;
+		border-radius: 50%;
+		display: inline-block;
+		margin-right: 5px;
+	}
+
+	.present-dot {
+		background: #22c55e;
+	}
+
+	.absent-dot {
+		background: #ef4444;
+	}
+
+	/* CALENDAR CLEAN */
+	.calendar {
+		display: grid;
+		grid-template-columns: repeat(7, 1fr);
+		gap: 6px;
+		margin-top: 10px;
+	}
+
+	.day {
+		padding: 8px;
+		text-align: center;
+		border: 1px solid #eee;
+		border-radius: 6px;
+		font-size: 13px;
+		background: #fff;
+	}
+
+	.present {
+		background: #ecfdf5;
+		color: #065f46;
+	}
+
+	.absent {
+		background: #fef2f2;
+		color: #991b1b;
+	}
+
+	/* TABLE CLEAN LIKE ADMIN PANEL */
+	table {
+		width: 100%;
+		margin-top: 15px;
+		border-collapse: collapse;
+		background: #fff;
+		border: 1px solid #eee;
+		border-radius: 8px;
+		overflow: hidden;
+	}
+
+	th {
+		background: #f9fafb;
+		text-align: left;
+		padding: 10px;
+		font-size: 13px;
+		color: #374151;
+	}
+
+	td {
+		padding: 10px;
+		border-top: 1px solid #f1f1f1;
+		font-size: 13px;
+	}
+
+	.badge-present {
+		color: #166534;
+		font-weight: 600;
+	}
+
+	.badge-absent {
+		color: #991b1b;
+		font-weight: 600;
+	}
+
+	/* MOBILE */
+	@@media(max-width:768px) {
+		.summary {
+			grid-template-columns: repeat(2, 1fr);
+		}
+	}
+</style>
+
+<div class="attendance-box">
+
+	<!-- HEADER -->
+	<div class="header">
+		<h2>Attendance Report</h2>
+
+		<div class="month-nav">
+			<a href="?month=@(ViewBag.Month - 1)&year=@ViewBag.Year">◀</a>
+			<span>@ViewBag.Month / @ViewBag.Year</span>
+			<a href="?month=@(ViewBag.Month + 1)&year=@ViewBag.Year">▶</a>
+		</div>
+	</div>
+
+	@if (Model?.Students != null && Model.Students.Any())
+	{
+		var s = Model.Students.First();
+
+		<!-- SUMMARY -->
+		<div class="summary">
+
+			<div class="box present-box">
+				<h3>@s.Present</h3>
+				<p>Present</p>
+			</div>
+
+			<div class="box absent-box">
+				<h3>@s.Absent</h3>
+				<p>Absent</p>
+			</div>
+
+			<div class="box total-box">
+				<h3>@Model.TotalDays</h3>
+				<p>Total Days</p>
+			</div>
+
+			<div class="box percent-box">
+				<h3>@s.Percentage%</h3>
+				<p>Attendance</p>
+			</div>
+
+		</div>
+
+		<!-- LEGEND -->
+		<div class="legend">
+			<span><span class="dot present-dot"></span>Present</span>
+			<span><span class="dot absent-dot"></span>Absent</span>
+		</div>
+
+		<!-- CALENDAR -->
+		<div class="calendar">
+			@foreach (var d in Model.Dates)
+			{
+				var st = s.DailyStatus.FirstOrDefault(x => x.Date.Date == d.Date);
+				string cls = (st?.Status == "P") ? "present" : "absent";
+
+				<div class="day @cls">
+					@d.Day
+				</div>
+			}
+		</div>
+
+		<!-- TABLE -->
+		<table>
+			<thead>
+				<tr>
+					<th>Date</th>
+					<th>Status</th>
+				</tr>
+			</thead>
+
+			<tbody>
+				@foreach (var d in Model.Dates)
+				{
+					var st = s.DailyStatus.FirstOrDefault(x => x.Date.Date == d.Date);
+
+					<tr>
+						<td>@d.ToString("dd MMM yyyy")</td>
+						<td>
+							@if (st?.Status == "P")
+							{
+								<span class="badge-present">Present</span>
+							}
+							else
+							{
+								<span class="badge-absent">Absent</span>
+							}
+						</td>
+					</tr>
+				}
+			</tbody>
+		</table>
+
+	}
+	else
+	{
+		<p style="text-align:center;color:#6b7280;">
+			No attendance data found.
+		</p>
+	}
+
+</div>
