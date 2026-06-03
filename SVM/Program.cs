@@ -1,8 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http.Features;
 using Microsoft.EntityFrameworkCore;
+using QuestPDF.Infrastructure;
 using Rotativa.AspNetCore;
 using SVM.Models;
-using QuestPDF.Infrastructure;
+using SVM.Services;
 
 
 namespace SVM
@@ -19,6 +20,7 @@ namespace SVM
             builder.Services.AddControllersWithViews();
             builder.Services.AddDbContext<SvmContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStrings")));
             builder.Services.AddDistributedMemoryCache();
+            builder.Services.AddScoped<IGeminiService, GeminiService>();
             builder.Services.AddSession(options =>
             {
                 options.IdleTimeout = TimeSpan.FromMinutes(30);
