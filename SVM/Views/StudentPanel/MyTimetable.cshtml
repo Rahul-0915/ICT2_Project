@@ -1,0 +1,116 @@
+﻿@model List<SVM.Models.Timetable>
+
+@{
+	ViewData["Title"] = "My Timetable";
+	Layout = "~/Views/Shared/_StudentsLayout.cshtml";
+
+	var days = new List<string>
+	{
+		"Monday",
+		"Tuesday",
+		"Wednesday",
+		"Thursday",
+		"Friday",
+		"Saturday"
+	};
+
+	int maxPeriod = Model.Any()
+		? Model.Max(x => x.LectureNo)
+		: 0;
+}
+
+<link rel="stylesheet"
+	  href="~/css/StudentsSide_Css/TimeTable.css"
+	  asp-append-version="true" />
+
+<div class="tt-container">
+
+	<div class="tt-header">
+		<h2>
+			<i class="fas fa-calendar-alt"></i>
+			Academic Timetable
+		</h2>
+		<p>Your complete weekly class schedule</p>
+	</div>
+
+	@if (!Model.Any())
+	{
+		<div class="tt-empty">
+			<i class="fas fa-calendar-times"></i>
+			<h4>No Timetable Available</h4>
+			<p>Your timetable has not been published yet.</p>
+		</div>
+	}
+	else
+	{
+		<div class="table-wrapper">
+
+			<table class="tt-table">
+
+				<thead>
+					<tr>
+						<th>Day</th>
+
+						@for (int p = 1; p <= maxPeriod; p++)
+						{
+							<th>Period @p</th>
+						}
+					</tr>
+				</thead>
+
+				<tbody>
+
+					@foreach (var day in days)
+					{
+						var isToday = DateTime.Now.DayOfWeek.ToString()
+						.Equals(day, StringComparison.OrdinalIgnoreCase);
+
+						<tr class="@(isToday ? "today-row" : "")">
+
+							<td class="day-col">
+								@day
+							</td>
+
+							@for (int p = 1; p <= maxPeriod; p++)
+							{
+								var lecture = Model.FirstOrDefault(x =>
+								x.DayName == day &&
+								x.LectureNo == p);
+
+								<td>
+
+									@if (lecture != null)
+									{
+										<div class="subject">
+											@lecture.Subject?.SubjectName
+										</div>
+
+										<div class="teacher">
+											@lecture.Staff?.FirstName
+										</div>
+
+										<div class="time">
+											@lecture.StartTime.ToString(@"hh\:mm")
+											-
+											@lecture.EndTime.ToString(@"hh\:mm")
+										</div>
+									}
+									else
+									{
+										<span class="empty-cell">—</span>
+									}
+
+								</td>
+							}
+
+						</tr>
+					}
+
+				</tbody>
+
+			</table>
+
+		</div>
+	}
+
+</div>

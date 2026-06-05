@@ -1,0 +1,212 @@
+﻿@model ReceiptViewModel
+
+@{
+    ViewData["Title"] = "Payment Receipt";
+    Layout = null;
+
+    var medium = Model.Medium ?? ViewBag.Medium as string ?? "Gujarati";
+    var schoolName = medium == "English" ? "S.V.M ENGLISH MEDIUM" : "શારદા વિદ્યામંદિર";
+    var logoPath = medium == "English" ? "/images/SVMEng_logo.png" : "/images/SVMGuj_logo.png";
+    var schoolAddress = "Gujarat Housing Board, Pandesara, Surat - 394221";
+    var schoolPhone = "+91 9876543210";
+    var schoolEmail = "shardavidhyamandir@gmail.com";
+
+    var monthlyYearly = Model.MonthlyFees * 12;
+    var receiptNo = Model.TransactionId ?? "RCP" + DateTime.Now.Ticks.ToString().Substring(0, 8);
+    var paymentDate = DateTime.TryParse(Model.PaymentDate?.ToString(), out var date) ? date.ToString("dd-MM-yyyy") : DateTime.Now.ToString("dd-MM-yyyy");
+}
+
+<link rel="stylesheet" href="~/css/StudentsSide_Css/StudFessReceipt.css" />
+
+<div class="receipt-page">
+    <div class="top-actions no-print">
+        <button type="button" class="print-btn" onclick="window.print()">
+            Print / Download
+        </button>
+        <a href="@Url.Action("FeesPayment", "StudentPanel")" class="close-btn">
+            ✕ Back
+        </a>
+    </div>
+
+    <div class="receipt-container">
+        <!-- HEADER -->
+        <div class="receipt-header">
+            <div class="logo-box">
+                <img src="@logoPath" alt="Logo" />
+            </div>
+            <div class="school-details">
+                <h1 class="school-name">@schoolName</h1>
+                <p>@schoolAddress</p>
+                <p>📞 @schoolPhone | ✉️ @schoolEmail</p>
+            </div>
+        </div>
+
+        <!-- TITLE -->
+        <div class="receipt-title">
+            FEE RECEIPT
+        </div>
+
+        <!-- STUDENT INFO -->
+        <div class="info-section">
+            <div class="info-row">
+                <span class="label">Transaction ID</span>
+                <span class="value">#@receiptNo</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Date</span>
+                <span class="value">@paymentDate</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Student Name</span>
+                <span class="value">@Model.StudentName</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Class</span>
+                <span class="value">@Model.ClassName</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Section</span>
+                <span class="value">@Model.SectionName</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Medium</span>
+                <span class="value">@medium</span>
+            </div>
+        </div>
+
+        <!-- Rest of the code same rahega -->
+        <!-- FEE TABLE -->
+        <div class="section-title">FEE DETAILS</div>
+        <table class="fee-table">
+            <thead>
+                <tr>
+                    <th>Sr. No.</th>
+                    <th>Particulars</th>
+                    <th>Amount (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.AdmissionFees > 0)
+                {
+                    <tr>
+                        <td>1</td>
+                        <td>Admission Fees</td>
+                        <td class="text-right">₹ @Model.AdmissionFees.ToString("N2")</td>
+                    </tr>
+                }
+                @if (Model.MonthlyFees > 0)
+                {
+                    <tr>
+                        <td>2</td>
+                        <td>Monthly Fees (Yearly)</td>
+                        <td class="text-right">₹ @monthlyYearly.ToString("N2")</td>
+                    </tr>
+                }
+                @if (Model.OtherActivityFees > 0)
+                {
+                    <tr>
+                        <td>3</td>
+                        <td>Other Activity Fees</td>
+                        <td class="text-right">₹ @Model.OtherActivityFees.ToString("N2")</td>
+                    </tr>
+                }
+                @if (Model.ComputerFees > 0)
+                {
+                    <tr>
+                        <td>4</td>
+                        <td>Computer Fees</td>
+                        <td class="text-right">₹ @Model.ComputerFees.ToString("N2")</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2" class="text-right"><strong>Total Amount</strong></td>
+                    <td class="text-right"><strong>₹ @Model.TotalAmount.ToString("N2")</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <!-- PAYMENT DETAILS -->
+        <div class="section-title">PAYMENT DETAILS</div>
+        <div class="payment-details">
+            <div class="payment-row">
+                <span class="label">Payment Mode</span>
+                <span class="value">💵 @Model.PaymentMode</span>
+            </div>
+            <div class="payment-row">
+                <span class="label">Transaction ID</span>
+                <span class="value">@Model.TransactionId</span>
+            </div>
+            <div class="payment-row">
+                <span class="label">Payment Date</span>
+                <span class="value">@paymentDate</span>
+            </div>
+            <div class="payment-row">
+                <span class="label">Amount Paid</span>
+                <span class="value amount">₹ @Model.TotalAmount.ToString("N2")</span>
+            </div>
+        </div>
+
+        <!-- AMOUNT IN WORDS -->
+        <div class="amount-box">
+            <label>Amount in Words</label>
+            <div class="amount-in-words">
+                @NumberToWords((long)(Model.TotalAmount)) Rupees Only
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="receipt-footer">
+            <div class="signature">
+                <div class="signature-box">
+                    <span>For @schoolName</span>
+                    <div class="sign-line">Authorized Signatory</div>
+                </div>
+                <div class="signature-box">
+                    <span>Student/Parent Signature</span>
+                    <div class="sign-line"></div>
+                </div>
+            </div>
+            <div class="generated-text">
+                <p>This is a computer generated receipt. No signature required.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+    @functions {
+        public string NumberToWords(long number)
+        {
+            if (number == 0) return "Zero";
+
+            string[] ones = { "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine" };
+            string[] teens = { "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
+            string[] tens = { "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
+            string[] thousands = { "", "Thousand", "Million", "Billion" };
+
+            string words = "";
+
+            for (int i = 0; number > 0; i++)
+            {
+                if (number % 1000 != 0)
+                {
+                    words = ConvertHundreds(number % 1000) + " " + thousands[i] + " " + words;
+                }
+                number /= 1000;
+            }
+
+            return words.Trim();
+
+            // Local function
+            string ConvertHundreds(long num)
+            {
+                if (num == 0) return "";
+                if (num < 10) return ones[num];
+                if (num < 20) return teens[num - 10];
+                if (num < 100) return tens[num / 10] + " " + ones[num % 10];
+                return ones[num / 100] + " Hundred " + ConvertHundreds(num % 100);
+            }
+        }
+    }

@@ -1,0 +1,88 @@
+﻿@model StudentFeeVM
+
+@{
+    ViewData["Title"] = "Fee Structure Details";
+    Layout = null;
+
+    // Student ke liye values
+    var admissionFees = Model?.AdmissionFees ?? 0;
+    var monthlyFees = Model?.MonthlyFees ?? 0;
+    var yearlyFees = monthlyFees * 12;
+    var activityFees = Model?.OtherActivityFees ?? 0;
+    var computerFees = Model?.ComputerFees ?? 0;    
+    var totalAmount = Model?.TotalAmount ?? 0;
+
+    // Session se student ki info
+    var medium = ViewBag.Medium ?? "English";
+    var className = ViewBag.ClassName ?? "Not Available";
+    var sessionName = ViewBag.SessionName ?? "2024-25";
+    var studentName = Context.Session.GetString("FullName") ?? "Student";
+    var studentId = Context.Session.GetString("StudentId") ?? "";
+
+    var schoolName = medium == "English" ? "S.V.M ENGLISH MEDIUM" : "શારદા વિદ્યામંદિર";
+    var logo = medium == "English" ? "/images/SVMEng_logo.png" : "/images/SVMGuj_logo.png";
+}
+
+<link rel="stylesheet" href="~/css/AdminSide_Css/FeeStructureDetails.css" />
+<br />
+<div class="details-page">
+    <div class="top-actions no-print">
+        <a asp-action="FeesPayment" asp-controller="StudentPanel" class="back-btn">← Back to Payment</a>
+        <button type="button" class="print-btn" onclick="printReceipt()">
+            Print / Download
+        </button>
+    </div>
+
+    <div class="receipt-container">
+        <div class="receipt-header">
+            <div class="logo-box">
+                <img src="@logo" alt="Logo" />
+            </div>
+            <div class="school-details">
+                <h1 class="school-name">@schoolName</h1>
+                <p>Gujarat Housing Board, Pandesara, Surat - 394221</p>
+                <p>+91 9876543210 | school@gmail.com</p>
+            </div>
+        </div>
+
+        <div class="receipt-title">FEE STRUCTURE DETAILS</div>
+
+        <div class="info-section">
+            <div class="info-row"><span class="label">Student Name :</span><span class="value">@studentName</span></div>
+            <div class="info-row"><span class="label">Student ID :</span><span class="value">@studentId</span></div>
+            <div class="info-row"><span class="label">Session :</span><span class="value">@sessionName</span></div>
+            <div class="info-row"><span class="label">Class :</span><span class="value">@className</span></div>
+            <div class="info-row"><span class="label">Medium :</span><span class="value">@medium</span></div>
+        </div>
+
+        <div class="section-title">FEES BREAKDOWN</div>
+
+        <table class="fees-table">
+            <thead>
+                <tr><th>Fees Type</th><th>Amount (₹)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>Admission Fees</td><td>₹ @admissionFees.ToString("N2")</td></tr>
+                <tr><td>Monthly Fees (Per Month)</td><td>₹ @monthlyFees.ToString("N2")</td></tr>
+                <tr><td>Yearly Fees (Monthly × 12)</td><td>₹ @yearlyFees.ToString("N2")</td></tr>
+                <tr><td>Other Activity Fees</td><td>₹ @activityFees.ToString("N2")</td></tr>
+                <tr><td>Computer Fees</td><td>₹ @computerFees.ToString("N2")</td></tr>
+            </tbody>
+            <tfoot>
+                <tr><td><strong>Total Amount</strong></td><td><strong>₹ @totalAmount.ToString("N2")</strong></td></tr>
+            </tfoot>
+        </table>
+
+        <div class="receipt-footer">
+            <div class="signature-box">Student Signature</div>
+            <div class="signature-box">Principal Signature</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    function printReceipt() {
+        window.focus();
+        window.print();
+    }
+</script>

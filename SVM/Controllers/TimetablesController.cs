@@ -23,22 +23,22 @@ namespace SVM.Controllers
         // GET: Timetables?sessionId=1&classId=2&sectionId=3&medium=Gujarati
         public async Task<IActionResult> Index(int? sessionId, int? classId, int? sectionId, string medium)
         {
-			var sessions = await GetSessions();
+            var sessions = await GetSessions();
 
-			// ✅ Active session auto select
-			if (sessionId == null)
-			{
-				var activeSession = sessions.FirstOrDefault(s => s.IsActive == 1);
+            // ✅ Active session auto select
+            if (sessionId == null)
+            {
+                var activeSession = sessions.FirstOrDefault(s => s.IsActive == 1);
 
-				if (activeSession != null)
-				{
-					sessionId = activeSession.SessionId;
-				}
-			}
+                if (activeSession != null)
+                {
+                    sessionId = activeSession.SessionId;
+                }
+            }
 
-			ViewBag.SessionList = new SelectList(sessions, "SessionId", "SessionName", sessionId);
+            ViewBag.SessionList = new SelectList(sessions, "SessionId", "SessionName", sessionId);
 
-			ViewBag.MediumList = new SelectList(new[] { "Gujarati", "English" }, medium);
+            ViewBag.MediumList = new SelectList(new[] { "Gujarati", "English" }, medium);
 
             var sections = await GetSections();
             ViewBag.SectionList = new SelectList(sections, "SectionId", "SectionName", sectionId);
@@ -305,6 +305,38 @@ namespace SVM.Controllers
             var document = CreatePdfDocument(grid, sessionName, className, sectionName, medium);
             var pdfBytes = document.GeneratePdf();
             return File(pdfBytes, "application/pdf", $"Timetable_{sessionName}_{className}_{sectionName}_{medium}.pdf");
+        }
+        private async Task<List<Staff>> GetTeachersForSubject(int subjectId, int classId, int sessionId)
+        {
+            var response = await _client.GetAsync($"TeacherSubjects");
+            if (!response.IsSuccessStatusCode) return new List<Staff>();
+
+            var data = await response.Content.ReadAsStringAsync();
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var allMappings = JsonSerializer.Deserialize<List<TeacherSubject>>(data, options) ?? new List<TeacherSubject>();
+
+            // ✅ Filter by subject, class, and session
+            var filteredMappings = allMappings
+                .Where(m => m.SubjectId == subjectId && m.ClassId == classId && m.SessionId == sessionId)
+                .ToList();
+
+            var teachers = new List<Staff>();
+            var distinctStaffIds = filteredMappings
+                .Where(m => m.StaffId.HasValue)
+                .Select(m => m.StaffId.Value)
+                .Distinct();
+
+            foreach (var staffId in distinctStaffIds)
+            {
+                var staffRes = await _client.GetAsync($"Staffs/{staffId}");
+                if (staffRes.IsSuccessStatusCode)
+                {
+                    var staffData = await staffRes.Content.ReadAsStringAsync();
+                    var staff = JsonSerializer.Deserialize<Staff>(staffData, options);
+                    if (staff != null) teachers.Add(staff);
+                }
+            }
+            return teachers;
         }
 
         // -------------------------- HELPER METHODS --------------------------
@@ -639,57 +671,37 @@ Principal Sign: ____________________
 
         private async Task<Dictionary<int, Staff>> GetTeacherMapping(int sessionId, int classId, int sectionId)
         {
-            var response = await _client.GetAsync($"TeacherSubjects?sessionId={sessionId}&classId={classId}");
+            var response = await _client.GetAsync("TeacherSubjects");
             if (!response.IsSuccessStatusCode) return new Dictionary<int, Staff>();
 
             var data = await response.Content.ReadAsStringAsync();
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var mappings = JsonSerializer.Deserialize<List<TeacherSubject>>(data, options) ?? new List<TeacherSubject>();
+            var allMappings = JsonSerializer.Deserialize<List<TeacherSubject>>(data, options) ?? new List<TeacherSubject>();
+
+            // ✅ Filter by session and class (section is often not in TeacherSubject, so ignore or add if your schema has it)
+            var filteredMappings = allMappings
+                .Where(m => m.SessionId == sessionId && m.ClassId == classId)
+                .ToList();
 
             var teacherMapping = new Dictionary<int, Staff>();
 
-            foreach (var map in mappings)
+            foreach (var map in filteredMappings)
             {
-                if (!map.StaffId.HasValue) continue;
+                if (!map.StaffId.HasValue || !map.SubjectId.HasValue) continue;
 
                 var staffRes = await _client.GetAsync($"Staffs/{map.StaffId}");
                 if (staffRes.IsSuccessStatusCode)
                 {
                     var staffData = await staffRes.Content.ReadAsStringAsync();
                     var staff = JsonSerializer.Deserialize<Staff>(staffData, options);
-                    if (staff != null && map.SubjectId.HasValue)
+                    if (staff != null)
                         teacherMapping[map.SubjectId.Value] = staff;
                 }
             }
-
             return teacherMapping;
         }
 
-        private async Task<List<Staff>> GetTeachersForSubject(int subjectId, int classId, int sessionId)
-        {
-            var response = await _client.GetAsync($"TeacherSubjects?subjectId={subjectId}&classId={classId}&sessionId={sessionId}");
-            if (!response.IsSuccessStatusCode) return new List<Staff>();
-
-            var data = await response.Content.ReadAsStringAsync();
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var mappings = JsonSerializer.Deserialize<List<TeacherSubject>>(data, options) ?? new List<TeacherSubject>();
-
-            var teachers = new List<Staff>();
-            var distinctStaffIds = mappings.Where(m => m.StaffId.HasValue).Select(m => m.StaffId.Value).Distinct();
-
-            foreach (var staffId in distinctStaffIds)
-            {
-                var staffRes = await _client.GetAsync($"Staffs/{staffId}");
-                if (staffRes.IsSuccessStatusCode)
-                {
-                    var staffData = await staffRes.Content.ReadAsStringAsync();
-                    var staff = JsonSerializer.Deserialize<Staff>(staffData, options);
-                    if (staff != null) teachers.Add(staff);
-                }
-            }
-            return teachers;
-        }
-
+      
         private async Task<Staff> GetStaffById(int staffId)
         {
             var response = await _client.GetAsync($"Staffs/{staffId}");

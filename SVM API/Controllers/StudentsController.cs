@@ -350,7 +350,19 @@ namespace SVM_API.Controllers
             if (student == null)
                 return NotFound(new { message = $"No student found for UserId: {userId}" });
 
-            return student;
+            return Ok(new
+            {
+                student.StudentId,
+                student.UserId,
+                student.FirstName,
+                student.LastName,
+                student.ClassId,
+                student.SectionId,
+                student.SessionId,
+                student.RollNo,
+                student.StudentPhoto,
+                student.AdmissionNo
+            });
         }
         // DTO for response
         public class StudentWithDetails
