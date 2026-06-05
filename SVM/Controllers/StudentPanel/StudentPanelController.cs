@@ -589,6 +589,41 @@ Student Question:
 
             var json = await response.Content.ReadAsStringAsync();
             var receipt = JsonSerializer.Deserialize<ReceiptViewModel>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            // Get Student, Class, Section, Medium info
+            var studentResponse = await _client.GetAsync($"Students/{studentId}");
+            if (studentResponse.IsSuccessStatusCode)
+            {
+                var studentJson = await studentResponse.Content.ReadAsStringAsync();
+                var student = JsonSerializer.Deserialize<Student>(studentJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (student?.ClassId != null)
+                {
+                    var classResponse = await _client.GetAsync($"Classes/{student.ClassId}");
+                    if (classResponse.IsSuccessStatusCode)
+                    {
+                        var classJson = await classResponse.Content.ReadAsStringAsync();
+                        var classObj = JsonSerializer.Deserialize<Class>(classJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                        // ✅ Set Medium
+                        receipt.Medium = classObj?.Medium ?? "Gujarati";
+                        ViewBag.Medium = receipt.Medium;
+                    }
+                }
+
+                // ✅ Set Section Name
+                if (student?.SectionId != null)
+                {
+                    var sectionResponse = await _client.GetAsync($"Sections/{student.SectionId}");
+                    if (sectionResponse.IsSuccessStatusCode)
+                    {
+                        var sectionJson = await sectionResponse.Content.ReadAsStringAsync();
+                        var sectionObj = JsonSerializer.Deserialize<Section>(sectionJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        receipt.SectionName = sectionObj?.SectionName ?? "N/A";
+                    }
+                }
+            }
+
             return View(receipt);
         }
         public class AiResponse
@@ -600,6 +635,74 @@ Student Question:
         {
             public string text { get; set; } = "";
             public string action { get; set; } = "";
+        }
+        public async Task<IActionResult> FeeStructure()
+        {
+            string? studentId = HttpContext.Session.GetString("StudentId");
+
+            if (string.IsNullOrEmpty(studentId))
+                return RedirectToAction("Login", "Account");
+
+            // Get Fee Data
+            var response = await _client.GetAsync($"FeeStructures/StudentFee/{studentId}");
+
+            if (!response.IsSuccessStatusCode)
+                return View(new StudentFeeVM());
+
+            var json = await response.Content.ReadAsStringAsync();
+
+            var fee = JsonSerializer.Deserialize<StudentFeeVM>(
+                json,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            // Get Class & Medium info for student
+            var studentResponse = await _client.GetAsync($"Students/{studentId}");
+            if (studentResponse.IsSuccessStatusCode)
+            {
+                var studentJson = await studentResponse.Content.ReadAsStringAsync();
+                var student = JsonSerializer.Deserialize<Student>(
+                    studentJson,
+                    new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                if (student?.ClassId != null)
+                {
+                    var classResponse = await _client.GetAsync($"Classes/{student.ClassId}");
+                    if (classResponse.IsSuccessStatusCode)
+                    {
+                        var classJson = await classResponse.Content.ReadAsStringAsync();
+                        var classObj = JsonSerializer.Deserialize<Class>(
+                            classJson,
+                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+                        ViewBag.ClassName = classObj?.ClassName;
+                        ViewBag.Medium = classObj?.Medium;
+                    }
+                }
+
+                // ✅ FIX: SessionId se Session name fetch kar
+                if (student.SessionId > 0)
+                {
+                    var sessionResponse = await _client.GetAsync($"Sessions/{student.SessionId}");
+                    if (sessionResponse.IsSuccessStatusCode)
+                    {
+                        var sessionJson = await sessionResponse.Content.ReadAsStringAsync();
+                        var session = JsonSerializer.Deserialize<Session>(
+                            sessionJson,
+                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        ViewBag.SessionName = session?.SessionName ?? "2024-25";
+                    }
+                    else
+                    {
+                        ViewBag.SessionName = "2024-25";
+                    }
+                }
+                else
+                {
+                    ViewBag.SessionName = "2024-25";
+                }
+            }
+
+            return View(fee);
         }
 
     }

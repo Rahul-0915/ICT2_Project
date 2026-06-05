@@ -5,6 +5,8 @@ namespace SVM.Models
     {
         public string StudentName { get; set; } = string.Empty;
         public string ClassName { get; set; } = string.Empty;
+        public string SectionName { get; set; }     
+        public string Medium { get; set; }
         public decimal AdmissionFees { get; set; }
         public decimal MonthlyFees { get; set; }
         public decimal OtherActivityFees { get; set; }

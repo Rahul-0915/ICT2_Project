@@ -1,0 +1,937 @@
+﻿    @model List<SVM.Models.Student>
+
+    @{
+        ViewData["Title"] = "Collect Fees (Cash)";
+        Layout = null;
+    }
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <meta charset="utf-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Collect Fees - SVM Admin</title>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+        <link rel="stylesheet" href="~/css/AdminSide_Css/CashFessPayment.css" asp-append-version="true" />
+    </head>
+    <body>
+
+        <div class="filter-bar">
+            <div class="filter-group">
+            
+                <select id="sessionFilter">
+                    <option value="">Select Session</option>
+                    @if (ViewBag.AllSessions != null)
+                    {
+                        foreach (var s in ViewBag.AllSessions)
+                        {
+                            <option value="@s.SessionId" selected="@(ViewBag.SelectedSessionId == s.SessionId ? "selected" : null)">
+                                @s.SessionName
+                            </option>
+                        }
+                    }
+                </select>
+            </div>
+
+            <div class="filter-group">
+            
+                <select id="mediumFilter">
+                    <option value="">Select Medium</option>
+                    <option value="Gujarati" selected="@(ViewBag.SelectedMedium == "Gujarati")">Gujarati</option>
+                    <option value="English" selected="@(ViewBag.SelectedMedium == "English")">English</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+            
+                <select id="classFilter">
+                    <option value="">Select Class</option>
+                </select>
+            </div>
+
+            <div class="filter-group">
+            
+                <select id="sectionFilter">
+                    <option value="">Select Section</option>
+                </select>
+            </div>
+
+            <div>
+                <button class="search-btn" onclick="searchStudents()">
+                    <i class="fa-solid fa-magnifying-glass"></i> Search
+                </button>
+                <button class="reset-btn" onclick="resetFilters()">
+                    <i class="fa-solid fa-rotate-right"></i> Reset
+                </button>
+            <button class="excel-btn" onclick="downloadExcelWithStatus()">
+                <i class="fa-solid fa-file-excel"></i> Excel
+            </button>
+            </div>
+        </div>
+
+        <div class="result-title" id="resultTitle"></div>
+
+        <!-- Search by Roll No or Name -->
+        <div class="search-section" id="searchSection" style="display:none;">
+            <div class="search-actions">
+                <div class="search-input-group">
+                    <i class="fa-solid fa-search"></i>
+                    <input type="text" id="studentSearch" placeholder="Search by Roll No or Student Name..." onkeyup="filterStudents()">
+                    <button class="search-clear-btn" id="clearSearchBtn" onclick="clearSearch()">
+                        <i class="fa-solid fa-times-circle"></i>
+                    </button>
+                </div>
+                <button class="search-reset-btn" onclick="resetStudentSearch()">
+                    <i class="fa-solid fa-undo-alt"></i> Reset Search
+                </button>
+            </div>
+        </div>
+
+        <div class="table-wrapper" id="tableWrapper">
+            <table class="student-table">
+                <thead>
+                    <tr>
+                        <th>Roll No</th>
+                        <th>Photo</th>
+                        <th>Student Name</th>
+                        <th>GR No</th>
+                        <th>Class</th>
+                        <th>Section</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody id="tableBody">
+                    @foreach (var item in Model)
+                    {
+                        var medium = item.Class?.Medium ?? "";
+                        <tr class="student-row"
+                            data-id="@item.StudentId"
+                            data-session="@item.SessionId"
+                            data-medium="@medium"
+                            data-class="@item.ClassId"
+                            data-section="@item.SectionId"
+                            data-name="@item.FirstName @item.LastName"
+                            data-roll="@item.RollNo"
+                            data-gr="@item.Grno"
+                            data-classname="@item.Class?.ClassName"
+                            data-sectionname="@item.Section?.SectionName"
+                            style="display:none;">
+                            <td>@item.RollNo</td>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.StudentPhoto))
+                                {
+                                    <img src="@item.StudentPhoto" class="table-photo" />
+                                }
+                                else
+                                {
+                                    <img src="/images/default-user.png" class="table-photo" />
+                                }
+                            </td>
+                            <td class="student-name-cell">@item.FirstName @item.LastName</td>
+                            <td>@item.Grno</td>
+                            <td>@item.Class?.ClassName</td>
+                            <td>@item.Section?.SectionName</td>
+                            <td class="payment-status" data-student="@item.StudentId">
+                                <span class="status-badge">Checking...</span>
+                            </td>
+                            <td class="action-cell" data-student="@item.StudentId">
+                                <button class="pay-btn" data-student="@item.StudentId" onclick="openPaymentModal(this)">
+                                    <i class="fa-solid fa-money-bill-wave"></i> Pay
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <div class="no-data" id="noData">Select filters and search students</div>
+
+        <!-- Payment Modal -->
+        <div class="payment-modal" id="paymentModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fa-solid fa-receipt"></i> Collect Cash Payment</h3>
+                    <button class="close-modal" onclick="closePaymentModal()">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="student-details-card">
+                        <div class="student-name-large">
+                            <i class="fa-solid fa-user-graduate"></i>
+                            <span id="modalStudentName">-</span>
+                        </div>
+                        <div class="detail-grid">
+                            <div class="detail-item">
+                                <span class="detail-label">Class:</span>
+                                <span class="detail-value" id="modalClass">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Section:</span>
+                                <span class="detail-value" id="modalSection">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Session:</span>
+                                <span class="detail-value" id="modalSession">-</span>
+                            </div>
+                            <div class="detail-item">
+                                <span class="detail-label">Roll No:</span>
+                                <span class="detail-value" id="modalRollNo">-</span>
+                            </div>
+                        </div>
+                    </div>
+
+                   @*  <div class="fee-summary-card">
+                        <div class="fee-row-simple">
+                            <span>💰 Total Fees</span>
+                            <strong>₹<span id="totalFees">0</span></strong>
+                        </div>
+                        <div class="fee-row-simple">
+                            <span>✅ Already Paid</span>
+                            <strong>₹<span id="alreadyPaid">0</span></strong>
+                        </div>
+                        <div class="fee-total">
+                            <span>📌 Payable Amount</span>
+                            <strong>₹<span id="payableAmountText">0</span></strong>
+                        </div>
+                    </div> *@
+
+                    <div class="form-group payable-highlight">
+                        <label><i class="fa-solid fa-indian-rupee-sign"></i> Payable Amount</label>
+                        <input type="text" id="payableAmount" readonly placeholder="₹0.00">
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fa-solid fa-hand-holding-usd"></i> Received Amount (from Student)</label>
+                        <input type="number" id="receivedAmount" placeholder="Enter amount student is giving" step="0.01" min="0">
+                        <div class="error-msg" id="receivedError">
+                            <i class="fa-solid fa-circle-exclamation"></i> Received amount cannot be less than payable amount!
+                        </div>
+                    </div>
+
+                    <div class="return-card" id="returnAmountDiv" style="display:none;">
+                        <span><i class="fa-solid fa-arrow-rotate-left"></i> Return to Student</span>
+                        <div class="return-amount-value" id="returnAmount">₹0</div>
+                    </div>
+
+                    <div class="form-group">
+                        <label><i class="fa-solid fa-credit-card"></i> Payment Mode</label>
+                        <div class="payment-mode-group">
+                            <label>
+                                <input type="radio" name="paymentMode" value="Cash" checked> 💵 Cash
+                            </label>
+                            <label style="opacity:0.5;">
+                                <input type="radio" name="paymentMode" value="Online" disabled> 💳 Online
+                            </label>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn-cancel" onclick="closePaymentModal()">
+                        <i class="fa-solid fa-times"></i> Cancel
+                    </button>
+                    <button class="btn-pay" id="confirmPayBtn" onclick="confirmPayment()">
+                        <i class="fa-solid fa-check"></i> Confirm Payment
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Receipt History Modal -->
+        <div class="receipt-modal" id="receiptModal">
+            <div class="receipt-modal-content">
+                <div class="receipt-modal-header">
+                    <h3><i class="fa-solid fa-receipt"></i> Payment Details</h3>
+                    <button class="close-modal" onclick="closeReceiptModal()" style="color:white;">&times;</button>
+                </div>
+                <div class="receipt-modal-body" id="receiptListBody">
+                    <div class="no-receipts">
+                        <i class="fa-solid fa-spinner fa-pulse"></i> Loading...
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        let currentStudent = {
+            id: 0,
+            feeId: 0,
+            totalFees: 0,
+            alreadyPaid: 0,
+            payableAmount: 0,
+            rollNo: 0,
+            studentName: ""
+        };
+    
+        // Preload all data on page load
+        let allClasses = [];
+        let allSections = [];
+        let sessionsList = [];
+        let classesLoaded = false;
+        let sectionsLoaded = false;
+    
+        // Load all data at once on page ready
+        $(document).ready(function() {
+            // Load all sessions first
+            loadAllSessions();
+            // Load all classes and sections in background
+            loadAllClasses();
+            loadAllSections();
+            checkAllStudentsPaymentStatus();
+        });
+    
+        function loadAllSessions() {
+            $.ajax({
+                url: '@Url.Action("GetAllSessions", "Admin")',
+                type: 'GET',
+                success: function(data) {
+                    sessionsList = data;
+                    let sessionHtml = '<option value="">Select Session</option>';
+                    $.each(data, function(i, item) {
+                        let selected = (item.isActive == 1) ? 'selected' : '';
+                        sessionHtml += `<option value="${item.sessionId}" ${selected}>${item.sessionName}</option>`;
+                    });
+                    $("#sessionFilter").html(sessionHtml);
+                }
+            });
+        }
+    
+        function loadAllClasses() {
+            $.ajax({
+                url: '@Url.Action("GetAllClassesList", "Admin")',
+                type: 'GET',
+                success: function(data) {
+                    allClasses = data;
+                    classesLoaded = true;
+                }
+            });
+        }
+    
+        function loadAllSections() {
+            $.ajax({
+                url: '@Url.Action("GetAllSectionsList", "Admin")',
+                type: 'GET',
+                success: function(data) {
+                    allSections = data;
+                    sectionsLoaded = true;
+                }
+            });
+        }
+    
+        // Fast filter classes without API call
+        $("#sessionFilter, #mediumFilter").change(function() {
+            let sessionId = parseInt($("#sessionFilter").val());
+            let medium = $("#mediumFilter").val();
+        
+            $("#classFilter").html('<option value="">Select Class</option>');
+            $("#sectionFilter").html('<option value="">Select Section</option>');
+        
+            if (sessionId && medium && classesLoaded) {
+                let filteredClasses = allClasses.filter(c => c.sessionId == sessionId && c.medium == medium);
+                $.each(filteredClasses, function(i, item) {
+                    $("#classFilter").append(`<option value="${item.classId}">${item.className}</option>`);
+                });
+            } else if (sessionId && medium) {
+                // Fallback to API if cache not ready
+                $.ajax({
+                    url: '@Url.Action("GetClassesByMedium", "Students")',
+                    type: 'GET',
+                    data: { medium: medium, sessionId: sessionId },
+                    success: function(data) {
+                        $.each(data, function(i, item) {
+                            $("#classFilter").append(`<option value="${item.value}">${item.text}</option>`);
+                        });
+                    }
+                });
+            }
+        });
+    
+        // Fast filter sections without API call
+        $("#classFilter").change(function() {
+            let classId = parseInt($(this).val());
+            $("#sectionFilter").html('<option value="">Select Section</option>');
+            if (classId && sectionsLoaded) {
+                let filteredSections = allSections.filter(s => s.classId == classId);
+                $.each(filteredSections, function(i, item) {
+                    $("#sectionFilter").append(`<option value="${item.sectionId}">${item.sectionName}</option>`);
+                });
+            } else if (classId) {
+                $.ajax({
+                    url: '@Url.Action("GetSectionsByClass", "Students")',
+                    type: 'GET',
+                    data: { classId: classId },
+                    success: function(data) {
+                        $.each(data, function(i, item) {
+                            $("#sectionFilter").append(`<option value="${item.value}">${item.text}</option>`);
+                        });
+                    }
+                });
+            }
+        });
+
+        function checkAllStudentsPaymentStatus() {
+            $('.student-row').each(function() {
+                let studentId = $(this).data('id');
+                checkStudentPaymentStatus(studentId);
+            });
+        }
+
+        function checkStudentPaymentStatus(studentId) {
+            $.ajax({
+                url: '@Url.Action("CheckStudentPaymentStatus", "Admin")',
+                type: 'GET',
+                data: { studentId: studentId },
+                success: function(response) {
+                    let statusCell = $(`.payment-status[data-student="${studentId}"]`);
+                    let actionCell = $(`.action-cell[data-student="${studentId}"]`);
+                
+                    if (response.alreadyPaid >= response.totalFees && response.totalFees > 0) {
+                        statusCell.html('<span class="status-badge status-paid"><i class="fa-solid fa-check-circle"></i> Paid</span>');
+                        actionCell.html(`
+                            <button class="view-receipt-btn" onclick="viewReceipts(${studentId})">
+                                <i class="fa-solid fa-eye"></i> View
+                            </button>
+                        `);
+                    } else if (response.alreadyPaid > 0) {
+                        let remaining = response.totalFees - response.alreadyPaid;
+                        statusCell.html(`<span class="status-badge status-partial"><i class="fa-solid fa-clock"></i> Partial (₹${remaining.toFixed(2)})</span>`);
+                        actionCell.html(`
+                            <button class="pay-btn" onclick="openPaymentModal(this)" data-student="${studentId}">
+                                <i class="fa-solid fa-money-bill-wave"></i> Pay
+                            </button>
+                            <button class="view-receipt-btn" onclick="viewReceipts(${studentId})" style="margin-left:8px;">
+                                <i class="fa-solid fa-eye"></i> View
+                            </button>
+                        `);
+                    } else {
+                        statusCell.html('<span class="status-badge status-pending"><i class="fa-solid fa-hourglass-half"></i> Pending</span>');
+                        actionCell.html(`
+                            <button class="pay-btn" onclick="openPaymentModal(this)" data-student="${studentId}">
+                                <i class="fa-solid fa-money-bill-wave"></i> Pay
+                            </button>
+                        `);
+                    }
+                }
+            });
+        }
+
+        function searchStudents() {
+            let session = $("#sessionFilter").val();
+            let medium = $("#mediumFilter").val();
+            let classId = $("#classFilter").val();
+            let sectionId = $("#sectionFilter").val();
+
+            if (!session || !medium || !classId || !sectionId) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Incomplete Selection',
+                    text: 'Please select all filters',
+                    confirmButtonColor: '#3b82f6'
+                });
+                return;
+            }
+
+            let rows = document.querySelectorAll(".student-row");
+            let visible = 0;
+
+            rows.forEach(row => {
+                let match = row.dataset.session == session &&
+                            row.dataset.medium == medium &&
+                            row.dataset.class == classId &&
+                            row.dataset.section == sectionId;
+            
+                if (match) {
+                    row.style.display = "table-row";
+                    $(row).data('originalDisplay', 'table-row');
+                    visible++;
+                } else {
+                    row.style.display = "none";
+                    $(row).data('originalDisplay', 'none');
+                }
+            });
+
+            if (visible > 0) {
+                $("#tableWrapper").show();
+                $("#searchSection").show();
+                $("#noData").hide();
+                let classText = $("#classFilter option:selected").text();
+                let sectionText = $("#sectionFilter option:selected").text();
+                let mediumText = medium + " Medium";
+                $("#resultTitle").html(`<i class="fa-solid fa-users"></i> ${mediumText} | ${classText} | Section ${sectionText} | <i class="fa-regular fa-user"></i> ${visible} Students`).show();
+            
+                checkAllStudentsPaymentStatus();
+                $("#studentSearch").val('');
+                $("#clearSearchBtn").hide();
+            } else {
+                $("#tableWrapper").hide();
+                $("#searchSection").hide();
+                $("#resultTitle").hide();
+                $("#noData").show().html('<i class="fa-regular fa-face-frown"></i> No Students Data Available');
+            }
+        }
+
+        function resetFilters() {
+            location.reload();
+        }
+
+        // Search with clear button and proper reset
+        function filterStudents() {
+            let searchTerm = $("#studentSearch").val().toLowerCase().trim();
+            let clearBtn = $("#clearSearchBtn");
+        
+            if (searchTerm.length > 0) {
+                clearBtn.show();
+            } else {
+                clearBtn.hide();
+                showAllFilteredRows();
+                return;
+            }
+        
+            let visibleCount = 0;
+        
+            $(".student-row").each(function() {
+                if ($(this).css('display') !== 'none') {
+                    let rollNo = $(this).data('roll')?.toString() || "";
+                    let studentName = $(this).data('name')?.toLowerCase() || "";
+                
+                    if (rollNo.includes(searchTerm) || studentName.includes(searchTerm)) {
+                        $(this).show();
+                        visibleCount++;
+                    } else {
+                        $(this).hide();
+                    }
+                }
+            });
+        
+            if (visibleCount === 0 && searchTerm.length > 0) {
+                $("#noData").show().html(`<i class="fa-regular fa-face-frown"></i> No student found matching "${searchTerm}"`).css("color", "#ef4444");
+            } else {
+                $("#noData").hide();
+            }
+        }
+    
+        function showAllFilteredRows() {
+            let session = $("#sessionFilter").val();
+            let medium = $("#mediumFilter").val();
+            let classId = $("#classFilter").val();
+            let sectionId = $("#sectionFilter").val();
+        
+            $(".student-row").each(function() {
+                let match = $(this).data('session') == session &&
+                            $(this).data('medium') == medium &&
+                            $(this).data('class') == classId &&
+                            $(this).data('section') == sectionId;
+            
+                if (match) {
+                    $(this).show();
+                }
+            });
+            $("#noData").hide();
+        }
+    
+        function clearSearch() {
+            $("#studentSearch").val('');
+            $("#clearSearchBtn").hide();
+            showAllFilteredRows();
+        }
+    
+        function resetStudentSearch() {
+            $("#studentSearch").val('');
+            $("#clearSearchBtn").hide();
+            showAllFilteredRows();
+        }
+
+        function openPaymentModal(btn) {
+            let row = $(btn).closest('tr');
+            let studentId = row.data('id');
+            let rollNo = row.data('roll');
+            let studentName = row.data('name');
+        
+            let statusSpan = row.find('.payment-status span').text();
+            if (statusSpan.includes('Paid')) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Payment Already Done',
+                    text: 'This student has already paid full fees!',
+                    confirmButtonColor: '#dc2626'
+                });
+                return;
+            }
+        
+            $("#paymentModal").css("display", "flex");
+            $("#confirmPayBtn").prop("disabled", true).html('<i class="fa-solid fa-spinner fa-pulse"></i> Loading...');
+        
+            $.ajax({
+                url: '@Url.Action("GetStudentFeeForCash", "Admin")',
+                type: 'GET',
+                data: { studentId: studentId },
+                success: function(response) {
+                    if (response.success) {
+                        let data = response.data;
+                    
+                        if (data.alreadyPaid >= data.totalFees && data.totalFees > 0) {
+                            Swal.fire({
+                                icon: 'error',
+                                title: 'Already Paid',
+                                text: 'This student has already paid full fees!'
+                            });
+                            closePaymentModal();
+                            return;
+                        }
+                    
+                        currentStudent.id = data.studentId;
+                        currentStudent.feeId = data.feeId;
+                        currentStudent.totalFees = data.totalFees;
+                        currentStudent.alreadyPaid = data.alreadyPaid;
+                        currentStudent.payableAmount = data.payableAmount;
+                        currentStudent.rollNo = rollNo;
+                        currentStudent.studentName = studentName;
+                    
+                        $("#modalStudentName").text(studentName);
+                        $("#modalRollNo").text(rollNo);
+                        $("#modalClass").text(data.className);
+                        $("#modalSection").text(data.sectionName);
+                        $("#modalSession").text(data.sessionName);
+                        $("#totalFees").text(data.totalFees.toFixed(2));
+                        $("#alreadyPaid").text(data.alreadyPaid.toFixed(2));
+                        $("#payableAmountText").text(data.payableAmount.toFixed(2));
+                        $("#payableAmount").val(`₹${data.payableAmount.toFixed(2)}`);
+                    
+                        $("#receivedAmount").val("");
+                        $("#returnAmountDiv").hide();
+                        $("#receivedError").hide();
+                    
+                        $("#confirmPayBtn").prop("disabled", false).html('<i class="fa-solid fa-check"></i> Confirm Payment');
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Error',
+                            text: response.message || "Failed to load fee details"
+                        });
+                        closePaymentModal();
+                    }
+                },
+                error: function() {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: 'Error loading student fee details'
+                    });
+                    closePaymentModal();
+                }
+            });
+        }
+
+        // Calculate return amount
+        $(document).on('input', '#receivedAmount', function() {
+            let received = parseFloat($(this).val()) || 0;
+            let payable = currentStudent.payableAmount;
+        
+            if (received > 0 && received < payable) {
+                $("#receivedError").show();
+                $("#confirmPayBtn").prop("disabled", true);
+                $("#returnAmountDiv").hide();
+                return;
+            } else {
+                $("#receivedError").hide();
+                $("#confirmPayBtn").prop("disabled", false);
+            }
+        
+            if (received > 0) {
+                if (received > payable) {
+                    let returnAmount = received - payable;
+                    $("#returnAmount").text(`₹${returnAmount.toFixed(2)}`);
+                    $("#returnAmountDiv").show();
+                } else if (received === payable) {
+                    $("#returnAmount").text(`₹0 (Exact Amount)`);
+                    $("#returnAmountDiv").show();
+                }
+            } else {
+                $("#returnAmountDiv").hide();
+            }
+        });
+
+        function confirmPayment() {
+            let receivedAmount = parseFloat($("#receivedAmount").val());
+            let payable = currentStudent.payableAmount;
+        
+            if (!receivedAmount || receivedAmount <= 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'Invalid Amount',
+                    text: 'Please enter received amount',
+                    confirmButtonColor: '#f59e0b'
+                });
+                return;
+            }
+        
+            if (receivedAmount < payable) {
+                Swal.fire({
+                    icon: 'error',
+                    title: 'Insufficient Amount',
+                    text: `Received amount (₹${receivedAmount.toFixed(2)}) cannot be less than payable amount (₹${payable.toFixed(2)})!`,
+                    confirmButtonColor: '#dc2626'
+                });
+                return;
+            }
+        
+            let amountToRecord = payable;
+            let returnAmount = receivedAmount - payable;
+        
+            if (receivedAmount > payable) {
+                Swal.fire({
+                    title: 'Extra Amount Received',
+                    html: `<div style="text-align:left">
+                            <p><strong>Payable Amount:</strong> ₹${payable.toFixed(2)}</p>
+                            <p><strong>Received Amount:</strong> ₹${receivedAmount.toFixed(2)}</p>
+                            <p><strong>Extra Amount:</strong> ₹${returnAmount.toFixed(2)}</p>
+                            <hr>
+                            <p><strong style="color:#059669;">Will be recorded as:</strong> ₹${amountToRecord.toFixed(2)}</p>
+                            <p><strong>Return to Student:</strong> ₹${returnAmount.toFixed(2)}</p>
+                           </div>`,
+                    icon: 'info',
+                    showCancelButton: true,
+                    confirmButtonColor: '#10b981',
+                    cancelButtonColor: '#6b7280',
+                    confirmButtonText: 'Yes, Proceed',
+                    cancelButtonText: 'Cancel'
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                        processPayment(amountToRecord);
+                    }
+                });
+            } else {
+                processPayment(amountToRecord);
+            }
+        }
+
+        function processPayment(amountToRecord) {
+            $("#confirmPayBtn").prop("disabled", true).html('<i class="fa-solid fa-spinner fa-pulse"></i> Processing...');
+        
+            $.ajax({
+                url: '@Url.Action("CashPayment", "Admin")',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({
+                    studentId: currentStudent.id,
+                    feeId: currentStudent.feeId,
+                    amountPaid: amountToRecord
+                }),
+                success: function(response) {
+                    if (response.success) {
+                        Swal.fire({
+                            icon: 'success',
+                            title: 'Payment Successful!',
+                            html: `<div style="text-align:center">
+                                    <i class="fa-solid fa-circle-check" style="font-size:48px; color:#10b981; margin-bottom:15px;"></i>
+                                    <p><strong>Amount Paid:</strong> ₹${amountToRecord.toFixed(2)}</p>
+                                    <p><strong>Student:</strong> ${currentStudent.studentName}</p>
+                                   </div>`,
+                            confirmButtonColor: '#10b981',
+                            confirmButtonText: 'Print Receipt',
+                            showCancelButton: true,
+                            cancelButtonText: 'Close',
+                            cancelButtonColor: '#6b7280'
+                        }).then((result) => {
+                            if (result.isConfirmed) {
+                                window.open('/Admin/PrintReceipt/' + response.paymentId, '_blank');
+                            }
+                            closePaymentModal();
+                            location.reload();
+                        });
+                    } else {
+                        Swal.fire({
+                            icon: 'error',
+                            title: 'Payment Failed',
+                            text: response.message,
+                            confirmButtonColor: '#dc2626'
+                        });
+                        $("#confirmPayBtn").prop("disabled", false).html('<i class="fa-solid fa-check"></i> Confirm Payment');
+                    }
+                },
+                error: function(xhr) {
+                    Swal.fire({
+                        icon: 'error',
+                        title: 'Error',
+                        text: xhr.responseJSON?.message || "Something went wrong",
+                        confirmButtonColor: '#dc2626'
+                    });
+                    $("#confirmPayBtn").prop("disabled", false).html('<i class="fa-solid fa-check"></i> Confirm Payment');
+                }
+            });
+        }
+
+        // View Receipts - Show all receipts for a student
+        function viewReceipts(studentId) {
+            $("#receiptModal").css("display", "flex");
+            $("#receiptListBody").html('<div class="no-receipts"><i class="fa-solid fa-spinner fa-pulse"></i> Loading payment details...</div>');
+        
+            $.ajax({
+                url: '@Url.Action("GetStudentReceipts", "Admin")',
+                type: 'GET',
+                data: { studentId: studentId },
+                success: function(response) {
+                    if (response.success && response.receipts.length > 0) {
+                        let html = '<div class="receipt-list">';
+                        response.receipts.forEach(receipt => {
+                            html += `
+                                <div class="receipt-card" onclick="window.open('/Admin/PrintReceipt/${receipt.paymentId}', '_blank')">
+                                    <div class="receipt-card-header">
+                                        <span class="receipt-date"><i class="fa-regular fa-calendar"></i> ${receipt.paymentDate}</span>
+                                        <span class="receipt-amount">₹${receipt.amountPaid.toFixed(2)}</span>
+                                    </div>
+                                    <div class="receipt-details">
+                                        <span><i class="fa-regular fa-hashtag"></i> Receipt No: ${receipt.receiptNo}</span>
+                                        <span><i class="fa-solid fa-credit-card"></i> Mode: ${receipt.paymentMode}</span>
+                                        <span><i class="fa-regular fa-clock"></i> Transaction: ${receipt.transactionId}</span>
+                                    </div>
+                                </div>
+                            `;
+                        });
+                        html += '</div>';
+                        $("#receiptListBody").html(html);
+                    } else {
+                        $("#receiptListBody").html(`
+                            <div class="no-receipts">
+                                <i class="fa-regular fa-receipt" style="font-size:48px; margin-bottom:15px; color:#cbd5e1;"></i>
+                                <p>No payment records found</p>
+                            </div>
+                        `);
+                    }
+                },
+                error: function() {
+                    $("#receiptListBody").html(`
+                        <div class="no-receipts">
+                            <i class="fa-solid fa-circle-exclamation" style="font-size:48px; margin-bottom:15px; color:#ef4444;"></i>
+                            <p>Error loading payment details</p>
+                        </div>
+                    `);
+                }
+            });
+        }
+
+        function closePaymentModal() {
+            $("#paymentModal").fadeOut();
+            currentStudent = { id: 0, feeId: 0, totalFees: 0, alreadyPaid: 0, payableAmount: 0, rollNo: 0, studentName: "" };
+            $("#receivedError").hide();
+        }
+
+        function closeReceiptModal() {
+            $("#receiptModal").fadeOut();
+        }
+
+        $(window).click(function(e) {
+            if ($(e.target).hasClass('payment-modal')) {
+                closePaymentModal();
+            }
+            if ($(e.target).hasClass('receipt-modal')) {
+                closeReceiptModal();
+            }
+        });
+
+        // ========== DOWNLOAD EXCEL WITH STATUS ==========
+        // ========== DOWNLOAD EXCEL WITH STATUS (No Class/Section) ==========
+        function downloadExcelWithStatus() {
+            let rows = [];
+
+            // Get filter values for header
+            let sessionText = $("#sessionFilter option:selected").text() || "";
+            let mediumText = $("#mediumFilter option:selected").val() || "";
+            let classText = $("#classFilter option:selected").text() || "";
+            let sectionText = $("#sectionFilter option:selected").text() || "";
+
+            // Header rows
+            rows.push(["STUDENT FEE STATUS REPORT"]);
+            rows.push([`Generated on: ${new Date().toLocaleString()}`]);
+            rows.push([]);
+            rows.push([`Session: ${sessionText}`]);
+            rows.push([`Medium: ${mediumText}`]);
+            rows.push([`Class: ${classText}`]);
+            rows.push([`Section: ${sectionText}`]);
+            rows.push([]);
+            rows.push([]);
+
+            // Table Headers - ONLY Roll No, Student Name, GR No, Status
+            rows.push(["Roll No", "Student Name", "GR No", "Status"]);
+
+            // Table Data from visible rows
+            let totalStudents = 0;
+            let paidCount = 0;
+            let pendingCount = 0;
+
+            $(".student-row").each(function () {
+                if ($(this).css("display") != "none") {
+                    let rollNo = $(this).find("td:eq(0)").text().trim();
+                    let studentName = $(this).find("td:eq(2)").text().trim();
+                    let grNo = $(this).find("td:eq(3)").text().trim();
+
+                    // Get status from payment-status cell
+                    let statusSpan = $(this).find(".payment-status .status-badge").text().trim();
+                    let status = "Pending";
+
+                    if (statusSpan.includes("Paid")) {
+                        status = "Paid";
+                        paidCount++;
+                    } else if (statusSpan.includes("Partial")) {
+                        status = "Partial";
+                        pendingCount++;
+                    } else {
+                        status = "Pending";
+                        pendingCount++;
+                    }
+
+                    rows.push([rollNo, studentName, grNo, status]);
+                    totalStudents++;
+                }
+            });
+
+            if (totalStudents === 0) {
+                Swal.fire({
+                    icon: 'warning',
+                    title: 'No Data',
+                    text: 'No students found to export!',
+                    confirmButtonColor: '#f59e0b'
+                });
+                return;
+            }
+
+            rows.push([]);
+            rows.push(["SUMMARY:"]);
+            rows.push([`Total Students: ${totalStudents}`]);
+            rows.push([`Paid: ${paidCount}`]);
+            rows.push([`Pending: ${pendingCount}`]);
+
+            // Create worksheet
+            let ws = XLSX.utils.aoa_to_sheet(rows);
+
+            // Set column widths
+            ws['!cols'] = [
+                { wch: 12 },  // Roll No
+                { wch: 30 },  // Student Name
+                { wch: 15 },  // GR No
+                { wch: 12 }   // Status
+            ];
+
+            // Merge title cells
+            if (!ws['!merges']) ws['!merges'] = [];
+            ws['!merges'].push({ s: { r: 0, c: 0 }, e: { r: 0, c: 3 } });
+            ws['!merges'].push({ s: { r: 1, c: 0 }, e: { r: 1, c: 3 } });
+
+            // Create workbook and save
+            let wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Student_Fee_Status");
+
+            let fileName = `Student_Fee_Status_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+
+            
+        }
+    </script>
+
+    </body>
+    </html>

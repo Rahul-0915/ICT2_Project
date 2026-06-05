@@ -1,0 +1,199 @@
+﻿/* Simple Classic CSS - No big design */
+
+.fees-container {
+    max-width: 500px;
+    margin: 40px auto;
+    padding: 0 15px;
+}
+
+.fees-card {
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.card-header {
+    background: #f5f5f5;
+    padding: 20px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+    .card-header h2 {
+        margin: 0 0 5px 0;
+        font-size: 22px;
+        color: #333;
+    }
+
+    .card-header p {
+        margin: 0;
+        font-size: 13px;
+        color: #666;
+    }
+
+.card-body {
+    padding: 25px;
+}
+
+/* Status */
+.paid-status,
+.pending-status {
+    text-align: center;
+    padding: 12px;
+    border-radius: 6px;
+    margin-bottom: 25px;
+    font-weight: 500;
+}
+
+.paid-status {
+    background: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.pending-status {
+    background: #fff3cd;
+    color: #856404;
+    border: 1px solid #ffeeba;
+}
+
+.status-icon {
+    font-weight: bold;
+    margin-right: 8px;
+}
+
+/* Total Section */
+.total-section {
+    text-align: center;
+    padding: 20px;
+    background: #fafafa;
+    border: 1px solid #eee;
+    border-radius: 8px;
+    margin-bottom: 25px;
+}
+
+    .total-section label {
+        font-size: 14px;
+        color: #666;
+        display: block;
+        margin-bottom: 10px;
+    }
+
+    .total-section .amount {
+        font-size: 32px;
+        font-weight: bold;
+        color: #2c3e50;
+    }
+
+/* Fee Breakdown Table */
+.fee-breakdown {
+    margin-bottom: 25px;
+}
+
+.fee-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.fee-name {
+    color: #555;
+}
+
+.fee-amount {
+    font-weight: 500;
+    color: #333;
+}
+
+.total-row {
+    border-top: 2px solid #ddd;
+    margin-top: 5px;
+    padding-top: 15px;
+    font-weight: bold;
+}
+
+    .total-row .fee-name,
+    .total-row .fee-amount {
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+.fee-amount.total {
+    color: #e67e22;
+}
+
+/* Buttons */
+.action-buttons {
+    display: flex;
+    gap: 12px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+.btn {
+    padding: 10px 24px;
+    border: none;
+    border-radius: 6px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    transition: all 0.2s;
+}
+
+.btn-primary {
+    background: #2c3e50;
+    color: white;
+}
+
+    .btn-primary:hover {
+        background: #1a252f;
+    }
+
+.btn-pay {
+    background: #27ae60;
+    color: white;
+}
+
+    .btn-pay:hover {
+        background: #219a52;
+    }
+
+.btn-secondary {
+    background: #6c757d;
+    color: white;
+}
+
+    .btn-secondary:hover {
+        background: #5a6268;
+    }
+
+.btn-outline {
+    background: white;
+    color: #2c3e50;
+    border: 1px solid #2c3e50;
+}
+
+    .btn-outline:hover {
+        background: #f0f0f0;
+    }
+
+/* Responsive */
+@media (max-width: 480px) {
+    .card-body {
+        padding: 18px;
+    }
+
+    .total-section .amount {
+        font-size: 26px;
+    }
+
+    .btn {
+        padding: 8px 18px;
+        font-size: 13px;
+    }
+}

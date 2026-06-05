@@ -19,123 +19,26 @@
 		: 0;
 }
 
-<style>
-
-	.tt-container {
-		max-width: 1400px;
-		margin: 20px auto;
-		padding: 10px;
-	}
-
-	.tt-header {
-		background: linear-gradient(135deg,#dbeafe,#e0e7ff);
-		border-radius: 18px;
-		padding: 20px;
-		margin-bottom: 20px;
-		box-shadow: 0 4px 15px rgba(0,0,0,.08);
-	}
-
-		.tt-header h2 {
-			margin: 0;
-			color: #1f2937;
-			font-size: 24px;
-			font-weight: 700;
-		}
-
-		.tt-header p {
-			margin-top: 5px;
-			color: #64748b;
-			font-size: 13px;
-		}
-
-	.table-wrapper {
-		background: white;
-		border-radius: 18px;
-		overflow: hidden;
-		box-shadow: 0 6px 18px rgba(0,0,0,.08);
-	}
-
-	.tt-table {
-		width: 100%;
-		border-collapse: collapse;
-	}
-
-		.tt-table th {
-			background: #2563eb;
-			color: white;
-			padding: 14px;
-			text-align: center;
-			font-size: 13px;
-			font-weight: 600;
-		}
-
-		.tt-table td {
-			border: 1px solid #e5e7eb;
-			padding: 12px;
-			text-align: center;
-			vertical-align: middle;
-		}
-
-	.day-col {
-		background: #f8fafc;
-		font-weight: 700;
-		color: #1f2937;
-		min-width: 130px;
-	}
-
-	.today-row {
-		background: #f0fdf4;
-	}
-
-	.subject {
-		font-weight: 600;
-		color: #111827;
-		font-size: 13px;
-	}
-
-	.teacher {
-		font-size: 11px;
-		color: #64748b;
-		margin-top: 4px;
-	}
-
-	.time {
-		margin-top: 5px;
-		font-size: 11px;
-		color: #2563eb;
-	}
-
-	.empty-cell {
-		color: #cbd5e1;
-	}
-
-	@@media(max-width:768px) {
-
-		.table-wrapper {
-			overflow-x: auto;
-		}
-
-		.tt-table {
-			min-width: 1000px;
-		}
-	}
-
-</style>
+<link rel="stylesheet"
+	  href="~/css/StudentsSide_Css/TimeTable.css"
+	  asp-append-version="true" />
 
 <div class="tt-container">
 
 	<div class="tt-header">
 		<h2>
 			<i class="fas fa-calendar-alt"></i>
-			My Timetable
+			Academic Timetable
 		</h2>
-		<p>Weekly Academic Schedule</p>
+		<p>Your complete weekly class schedule</p>
 	</div>
 
 	@if (!Model.Any())
 	{
-		<div class="alert alert-warning">
-			No timetable available.
+		<div class="tt-empty">
+			<i class="fas fa-calendar-times"></i>
+			<h4>No Timetable Available</h4>
+			<p>Your timetable has not been published yet.</p>
 		</div>
 	}
 	else

@@ -1,0 +1,390 @@
+﻿/* ========================================
+   FEE RECEIPT - PROFESSIONAL DESIGN
+   ======================================== */
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    padding: 20px;
+    background: #eef2f7;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+.receipt-page {
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+/* ========== TOP ACTIONS ========== */
+.top-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 15px;
+    margin-bottom: 20px;
+}
+
+.print-btn, .close-btn {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 14px;
+    transition: all 0.2s ease;
+}
+
+.print-btn {
+    background: #2563eb;
+    color: white;
+}
+
+    .print-btn:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+    }
+
+.close-btn {
+    background: #ef4444;
+    color: white;
+}
+
+    .close-btn:hover {
+        background: #dc2626;
+        transform: translateY(-1px);
+    }
+
+/* ========== RECEIPT CONTAINER ========== */
+.receipt-container {
+    background: white;
+    padding: 25px;
+    border-radius: 12px;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+}
+
+/* ========== HEADER ========== */
+.receipt-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    border-bottom: 2px solid #2563eb;
+    padding-bottom: 15px;
+    margin-bottom: 20px;
+}
+
+.logo-box img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+}
+
+.school-details {
+    text-align: center;
+    flex: 1;
+}
+
+.school-name {
+    font-size: 20px;
+    color: #1e3a8a;
+    margin-bottom: 5px;
+    font-weight: 800;
+    letter-spacing: 1px;
+}
+
+.school-details p {
+    margin: 3px 0;
+    font-size: 11px;
+    color: #4b5563;
+}
+
+/* ========== RECEIPT TITLE ========== */
+.receipt-title {
+    text-align: center;
+    font-size: 20px;
+    font-weight: 800;
+    margin: 15px 0;
+    padding-bottom: 8px;
+    border-bottom: 2px dashed #cbd5e1;
+    color: #1f2937;
+    letter-spacing: 2px;
+}
+
+/* ========== INFO SECTION ========== */
+.info-section {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    background: #f8fafc;
+    padding: 15px;
+    border-radius: 10px;
+    margin-bottom: 20px;
+}
+
+.info-row {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+}
+
+    .info-row .label {
+        font-weight: 700;
+        color: #4b5563;
+        font-size: 12px;
+        min-width: 100px;
+    }
+
+    .info-row .value {
+        font-weight: 600;
+        color: #1f2937;
+        font-size: 13px;
+    }
+
+/* ========== SECTION TITLE ========== */
+.section-title {
+    font-size: 15px;
+    font-weight: 700;
+    margin: 20px 0 12px 0;
+    padding: 6px 10px;
+    background: #e0e7ff;
+    border-left: 4px solid #2563eb;
+    color: #1e3a8a;
+    border-radius: 6px;
+}
+
+/* ========== FEE TABLE ========== */
+.fee-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 10px 0;
+}
+
+    .fee-table th {
+        background: #1e293b;
+        color: white;
+        padding: 10px;
+        text-align: left;
+        font-weight: 600;
+        font-size: 13px;
+    }
+
+    .fee-table td {
+        padding: 8px 10px;
+        border-bottom: 1px solid #e5e7eb;
+        font-size: 13px;
+    }
+
+    .fee-table tfoot td {
+        background: #f8fafc;
+        font-weight: 700;
+        border-top: 2px solid #2563eb;
+        padding: 10px;
+    }
+
+.text-right {
+    text-align: right;
+}
+
+/* ========== PAYMENT DETAILS ========== */
+.payment-details {
+    background: #f0fdf4;
+    border-radius: 10px;
+    padding: 15px;
+    margin: 10px 0;
+}
+
+.payment-row {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid #dcfce7;
+}
+
+    .payment-row:last-child {
+        border-bottom: none;
+    }
+
+    .payment-row .label {
+        font-weight: 700;
+        color: #166534;
+        font-size: 13px;
+    }
+
+    .payment-row .value {
+        font-weight: 600;
+        color: #1f2937;
+        font-size: 13px;
+    }
+
+        .payment-row .value.amount {
+            font-size: 18px;
+            color: #059669;
+        }
+
+/* ========== AMOUNT BOX ========== */
+.amount-box {
+    background: #f0fdf4;
+    border: 1px solid #22c55e;
+    border-radius: 10px;
+    padding: 12px 15px;
+    margin: 15px 0;
+    text-align: center;
+}
+
+    .amount-box label {
+        font-size: 11px;
+        color: #166534;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 600;
+    }
+
+.amount-in-words {
+    font-size: 13px;
+    font-weight: 600;
+    color: #16a34a;
+    text-transform: uppercase;
+}
+
+/* ========== FOOTER ========== */
+.receipt-footer {
+    margin-top: 20px;
+    padding-top: 15px;
+    border-top: 1px dashed #cbd5e1;
+}
+
+.signature {
+    display: flex;
+    justify-content: space-between;
+    gap: 40px;
+    margin-bottom: 15px;
+}
+
+.signature-box {
+    flex: 1;
+    text-align: center;
+}
+
+    .signature-box span {
+        font-size: 11px;
+        color: #6b7280;
+        display: block;
+        margin-bottom: 25px;
+    }
+
+.sign-line {
+    border-top: 1px solid #1e293b;
+    padding-top: 6px;
+    font-size: 10px;
+    color: #9ca3af;
+    width: 100%;
+}
+
+.generated-text {
+    text-align: center;
+    font-size: 10px;
+    color: #9ca3af;
+    margin-top: 15px;
+    line-height: 1.4;
+}
+
+/* ========== PRINT STYLES ========== */
+@page {
+    size: A4;
+    margin: 10mm;
+}
+
+@media print {
+    html, body {
+        background: white !important;
+        margin: 0 !important;
+        padding: 0 !important;
+    }
+
+    .no-print {
+        display: none !important;
+    }
+
+    .receipt-container {
+        box-shadow: none;
+        padding: 15px;
+        margin: 0;
+        border: none;
+    }
+
+    .fee-table th {
+        background: #1e293b !important;
+        color: white !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .section-title {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .payment-details {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .amount-box {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+
+    .receipt-header {
+        border-bottom: 2px solid #2563eb !important;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+
+    .receipt-container {
+        padding: 15px;
+    }
+
+    .receipt-header {
+        flex-direction: column;
+        text-align: center;
+        gap: 10px;
+    }
+
+    .logo-box img {
+        width: 50px;
+        height: 50px;
+    }
+
+    .school-name {
+        font-size: 16px;
+    }
+
+    .info-section {
+        grid-template-columns: 1fr;
+    }
+
+    .signature {
+        flex-direction: column;
+        gap: 20px;
+    }
+
+    .top-actions {
+        justify-content: center;
+    }
+}

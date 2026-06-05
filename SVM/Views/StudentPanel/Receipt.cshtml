@@ -1,205 +1,212 @@
 ﻿@model ReceiptViewModel
+
 @{
     ViewData["Title"] = "Payment Receipt";
-    Layout = "~/Views/Shared/_StudentsLayout.cshtml";
+    Layout = null;
+
+    var medium = Model.Medium ?? ViewBag.Medium as string ?? "Gujarati";
+    var schoolName = medium == "English" ? "S.V.M ENGLISH MEDIUM" : "શારદા વિદ્યામંદિર";
+    var logoPath = medium == "English" ? "/images/SVMEng_logo.png" : "/images/SVMGuj_logo.png";
+    var schoolAddress = "Gujarat Housing Board, Pandesara, Surat - 394221";
+    var schoolPhone = "+91 9876543210";
+    var schoolEmail = "shardavidhyamandir@gmail.com";
+
+    var monthlyYearly = Model.MonthlyFees * 12;
+    var receiptNo = Model.TransactionId ?? "RCP" + DateTime.Now.Ticks.ToString().Substring(0, 8);
+    var paymentDate = DateTime.TryParse(Model.PaymentDate?.ToString(), out var date) ? date.ToString("dd-MM-yyyy") : DateTime.Now.ToString("dd-MM-yyyy");
 }
 
-<style>
-    body {
-        background: #f4f7fb;
-    }
+<link rel="stylesheet" href="~/css/StudentsSide_Css/StudFessReceipt.css" />
 
-    .fee-container {
-        max-width: 850px;
-        margin: 2rem auto;
-        display: flex;
-        justify-content: center;
-    }
+<div class="receipt-page">
+    <div class="top-actions no-print">
+        <button type="button" class="print-btn" onclick="window.print()">
+            Print / Download
+        </button>
+        <a href="@Url.Action("FeesPayment", "StudentPanel")" class="close-btn">
+            ✕ Back
+        </a>
+    </div>
 
-    /* LEFT DARK PANEL */
-    .fee-card {
-        width: 100%;
-        border-radius: 25px;
-        overflow: hidden;
-        display: flex;
-        box-shadow: 0 20px 50px rgba(0,0,0,0.15);
-    }
-
-    .fee-left {
-        width: 40%;
-        background: linear-gradient(135deg, #0f172a, #1e3c72);
-        color: white;
-        padding: 2rem;
-        position: relative;
-    }
-
-        .fee-left h2 {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-
-        .fee-left p {
-            opacity: 0.8;
-            font-size: 0.95rem;
-        }
-
-    .circle {
-        position: absolute;
-        top: -50px;
-        right: -50px;
-        width: 120px;
-        height: 120px;
-        background: rgba(255,255,255,0.08);
-        border-radius: 50%;
-    }
-
-    /* RIGHT CARD */
-    .fee-right {
-        width: 60%;
-        background: white;
-        padding: 2rem;
-    }
-
-    .summary-card {
-        background: #f8fafc;
-        border-radius: 18px;
-        padding: 1.5rem;
-        box-shadow: inset 0 0 0 1px #e5e7eb;
-    }
-
-    .summary-title {
-        font-size: 1.2rem;
-        font-weight: 700;
-        margin-bottom: 1rem;
-        color: #111827;
-    }
-
-    .fee-row {
-        display: flex;
-        justify-content: space-between;
-        padding: 0.7rem 0;
-        border-bottom: 1px solid #eaeaea;
-        font-size: 0.95rem;
-    }
-
-        .fee-row:last-child {
-            border-bottom: none;
-        }
-
-    .label {
-        color: #374151;
-    }
-
-    .value {
-        font-weight: 600;
-        color: #111827;
-    }
-
-    .total {
-        margin-top: 1rem;
-        padding-top: 1rem;
-        border-top: 2px dashed #cbd5e1;
-        display: flex;
-        justify-content: space-between;
-        font-size: 1.2rem;
-        font-weight: 800;
-        color: #0f172a;
-    }
-
-    .btns {
-        margin-top: 1.5rem;
-        display: flex;
-        gap: 1rem;
-    }
-
-    .btn {
-        padding: 0.6rem 1.2rem;
-        border-radius: 30px;
-        border: none;
-        cursor: pointer;
-        font-weight: 600;
-    }
-
-    .print {
-        background: #2563eb;
-        color: white;
-    }
-
-    .back {
-        background: #e5e7eb;
-        color: #111827;
-        text-decoration: none;
-        display: inline-flex;
-        align-items: center;
-        justify-content: center;
-    }
-
-    @@media (max-width: 768px) {
-        .fee-card {
-            flex-direction: column;
-        }
-
-        .fee-left, .fee-right {
-            width: 100%;
-        }
-    }
-</style>
-
-<div class="fee-container">
-    <div class="fee-card">
-
-        <!-- LEFT SIDE -->
-        <div class="fee-left">
-            <div class="circle"></div>
-
-            <h2>S.V.M</h2>
-            <p>Fee Structures</p>
-
-            <hr style="border:1px solid rgba(255,255,255,0.2); margin:1rem 0;" />
-
-            <p><b>Student:</b> @Model.StudentName</p>
-            <p><b>Class:</b> @Model.ClassName</p>
-            <p><b>Date:</b> @Model.PaymentDate</p>
-            <p><b>Mode:</b> @Model.PaymentMode</p>
+    <div class="receipt-container">
+        <!-- HEADER -->
+        <div class="receipt-header">
+            <div class="logo-box">
+                <img src="@logoPath" alt="Logo" />
+            </div>
+            <div class="school-details">
+                <h1 class="school-name">@schoolName</h1>
+                <p>@schoolAddress</p>
+                <p>📞 @schoolPhone | ✉️ @schoolEmail</p>
+            </div>
         </div>
 
-        <!-- RIGHT SIDE -->
-        <div class="fee-right">
+        <!-- TITLE -->
+        <div class="receipt-title">
+            FEE RECEIPT
+        </div>
 
-            <div class="summary-card">
-                <div class="summary-title">Fee Summary</div>
+        <!-- STUDENT INFO -->
+        <div class="info-section">
+            <div class="info-row">
+                <span class="label">Transaction ID</span>
+                <span class="value">#@receiptNo</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Date</span>
+                <span class="value">@paymentDate</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Student Name</span>
+                <span class="value">@Model.StudentName</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Class</span>
+                <span class="value">@Model.ClassName</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Section</span>
+                <span class="value">@Model.SectionName</span>
+            </div>
+            <div class="info-row">
+                <span class="label">Medium</span>
+                <span class="value">@medium</span>
+            </div>
+        </div>
 
-                <div class="fee-row">
-                    <span class="label">Admission Fees</span>
-                    <span class="value">₹ @Model.AdmissionFees.ToString("N2")</span>
+        <!-- Rest of the code same rahega -->
+        <!-- FEE TABLE -->
+        <div class="section-title">FEE DETAILS</div>
+        <table class="fee-table">
+            <thead>
+                <tr>
+                    <th>Sr. No.</th>
+                    <th>Particulars</th>
+                    <th>Amount (₹)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.AdmissionFees > 0)
+                {
+                    <tr>
+                        <td>1</td>
+                        <td>Admission Fees</td>
+                        <td class="text-right">₹ @Model.AdmissionFees.ToString("N2")</td>
+                    </tr>
+                }
+                @if (Model.MonthlyFees > 0)
+                {
+                    <tr>
+                        <td>2</td>
+                        <td>Monthly Fees (Yearly)</td>
+                        <td class="text-right">₹ @monthlyYearly.ToString("N2")</td>
+                    </tr>
+                }
+                @if (Model.OtherActivityFees > 0)
+                {
+                    <tr>
+                        <td>3</td>
+                        <td>Other Activity Fees</td>
+                        <td class="text-right">₹ @Model.OtherActivityFees.ToString("N2")</td>
+                    </tr>
+                }
+                @if (Model.ComputerFees > 0)
+                {
+                    <tr>
+                        <td>4</td>
+                        <td>Computer Fees</td>
+                        <td class="text-right">₹ @Model.ComputerFees.ToString("N2")</td>
+                    </tr>
+                }
+            </tbody>
+            <tfoot>
+                <tr>
+                    <td colspan="2" class="text-right"><strong>Total Amount</strong></td>
+                    <td class="text-right"><strong>₹ @Model.TotalAmount.ToString("N2")</strong></td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <!-- PAYMENT DETAILS -->
+        <div class="section-title">PAYMENT DETAILS</div>
+        <div class="payment-details">
+            <div class="payment-row">
+                <span class="label">Payment Mode</span>
+                <span class="value">💵 @Model.PaymentMode</span>
+            </div>
+            <div class="payment-row">
+                <span class="label">Transaction ID</span>
+                <span class="value">@Model.TransactionId</span>
+            </div>
+            <div class="payment-row">
+                <span class="label">Payment Date</span>
+                <span class="value">@paymentDate</span>
+            </div>
+            <div class="payment-row">
+                <span class="label">Amount Paid</span>
+                <span class="value amount">₹ @Model.TotalAmount.ToString("N2")</span>
+            </div>
+        </div>
+
+        <!-- AMOUNT IN WORDS -->
+        <div class="amount-box">
+            <label>Amount in Words</label>
+            <div class="amount-in-words">
+                @NumberToWords((long)(Model.TotalAmount)) Rupees Only
+            </div>
+        </div>
+
+        <!-- FOOTER -->
+        <div class="receipt-footer">
+            <div class="signature">
+                <div class="signature-box">
+                    <span>For @schoolName</span>
+                    <div class="sign-line">Authorized Signatory</div>
                 </div>
-
-                <div class="fee-row">
-                    <span class="label">Monthly Fees (Yearly)</span>
-                    <span class="value">₹ @Model.MonthlyFees.ToString("N2")</span>
-                </div>
-
-                <div class="fee-row">
-                    <span class="label">Activity Fees</span>
-                    <span class="value">₹ @Model.OtherActivityFees.ToString("N2")</span>
-                </div>
-
-                <div class="fee-row">
-                    <span class="label">Computer Fees</span>
-                    <span class="value">₹ @Model.ComputerFees.ToString("N2")</span>
-                </div>
-
-                <div class="total">
-                    <span>Total</span>
-                    <span>₹ @Model.TotalAmount.ToString("N2")</span>
+                <div class="signature-box">
+                    <span>Student/Parent Signature</span>
+                    <div class="sign-line"></div>
                 </div>
             </div>
-
-            <div class="btns">
-                <button class="btn print" onclick="window.print()">Print</button>
-                <a class="btn back" href="@Url.Action("Student", "StudentPanel")">Back</a>
+            <div class="generated-text">
+                <p>This is a computer generated receipt. No signature required.</p>
             </div>
-
         </div>
     </div>
 </div>
+
+
+    @functions {
+        public string NumberToWords(long number)
+        {
+            if (number == 0) return "Zero";
+
+            string[] ones = { "", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine" };
+            string[] teens = { "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen" };
+            string[] tens = { "", "", "Twenty", "Thirty", "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety" };
+            string[] thousands = { "", "Thousand", "Million", "Billion" };
+
+            string words = "";
+
+            for (int i = 0; number > 0; i++)
+            {
+                if (number % 1000 != 0)
+                {
+                    words = ConvertHundreds(number % 1000) + " " + thousands[i] + " " + words;
+                }
+                number /= 1000;
+            }
+
+            return words.Trim();
+
+            // Local function
+            string ConvertHundreds(long num)
+            {
+                if (num == 0) return "";
+                if (num < 10) return ones[num];
+                if (num < 20) return teens[num - 10];
+                if (num < 100) return tens[num / 10] + " " + ones[num % 10];
+                return ones[num / 100] + " Hundred " + ConvertHundreds(num % 100);
+            }
+        }
+    }
