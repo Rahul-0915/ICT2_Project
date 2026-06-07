@@ -312,13 +312,34 @@ namespace SVM.Controllers
 			{
 				var response = await _client.GetAsync($"FeePayments/StudentFeeDetails/{studentId}");
 
-				if (!response.IsSuccessStatusCode)
-				{
-					var error = await response.Content.ReadAsStringAsync();
-					return Json(new { success = false, message = error });
-				}
+                if (!response.IsSuccessStatusCode)
+                {
+                    var errorJson = await response.Content.ReadAsStringAsync();
 
-				var json = await response.Content.ReadAsStringAsync();
+                    try
+                    {
+                        using var doc = JsonDocument.Parse(errorJson);
+
+                        string message = doc.RootElement
+                                            .GetProperty("message")
+                                            .GetString();
+
+                        return Json(new
+                        {
+                            success = false,
+                            message = message
+                        });
+                    }
+                    catch
+                    {
+                        return Json(new
+                        {
+                            success = false,
+                            message = errorJson
+                        });
+                    }
+                }
+                var json = await response.Content.ReadAsStringAsync();
 				var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
 				var feeDetails = JsonSerializer.Deserialize<dynamic>(json, options);
 

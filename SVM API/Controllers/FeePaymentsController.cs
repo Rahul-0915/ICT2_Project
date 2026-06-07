@@ -94,7 +94,7 @@ namespace SVM_API.Controllers
                 .FirstOrDefaultAsync(f => f.SessionId == student.SessionId && f.ClassId == student.ClassId);
 
             if (feeStructure == null)
-                return NotFound(new { message = "Fee structure not found for this student" });
+                return BadRequest(new { message = "Fee Structure Not Found For This Student" });
 
             decimal totalFees = (feeStructure.AdmissionFees ?? 0) +
                                ((feeStructure.MonthlyFees ?? 0) * 12) +
