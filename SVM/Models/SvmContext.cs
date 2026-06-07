@@ -506,10 +506,22 @@ public partial class SvmContext : DbContext
 
             entity.ToTable("exam_subjects");
 
-            entity.Property(e => e.ExamSubjectId).HasColumnName("exam_subject_id");
-            entity.Property(e => e.ExamId).HasColumnName("exam_id");
-            entity.Property(e => e.SubjectId).HasColumnName("subject_id");
-            entity.Property(e => e.TotalMarks).HasColumnName("total_marks");
+            entity.Property(e => e.ExamSubjectId)
+                .HasColumnName("exam_subject_id");
+
+            entity.Property(e => e.ExamId)
+                .HasColumnName("exam_id");
+
+            entity.Property(e => e.SubjectId)
+                .HasColumnName("subject_id");
+
+            entity.Property(e => e.TotalMarks)
+                .HasColumnName("total_marks");
+
+            // New Column
+            entity.Property(e => e.PassingMarks)
+                .HasColumnName("passing_marks")
+                .HasDefaultValue(0);
 
             entity.HasOne(d => d.Exam)
                 .WithMany(p => p.ExamSubjects)

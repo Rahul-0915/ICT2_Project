@@ -548,29 +548,33 @@ Student Question:
         }
         public async Task<IActionResult> FeesPayment()
         {
-            string? studentId =
-                HttpContext.Session.GetString("StudentId");
+            string? studentId = HttpContext.Session.GetString("StudentId");
 
             if (string.IsNullOrEmpty(studentId))
                 return RedirectToAction("Login", "Account");
 
-            var response =
-                await _client.GetAsync(
-                    $"FeeStructures/StudentFee/{studentId}");
+            var response = await _client.GetAsync($"FeeStructures/StudentFee/{studentId}");
 
             if (!response.IsSuccessStatusCode)
-                return View();
+            {
+                TempData["FeeError"] = "Fee Structure not available.";
+                return View(new StudentFeeVM());
+            }
 
-            var json =
-                await response.Content.ReadAsStringAsync();
+            var json = await response.Content.ReadAsStringAsync();
 
-            var fee =
-                JsonSerializer.Deserialize<StudentFeeVM>(
-                    json,
-                    new JsonSerializerOptions
-                    {
-                        PropertyNameCaseInsensitive = true
-                    });
+            var fee = JsonSerializer.Deserialize<StudentFeeVM>(
+                json,
+                new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+            if (fee == null)
+            {
+                TempData["FeeError"] = "Fee Structure not available.";
+                fee = new StudentFeeVM();
+            }
 
             return View(fee);
         }
@@ -646,14 +650,24 @@ Student Question:
             // Get Fee Data
             var response = await _client.GetAsync($"FeeStructures/StudentFee/{studentId}");
 
+            // If API call fails or fee data is missing/invalid
             if (!response.IsSuccessStatusCode)
-                return View(new StudentFeeVM());
+            {
+                TempData["FeeError"] = "Fee structure is not available for your class/session.";
+                return RedirectToAction("FeesPayment");
+            }
 
             var json = await response.Content.ReadAsStringAsync();
-
             var fee = JsonSerializer.Deserialize<StudentFeeVM>(
                 json,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+
+            // Additional check: if fee object is null or has no FeeId (i.e., no structure)
+            if (fee == null || fee.FeeId == 0)
+            {
+                TempData["FeeError"] = "Fee structure is not available for your class/session.";
+                return RedirectToAction("FeesPayment");
+            }
 
             // Get Class & Medium info for student
             var studentResponse = await _client.GetAsync($"Students/{studentId}");
@@ -679,7 +693,7 @@ Student Question:
                     }
                 }
 
-                // ✅ FIX: SessionId se Session name fetch kar
+                // Fetch Session name
                 if (student.SessionId > 0)
                 {
                     var sessionResponse = await _client.GetAsync($"Sessions/{student.SessionId}");

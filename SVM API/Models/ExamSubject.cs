@@ -1,5 +1,4 @@
-﻿
-namespace SVM_API.Models
+﻿namespace SVM_API.Models
 {
     public partial class ExamSubject
     {
@@ -10,6 +9,9 @@ namespace SVM_API.Models
         public int SubjectId { get; set; }
 
         public int TotalMarks { get; set; }
+
+        // New Column
+        public int? PassingMarks { get; set; }
 
         // Navigation Properties
         public virtual Exam? Exam { get; set; }
