@@ -1,65 +1,68 @@
 ﻿@model StudentFeeVM
 
 @{
-    ViewData["Title"] = "Fees Payment";
-    Layout = "~/Views/Shared/_StudentsLayout.cshtml";
+	var feeModel = Model ?? new StudentFeeVM();
+}
+@{
+	ViewData["Title"] = "Fees Payment";
+	Layout = "~/Views/Shared/_StudentsLayout.cshtml";
 }
 
 <link rel="stylesheet" href="~/Css/StudentsSide_Css/FessPayment.css" />
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css" />
 
 <div class="fees-container">
-    <div class="fees-card">
-        <div class="card-header">
-            <h2>Fee Payment</h2>
+	<div class="fees-card">
+		<div class="card-header">
+			<h2>Fee Payment</h2>
 
-        </div>
+		</div>
 
-        <div class="card-body">
-            @if (Model.AlreadyPaid)
-            {
-                <div class="paid-status">
-                    <span class="status-icon">✓</span>
-                    <span class="status-text">Fees Already Paid</span>
-                </div>
+		<div class="card-body">
+			@if (Model.AlreadyPaid)
+			{
+				<div class="paid-status">
+					<span class="status-icon">✓</span>
+					<span class="status-text">Fees Already Paid</span>
+				</div>
 
-                <div class="total-section">
-                    <label>Total Amount Paid</label>
-                    <div class="amount">₹ @Model.TotalAmount.ToString("N2")</div>
-                </div>
+				<div class="total-section">
+					<label>Total Amount Paid</label>
+					<div class="amount">₹ @Model.TotalAmount.ToString("N2")</div>
+				</div>
 
-                <div class="action-buttons">
-                    <a href="@Url.Action("Receipt", "StudentPanel")" class="btn btn-primary">
-                        Download Receipt
-                    </a>
-                    <a href="@Url.Action("FeeStructure", "StudentPanel")" class="btn btn-secondary">
-                        View Fee Structure
-                    </a>
-                </div>
-            }
-            else
-            {
-                <div class="pending-status">
-                    <span class="status-icon">!</span>
-                    <span class="status-text">Payment Pending</span>
-                </div>
+				<div class="action-buttons">
+					<a href="@Url.Action("Receipt", "StudentPanel")" class="btn btn-primary">
+						Download Receipt
+					</a>
+					<a href="@Url.Action("FeeStructure", "StudentPanel")" class="btn btn-secondary">
+						View Fee Structure
+					</a>
+				</div>
+			}
+			else
+			{
+				<div class="pending-status">
+					<span class="status-icon">!</span>
+					<span class="status-text">Payment Pending</span>
+				</div>
 
-                <div class="total-section">
-                    <label>Total Payable Amount</label>
-                    <div class="amount">₹ @Model.TotalAmount.ToString("N2")</div>
-                </div>
+				<div class="total-section">
+					<label>Total Payable Amount</label>
+					<div class="amount">₹ @Model.TotalAmount.ToString("N2")</div>
+				</div>
 
-                <div class="action-buttons">
-                    <button id="payNowBtn" class="btn btn-pay">
-                        Pay Now
-                    </button>
-                    <a href="@Url.Action("FeeStructure", "StudentPanel")" class="btn btn-secondary">
-                        View Fee Structure
-                    </a>
-                </div>
-            }
-        </div>
-    </div>
+				<div class="action-buttons">
+					<button id="payNowBtn" class="btn btn-pay">
+						Pay Now
+					</button>
+					<a href="@Url.Action("FeeStructure", "StudentPanel")" class="btn btn-secondary">
+						View Fee Structure
+					</a>
+				</div>
+			}
+		</div>
+	</div>
 </div>
 
 <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
@@ -67,75 +70,107 @@
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
 <script>
-    $("#payNowBtn").on("click", function () {
-        var studentId = parseInt('@Context.Session.GetString("StudentId")');
-        if (isNaN(studentId) || studentId === 0) {
-            Swal.fire({
-                title: 'Session Expired',
-                text: 'Please login again.',
-                confirmButtonText: 'OK'
-            });
-            return;
-        }
+	$("#payNowBtn").on("click", function () {
+		// ================= VALIDATE FEE STRUCTURE AVAILABILITY =================
+		var feeId = @Model.FeeId;
+		var totalAmount = parseFloat(@Model.TotalAmount);
 
-        $.ajax({
-            url: "http://localhost:5175/api/Payment/create-order",
-            type: "POST",
-            contentType: "application/json",
-            data: JSON.stringify(parseFloat(@Model.TotalAmount)),
-            success: function (data) {
-                var options = {
-                    key: data.key,
-                    amount: @Model.TotalAmount * 100,
-                    currency: "INR",
-                    name: "SVM School",
-                    order_id: data.orderId,
-                    handler: function (response) {
-                        $.ajax({
-                            url: "http://localhost:5175/api/Payment/success",
-                            type: "POST",
-                            contentType: "application/json",
-                            data: JSON.stringify({
-                                studentId: studentId,
-                                feeId: @Model.FeeId,
-                                amount: @Model.TotalAmount,
-                                PaymentId: response.razorpay_payment_id
-                            }),
-                            success: function () {
-                                Swal.fire({
-                                    title: 'Payment Successful!',
-                                    text: 'Your fee has been paid.',
-                                    confirmButtonText: 'OK'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.reload();
-                                    }
-                                });
-                            },
-                            error: function () {
-                                Swal.fire({
-                                    title: 'Payment Failed!',
-                                    text: 'Payment could not be saved.',
-                                    confirmButtonText: 'OK'
-                                }).then((result) => {
-                                    if (result.isConfirmed) {
-                                        location.reload();
-                                    }
-                                });
-                            }
-                        });
-                    }
-                };
-                var rzp = new Razorpay(options);
-                rzp.open();
-            },
-            error: function () {
-                Swal.fire({
-                    title: 'Failed!',
-                    text: 'Could not create payment order.',
-                    confirmButtonText: 'OK'
-                });
-            }
-        });
-    });
+		if (feeId === 0 || isNaN(totalAmount) || totalAmount <= 0) {
+			Swal.fire({
+				icon: 'warning',
+				title: 'Fee Structure Not Available',
+				text: 'Fee structure is not available for your class/session. Please contact administrator.',
+				confirmButtonText: 'OK'
+			});
+			return;
+		}
+
+		var studentId = parseInt('@Context.Session.GetString("StudentId")');
+		if (isNaN(studentId) || studentId === 0) {
+			Swal.fire({
+				title: 'Session Expired',
+				text: 'Please login again.',
+				confirmButtonText: 'OK'
+			});
+			return;
+		}
+
+		$.ajax({
+			url: "http://localhost:5175/api/Payment/create-order",
+			type: "POST",
+			contentType: "application/json",
+			data: JSON.stringify(totalAmount),
+			success: function (data) {
+				var options = {
+					key: data.key,
+					amount: totalAmount * 100,
+					currency: "INR",
+					name: "SVM School",
+					order_id: data.orderId,
+					handler: function (response) {
+						$.ajax({
+							url: "http://localhost:5175/api/Payment/success",
+							type: "POST",
+							contentType: "application/json",
+							data: JSON.stringify({
+								studentId: studentId,
+								feeId: feeId,
+								amount: totalAmount,
+								PaymentId: response.razorpay_payment_id
+							}),
+							success: function () {
+								Swal.fire({
+									title: 'Payment Successful!',
+									text: 'Your fee has been paid.',
+									confirmButtonText: 'OK'
+								}).then((result) => {
+									if (result.isConfirmed) {
+										location.reload();
+									}
+								});
+							},
+							error: function () {
+								Swal.fire({
+									title: 'Payment Failed!',
+									text: 'Payment could not be saved.',
+									confirmButtonText: 'OK'
+								}).then((result) => {
+									if (result.isConfirmed) {
+										location.reload();
+									}
+								});
+							}
+						});
+					}
+				};
+				var rzp = new Razorpay(options);
+				rzp.open();
+			},
+				error: function (xhr) {
+		let errorMsg = "Could not create payment order.";
+		if (xhr.responseJSON && xhr.responseJSON.error) {
+			errorMsg = xhr.responseJSON.error;
+		}
+		Swal.fire({
+			title: 'Failed!',
+			text: errorMsg,
+			confirmButtonText: 'OK'
+		});
+	}
+		});
+	});
 </script>
+
+@if (TempData["FeeError"] != null)
+{
+	<script>
+		$(document).ready(function () {
+			Swal.fire({
+				icon: 'warning',
+				title: 'Fee Information',
+				text: '@TempData["FeeError"]',
+				confirmButtonText: 'OK'
+			});
+		});
+	</script>
+}

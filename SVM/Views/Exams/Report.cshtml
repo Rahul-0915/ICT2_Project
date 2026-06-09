@@ -1,0 +1,537 @@
+﻿@model SVM.Models.ExamReportVM
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exam Report</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fa;
+            padding: 24px;
+            background-color: #efeae2;
+            background-image: url('/images/AdminDashboardBGImg.png');
+            background-repeat: repeat;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .filter-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+            align-items: flex-end;
+            border: 1px solid #e5e7eb;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+            .filter-group label {
+                display: block;
+                font-size: 12px;
+                font-weight: 600;
+                margin-bottom: 5px;
+                text-transform: uppercase;
+            }
+
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+        .btn-excel {
+            background: #10b981;
+            color: white;
+        }
+
+        .search-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+            .search-box input {
+                flex: 1;
+                padding: 10px;
+                border: 1px solid #ddd;
+                border-radius: 8px;
+            }
+
+        .options-bar {
+            background: white;
+            padding: 10px 20px;
+            border-radius: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            border: 1px solid #e5e7eb;
+        }
+
+            .options-bar label {
+                margin-left: 5px;
+                cursor: pointer;
+            }
+
+        .table-wrapper {
+            background: white;
+            border-radius: 20px;
+            overflow-x: auto;
+            padding: 20px;
+            border: 1px solid #e5e7eb;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th, td {
+            padding: 8px;
+            border: 1px solid #e5e7eb;
+            text-align: center;
+        }
+
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+        }
+
+        .pass {
+            color: #059669;
+            font-weight: 600;
+        }
+
+        .fail {
+            color: #dc2626;
+            font-weight: 600;
+        }
+
+        .rank-col {
+            width: 70px;
+        }
+
+        .summary {
+            margin-top: 20px;
+            padding: 15px;
+            background: #f0fdf4;
+            border-radius: 12px;
+            display: flex;
+            justify-content: flex-end;
+            gap: 30px;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+        #loadingOverlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255,255,255,0.8);
+            z-index: 9999;
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .loader-box {
+            text-align: center;
+            background: white;
+            padding: 25px 40px;
+            border-radius: 15px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.15);
+        }
+
+            .loader-box i {
+                font-size: 35px;
+                color: #3b82f6;
+                margin-bottom: 10px;
+            }
+
+            .loader-box p {
+                margin: 0;
+                font-weight: 600;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h5>Exam Result Report</h5>
+        <div class="filter-bar">
+            <div class="filter-group"><label>Session</label><select id="sessionFilter"></select></div>
+            <div class="filter-group"><label>Medium</label><select id="mediumFilter"><option value="">Select Medium</option><option value="Gujarati">Gujarati</option><option value="English">English</option></select></div>
+            <div class="filter-group"><label>Class</label><select id="classFilter"><option value="">Select Class</option></select></div>
+            <div class="filter-group"><label>Section</label><select id="sectionFilter"><option value="">Select Section</option></select></div>
+            <div class="filter-group"><label>Exam</label><select id="examFilter"><option value="">Select Exam</option></select></div>
+            <div><button class="btn btn-primary" onclick="generateReport()">Generate Report</button><button class="btn btn-secondary" onclick="resetFilters()">Reset</button><button class="btn btn-excel" onclick="exportToExcel()">Export Excel</button></div>
+        </div>
+
+        <div class="options-bar">
+            <input type="checkbox" id="showGrNoCheckbox" /> <label for="showGrNoCheckbox">Show GR Number</label>
+            <input type="checkbox" id="showAllRankCheckbox" /> <label for="showAllRankCheckbox">Show Rank for All Students</label>
+        </div>
+
+        <div class="search-box"><input type="text" id="studentSearch" placeholder="Search by Roll No, Name or GR No" onkeyup="filterTable()" /></div>
+
+        <div id="reportArea">
+            @if (Model != null && Model.Students != null && Model.Students.Any())
+            {
+                var firstStudent = Model.Students.First();
+                <div class="table-wrapper">
+                    <table id="reportTable">
+                        <thead>
+                            <tr>
+                                <th>Roll No</th>
+                                <th>Student Name</th>
+                                <th id="grNoHeader" style="display:none;">GR No</th>
+                                @foreach (var sub in firstStudent.SubjectMarks)
+                                {
+                                    <th>@sub.SubjectName<br />(@sub.TotalMarks)</th>
+                                }
+                                <th>Total<br />(Obtained)</th>
+                                <th>Percentage</th>
+                                <th>Result</th>
+                                <th>Rank</th>
+                            </tr>
+                        </thead>
+                        <tbody id="reportBody">
+                            @foreach (var s in Model.Students.OrderBy(x => x.RollNo))
+                            {
+                                <tr data-percentage="@s.Percentage">
+                                    <td>@s.RollNo</td>
+                                    <td class="student-name">@s.StudentName</td>
+                                    <td class="grNoCell" style="display:none;">@s.GrNo</td>
+                                    @foreach (var sub in s.SubjectMarks)
+                                    {
+                                        <td class="@(sub.Status == "Pass" ? "pass" : "fail")">@sub.ObtainedMarks</td>
+                                    }
+                                    <td>@s.TotalObtained</td>
+                                    <td>@s.Percentage%</td>
+                                    <td class="@(s.Result == "Pass" ? "pass" : "fail")">@s.Result</td>
+                                    <td class="rankCell">@(s.Rank.HasValue && s.Rank.Value <= 5 ? s.Rank.Value.ToString() : "-")</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+                <div class="summary">
+                    <span>Total Students: <strong>@Model.Students.Count</strong></span>
+                    <span>Pass: <strong class="pass">@Model.Students.Count(x => x.Result == "Pass")</strong></span>
+                    <span>Fail: <strong class="fail">@Model.Students.Count(x => x.Result == "Fail")</strong></span>
+                </div>
+            }
+            else if (ViewBag.Error != null)
+            {
+                <div class="no-data">@ViewBag.Error</div>
+            }
+            else
+            {
+                <div class="no-data">Select filters and an exam to view report.</div>
+            }
+        </div>
+    </div>
+    <div id="loadingOverlay" style="display:none;">
+        <div class="loader-box">
+            <i class="fa fa-spinner fa-spin"></i>
+            <p>Generating Report...</p>
+        </div>
+    </div>
+    <script>
+        
+        $(document).ready(function () {
+            
+            loadSessions().then(function () {
+                let urlParams = new URLSearchParams(window.location.search);
+                let sessionId = urlParams.get('sessionId');
+                let medium = urlParams.get('medium');
+                let classId = urlParams.get('classId');
+                let sectionId = urlParams.get('sectionId');
+                let examId = urlParams.get('examId');
+                if (sessionId) $("#sessionFilter").val(sessionId).trigger('change');
+                if (medium) $("#mediumFilter").val(medium).trigger('change');
+                if (classId) {
+                    let checkClass = setInterval(function () {
+                        if ($("#classFilter option[value='" + classId + "']").length) {
+                            $("#classFilter").val(classId).trigger('change');
+                            clearInterval(checkClass);
+                        }
+                    }, 100);
+                }
+                if (sectionId) {
+                    let checkSection = setInterval(function () {
+                        if ($("#sectionFilter option[value='" + sectionId + "']").length) {
+                            $("#sectionFilter").val(sectionId).trigger('change');
+                            clearInterval(checkSection);
+                        }
+                    }, 100);
+                }
+                if (examId) {
+                    let checkExam = setInterval(function () {
+                        if ($("#examFilter option[value='" + examId + "']").length) {
+                            $("#examFilter").val(examId);
+                            clearInterval(checkExam);
+                        }
+                    }, 100);
+                }
+            });
+            $("#sessionFilter, #mediumFilter").change(loadClasses);
+            $("#classFilter").change(loadSections);
+            $("#sectionFilter").change(loadExams);
+
+            // GR Number toggle
+            $("#showGrNoCheckbox").change(function () {
+                if ($(this).is(":checked")) {
+                    $("#grNoHeader").show();
+                    $(".grNoCell").show();
+                } else {
+                    $("#grNoHeader").hide();
+                    $(".grNoCell").hide();
+                }
+            });
+
+            // Rank All toggle
+            // Rank All toggle with tie handling
+            $("#showAllRankCheckbox").change(function () {
+                if ($(this).is(":checked")) {
+                    // Collect all rows with their percentage
+                    let rows = [];
+                    $("#reportBody tr").each(function () {
+                        let percentage = parseFloat($(this).data("percentage"));
+                        rows.push({ percentage: percentage, element: $(this) });
+                    });
+                    // Sort by percentage descending
+                    rows.sort((a, b) => b.percentage - a.percentage);
+
+                    // Assign ranks with ties
+                    let currentRank = 1;
+                    for (let i = 0; i < rows.length; i++) {
+                        if (i > 0 && rows[i].percentage < rows[i - 1].percentage) {
+                            currentRank = i + 1;
+                        }
+                        rows[i].element.find(".rankCell").text(currentRank);
+                    }
+                } else {
+                    // Restore original rank (only top 5 with ties preserved)
+                    $("#reportBody tr").each(function () {
+                        let originalRank = $(this).find(".rankCell").data("original-rank");
+                        if (originalRank === undefined) {
+                            let currentText = $(this).find(".rankCell").text();
+                            let rankVal = (currentText !== "-" && !isNaN(parseInt(currentText))) ? parseInt(currentText) : null;
+                            $(this).find(".rankCell").data("original-rank", rankVal ? rankVal : 0);
+                        }
+                        let orig = $(this).find(".rankCell").data("original-rank");
+                        if (orig && orig <= 5) {
+                            $(this).find(".rankCell").text(orig);
+                        } else {
+                            $(this).find(".rankCell").text("-");
+                        }
+                    });
+                }
+            });
+
+            // Store original rank on load
+            $("#reportBody tr").each(function () {
+                let txt = $(this).find(".rankCell").text();
+                let rank = (txt !== "-" && !isNaN(parseInt(txt))) ? parseInt(txt) : null;
+                $(this).find(".rankCell").data("original-rank", rank ? rank : 0);
+            });
+        });
+
+        function loadSessions() {
+            return $.get('/Exams/GetSessionsJson', function (data) {
+                let opts = '<option value="">Select Session</option>';
+                $.each(data, function (i, s) {
+                    opts += `<option value="${s.sessionId}" ${s.isActive ? 'selected' : ''}>${s.sessionName}</option>`;
+                });
+                $("#sessionFilter").html(opts);
+            });
+        }
+
+        function loadClasses() {
+            let s = $("#sessionFilter").val();
+            let m = $("#mediumFilter").val();
+            if (s && m) {
+                $.get('/Exams/GetClassesByMedium', { medium: m, sessionId: s }, function (data) {
+                    let opts = '<option value="">Select Class</option>';
+                    $.each(data, function (i, c) {
+                        let val = c.classId || c.value;
+                        let txt = c.className || c.text;
+                        if (val && txt) opts += `<option value="${val}">${txt}</option>`;
+                    });
+                    $("#classFilter").html(opts);
+                    $("#sectionFilter").html('<option value="">Select Section</option>');
+                    $("#examFilter").html('<option value="">Select Exam</option>');
+                });
+            } else {
+                $("#classFilter").html('<option value="">Select Class</option>');
+                $("#sectionFilter").html('<option value="">Select Section</option>');
+                $("#examFilter").html('<option value="">Select Exam</option>');
+            }
+        }
+
+        function loadSections() {
+            let c = $("#classFilter").val();
+            if (c) {
+                $.get('/Exams/GetSectionsJson', { classId: c }, function (data) {
+                    let opts = '<option value="">Select Section</option>';
+                    $.each(data, function (i, s) {
+                        let val = s.sectionId || s.value;
+                        let txt = s.sectionName || s.text;
+                        if (val && txt) opts += `<option value="${val}">${txt}</option>`;
+                    });
+                    $("#sectionFilter").html(opts);
+                    $("#examFilter").html('<option value="">Select Exam</option>');
+                });
+            } else {
+                $("#sectionFilter").html('<option value="">Select Section</option>');
+                $("#examFilter").html('<option value="">Select Exam</option>');
+            }
+        }
+
+        function loadExams() {
+            let s = $("#sessionFilter").val();
+            let m = $("#mediumFilter").val();
+            let c = $("#classFilter").val();
+            let sec = $("#sectionFilter").val();
+            if (s && m && c && sec) {
+                $.get('/Exams/GetExamsByFilters', { sessionId: s, medium: m, classId: c, sectionId: sec }, function (data) {
+                    let opts = '<option value="">Select Exam</option>';
+                    $.each(data, function (i, e) {
+                        opts += `<option value="${e.examId}">${e.examName}</option>`;
+                    });
+                    $("#examFilter").html(opts);
+                });
+            }
+        }
+
+        function generateReport() {
+            let s = $("#sessionFilter").val();
+            let m = $("#mediumFilter").val();
+            let c = $("#classFilter").val();
+            let sec = $("#sectionFilter").val();
+            let e = $("#examFilter").val();
+            if (!s || !m || !c || !sec || !e) {
+                alert("Please select all filters and an exam.");
+                return;
+            }
+            $("#loadingOverlay").css("display", "flex");
+
+            window.location.href = `/Exams/Report?sessionId=${s}&medium=${m}&classId=${c}&sectionId=${sec}&examId=${e}`;
+        }
+
+        function resetFilters() {
+            window.location.href = '/Exams/Report';
+        }
+
+        function filterTable() {
+            
+            let search = $("#studentSearch").val().toLowerCase();
+            $("#reportBody tr").each(function () {
+                let text = $(this).find("td:eq(0)").text().toLowerCase() + " " +
+                    $(this).find("td:eq(1)").text().toLowerCase();
+                if ($("#showGrNoCheckbox").is(":checked")) {
+                    text += " " + $(this).find(".grNoCell").text().toLowerCase();
+                }
+                $(this).toggle(text.indexOf(search) > -1);
+            });
+        }
+
+        function exportToExcel() {
+            let rows = [];
+            rows.push(["EXAM RESULT REPORT"]);
+            rows.push([`Generated on: ${new Date().toLocaleString()}`]);
+            let urlParams = new URLSearchParams(window.location.search);
+            let sessionText = $("#sessionFilter option:selected").text();
+            let mediumText = urlParams.get('medium') || "";
+            let classText = $("#classFilter option:selected").text();
+            let sectionText = $("#sectionFilter option:selected").text();
+            let examText = $("#examFilter option:selected").text();
+            rows.push([`Session: ${sessionText}`]);
+            rows.push([`Medium: ${mediumText}`]);
+            rows.push([`Class: ${classText}`]);
+            rows.push([`Section: ${sectionText}`]);
+            rows.push([`Exam: ${examText}`]);
+            rows.push([]);
+
+            let headers = [];
+            $("#reportTable thead th").each(function () {
+                if ($(this).attr('id') === 'grNoHeader' && !$("#showGrNoCheckbox").is(":checked")) {
+                    return;
+                }
+                headers.push($(this).text().trim().replace(/\n/g, ' '));
+            });
+            rows.push(headers);
+
+            $("#reportBody tr").each(function () {
+                let row = [];
+                $(this).find("td").each(function (idx) {
+                    if ($(this).hasClass('grNoCell') && !$("#showGrNoCheckbox").is(":checked")) {
+                        return;
+                    }
+                    row.push($(this).text().trim());
+                });
+                rows.push(row);
+            });
+
+            rows.push([]);
+            let totalStudents = $(".summary span:first strong").text() || "0";
+            let passStudents = $(".summary span:eq(1) strong").text() || "0";
+            let failStudents = $(".summary span:last strong").text() || "0";
+            rows.push(["SUMMARY"]);
+            rows.push([`Total Students: ${totalStudents}`]);
+            rows.push([`Pass: ${passStudents}`]);
+            rows.push([`Fail: ${failStudents}`]);
+
+            let ws = XLSX.utils.aoa_to_sheet(rows);
+            ws['!cols'] = headers.map(() => ({ wch: 12 }));
+            let wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Exam_Report");
+            XLSX.writeFile(wb, `Exam_Report_${new Date().toISOString().slice(0, 19).replace(/:/g, '-')}.xlsx`);
+        }
+    </script>
+</body>
+</html>

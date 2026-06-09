@@ -1,0 +1,145 @@
+﻿@model List<SVM.Models.ExamSubjectSelectionVM>
+@{
+	Layout = null;
+	var exam = ViewBag.Exam;
+}
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Exam Subjects</title>
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+	<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+	<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+	<style>
+		body {
+			font-family: 'Inter', sans-serif;
+			background: #f5f7fa;
+			padding: 24px;
+			background-color: #efeae2;
+			background-image: url('/images/AdminDashboardBGImg.png');
+			background-repeat: repeat;
+			overflow-x: hidden;
+		}
+
+		.container {
+			max-width: 1000px;
+			margin: 0 auto;
+			background: white;
+			border-radius: 20px;
+			padding: 28px;
+			border: 1px solid #e5e7eb;
+		}
+
+		h2 {
+			margin-bottom: 20px;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: collapse;
+		}
+
+		th, td {
+			padding: 12px;
+			text-align: left;
+			border-bottom: 1px solid #e5e7eb;
+		}
+
+		th {
+			background: #f8fafc;
+		}
+
+		input {
+			width: 120px;
+			padding: 8px;
+			border: 1px solid #d1d5db;
+			border-radius: 8px;
+		}
+
+		.btn {
+			padding: 10px 20px;
+			border-radius: 10px;
+			font-weight: 600;
+			cursor: pointer;
+			border: none;
+		}
+
+		.btn-save {
+			background: #10b981;
+			color: white;
+		}
+
+			.btn-save:hover {
+				background: #059669;
+			}
+
+		.btn-back {
+			background: #6b7280;
+			color: white;
+			text-decoration: none;
+			display: inline-block;
+			margin-left: 10px;
+		}
+
+		.info-box {
+			background: #eff6ff;
+			color: #1d4ed8;
+			padding: 12px 16px;
+			border-radius: 12px;
+			margin-bottom: 20px;
+		}
+
+		.select-all {
+			margin-bottom: 16px;
+			font-weight: 600;
+		}
+	</style>
+</head>
+<body>
+	<div class="container">
+		<h2><i class="fas fa-book"></i> Manage Subjects - @exam.ExamName</h2>
+		<div class="info-box"><i class="fas fa-info-circle"></i> Select subjects, set Total Marks and Passing Marks (0 = no passing requirement).</div>
+		<form method="post" asp-action="SaveSubjects">
+			<input type="hidden" name="examId" value="@exam.ExamId" />
+			<div class="select-all"><label><input type="checkbox" id="selectAll"> Select All Subjects</label></div>
+			<table>
+				<thead>
+					<tr>
+						<th>Select</th>
+						<th>Subject Name</th>
+						<th>Total Marks</th>
+						<th>Passing Marks</th>
+					</tr>
+				</thead>
+				<tbody>
+					@for (int i = 0; i < Model.Count; i++)
+					{
+						<tr>
+							<td><input type="checkbox" class="subject-checkbox" name="subjects[@i].IsSelected" value="true" @(Model[i].IsSelected ? "checked" : "") /></td>
+							<td>@Model[i].SubjectName<input type="hidden" name="subjects[@i].SubjectId" value="@Model[i].SubjectId" /></td>
+							<td><input type="number" name="subjects[@i].TotalMarks" value="@Model[i].TotalMarks" step="1" /></td>
+							<td><input type="number" name="subjects[@i].PassingMarks" value="@Model[i].PassingMarks" step="1" /></td>
+						</tr>
+					}
+				</tbody>
+			</table>
+			<button type="submit" class="btn btn-save"><i class="fas fa-save"></i> Save Subjects</button>
+			<a asp-action="Index" class="btn btn-back"><i class="fas fa-arrow-left"></i> Back</a>
+		</form>
+	</div>
+	<script>
+		document.getElementById('selectAll').addEventListener('change', function () {
+			document.querySelectorAll('.subject-checkbox').forEach(cb => cb.checked = this.checked);
+		});
+		@if (TempData["SubjectSuccess"] != null)
+		{
+			<text>Swal.fire({ icon: 'success', title: 'Success', text: '@TempData["SubjectSuccess"]' }); </text>
+		}
+		@if (TempData["SubjectError"] != null)
+		{
+			<text>Swal.fire({ icon: 'error', title: 'Error', text: '@TempData["SubjectError"]' }); </text>
+		}
+	</script>
+</body>
+</html>

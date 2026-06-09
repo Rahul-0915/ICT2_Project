@@ -46,11 +46,16 @@ public partial class SvmContext : DbContext
     public virtual DbSet<User> Users { get; set; }
     public DbSet<Updates> Updates { get; set; }
     public virtual DbSet<Timetable> Timetables { get; set; }
+    public virtual DbSet<Exam> Exams { get; set; }
+
+    public virtual DbSet<ExamSubject> ExamSubjects { get; set; }
+
+    public virtual DbSet<ExamMark> ExamMarks { get; set; }
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    => optionsBuilder.UseSqlServer("Data Source=LAPTOP-4UGH4KDC\\SQLEXPRESS;Initial Catalog=SVM;Integrated Security=True;Encrypt=False");
+    //=> optionsBuilder.UseSqlServer("Data Source=LAPTOP-4UGH4KDC\\SQLEXPRESS;Initial Catalog=SVM;Integrated Security=True;Encrypt=False");
 
 
-    //=> optionsBuilder.UseSqlServer("Data Source=LAPTOP-0UK50KGM\\SQLEXPRESS;Initial Catalog=SVM;Integrated Security=True;Encrypt=False");
+    => optionsBuilder.UseSqlServer("Data Source=LAPTOP-0UK50KGM\\SQLEXPRESS;Initial Catalog=SVM;Integrated Security=True;Encrypt=False");
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -464,7 +469,92 @@ public partial class SvmContext : DbContext
                 .HasForeignKey(d => d.GroupId)
                 .HasConstraintName("FK__users__group_id__0519C6AF");
         });
+        modelBuilder.Entity<Exam>(entity =>
+        {
+            entity.HasKey(e => e.ExamId);
 
+            entity.ToTable("exams");
+
+            entity.Property(e => e.ExamId).HasColumnName("exam_id");
+            entity.Property(e => e.ExamName).HasColumnName("exam_name");
+            entity.Property(e => e.ExamType).HasColumnName("exam_type");
+            entity.Property(e => e.SessionId).HasColumnName("session_id");
+            entity.Property(e => e.ClassId).HasColumnName("class_id");
+            entity.Property(e => e.SectionId).HasColumnName("section_id");
+            entity.Property(e => e.Medium).HasColumnName("medium");
+            entity.Property(e => e.StartDate).HasColumnName("start_date");
+            entity.Property(e => e.EndDate).HasColumnName("end_date");
+            entity.Property(e => e.IsActive).HasColumnName("is_active");
+            entity.Property(e => e.CreatedBy).HasColumnName("created_by");
+            entity.Property(e => e.CreatedAt).HasColumnName("created_at");
+
+            entity.HasOne(d => d.Session)
+                .WithMany()
+                .HasForeignKey(d => d.SessionId);
+
+            entity.HasOne(d => d.Class)
+                .WithMany()
+                .HasForeignKey(d => d.ClassId);
+
+            entity.HasOne(d => d.Section)
+                .WithMany()
+                .HasForeignKey(d => d.SectionId);
+        });
+
+        modelBuilder.Entity<ExamSubject>(entity =>
+        {
+            entity.HasKey(e => e.ExamSubjectId);
+
+            entity.ToTable("exam_subjects");
+
+            entity.Property(e => e.ExamSubjectId)
+                .HasColumnName("exam_subject_id");
+
+            entity.Property(e => e.ExamId)
+                .HasColumnName("exam_id");
+
+            entity.Property(e => e.SubjectId)
+                .HasColumnName("subject_id");
+
+            entity.Property(e => e.TotalMarks)
+                .HasColumnName("total_marks");
+
+            // New Column
+            entity.Property(e => e.PassingMarks)
+                .HasColumnName("passing_marks")
+                .HasDefaultValue(0);
+
+            entity.HasOne(d => d.Exam)
+                .WithMany(p => p.ExamSubjects)
+                .HasForeignKey(d => d.ExamId);
+
+            entity.HasOne(d => d.Subject)
+                .WithMany()
+                .HasForeignKey(d => d.SubjectId);
+        });
+        modelBuilder.Entity<ExamMark>(entity =>
+        {
+            entity.HasKey(e => e.MarkId);
+
+            entity.ToTable("exam_marks");
+
+            entity.Property(e => e.MarkId).HasColumnName("mark_id");
+            entity.Property(e => e.ExamSubjectId).HasColumnName("exam_subject_id");
+            entity.Property(e => e.StudentId).HasColumnName("student_id");
+            entity.Property(e => e.ObtainedMarks)
+                  .HasColumnType("decimal(10,2)")
+                  .HasColumnName("obtained_marks");
+            entity.Property(e => e.EnteredBy).HasColumnName("entered_by");
+            entity.Property(e => e.EnteredAt).HasColumnName("entered_at");
+
+            entity.HasOne(d => d.ExamSubject)
+                .WithMany(p => p.ExamMarks)
+                .HasForeignKey(d => d.ExamSubjectId);
+
+            entity.HasOne(d => d.Student)
+                .WithMany()
+                .HasForeignKey(d => d.StudentId);
+        });
         OnModelCreatingPartial(modelBuilder);
     }
 

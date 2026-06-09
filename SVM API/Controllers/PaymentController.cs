@@ -16,29 +16,41 @@ namespace SVM_API.Controllers
         {
             _context = context;
         }
-
         [HttpPost("create-order")]
         public IActionResult CreateOrder([FromBody] decimal amount)
         {
-            var client = new RazorpayClient(
-                "rzp_test_SxA17sOstoKC4x",
-                "V5TPP3ZQMr6xvOamcCLrE6zi"
-            );
+            // ✅ Validate amount
+            if (amount <= 0)
+            {
+                return BadRequest(new { error = "Invalid amount. Fee structure may not be available for your class/session." });
+            }
 
-            var options = new Dictionary<string, object>
+            try
+            {
+                var client = new RazorpayClient(
+                    "rzp_test_SxA17sOstoKC4x",
+                    "V5TPP3ZQMr6xvOamcCLrE6zi"
+                );
+
+                var options = new Dictionary<string, object>
         {
             { "amount", amount * 100 },
             { "currency", "INR" },
             { "receipt", Guid.NewGuid().ToString() }
         };
 
-            var order = client.Order.Create(options);
+                var order = client.Order.Create(options);
 
-            return Ok(new
+                return Ok(new
+                {
+                    orderId = order["id"].ToString(),
+                    key = "rzp_test_SxA17sOstoKC4x"
+                });
+            }
+            catch (Exception ex)
             {
-                orderId = order["id"].ToString(),
-                key = "rzp_test_SxA17sOstoKC4x"
-            });
+                return StatusCode(500, new { error = ex.Message });
+            }
         }
 
         [HttpPost("success")]

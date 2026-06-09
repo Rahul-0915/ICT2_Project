@@ -123,8 +123,7 @@
 				<a href="#"><i class="fa fa-chalkboard-teacher"></i> Staff</a>
 				<div class="submenu">
 					<a asp-action="Index" asp-controller="Staffs" target="mainFrame">Staff List</a>
-					<a href="#">Staff Attendance</a>
-					<a href="#">Leave Request</a>
+
 				</div>
 			</li>
 
@@ -136,17 +135,21 @@
 					<a target="mainFrame" asp-controller="Subjects" asp-action="Index">Subjects</a>
 					<a target="mainFrame" asp-controller="TeacherSubjects" asp-action="Index">Subject Allocation</a>
 					<a target="mainFrame" asp-controller="Timetables" asp-action="Index">Timetable</a>
-					<a href="#">Exams</a>
-					<div class="submenu-item">
-						<a href="#">Results</a>
-						<div class="submenu2">
-							<a href="#">Result Entry</a>
-							<a href="#">Report Card</a>
-						</div>
-					</div>
+
 				</div>
 			</li>
+			<li>
+				<a href="#"><i class="fa fa-clipboard-list"></i> Exam Management</a>
+				<div class="submenu">
+					<a asp-action="Index" asp-controller="Exams" target="mainFrame">
+						Create Exam & Marks Entry
+					</a>
 
+					<a asp-action="Report" asp-controller="Exams" target="mainFrame">
+						Result Report
+					</a>
+				</div>
+			</li>
 			<!-- ================= ACCOUNTS (Fees + Salary yahan ayega) ================= -->
 			<!-- ================= ACCOUNTS (Fees + Salary yahan ayega) ================= -->
 			<li>
@@ -158,10 +161,10 @@
 						<div class="submenu2">
 							<a target="mainFrame" asp-controller="Admin" asp-action="FeesPayment">Collect Fees & Report</a>
 							<a target="mainFrame" asp-controller="FeeReports" asp-action="Index">
-								 Fee Collection Report
+								Fee Collection Report
 							</a>
-							
-							
+
+
 						</div>
 					</div>
 					<!-- Fee Structure -->
@@ -190,10 +193,15 @@
 
 		</ul>
 	</div>
-
+	<div id="pageLoader" style="display:none;">
+		<i class="fa fa-spinner fa-spin"></i>
+		Loading...
+	</div>
 	<iframe id="mainFrame" name="mainFrame"></iframe>
 
 </body>
+<script src="~/js/AdminPanel.js"></script>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="~/js/AdminPanel.js"></script>
 <script>
 	let lastCount = -1;
@@ -227,5 +235,17 @@
 
 	// real-time polling
 	setInterval(loadInquiryCount, 3000);
+
+	$(document).ready(function () {
+
+		$("a[target='mainFrame']").click(function () {
+			$("#pageLoader").show();
+		});
+
+		$("#mainFrame").on("load", function () {
+			$("#pageLoader").hide();
+		});
+
+	});
 </script>
 </html>

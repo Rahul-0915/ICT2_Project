@@ -1,0 +1,182 @@
+﻿@{
+    Layout = null;
+    var exam = ViewBag.Exam;
+    var subjects = ViewBag.Subjects as List<dynamic> ?? new List<dynamic>();
+    var students = ViewBag.Students as List<dynamic> ?? new List<dynamic>();
+    var error = ViewBag.Error as string;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Marks Entry</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fa;
+            padding: 24px;
+            background-color: #efeae2;
+            background-image: url('/images/AdminDashboardBGImg.png');
+            background-repeat: repeat;
+            overflow-x: hidden;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 24px;
+            overflow-x: auto;
+            border: 1px solid #e5e7eb;
+        }
+
+        h2 {
+            margin-bottom: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th, td {
+            padding: 10px;
+            border: 1px solid #e5e7eb;
+            text-align: center;
+        }
+
+        th {
+            background: #f8fafc;
+            font-weight: 600;
+        }
+
+        input {
+            width: 80px;
+            padding: 6px;
+            text-align: center;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+        }
+
+        .student-name {
+            text-align: left;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-save {
+            background: #10b981;
+            color: white;
+        }
+
+            .btn-save:hover {
+                background: #059669;
+            }
+
+        .btn-back {
+            background: #6b7280;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            margin-left: 10px;
+        }
+
+        .alert-danger {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h4><i class="fas fa-pen"></i> Marks Entry - @exam?.ExamName</h4>
+        @if (!string.IsNullOrEmpty(error))
+        {
+            <div class="alert-danger">@error</div>
+        }
+        <form method="post" asp-action="SaveMarks">
+            <input type="hidden" name="examId" value="@exam?.ExamId" />
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>Roll No</th>
+                        <th>Student Name</th>
+                        <th>GR No</th>
+                        @foreach (var sub in subjects)
+                        {
+                            <th>@sub.SubjectName<br />(@sub.TotalMarks)</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (students.Any())
+                    {
+                        int markIndex = 0;  // ← Flat index for marks list
+                        for (int i = 0; i < students.Count; i++)
+                        {
+                            var student = students[i];
+                            // Build dictionary for this student's marks
+                            var marksDict = new Dictionary<int, decimal?>();
+                            if (student.Marks != null)
+                            {
+                                foreach (var mark in student.Marks)
+                                {
+                                    marksDict[mark.ExamSubjectId] = mark.ObtainedMarks;
+                                }
+                            }
+                            <tr>
+                                <td>@student.RollNo</td>
+                                <td class="student-name">@student.StudentName</td>
+                                <td>@student.Grno</td>
+                                @for (int j = 0; j < subjects.Count; j++)
+                                {
+                                    var currentSubject = subjects[j];
+                                    decimal? obtained = marksDict.ContainsKey(currentSubject.ExamSubjectId) ? marksDict[currentSubject.ExamSubjectId] : null;
+                                    <td>
+                                        <input type="hidden" name="marks[@markIndex].ExamSubjectId" value="@currentSubject.ExamSubjectId" />
+                                        <input type="hidden" name="marks[@markIndex].StudentId" value="@student.StudentId" />
+                                        <input type="number" name="marks[@markIndex].ObtainedMarks" value="@(obtained ?? 0)" step="0.01" min="0" max="@currentSubject.TotalMarks" />
+                                    </td>
+                                    markIndex++;  // ← Increment for next cell
+                                }
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="@(subjects.Count + 3)" class="no-data">No students found for this class/section.</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <button type="submit" class="btn btn-save"><i class="fas fa-save"></i> Save Marks</button>
+            <a asp-action="Index" class="btn btn-back"><i class="fas fa-arrow-left"></i> Back</a>
+        </form>
+    </div>
+    <script>
+        @if (TempData["Success"] != null)
+        {
+            <text>Swal.fire({ icon: 'success', title: 'Success', text: '@TempData["Success"]' }).then(() => { window.location.href = '/Exams/Index'; }); </text>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <text>Swal.fire({ icon: 'error', title: 'Error', text: '@TempData["Error"]' }); </text>
+        }
+    </script>
+</body>
+</html>

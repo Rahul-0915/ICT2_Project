@@ -1,0 +1,335 @@
+﻿@model List<SVM.Models.ExamListVM>
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Exam Management</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fa;
+            padding: 24px;
+            background-color: #efeae2;
+            background-image: url('/images/AdminDashboardBGImg.png');
+            background-repeat: repeat;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+            .header h2 {
+                font-size: 1.8rem;
+                font-weight: 700;
+                color: #1e293b;
+            }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            padding: 10px 20px;
+            border-radius: 10px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            transition: 0.2s;
+        }
+
+            .btn-primary:hover {
+                background: #2563eb;
+                transform: translateY(-1px);
+            }
+
+        .filter-bar {
+            background: white;
+            padding: 20px;
+            border-radius: 20px;
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+            margin-bottom: 24px;
+            align-items: flex-end;
+            border: 1px solid #e5e7eb;
+        }
+
+        .filter-group {
+            flex: 1;
+            min-width: 150px;
+        }
+
+            .filter-group label {
+                display: block;
+                font-size: 12px;
+                font-weight: 600;
+                color: #4b5563;
+                margin-bottom: 6px;
+                text-transform: uppercase;
+            }
+
+        select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            font-size: 14px;
+            background: white;
+            cursor: pointer;
+        }
+
+        .btn-search, .btn-reset {
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-search {
+            background: #3b82f6;
+            color: white;
+        }
+
+            .btn-search:hover {
+                background: #2563eb;
+            }
+
+        .btn-reset {
+            background: #6b7280;
+            color: white;
+        }
+
+            .btn-reset:hover {
+                background: #4b5563;
+            }
+
+        .table-wrapper {
+            background: white;
+            border-radius: 20px;
+            overflow-x: auto;
+            border: 1px solid #e5e7eb;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 800px;
+        }
+
+        th {
+            background: #f8fafc;
+            padding: 16px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 13px;
+            color: #475569;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f1f5f9;
+            font-size: 14px;
+            color: #334155;
+            vertical-align: middle;
+        }
+
+        tr:hover {
+            background: #f8fafc;
+        }
+
+        .actions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+        }
+
+            .actions a, .actions button {
+                text-decoration: none;
+                padding: 5px 12px;
+                border-radius: 20px;
+                font-size: 12px;
+                font-weight: 500;
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                border: none;
+                cursor: pointer;
+            }
+
+        .btn-subjects {
+            background: #e0e7ff;
+            color: #4338ca;
+        }
+
+        .btn-marks {
+            background: #fef3c7;
+            color: #d97706;
+        }
+
+        .btn-edit {
+            background: #dbeafe;
+            color: #1d4ed8;
+        }
+
+        .btn-delete {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .btn-publish {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 30px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: #d1fae5;
+            color: #059669;
+        }
+
+        .status-inactive {
+            background: #fee2e2;
+            color: #dc2626;
+        }
+
+        .no-data {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+
+        @@media (max-width: 768px) {
+            body {
+                padding: 16px;
+            }
+
+            .filter-bar {
+                flex-direction: column;
+            }
+
+            .filter-group {
+                width: 100%;
+            }
+
+            .actions {
+                flex-direction: column;
+            }
+
+                .actions a, .actions button {
+                    justify-content: center;
+                }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            
+            <a asp-action="Create" class="btn-primary"><i class="fas fa-plus"></i> Create Exam</a>
+        </div>
+        <div class="filter-bar">
+            <div class="filter-group"><label>Session</label><select id="sessionFilter"></select></div>
+            <div class="filter-group"><label>Medium</label><select id="mediumFilter"><option value="">Select Medium</option><option value="Gujarati">Gujarati</option><option value="English">English</option></select></div>
+            <div class="filter-group"><label>Class</label><select id="classFilter"><option value="">Select Class</option></select></div>
+            <div class="filter-group"><label>Section</label><select id="sectionFilter"><option value="">Select Section</option></select></div>
+            <div><button class="btn-search" onclick="search()"><i class="fas fa-search"></i> Search</button><button class="btn-reset" onclick="resetFilters()"><i class="fas fa-undo"></i> Reset</button></div>
+        </div>
+        <div class="table-wrapper">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Exam Name</th>
+                        <th>Type</th>
+                        <th>Start Date</th>
+                        <th>End Date</th>
+                        <th>Status</th>
+                        <th>Published</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var exam in Model)
+                        {
+                            <tr>
+                                <td>@exam.ExamName</td>
+                                <td>@exam.ExamType</td>
+                                <td>@exam.StartDate.ToString("dd-MM-yyyy")</td>
+                                <td>@exam.EndDate.ToString("dd-MM-yyyy")</td>
+                                <td><span class="status-badge @(exam.IsActive ? "status-active" : "status-inactive")">@(exam.IsActive ? "Active" : "Inactive")</span></td>
+                                <td><span class="status-badge @(exam.IsPublished ? "status-active" : "status-inactive")">@(exam.IsPublished ? "Published" : "Unpublished")</span></td>
+                                <td class="actions">
+                                    <a asp-action="Subjects" asp-route-examId="@exam.ExamId" class="btn-subjects"><i class="fas fa-book"></i> Subjects</a>
+                                    <a asp-action="MarksEntry" asp-route-examId="@exam.ExamId" asp-route-classId="@exam.ClassId" asp-route-sectionId="@exam.SectionId" class="btn-marks"><i class="fas fa-pen"></i> Marks Entry</a>
+                                    <a asp-action="Edit" asp-route-id="@exam.ExamId" class="btn-edit"><i class="fas fa-edit"></i> Edit</a>
+                                    <a asp-action="Delete" asp-route-id="@exam.ExamId" class="btn-delete"><i class="fas fa-trash"></i> Delete</a>
+                                    @if (!exam.IsPublished)
+                                    {
+                                        <form asp-action="Publish" method="post" style="display:inline;">
+                                            <input type="hidden" name="id" value="@exam.ExamId" />
+                                            <input type="hidden" name="sessionId" value="@ViewBag.SelectedSessionId" />
+                                            <input type="hidden" name="medium" value="@ViewBag.SelectedMedium" />
+                                            <input type="hidden" name="classId" value="@ViewBag.SelectedClassId" />
+                                            <input type="hidden" name="sectionId" value="@ViewBag.SelectedSectionId" />
+                                            <button type="submit" class="btn-publish"><i class="fas fa-globe"></i> Publish</button>
+                                        </form>
+                                    }
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr><td colspan="7" class="no-data">No exams found. Click "Create Exam" to add one.</td></tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () { loadSessions(); $("#sessionFilter, #mediumFilter").change(loadClasses); $("#classFilter").change(loadSections); });
+        function loadSessions() { $.get('/Exams/GetSessionsJson', function (data) { let opts = '<option value="">Select Session</option>'; $.each(data, (i, s) => opts += `<option value="${s.sessionId}" ${s.isActive ? 'selected' : ''}>${s.sessionName}</option>`); $("#sessionFilter").html(opts); }); }
+        function loadClasses() { let s = $("#sessionFilter").val(), m = $("#mediumFilter").val(); if (s && m) { $.get('/Exams/GetClassesByMedium', { medium: m, sessionId: s }, function (data) { let opts = '<option value="">Select Class</option>'; $.each(data, function (i, c) { let val = c.classId || c.value, txt = c.className || c.text; if (val && txt) opts += `<option value="${val}">${txt}</option>`; }); $("#classFilter").html(opts); $("#sectionFilter").html('<option value="">Select Section</option>'); }); } else { $("#classFilter").html('<option value="">Select Class</option>'); $("#sectionFilter").html('<option value="">Select Section</option>'); } }
+        function loadSections() { let c = $("#classFilter").val(); if (c) { $.get('/Exams/GetSectionsJson', { classId: c }, function (data) { let opts = '<option value="">Select Section</option>'; $.each(data, function (i, s) { let val = s.sectionId || s.value, txt = s.sectionName || s.text; if (val && txt) opts += `<option value="${val}">${txt}</option>`; }); $("#sectionFilter").html(opts); }); } else { $("#sectionFilter").html('<option value="">Select Section</option>'); } }
+        function search() { let s = $("#sessionFilter").val(), m = $("#mediumFilter").val(), c = $("#classFilter").val(), sec = $("#sectionFilter").val(); if (!s || !m || !c || !sec) { Swal.fire({ icon: 'warning', title: 'Incomplete', text: 'Please select all filters.' }); return; } window.location.href = `/Exams/Index?sessionId=${s}&medium=${m}&classId=${c}&sectionId=${sec}`; }
+        function resetFilters() { window.location.href = '/Exams/Index'; }
+        @if (TempData["Success"] != null)
+        {
+            <text>Swal.fire({ icon: 'success', title: 'Success', text: '@TempData["Success"]' }); </text>
+        }
+        @if (TempData["Error"] != null)
+        {
+            <text>Swal.fire({ icon: 'error', title: 'Error', text: '@TempData["Error"]' }); </text>
+        }
+    </script>
+</body>
+</html>

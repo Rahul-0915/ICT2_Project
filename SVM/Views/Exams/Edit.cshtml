@@ -1,0 +1,177 @@
+﻿@model SVM.Models.ExamDTO
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Edit Exam</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fa;
+            padding: 24px;
+            background-color: #efeae2;
+            background-image: url('/images/AdminDashboardBGImg.png');
+            background-repeat: repeat;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            border: 1px solid #e5e7eb;
+        }
+
+        h2 {
+            margin-bottom: 24px;
+            color: #1e293b;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #334155;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+
+            input:focus, select:focus {
+                outline: none;
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+            }
+
+        .text-danger {
+            color: #dc2626;
+            font-size: 12px;
+            margin-top: 4px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            width: 100%;
+        }
+
+            .btn-primary:hover {
+                background: #2563eb;
+                transform: translateY(-1px);
+            }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            margin-top: 12px;
+            width: 100%;
+        }
+
+        .validation-summary {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2><i class="fas fa-edit"></i> Edit Exam</h2>
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="validation-summary">@Html.ValidationSummary(false)</div>
+        }
+        <form asp-action="Edit" method="post">
+            <input type="hidden" asp-for="ExamId" />
+            <div class="form-group">
+                <label asp-for="ExamName"></label>
+                <input asp-for="ExamName" />
+                <span asp-validation-for="ExamName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ExamType"></label>
+                <select asp-for="ExamType">
+                    <option value="">Select Type</option>
+                    <option>Unit Test</option>
+                    <option>Quarterly</option>
+                    <option>Half Yearly</option>
+                    <option>Final</option>
+                    <option>Term 1</option>
+                    <option>Term 2</option>
+                </select>
+                <span asp-validation-for="ExamType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SessionId"></label>
+                <select asp-for="SessionId" id="SessionId" asp-items="@(new SelectList(ViewBag.Sessions, "SessionId", "SessionName"))"><option value="">Select Session</option></select>
+                <span asp-validation-for="SessionId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Medium"></label>
+                <select asp-for="Medium" id="Medium"><option value="">Select Medium</option><option>Gujarati</option><option>English</option></select>
+                <span asp-validation-for="Medium" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClassId"></label>
+                <select asp-for="ClassId" id="ClassId"><option value="">Select Class</option></select>
+                <span asp-validation-for="ClassId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SectionId"></label>
+                <select asp-for="SectionId" id="SectionId"><option value="">Select Section</option></select>
+                <span asp-validation-for="SectionId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StartDate"></label>
+                <input asp-for="StartDate" type="date" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EndDate"></label>
+                <input asp-for="EndDate" type="date" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Update Exam</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+    <script>
+        $(document).ready(function () {
+            function loadClasses() { var s = $("#SessionId").val(), m = $("#Medium").val(); if (s && m) { $.get('/Exams/GetClassesByMedium', { medium: m, sessionId: s }, function (data) { var opts = '<option value="">Select Class</option>'; $.each(data, function (i, c) { var val = c.classId || c.value, txt = c.className || c.text; if (val && txt) opts += `<option value="${val}">${txt}</option>`; }); $("#ClassId").html(opts); $("#SectionId").html('<option value="">Select Section</option>'); }); } else { $("#ClassId").html('<option value="">Select Class</option>'); $("#SectionId").html('<option value="">Select Section</option>'); } }
+            function loadSections() { var c = $("#ClassId").val(); if (c) { $.get('/Exams/GetSectionsJson', { classId: c }, function (data) { var opts = '<option value="">Select Section</option>'; $.each(data, function (i, s) { var val = s.sectionId || s.value, txt = s.sectionName || s.text; if (val && txt) opts += `<option value="${val}">${txt}</option>`; }); $("#SectionId").html(opts); }); } else { $("#SectionId").html('<option value="">Select Section</option>'); } }
+            $("#SessionId, #Medium").change(loadClasses);
+            $("#ClassId").change(loadSections);
+            if ($("#SessionId").val() && $("#Medium").val()) loadClasses();
+        });
+    </script>
+</body>
+</html>
