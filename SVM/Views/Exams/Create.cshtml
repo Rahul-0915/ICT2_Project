@@ -1,0 +1,233 @@
+﻿@model SVM.Models.ExamDTO
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Create Exam</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fa;
+            padding: 24px;
+            background-color: #efeae2;
+            background-image: url('/images/AdminDashboardBGImg.png');
+            background-repeat: repeat;
+            overflow-x: hidden;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            border: 1px solid #e5e7eb;
+        }
+
+        h2 {
+            margin-bottom: 24px;
+            color: #1e293b;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            color: #334155;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #d1d5db;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: 0.2s;
+        }
+
+            input:focus, select:focus {
+                outline: none;
+                border-color: #3b82f6;
+                box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+            }
+
+        .text-danger {
+            color: #dc2626;
+            font-size: 12px;
+            margin-top: 4px;
+            display: block;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: #3b82f6;
+            color: white;
+            width: 100%;
+        }
+
+            .btn-primary:hover {
+                background: #2563eb;
+                transform: translateY(-1px);
+            }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+            margin-top: 12px;
+            width: 100%;
+        }
+
+        .validation-summary {
+            background: #fee2e2;
+            color: #dc2626;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h3><i class="fas fa-plus-circle"></i> Create New Exam</h3>
+        @if (!ViewData.ModelState.IsValid)
+        {
+            <div class="validation-summary">@Html.ValidationSummary(false)</div>
+        }
+        <form asp-action="Create" method="post">
+            <div class="form-group">
+                <label asp-for="ExamName"></label>
+                <input asp-for="ExamName" />
+                <span asp-validation-for="ExamName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ExamType"></label>
+                <select asp-for="ExamType">
+                    <option value="">Select Exam Type</option>
+                    <option value="Weekly Test">Weekly Test</option>
+                    <option value="Unit Test 1">Unit Test 1</option>
+                    <option value="Unit Test 2">Unit Test 2</option>
+                    <option value="Term 1">Term 1</option>
+                    <option value="Term 2">Term 2</option>
+                    <option value="Final">Final</option>
+                    <option value="Half Yearly">Half Yearly</option>
+                    <option value="Quarterly">Quarterly</option>
+                </select>
+                <span asp-validation-for="ExamType" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SessionId"></label>
+                <select asp-for="SessionId" id="SessionId" asp-items="@(new SelectList(ViewBag.Sessions, "SessionId", "SessionName"))">
+                    <option value="">Select Session</option>
+                </select>
+                <span asp-validation-for="SessionId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="Medium"></label>
+                <select asp-for="Medium" id="Medium">
+                    <option value="">Select Medium</option>
+                    <option value="Gujarati">Gujarati</option>
+                    <option value="English">English</option>
+                </select>
+                <span asp-validation-for="Medium" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="ClassId"></label>
+                <select asp-for="ClassId" id="ClassId"><option value="">Select Class</option></select>
+                <span asp-validation-for="ClassId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="SectionId"></label>
+                <select asp-for="SectionId" id="SectionId"><option value="">Select Section</option></select>
+                <span asp-validation-for="SectionId" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="StartDate"></label>
+                <input asp-for="StartDate" type="date" />
+                <span asp-validation-for="StartDate" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label asp-for="EndDate"></label>
+                <input asp-for="EndDate" type="date" />
+                <span asp-validation-for="EndDate" class="text-danger"></span>
+            </div>
+            <button type="submit" class="btn btn-primary">Save Exam</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+    <script>
+        $(document).ready(function () {
+            function loadClasses() {
+                var sessionId = $("#SessionId").val();
+                var medium = $("#Medium").val();
+                if (sessionId && medium) {
+                    $.get('/Exams/GetClassesByMedium', { medium: medium, sessionId: sessionId }, function (data) {
+                        var classSelect = $("#ClassId");
+                        classSelect.empty();
+                        classSelect.append('<option value="">Select Class</option>');
+                        if (data && data.length) {
+                            $.each(data, function (i, item) {
+                                var val = item.classId || item.value || item.id;
+                                var txt = item.className || item.text || item.name;
+                                if (val && txt) {
+                                    classSelect.append($('<option></option>').val(val).text(txt));
+                                }
+                            });
+                        }
+                        $("#SectionId").empty().append('<option value="">Select Section</option>');
+                    }).fail(function () { alert("Failed to load classes."); });
+                } else {
+                    $("#ClassId").empty().append('<option value="">Select Class</option>');
+                    $("#SectionId").empty().append('<option value="">Select Section</option>');
+                }
+            }
+
+            function loadSections() {
+                var classId = $("#ClassId").val();
+                if (classId) {
+                    $.get('/Exams/GetSectionsJson', { classId: classId }, function (data) {
+                        var sectionSelect = $("#SectionId");
+                        sectionSelect.empty();
+                        sectionSelect.append('<option value="">Select Section</option>');
+                        if (data && data.length) {
+                            $.each(data, function (i, item) {
+                                var val = item.sectionId || item.value || item.id;
+                                var txt = item.sectionName || item.text || item.name;
+                                if (val && txt) {
+                                    sectionSelect.append($('<option></option>').val(val).text(txt));
+                                }
+                            });
+                        }
+                    }).fail(function () { alert("Failed to load sections."); });
+                } else {
+                    $("#SectionId").empty().append('<option value="">Select Section</option>');
+                }
+            }
+
+            $("#SessionId, #Medium").change(loadClasses);
+            $("#ClassId").change(loadSections);
+
+            // Trigger initial load if session and medium are already selected (e.g., after validation error)
+            if ($("#SessionId").val() && $("#Medium").val()) loadClasses();
+        });
+    </script>
+</body>
+</html>

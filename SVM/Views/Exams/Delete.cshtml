@@ -1,0 +1,79 @@
+﻿@model SVM.Models.ExamDTO
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delete Exam</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #f5f7fa;
+            padding: 24px;
+        }
+
+        .container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            padding: 32px;
+            text-align: center;
+            border: 1px solid #e5e7eb;
+        }
+
+        h2 {
+            color: #1e293b;
+            margin-bottom: 16px;
+        }
+
+        p {
+            color: #4b5563;
+            margin-bottom: 24px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            margin: 0 8px;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .btn-danger {
+            background: #dc2626;
+            color: white;
+        }
+
+            .btn-danger:hover {
+                background: #b91c1c;
+            }
+
+        .btn-secondary {
+            background: #6b7280;
+            color: white;
+        }
+
+            .btn-secondary:hover {
+                background: #4b5563;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Delete Exam</h2>
+        <p>Are you sure you want to delete <strong>@Model.ExamName</strong>?</p>
+        <form asp-action="Delete" method="post">
+            <input type="hidden" asp-for="ExamId" />
+            <button type="submit" class="btn btn-danger">Yes, Delete</button>
+            <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+        </form>
+    </div>
+</body>
+</html>

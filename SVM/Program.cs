@@ -14,6 +14,7 @@ namespace SVM
         {
             var builder = WebApplication.CreateBuilder(args);
             builder.Services.AddHttpClient();
+            builder.Services.AddHttpContextAccessor(); // for marks entry
             QuestPDF.Settings.License = LicenseType.Community;
 
             // Add services to the container.

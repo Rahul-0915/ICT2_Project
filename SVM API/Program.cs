@@ -13,8 +13,11 @@ namespace SVM_API
             var builder = WebApplication.CreateBuilder(args);
 
             builder.Services.AddDbContext<SvmContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("ConnectionStrings")));
+            Console.WriteLine(
+    builder.Configuration.GetConnectionString("ConnectionStrings"));
             // Add services to the container.
             builder.Services.AddHttpClient();
+            builder.Services.AddHttpContextAccessor(); // for marks entry
             builder.Services.Configure<JsonOptions>(options =>
             {
                 options.SerializerOptions.PropertyNamingPolicy = null;
@@ -49,8 +52,8 @@ namespace SVM_API
             app.UseStaticFiles(new StaticFileOptions
             {
                 FileProvider = new PhysicalFileProvider(
-                @"C:\Users\PRAKRUTI\source\repos\ICT2_Project\SVM\wwwroot\images\updates"),
-                //@"C:\Projects\SVM\wwwroot\images\updates\"),
+                //@"C:\Users\PRAKRUTI\source\repos\ICT2_Project\SVM\wwwroot\images\updates"),
+                @"C:\Project\SVM\wwwroot\images\updates\"),
 
                 RequestPath = "/images/updates"
             });
