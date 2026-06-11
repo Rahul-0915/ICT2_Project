@@ -119,5 +119,24 @@ namespace SVM_API.Controllers
                 .Where(s => s.ClassId == classId)
                 .ToListAsync();
         }
+        // GET: api/TeacherSubjects/by-staff
+        [HttpGet("by-staff")]
+        public async Task<ActionResult<IEnumerable<TeacherSubject>>> GetTeacherSubjectsByStaff(
+            int staffId,
+            int? classId,
+            int? sessionId)
+        {
+            var query = _context.TeacherSubjects
+                .Where(ts => ts.StaffId == staffId);
+
+            if (classId.HasValue)
+                query = query.Where(ts => ts.ClassId == classId);
+
+            if (sessionId.HasValue)
+                query = query.Where(ts => ts.SessionId == sessionId);
+
+            var result = await query.ToListAsync();
+            return Ok(result);
+        }
     }
 }

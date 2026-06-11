@@ -23,7 +23,7 @@
         public int? IsActive { get; set; }
 
         public int? CreatedBy { get; set; }
-
+     
         public DateTime? CreatedAt { get; set; }
 
         // Navigation Properties
@@ -34,5 +34,7 @@
         public virtual Section? Section { get; set; }
 
         public virtual ICollection<ExamSubject> ExamSubjects { get; set; } = new List<ExamSubject>();
+        public string StartDateString => StartDate.ToString("yyyy-MM-dd");
+        public string EndDateString => EndDate.ToString("yyyy-MM-dd");
     }
 }

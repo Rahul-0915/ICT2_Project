@@ -425,6 +425,7 @@ namespace SVM_API.Controllers
         }
 
         // ==================== STUDENT ENDPOINTS ====================
+
         [HttpGet("student-exams")]
         public async Task<IActionResult> GetStudentExams(int sessionId, string medium, int classId, int sectionId)
         {
@@ -436,34 +437,84 @@ namespace SVM_API.Controllers
             return Ok(exams);
         }
 
+        // ✅ FIXED GetStudentMarks - Only ONE method
         [HttpGet("student-marks")]
         public async Task<IActionResult> GetStudentMarks(int examId, int studentId)
         {
-            var exam = await _context.Exams.FindAsync(examId);
-            if (exam == null || !exam.IsPublished) return NotFound(new { message = "Exam not published or not found" });
-
-            var examSubjects = await _context.ExamSubjects
-                .Include(es => es.Subject)
-                .Where(es => es.ExamId == examId)
-                .ToListAsync();
-
-            var marks = await _context.ExamMarks
-                .Where(m => m.StudentId == studentId && examSubjects.Select(es => es.ExamSubjectId).Contains(m.ExamSubjectId))
-                .ToListAsync();
-
-            var result = new
+            try
             {
-                ExamName = exam.ExamName,
-                Subjects = examSubjects.Select(es => new
+                var exam = await _context.Exams.FindAsync(examId);
+                if (exam == null || !exam.IsPublished)
+                    return NotFound(new { message = "Exam not published or not found" });
+
+                var examSubjects = await _context.ExamSubjects
+                    .Include(es => es.Subject)
+                    .Where(es => es.ExamId == examId)
+                    .ToListAsync();
+
+                if (!examSubjects.Any())
+                    return Ok(new { ExamName = exam.ExamName, Subjects = new List<object>() });
+
+                var subjectResults = new List<object>();
+
+                foreach (var es in examSubjects)
                 {
-                    es.SubjectId,
-                    SubjectName = es.Subject?.SubjectName ?? "",
-                    es.TotalMarks,
-                    PassingMarks = es.PassingMarks ?? 0,
-                    ObtainedMarks = marks.FirstOrDefault(m => m.ExamSubjectId == es.ExamSubjectId)?.ObtainedMarks ?? 0
-                })
-            };
-            return Ok(result);
+                    var mark = await _context.ExamMarks
+                        .FirstOrDefaultAsync(m => m.ExamSubjectId == es.ExamSubjectId && m.StudentId == studentId);
+
+                    subjectResults.Add(new
+                    {
+                        es.SubjectId,
+                        SubjectName = es.Subject?.SubjectName ?? "",
+                        es.TotalMarks,
+                        PassingMarks = es.PassingMarks ?? 0,
+                        ObtainedMarks = mark?.ObtainedMarks ?? 0
+                    });
+                }
+
+                var result = new
+                {
+                    ExamName = exam.ExamName,
+                    Subjects = subjectResults
+                };
+
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { error = ex.Message });
+            }
         }
+
+        //[HttpGet("student-marks")]
+        //public async Task<IActionResult> GetStudentMarks(int examId, int studentId)
+        //{
+        //    var exam = await _context.Exams.FindAsync(examId);
+        //    if (exam == null || !exam.IsPublished) return NotFound(new { message = "Exam not published or not found" });
+
+        //    var examSubjects = await _context.ExamSubjects
+        //        .Include(es => es.Subject)
+        //        .Where(es => es.ExamId == examId)
+        //        .ToListAsync();
+
+        //    var marks = await _context.ExamMarks
+        //        .Where(m => m.StudentId == studentId && examSubjects.Select(es => es.ExamSubjectId).Contains(m.ExamSubjectId))
+        //        .ToListAsync();
+
+        //    var result = new
+        //    {
+        //        ExamName = exam.ExamName,
+        //        Subjects = examSubjects.Select(es => new
+        //        {
+        //            es.SubjectId,
+        //            SubjectName = es.Subject?.SubjectName ?? "",
+        //            es.TotalMarks,
+        //            PassingMarks = es.PassingMarks ?? 0,
+        //            ObtainedMarks = marks.FirstOrDefault(m => m.ExamSubjectId == es.ExamSubjectId)?.ObtainedMarks ?? 0
+        //        })
+        //    };
+        //    return Ok(result);
+        //}
+
     }
 }
