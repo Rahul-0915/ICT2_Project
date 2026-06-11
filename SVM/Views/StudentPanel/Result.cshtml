@@ -4,470 +4,6 @@
     ViewData["Title"] = "My Results";
 }
 
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
-
-    .result-wrapper {
-        background: #eef2f7;
-        padding: 30px 15px;
-    }
-
-    .result-container {
-        max-width: 1000px;
-        margin: 0 auto;
-    }
-
-    /* Student Info Card */
-    .student-info-card {
-        background: #fff;
-        border-radius: 12px;
-        padding: 25px;
-        margin-bottom: 25px;
-        border-top: 5px solid #1e40af;
-        box-shadow: 0 4px 15px rgba(0,0,0,.08);
-    }
-
-    .student-name {
-        font-size: 28px;
-        font-weight: 700;
-        color: #1e293b;
-    }
-
-    .student-details {
-        margin-top: 15px;
-        display: grid;
-        grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-        gap: 15px;
-    }
-
-    .detail-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 14px;
-        color: #475569;
-    }
-
-        .detail-item i {
-            width: 20px;
-            color: #4f46e5;
-        }
-
-    /* Exam Card */
-    .exam-card {
-        background: white;
-        border-radius: 16px;
-        margin-bottom: 24px;
-        overflow: hidden;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.08);
-    }
-
-    .exam-header {
-        background: linear-gradient(135deg,#1e3a8a,#2563eb);
-        padding: 20px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        cursor: pointer;
-    }
-
-        .exam-header:hover {
-            background: linear-gradient(135deg, #334155 0%, #1e293b 100%);
-        }
-
-    .exam-title h3 {
-        color: white;
-        font-size: 22px;
-        font-weight: 700;
-    }
-
-    .exam-date {
-        color: #94a3b8;
-        font-size: 12px;
-    }
-
-    .exam-summary {
-        text-align: right;
-    }
-
-    .result-badge {
-        display: inline-block;
-        padding: 4px 16px;
-        border-radius: 20px;
-        font-size: 12px;
-        font-weight: 600;
-    }
-
-    .result-pass {
-        background: #dcfce7;
-        color: #166534;
-    }
-
-    .result-fail {
-        background: #fee2e2;
-        color: #991b1b;
-    }
-
-    .percentage {
-        font-size: 30px;
-        font-weight: 700;
-        color: #fff;
-    }
-
-    .total-marks {
-        font-size: 12px;
-        color: #94a3b8;
-    }
-
-    .expand-icon {
-        color: white;
-        font-size: 20px;
-        transition: transform 0.3s;
-    }
-
-    .exam-header.open .expand-icon {
-        transform: rotate(180deg);
-    }
-
-    /* Marks Table */
-    .exam-details {
-        display: none;
-        padding: 0;
-    }
-
-        .exam-details.show {
-            display: block;
-        }
-
-    .marks-table th {
-        background: #f1f5f9;
-        color: #0f172a;
-        font-weight: 700;
-        text-transform: uppercase;
-        font-size: 13px;
-    }
-
-        .marks-table th {
-            background: #f8fafc;
-            padding: 14px 16px;
-            text-align: left;
-            font-size: 13px;
-            font-weight: 600;
-            color: #475569;
-            border-bottom: 1px solid #e2e8f0;
-        }
-
-    .marks-table td {
-        border: 1px solid #e2e8f0;
-    }
-
-    .marks-table tbody tr:hover {
-        background: #f8fafc;
-    }
-
-        .marks-table tr:last-child td {
-            border-bottom: none;
-        }
-
-        .marks-table tr:hover td {
-            background: #f8fafc;
-        }
-
-    .subject-name {
-        font-weight: 500;
-    }
-
-    .obtained-pass {
-        color: #16a34a;
-        font-weight: 600;
-    }
-
-    .obtained-fail {
-        color: #dc2626;
-        font-weight: 600;
-    }
-
-    .total-row {
-        background: #f8fafc;
-        font-weight: 600;
-    }
-
-        .total-row td {
-            padding: 12px 16px;
-            font-weight: 600;
-            color: #1e293b;
-        }
-
-    /* Grade Section */
-    .grade-section {
-        background: #f8fafc;
-        padding: 16px 24px;
-        border-top: 1px solid #e2e8f0;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        flex-wrap: wrap;
-        gap: 16px;
-    }
-
-    .grade-box {
-        text-align: center;
-    }
-
-    .grade-label {
-        font-size: 12px;
-        color: #64748b;
-        margin-bottom: 4px;
-    }
-
-    .grade-value {
-        font-size: 28px;
-        font-weight: 700;
-    }
-
-    .grade-a {
-        color: #16a34a;
-    }
-
-    .grade-b {
-        color: #3b82f6;
-    }
-
-    .grade-c {
-        color: #f59e0b;
-    }
-
-    .grade-d {
-        color: #ef4444;
-    }
-
-    .remark-box {
-        text-align: right;
-    }
-
-    .remark {
-        font-size: 14px;
-        font-weight: 500;
-    }
-
-    .remark-pass {
-        color: #16a34a;
-    }
-
-    .remark-fail {
-        color: #dc2626;
-    }
-
-    /* No Data */
-    .no-data {
-        text-align: center;
-        padding: 60px;
-        background: white;
-        border-radius: 16px;
-        color: #64748b;
-    }
-
-        .no-data i {
-            font-size: 48px;
-            margin-bottom: 16px;
-            color: #cbd5e1;
-        }
-
-    /* Print Styles */
-    @@media print {
-        .result-wrapper {
-            background: white;
-            padding: 0;
-        }
-
-        .exam-header {
-            background: #1e293b;
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-
-        .result-badge, .grade-section {
-            -webkit-print-color-adjust: exact;
-            print-color-adjust: exact;
-        }
-    }
-</style>
-
-<div class="result-wrapper">
-    <div class="result-container">
-        <!-- Student Info Card -->
-        <div class="student-info-card">
-            <div class="student-name">@Model.StudentName</div>
-            <div class="student-details">
-                <div class="detail-item">
-                    <i class="fas fa-id-card"></i>
-                    <span>Roll No: @Model.RollNo</span>
-                </div>
-                <div class="detail-item">
-                    <i class="fas fa-qrcode"></i>
-                    <span>GR No: @Model.GrNo</span>
-                </div>
-                <div class="detail-item">
-                    <i class="fas fa-graduation-cap"></i>
-                    <span>Class: @Model.ClassName - @Model.SectionName</span>
-                </div>
-            </div>
-        </div>
-
-        @if (Model.Exams != null && Model.Exams.Any())
-        {
-            foreach (var exam in Model.Exams)
-            {
-                var grade = GetGrade(exam.Percentage);
-                var gradeClass = GetGradeClass(exam.Percentage);
-
-                <div class="exam-card">
-                    <div class="exam-header" onclick="toggleExam(@exam.ExamId)">
-                        <div class="exam-title">
-                            <h3>@exam.ExamName (@exam.ExamType)</h3>
-                            <div class="exam-date">
-                                <i class="far fa-calendar-alt"></i> @exam.ExamDate.ToString("dd MMM yyyy")
-                            </div>
-                        </div>
-                        <div class="exam-summary">
-                            <div>
-                                <span class="result-badge @(exam.Result == "Pass" ? "result-pass" : "result-fail")">
-                                    @exam.Result
-                                </span>
-                            </div>
-                            <div class="percentage">@exam.Percentage.ToString("F2")%</div>
-                            <div class="total-marks">@exam.TotalObtainedMarks / @exam.TotalMaxMarks</div>
-                        </div>
-                        <div class="expand-icon">
-                            <i class="fas fa-chevron-down"></i>
-                        </div>
-                    </div>
-
-                    <div id="exam-details-@exam.ExamId" class="exam-details">
-                        <table class="marks-table">
-                            <thead>
-                                <tr>
-                                    <th>Subject</th>
-                                    <th>Total Marks</th>
-                                    <th>Passing Marks</th>
-                                    <th>Obtained Marks</th>
-                                    <th>Status</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                @foreach (var subject in exam.Subjects)
-                                {
-                                    var isPass = subject.ObtainedMarks >= subject.PassingMarks;
-                                    <tr>
-                                        <td class="subject-name">@subject.SubjectName</td>
-                                        <td>@subject.TotalMarks</td>
-                                        <td>@subject.PassingMarks</td>
-                                        <td class="@(isPass ? "obtained-pass" : "obtained-fail")">
-                                            @subject.ObtainedMarks.ToString("F2")
-                                        </td>
-                                        <td>
-                                            @if (isPass)
-                                            {
-                                                <span style="color: #16a34a;"><i class="fas fa-check-circle"></i> Pass</span>
-                                            }
-                                            else
-                                            {
-                                                <span style="color: #dc2626;"><i class="fas fa-times-circle"></i> Fail</span>
-                                            }
-                                        </td>
-                                    </tr>
-                                }
-                            </tbody>
-                            <tfoot>
-                                <tr class="total-row">
-                                    <td><strong>Total</strong></td>
-                                    <td><strong>@exam.TotalMaxMarks</strong></td>
-                                    <td>-</td>
-                                    <td><strong>@exam.TotalObtainedMarks.ToString("F2")</strong></td>
-                                    <td><strong>@exam.Percentage.ToString("F2")%</strong></td>
-                                </tr>
-                            </tfoot>
-                        </table>
-
-                        <!-- Grade & Remark Section -->
-                        <div class="grade-section">
-                            <div class="grade-box">
-                                <div class="grade-label">GRADE</div>
-                                <div class="grade-value @gradeClass">@grade</div>
-                            </div>
-                            <div class="grade-box">
-                                <div class="grade-label">PERCENTAGE</div>
-                                <div class="grade-value">@exam.Percentage.ToString("F2")%</div>
-                            </div>
-                            <div class="grade-box">
-                                <div class="grade-label">RESULT</div>
-                                <div class="grade-value @(exam.Result == "Pass" ? "grade-a" : "grade-d")">
-                                    @exam.Result
-                                </div>
-                            </div>
-                            <div class="remark-box">
-                                <div class="grade-label">REMARK</div>
-                                <div class="remark @(exam.Result == "Pass" ? "remark-pass" : "remark-fail")">
-                                    @if (exam.Result == "Pass")
-                                    {
-                                        if (exam.Percentage >= 85)
-                                        {
-                                            <span>🎉 Excellent! Keep it up!</span>
-                                        }
-                                        else if (exam.Percentage >= 70)
-                                        {
-                                            <span>👍 Very Good! Great effort!</span>
-                                        }
-                                        else if (exam.Percentage >= 50)
-                                        {
-                                            <span>📚 Good! Need more practice.</span>
-                                        }
-                                        else
-                                        {
-                                            <span>✅ Passed! Work harder next time.</span>
-                                        }
-                                    }
-                                    else
-                                    {
-                                        <span>⚠️ Need improvement. Work hard!</span>
-                                    }
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            }
-        }
-        else
-        {
-            <div class="no-data">
-                <i class="fas fa-chart-line"></i>
-                <h3>No Results Found</h3>
-                <p>Your exam results will appear here once they are published.</p>
-            </div>
-        }
-    </div>
-</div>
-
-<script>
-    function toggleExam(examId) {
-        var detailsDiv = document.getElementById('exam-details-' + examId);
-        var headerDiv = detailsDiv.previousElementSibling;
-
-        if (detailsDiv.classList.contains('show')) {
-            detailsDiv.classList.remove('show');
-            headerDiv.classList.remove('open');
-        } else {
-            detailsDiv.classList.add('show');
-            headerDiv.classList.add('open');
-        }
-    }
-</script>
-
 @functions {
     public string GetGrade(decimal percentage)
     {
@@ -489,3 +25,424 @@
         return "grade-d";
     }
 }
+
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    .result-wrapper {
+        background: #f5f7fc;
+        padding: 30px 20px;
+        min-height: calc(100vh - 200px);
+    }
+
+    .result-container {
+        max-width: 1100px;
+        padding:10px;
+        margin: 0 auto;
+        
+    }
+
+    /* Student Info Card */
+    .student-info-card {
+        background: white;
+        border-radius: 16px;
+        padding: 20px 25px;
+        margin-bottom: 25px;
+        border-left: 6px solid #1e40af;
+        box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    }
+
+    .student-name {
+        font-size: 24px;
+        font-weight: 700;
+        color: #0f172a;
+    }
+
+    .student-details {
+        margin-top: 12px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+
+    .detail-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 14px;
+        color: #334155;
+        background: #f1f5f9;
+        padding: 5px 14px;
+        border-radius: 30px;
+    }
+
+        .detail-item i {
+            width: 16px;
+            color: #4f46e5;
+            font-size: 13px;
+        }
+
+    /* Exam Card */
+    .exam-card {
+        background: white;
+        border-radius: 20px;
+        margin-bottom: 28px;
+        overflow: hidden;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+        border: 1px solid #e2e8f0;
+    }
+
+    .exam-header {
+        background: #f8fafc;
+        padding: 18px 24px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        gap: 12px;
+        cursor: pointer;
+        border-bottom: 1px solid #e2e8f0;
+        transition: background 0.2s;
+    }
+
+        .exam-header:hover {
+            background: #f1f5f9;
+        }
+
+    .exam-title h3 {
+        font-size: 20px;
+        font-weight: 700;
+        color: #0f172a;
+        margin-bottom: 4px;
+    }
+
+    .exam-date {
+        font-size: 12px;
+        color: #64748b;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .result-badge {
+        display: inline-block;
+        padding: 4px 16px;
+        border-radius: 30px;
+        font-size: 13px;
+        font-weight: 600;
+        text-transform: uppercase;
+    }
+
+    .result-pass {
+        background: #dcfce7;
+        color: #166534;
+    }
+
+    .result-fail {
+        background: #fee2e2;
+        color: #991b1b;
+    }
+
+    .expand-icon {
+        color: #475569;
+        font-size: 18px;
+        transition: transform 0.25s;
+        background: #e2e8f0;
+        width: 32px;
+        height: 32px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+    }
+
+    .exam-header.open .expand-icon {
+        transform: rotate(180deg);
+        background: #cbd5e1;
+    }
+
+    .exam-details {
+        display: none;
+        padding: 0;
+    }
+
+        .exam-details.show {
+            display: block;
+        }
+
+    /* Marks Table - Compact */
+    .marks-table {
+
+        width: 100%;
+        border-collapse: collapse;
+        
+        font-size: 14px;
+        
+    }
+
+        .marks-table th {
+            background: #f1f5f9;
+            padding: 12px 16px;
+            text-align: left;
+            font-weight: 600;
+            color: #1e293b;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .marks-table td {
+            padding: 10px 16px;
+            border-bottom: 1px solid #eef2f6;
+            color: #0f172a;
+        }
+
+        .marks-table tbody tr:hover td {
+            background-color: #fafcff;
+        }
+
+    .subject-name {
+        font-weight: 600;
+    }
+
+    .obtained-pass {
+        color: #15803d;
+        font-weight: 600;
+    }
+
+    .obtained-fail {
+        color: #dc2626;
+        font-weight: 600;
+    }
+
+    /* Summary rows - compact and centered */
+    .summary-row td {
+        text-align: center;
+        padding: 8px;
+        font-size: 15px;
+        background: #f8fafc;
+    }
+
+    .summary-label {
+        font-weight: 700;
+        color: #1e293b;
+        text-align: center;
+        width: auto;
+        padding-right: 0;
+    }
+
+    .summary-value {
+        text-align: center;
+        font-weight: 500;
+    }
+
+    .remark-text {
+        text-align: center;
+    }
+
+    .grade-a {
+        color: #15803d;
+        font-weight: 700;
+    }
+
+    .grade-b {
+        color: #1e40af;
+        font-weight: 700;
+    }
+
+    .grade-c {
+        color: #b45309;
+        font-weight: 700;
+    }
+
+    .grade-d {
+        color: #b91c1c;
+        font-weight: 700;
+    }
+
+    
+
+
+    .no-data {
+        text-align: center;
+        padding: 50px 20px;
+        background: white;
+        border-radius: 20px;
+        color: #64748b;
+    }
+
+        .no-data i {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #cbd5e1;
+        }
+
+    @@media print {
+        .result-wrapper {
+            background: white;
+            padding: 0;
+        }
+
+        .exam-header {
+            background: #f8fafc;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .result-badge, .summary-row td {
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+    }
+</style>
+
+<div class="result-wrapper">
+    <div class="result-container">
+        <!-- Student Info -->
+        <div class="student-info-card">
+            <div class="student-name">@Model.StudentName</div>
+            <div class="student-details">
+                <div class="detail-item"><i class="fas fa-id-card"></i> Roll No: @Model.RollNo</div>
+                <div class="detail-item"><i class="fas fa-qrcode"></i> GR No: @Model.GrNo</div>
+                <div class="detail-item"><i class="fas fa-graduation-cap"></i> Class: @Model.ClassName - @Model.SectionName</div>
+            </div>
+        </div>
+
+        @if (Model.Exams != null && Model.Exams.Any())
+        {
+            foreach (var exam in Model.Exams)
+            {
+                var roundedPercentage = decimal.Round(exam.Percentage, 0);
+                var roundedObtained = decimal.Round(exam.TotalObtainedMarks, 0);
+                var roundedMax = decimal.Round(exam.TotalMaxMarks, 0);
+                var grade = GetGrade(exam.Percentage);
+                var gradeClass = GetGradeClass(exam.Percentage);
+
+                <div class="exam-card">
+                    <div class="exam-header" onclick="toggleExam(@exam.ExamId)">
+                        <div class="exam-title">
+                            <h3>@exam.ExamName (@exam.ExamType)</h3>
+                            <div class="exam-date"><i class="far fa-calendar-alt"></i> @exam.ExamDate.ToString("dd MMM yyyy")</div>
+                        </div>
+                        <div class="exam-summary">
+                            <span class="result-badge @(exam.Result == "Pass" ? "result-pass" : "result-fail")">@exam.Result</span>
+                        </div>
+                        <div class="expand-icon"><i class="fas fa-chevron-down"></i></div>
+                    </div>
+
+                    <div id="exam-details-@exam.ExamId" class="exam-details">
+                        <table class="marks-table">
+                            <thead>
+                                <tr>
+                                    <th>Subject</th>
+                                    <th>Total Marks</th>
+                                    <th>Passing Marks</th>
+                                    <th>Obtained Marks</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var subject in exam.Subjects)
+                                {
+                                    var isPass = subject.ObtainedMarks >= subject.PassingMarks;
+                                    var roundedSubjectObtained = decimal.Round(subject.ObtainedMarks, 0);
+                                    <tr>
+                                        <td class="subject-name">@subject.SubjectName</td>
+                                        <td>@decimal.Round(subject.TotalMarks, 0)</td>
+                                        <td>@decimal.Round(subject.PassingMarks, 0)</td>
+                                        <td class="@(isPass ? "obtained-pass" : "obtained-fail")">@roundedSubjectObtained</td>
+                                        <td>
+                                            @if (isPass)
+                                            {
+                                                <span style="color:#15803d;"> Pass</span>
+                                            }
+                                            else
+                                            {
+                                                <span style="color:#dc2626;">Fail</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                            <tfoot>
+                                <tr class="summary-row">
+                                    <td colspan="5"><strong>Total :</strong> @roundedObtained / @roundedMax</td>
+                                </tr>
+
+                                <tr class="summary-row">
+                                    <td colspan="5"><strong>Percentage :</strong> @roundedPercentage%</td>
+                                </tr>
+
+                                <tr class="summary-row">
+                                    <td colspan="5"><strong>Grade :</strong> <span class="@gradeClass">@grade</span></td>
+                                </tr>
+
+                                <tr class="summary-row">
+                                    <td colspan="5">
+                                        <strong>Result :</strong>
+                                        <span class="@(exam.Result == "Pass" ? "obtained-pass" : "obtained-fail")">
+                                            @exam.Result
+                                        </span>
+                                    </td>
+                                </tr>
+
+                                <tr class="summary-row">
+                                    <td colspan="5" class="remark-text">
+                                        <strong>Remark :</strong>
+                                        @if (exam.Result == "Pass")
+                                        {
+                                            if (exam.Percentage >= 85)
+                                            {
+                                                <span> Excellent! Keep it up!</span>
+                                            }
+                                            else if (exam.Percentage >= 70)
+                                            {
+                                                <span> Very Good! Great effort!</span>
+                                            }
+                                            else if (exam.Percentage >= 50)
+                                            {
+                                                <span> Good! Need more practice.</span>
+                                            }
+                                            else
+                                            {
+                                                <span> Passed! Work harder next time.</span>
+                                            }
+                                        }
+                                        else
+                                        {
+                                            <span> Need improvement. Work hard!</span>
+                                        }
+                                    </td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div class="no-data">
+                <i class="fas fa-chart-line"></i>
+                <h3>No Results Found</h3>
+                <p>Your exam results will appear here once they are published.</p>
+            </div>
+        }
+    </div>
+</div>
+
+<script>
+    function toggleExam(examId) {
+        var detailsDiv = document.getElementById('exam-details-' + examId);
+        var headerDiv = detailsDiv.previousElementSibling;
+        if (detailsDiv.classList.contains('show')) {
+            detailsDiv.classList.remove('show');
+            headerDiv.classList.remove('open');
+        } else {
+            detailsDiv.classList.add('show');
+            headerDiv.classList.add('open');
+        }
+    }
+</script>

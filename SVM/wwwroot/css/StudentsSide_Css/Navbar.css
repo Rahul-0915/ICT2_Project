@@ -262,6 +262,10 @@ body {
     .dropdown a i {
         width: 18px;
     }
+    .dropdown a:hover {
+        background-color:lavender;
+        border-radius:12px;
+    }
 
 /* =========================
    CONTENT
@@ -343,6 +347,7 @@ body {
     .dropdown {
         width: 200px;
     }
+        
 }
 /* =========================
    RESPONSIVE
@@ -394,7 +399,7 @@ body {
         width: 200px;
         right: 0;
     }
-
+   
     .content {
         padding: 15px;
     }
@@ -569,6 +574,7 @@ body {
 
 .has-submenu:hover .submenu {
     display: block;
+    
 }
 
 .submenu a {
@@ -746,6 +752,7 @@ body {
     .dropdown {
         width: 200px;
     }
+   
 }
 /* =========================
    RESPONSIVE
@@ -967,7 +974,7 @@ body {
     /* LIGHT BLUE HOVER */
 
     .submenu a:hover {
-        background: #eaf4ff;
+        background-color:lavender;
         color: #163b65;
         padding-left: 22px;
     }

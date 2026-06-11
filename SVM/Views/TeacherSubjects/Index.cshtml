@@ -48,7 +48,14 @@
             </button>
 
             <!-- Reset Button (back to Index without filters) -->
-            <a asp-action="Index" class="reset-btn">Reset</a>
+            
+            <button type="button"
+                    class="reset-btn"
+                    onclick="resetFilter()">
+
+                Reset
+
+            </button>
         </form>
 
         <a asp-action="Create" class="add-btn"><i class="fa-solid fa-plus"></i></a>
