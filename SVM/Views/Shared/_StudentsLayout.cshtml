@@ -192,29 +192,29 @@
 				</li>
 
 				<li class="has-submenu">
-
 					<a href="javascript:void(0)">
 						<span>
 							<i class="fas fa-graduation-cap"></i>
 							Academic
 						</span>
-
 						<i class="fas fa-chevron-down nav-arrow"></i>
 					</a>
-
 					<ul class="submenu">
 						<li>
 							<a asp-controller="StudentPanel" asp-action="Attendance">
 								Attendance
 							</a>
 						</li>
-						<li><a href="#">Result</a></li>
-						<li><a href="#">Progress Report</a></li>
+						<li>
+							<a asp-controller="StudentPanel" asp-action="Result">
+								Result
+							</a>
+						</li>
+						
 					</ul>
-
 				</li>
 
-				<li class="has-submenu">
+				@* <li class="has-submenu">
 
 					<a href="javascript:void(0)">
 						<span>
@@ -231,7 +231,7 @@
 						<li><a href="#">Notes</a></li>
 					</ul>
 
-				</li>
+				</li> *@
 				<li>
 					<a asp-controller="StudentPanel"
 					   asp-action="MyTimetable">

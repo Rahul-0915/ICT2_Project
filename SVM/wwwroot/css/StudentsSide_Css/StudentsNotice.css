@@ -3,12 +3,18 @@
 ========================== */
 
 .notice-container {
+    
     max-width: 950px;
     margin: 20px auto;
     padding: 0 12px;
 }
 
 .notice-heading {
+    background-color:lavender;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    margin: 10px;
     font-size: 26px;
     font-weight: 700;
     color: #1e293b;

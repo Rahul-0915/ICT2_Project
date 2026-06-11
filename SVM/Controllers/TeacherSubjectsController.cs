@@ -1,11 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text.Json;
-using System.Threading.Tasks;
 using SVM.Models;
+using System.Text.Json;
 
 namespace SVM.Controllers
 {
@@ -19,190 +15,127 @@ namespace SVM.Controllers
             _client = clientFactory.CreateClient();
             _client.BaseAddress = new Uri("https://localhost:7191/api/");
         }
-
-        // GET: TeacherSubjects
         public async Task<IActionResult> Index(
-     int? sessionId,
-     string? medium,
-     int? classId)
+            int? sessionId,
+            string? medium,
+            int? classId)
         {
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             List<TeacherSubject> teacherSubjects = new();
 
-            var options = new JsonSerializerOptions
-            {
-                PropertyNameCaseInsensitive = true
-            };
-
-            // ================= ACTIVE SESSION =================
-
+            // ================= 1. SESSIONS (dropdown ke liye) =================
             var sessRes = await _client.GetAsync("Sessions");
-
             List<Session> sessions = new();
-
+            int? activeSessionId = null;
             if (sessRes.IsSuccessStatusCode)
             {
                 var sessData = await sessRes.Content.ReadAsStringAsync();
-
-                sessions = JsonSerializer.Deserialize<List<Session>>(sessData, options);
-
-                if (!sessionId.HasValue)
-                {
-                    var activeSession =
-                        sessions.FirstOrDefault(x => x.IsActive == 1);
-
-                    if (activeSession != null)
-                    {
-                        sessionId = activeSession.SessionId;
-                    }
-                }
+                sessions = JsonSerializer.Deserialize<List<Session>>(sessData, options) ?? new List<Session>();
+                activeSessionId = sessions.FirstOrDefault(x => x.IsActive == 1)?.SessionId;
             }
+            // Dropdown ki selected value: agar URL se sessionId aaya hai to woh, warna active session
+            int? selectedSessionId = sessionId ?? activeSessionId;
+            ViewBag.SessionId = new SelectList(sessions, "SessionId", "SessionName", selectedSessionId);
 
-            ViewBag.SessionId =
-                new SelectList(sessions, "SessionId", "SessionName", sessionId);
+            // ================= 2. MEDIUM =================
+            ViewBag.Mediums = new List<string> { "Gujarati", "English" };
 
-            // ================= MEDIUM =================
-
-            ViewBag.Mediums = new List<string>
-    {
-        "Gujarati",
-        "English"
-    };
-
-            // ================= CLASS =================
-
-            List<Class> classList = new();
-
+            // ================= 3. BULK LOAD: CLASSES =================
             var classRes = await _client.GetAsync("Classes");
-
+            List<Class> allClasses = new();
             if (classRes.IsSuccessStatusCode)
             {
                 var classData = await classRes.Content.ReadAsStringAsync();
-
-                var allClasses =
-                    JsonSerializer.Deserialize<List<Class>>(classData, options);
-
-                classList = allClasses;
-
-                if (sessionId.HasValue)
-                {
-                    classList = classList
-                        .Where(x => x.SessionId == sessionId)
-                        .ToList();
-                }
-
-                if (!string.IsNullOrEmpty(medium))
-                {
-                    classList = classList
-                        .Where(x => x.Medium == medium)
-                        .ToList();
-                }
+                allClasses = JsonSerializer.Deserialize<List<Class>>(classData, options) ?? new List<Class>();
             }
+            var classDict = allClasses.ToDictionary(c => c.ClassId);
 
-            ViewBag.ClassId =
-                new SelectList(classList, "ClassId", "ClassName", classId);
-
-            // ================= DATA =================
-
-            var response = await _client.GetAsync("TeacherSubjects");
-
-            if (response.IsSuccessStatusCode)
+            // ================= 4. BULK LOAD: STAFFS =================
+            var staffRes = await _client.GetAsync("Staffs");
+            List<Staff> allStaff = new();
+            if (staffRes.IsSuccessStatusCode)
             {
-                var data = await response.Content.ReadAsStringAsync();
+                var staffData = await staffRes.Content.ReadAsStringAsync();
+                allStaff = JsonSerializer.Deserialize<List<Staff>>(staffData, options) ?? new List<Staff>();
+            }
+            var staffDict = allStaff.ToDictionary(s => s.StaffId);
 
-                teacherSubjects =
-                    JsonSerializer.Deserialize<List<TeacherSubject>>(data, options);
+            // ================= 5. BULK LOAD: SUBJECTS =================
+            var subRes = await _client.GetAsync("Subjects");
+            List<Subject> allSubjects = new();
+            if (subRes.IsSuccessStatusCode)
+            {
+                var subData = await subRes.Content.ReadAsStringAsync();
+                allSubjects = JsonSerializer.Deserialize<List<Subject>>(subData, options) ?? new List<Subject>();
+            }
+            var subjectDict = allSubjects.ToDictionary(s => s.SubjectId);
 
-                foreach (var ts in teacherSubjects)
+            // ================= 6. SESSIONS DICTIONARY =================
+            var sessionDict = sessions.ToDictionary(s => s.SessionId);
+
+            // ================= 7. CHECK FILTER =================
+            bool hasFilter = sessionId.HasValue || !string.IsNullOrEmpty(medium) || classId.HasValue;
+
+            if (hasFilter)
+            {
+                var tsRes = await _client.GetAsync("TeacherSubjects");
+                if (tsRes.IsSuccessStatusCode)
                 {
-                    if (ts.StaffId.HasValue)
+                    var tsData = await tsRes.Content.ReadAsStringAsync();
+                    teacherSubjects = JsonSerializer.Deserialize<List<TeacherSubject>>(tsData, options) ?? new List<TeacherSubject>();
+
+                    // Assign related objects
+                    foreach (var ts in teacherSubjects)
                     {
-                        var staffRes =
-                            await _client.GetAsync($"Staffs/{ts.StaffId}");
+                        if (ts.ClassId.HasValue && classDict.TryGetValue(ts.ClassId.Value, out var cls))
+                            ts.Class = cls;
+                        else if (ts.ClassId.HasValue)
+                            Console.WriteLine($"⚠️ ClassId {ts.ClassId} not found in Classes table!");
 
-                        if (staffRes.IsSuccessStatusCode)
-                        {
-                            var staffData =
-                                await staffRes.Content.ReadAsStringAsync();
+                        if (ts.StaffId.HasValue && staffDict.TryGetValue(ts.StaffId.Value, out var staff))
+                            ts.Staff = staff;
 
-                            ts.Staff =
-                                JsonSerializer.Deserialize<Staff>(staffData, options);
-                        }
+                        if (ts.SubjectId.HasValue && subjectDict.TryGetValue(ts.SubjectId.Value, out var subject))
+                            ts.Subject = subject;
+
+                        if (ts.SessionId.HasValue && sessionDict.TryGetValue(ts.SessionId.Value, out var sess))
+                            ts.Session = sess;
                     }
 
-                    if (ts.SubjectId.HasValue)
-                    {
-                        var subRes =
-                            await _client.GetAsync($"Subjects/{ts.SubjectId}");
+                    // Apply filters
+                    if (sessionId.HasValue)
+                        teacherSubjects = teacherSubjects.Where(x => x.SessionId == sessionId).ToList();
 
-                        if (subRes.IsSuccessStatusCode)
-                        {
-                            var subData =
-                                await subRes.Content.ReadAsStringAsync();
+                    if (!string.IsNullOrEmpty(medium))
+                        teacherSubjects = teacherSubjects.Where(x => x.Class != null && x.Class.Medium == medium).ToList();
 
-                            ts.Subject =
-                                JsonSerializer.Deserialize<Subject>(subData, options);
-                        }
-                    }
+                    if (classId.HasValue)
+                        teacherSubjects = teacherSubjects.Where(x => x.ClassId == classId).ToList();
 
-                    if (ts.ClassId.HasValue)
-                    {
-                        var cRes =
-                            await _client.GetAsync($"Classes/{ts.ClassId}");
-
-                        if (cRes.IsSuccessStatusCode)
-                        {
-                            var cData =
-                                await cRes.Content.ReadAsStringAsync();
-
-                            ts.Class =
-                                JsonSerializer.Deserialize<Class>(cData, options);
-                        }
-                    }
-
-                    if (ts.SessionId.HasValue)
-                    {
-                        var sRes =
-                            await _client.GetAsync($"Sessions/{ts.SessionId}");
-
-                        if (sRes.IsSuccessStatusCode)
-                        {
-                            var sData =
-                                await sRes.Content.ReadAsStringAsync();
-
-                            ts.Session =
-                                JsonSerializer.Deserialize<Session>(sData, options);
-                        }
-                    }
-                }
-
-                // ================= FILTER =================
-
-                if (sessionId.HasValue)
-                {
-                    teacherSubjects = teacherSubjects
-                        .Where(x => x.SessionId == sessionId)
-                        .ToList();
-                }
-
-                if (!string.IsNullOrEmpty(medium))
-                {
-                    teacherSubjects = teacherSubjects
-                        .Where(x => x.Class?.Medium == medium)
-                        .ToList();
-                }
-
-                if (classId.HasValue)
-                {
-                    teacherSubjects = teacherSubjects
-                        .Where(x => x.ClassId == classId)
-                        .ToList();
+                    Console.WriteLine($"===== FINAL RESULT: {teacherSubjects.Count} records =====");
                 }
             }
+            else
+            {
+                Console.WriteLine("No filters provided – returning empty list.");
+            }
 
-            ViewBag.SelectedSessionId = sessionId;
-            ViewBag.SelectedMedium = medium;
-            ViewBag.SelectedClassId = classId;
+            // ================= 8. CLASS DROPDOWN (cascade ke liye) =================
+            List<Class> filteredForDropdown = allClasses;
+            if (selectedSessionId.HasValue) // Use selected sessionId for dropdown filtering
+                filteredForDropdown = filteredForDropdown.Where(c => c.SessionId == selectedSessionId).ToList();
+            if (!string.IsNullOrEmpty(medium))
+                filteredForDropdown = filteredForDropdown.Where(c => c.Medium == medium).ToList();
+            ViewBag.ClassId = new SelectList(filteredForDropdown, "ClassId", "ClassName", classId);
 
+            // Pass selected values to view for preserving medium and class selections
+            ViewBag.SelectedSessionId = sessionId;     // actual filter value (null if none)
+            ViewBag.SelectedMedium = medium;           // actual filter value
+            ViewBag.SelectedClassId = classId;         // actual filter value
+            ViewBag.HasFilter =
+    sessionId.HasValue ||
+    !string.IsNullOrEmpty(medium) ||
+    classId.HasValue;
             return View(teacherSubjects);
         }
 
@@ -625,19 +558,15 @@ namespace SVM.Controllers
         [HttpGet]
         public async Task<JsonResult> GetClassesBySessionMedium(int sessionId, string medium)
         {
-            var res = await _client.GetAsync($"TeacherSubjects/classes-by-session-medium?sessionId={sessionId}&medium={medium}");
+            if (string.IsNullOrWhiteSpace(medium))
+                return Json(new List<object>());  // empty list
 
+            var res = await _client.GetAsync($"TeacherSubjects/classes-by-session-medium?sessionId={sessionId}&medium={medium}");
             var data = await res.Content.ReadAsStringAsync();
             var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-
             var list = JsonSerializer.Deserialize<List<Class>>(data, option);
-
-            return Json(list.Select(x => new {
-                value = x.ClassId,
-                text = x.ClassName
-            }));
+            return Json(list.Select(x => new { value = x.ClassId, text = x.ClassName }));
         }
-
         [HttpGet]
         public async Task<JsonResult> GetSubjectsByClass(int classId)
         {
@@ -648,7 +577,8 @@ namespace SVM.Controllers
 
             var list = JsonSerializer.Deserialize<List<Subject>>(data, option);
 
-            return Json(list.Select(x => new {
+            return Json(list.Select(x => new
+            {
                 value = x.SubjectId,
                 text = x.SubjectName
             }));

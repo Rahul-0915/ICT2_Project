@@ -15,6 +15,12 @@
 	<link rel="stylesheet" href="~/css/Login.css" asp-append-version="true" />
 </head>
 <body>
+	<div class="login-banner">
+		
+		
+		
+	</div>
+
 	<div class="login-container">
 		<div class="login-box">
 			<h2>Log-in</h2>
@@ -41,11 +47,18 @@
 				</div>
 
 				<button type="submit" class="btn-login">Login</button>
+				<br /><br />
+				<hr />
 				<div style="margin-top:15px; text-align:center;">
 					<a asp-controller="Account"
 					   asp-action="ForgotPassword"
 					   style="color:#0d6efd; text-decoration:none;">
 						Forgot Password?
+					</a><br />
+					<a asp-controller="UserHome"
+					   asp-action="UserHome"
+					   style="color:#0d6efd; text-decoration:none;">
+						Continue as Guest
 					</a>
 				</div>
 			</form>

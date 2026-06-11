@@ -13,95 +13,42 @@
         });
 }
 
-<link rel="stylesheet"
-      href="~/css/AdminSide_Css/TeacherSubject.css"
-      asp-append-version="true" />
-
-<link rel="stylesheet"
-      href="~/css/AdminSide_Css/SearchBar.css"
-      asp-append-version="true" />
-
-<link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+<link rel="stylesheet" href="~/css/AdminSide_Css/TeacherSubject.css" asp-append-version="true" />
+<link rel="stylesheet" href="~/css/AdminSide_Css/SearchBar.css" asp-append-version="true" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
 <div class="assignment-page">
 
     <!-- TOP BAR -->
-
     <div class="top-bar">
+        <form method="get" asp-action="Index" class="left-side" style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
 
-        <div class="left-side">
+            <!-- Search Teacher (optional client-side filter) -->
+            <input type="text" id="searchInput" placeholder="Search teacher..." class="search-box" />
 
-            <!-- SEARCH -->
+            <!-- Session Dropdown (server‑side) -->
+            <select id="sessionFilter" name="sessionId" class="search-box" asp-items="ViewBag.SessionId"></select>
 
-            <input type="text"
-                   id="searchInput"
-                   placeholder="Search teacher..."
-                   class="search-box" />
-
-            <!-- SESSION -->
-
-            <select id="sessionFilter"
-                    class="search-box">
-
-                @foreach (var s in ViewBag.SessionId as SelectList)
-                {
-                    <option value="@s.Value"
-                            selected="@(s.Selected ? "selected" : null)">
-                        @s.Text
-                    </option>
-                }
-
-            </select>
-
-            <!-- MEDIUM -->
-
-            <select id="mediumFilter"
-                    class="search-box">
-
+            <select id="mediumFilter" name="medium" class="search-box">
                 <option value="">All Medium</option>
-
                 @foreach (string m in ViewBag.Mediums)
                 {
-                    if (ViewBag.SelectedMedium == m)
-                    {
-                        <option selected value="@m">@m</option>
-                    }
-                    else
-                    {
-                        <option value="@m">@m</option>
-                    }
+                    <option value="@m" selected="@(ViewBag.SelectedMedium == m)">@m</option>
                 }
-
             </select>
 
-            <!-- CLASS -->
-
-            <select id="classFilter"
-                    class="search-box">
-
+            <!-- Class Dropdown (server‑side) -->
+            <select id="classFilter" name="classId" class="search-box" asp-items="ViewBag.ClassId">
                 <option value="">All Classes</option>
-
-                @foreach (var c in ViewBag.ClassId as SelectList)
-                {
-                    <option value="@c.Value"
-                            selected="@(c.Selected ? "selected" : null)">
-                        @c.Text
-                    </option>
-                }
-
             </select>
 
-            <!-- SEARCH -->
-
-            <button type="button"
-                    class="search-btn"
-                    onclick="applyFilter()">
-
-                <i class="fa-solid fa-magnifying-glass"></i>
-                Search
-
+            <!-- Submit Button (server‑side filter) -->
+            <button type="submit" class="search-btn">
+                <i class="fa-solid fa-magnifying-glass"></i> Search
             </button>
+
+            <!-- Reset Button (back to Index without filters) -->
+            
             <button type="button"
                     class="reset-btn"
                     onclick="resetFilter()">
@@ -109,365 +56,128 @@
                 Reset
 
             </button>
+        </form>
 
-        </div>
-        <!-- ADD -->
-
-        <a asp-action="Create"
-           class="add-btn">
-
-            <i class="fa-solid fa-plus"></i>
-
-        </a>
-
+        <a asp-action="Create" class="add-btn"><i class="fa-solid fa-plus"></i></a>
     </div>
 
-
-
-    <!-- INFO -->
-
-    <h2 id="page-info" class="page-info">
-
-        Search teacher or select class to view Subject Allocation
-
-    </h2>
-
-    <!-- CONTAINER -->
+    @if (!Model.Any() && !(bool)(ViewBag.HasFilter ?? false))
+    {
+        <h2 class="page-info">
+            Search teacher or select class to view Subject Allocation
+        </h2>
+    }
 
     <div class="teacher-container">
-
         @foreach (var teacher in groupedTeachers)
         {
             <div class="teacher-card">
-
-                <!-- HEADER -->
-
                 <div class="teacher-header">
-
                     <div class="teacher-left">
-
                         <div class="teacher-icon">
-
-                            @if (!string.IsNullOrEmpty(
-                           teacher.FirstOrDefault()?.Staff?.StafPhoto))
+                            @if (!string.IsNullOrEmpty(teacher.FirstOrDefault()?.Staff?.StafPhoto))
                             {
-                                <img src="@teacher.FirstOrDefault()?.Staff?.StafPhoto"
-                                     alt="Teacher Photo" />
+                                <img src="@teacher.FirstOrDefault()?.Staff?.StafPhoto" alt="Teacher Photo" />
                             }
                             else
                             {
                                 <i class="fa-solid fa-user"></i>
                             }
-
                         </div>
-
                         <div>
-
-                            <h2 class="teacher-name">
-
-                                @teacher.Key.TeacherName
-
-                            </h2>
-
-                            <p class="teacher-count">
-
-                                @teacher.Count() Subject Assigned
-
-                            </p>
-
+                            <h2 class="teacher-name">@teacher.Key.TeacherName</h2>
+                            <p class="teacher-count">@teacher.Count() Subject Assigned</p>
                         </div>
-
                     </div>
-
                 </div>
 
-                <!-- SUBJECT TABLE -->
-
                 <div class="subject-table-wrapper">
-
                     <table class="subject-table">
-
                         <thead>
-
                             <tr>
                                 <th>Subject</th>
-                                <th>Class & Medium </th>
+                                <th>Class & Medium</th>
                                 <th>Session</th>
                                 <th>Action</th>
                             </tr>
-
                         </thead>
-
                         <tbody>
-
                             @foreach (var item in teacher)
                             {
                                 <tr>
-
-                                    <td>
-
-                                        @(item.Subject?.SubjectName ?? "N/A")
-
-                                    </td>
-
+                                    <td>@(item.Subject?.SubjectName ?? "N/A")</td>
                                     <td class="class-cell">
-
                                         <div class="class-medium-wrap">
-
-                                            <span class="class-badge">
-
-                                                @(item.Class?.ClassName ?? "N/A")
-
-                                            </span>
-
-                                            <span class="medium-badge">
-
-                                                @(item.Class?.Medium ?? "N/A")
-
-                                            </span>
-
+                                            <span class="class-badge">@(item.Class?.ClassName ?? "N/A")</span>
+                                            <span class="medium-badge">@(item.Class?.Medium ?? "N/A")</span>
                                         </div>
-
                                     </td>
-
+                                    <td>@(item.Session?.SessionName ?? "N/A")</td>
                                     <td>
-
-                                        @(item.Session?.SessionName ?? "N/A")
-
-                                    </td>
-
-                                    <td>
-
                                         <div class="action-group">
-
-                                            <a asp-action="Edit"
-                                               asp-route-id="@item.Id"
-                                               class="action-btn edit-btn">
-
-                                                <i class="fa-solid fa-pen"></i>
-
-                                            </a>
-
-                                            @* <a asp-action="Details"
-                                               asp-route-id="@item.Id"
-                                               class="action-btn details-btn">
-
-                                                <i class="fa-solid fa-eye"></i>
-
-                                            </a> *@
-
-                                            <a asp-action="Delete"
-                                               asp-route-id="@item.Id"
-                                               class="action-btn delete-btn">
-
-                                                <i class="fa-solid fa-trash"></i>
-
-                                            </a>
-
+                                            <a asp-action="Edit" asp-route-id="@item.Id" class="action-btn edit-btn"><i class="fa-solid fa-pen"></i></a>
+                                            <a asp-action="Delete" asp-route-id="@item.Id" class="action-btn delete-btn"><i class="fa-solid fa-trash"></i></a>
                                         </div>
-
                                     </td>
-
                                 </tr>
                             }
-
                         </tbody>
-
                     </table>
-
                 </div>
-
             </div>
         }
-
     </div>
 
-    <!-- NO DATA -->
-
-    <div id="noDataMessage"
-         class="no-data">
-
-        No Subject Allocation Found
-
-    </div>
+    @if (!Model.Any() && (ViewBag.HasFilter != null && (bool)ViewBag.HasFilter))
+    {
+        <div id="noDataMessage" class="no-data" style="display: block !important; text-align: center; padding: 20px; margin: 20px; background: #f8f9fa; border: 1px solid #ddd; border-radius: 5px; color: red; font-weight: bold;">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            No Subject Allocation Found
+        </div>
+    }
 
 </div>
 
-
-
 <script>
+    // ================= CLIENT-SIDE FILTER FOR TEACHER NAME ONLY =================
+    const searchInput = document.getElementById('searchInput');
+    const teacherCards = document.querySelectorAll('.teacher-card');
 
-    // DEFAULT HIDE
-    document.querySelectorAll(".teacher-card")
-        .forEach(card => {
-            card.style.display = "none";
-        });
-
-    // ================= SEARCH FILTER =================
-
-    function applyFilter() {
-
-        let search =
-            document.getElementById("searchInput")
-                .value.toLowerCase().trim();
-
-        let selectedClass =
-            document.getElementById("classFilter")
-                .options[
-                document.getElementById("classFilter").selectedIndex
-            ].text.toLowerCase();
-
-        let selectedSession =
-            document.getElementById("sessionFilter")
-                .options[
-                document.getElementById("sessionFilter").selectedIndex
-            ].text.toLowerCase();
-
-        let selectedMedium =
-            document.getElementById("mediumFilter")
-                .value.toLowerCase();
-
-        let cards =
-            document.querySelectorAll(".teacher-card");
-
-        let visible = 0;
-
-        cards.forEach(card => {
-
-            let teacherName =
-                card.querySelector(".teacher-name")
-                    .innerText.toLowerCase();
-
-            let rows =
-                card.querySelectorAll("tbody tr");
-
-            let showCard = false;
-
-            rows.forEach(row => {
-
-                let className =
-                    row.querySelector(".class-badge")
-                        ?.innerText.toLowerCase() || "";
-
-                let mediumName =
-                    row.querySelector(".medium-badge")
-                        ?.innerText.toLowerCase() || "";
-
-                let sessionName =
-                    row.cells[2].innerText.toLowerCase();
-
-                let teacherMatch =
-                    search === "" ||
-                    teacherName.includes(search);
-
-                let classMatch =
-                    selectedClass === "all classes" ||
-                    selectedClass === "" ||
-                    className.includes(selectedClass);
-
-                let mediumMatch =
-                    selectedMedium === "" ||
-                    mediumName.includes(selectedMedium);
-
-                let sessionMatch =
-                    selectedSession === "" ||
-                    sessionName.includes(selectedSession);
-
-                if (
-                    teacherMatch &&
-                    classMatch &&
-                    mediumMatch &&
-                    sessionMatch
-                ) {
-                    showCard = true;
-                }
-
-            });
-
-            if (showCard) {
-
-                card.style.display = "block";
-                visible++;
-
-                document.getElementById("page-info")
-                    .style.display = "none";
+    function filterByTeacherName() {
+        const term = searchInput.value.toLowerCase().trim();
+        teacherCards.forEach(card => {
+            const teacherNameElem = card.querySelector('.teacher-name');
+            if (teacherNameElem) {
+                const name = teacherNameElem.innerText.toLowerCase();
+                card.style.display = (term === '' || name.includes(term)) ? 'block' : 'none';
             }
-            else {
-
-                card.style.display = "none";
-            }
-
         });
-
-        // NO DATA MESSAGE
-
-        document.getElementById("noDataMessage")
-            .style.display =
-            visible === 0 ? "block" : "none";
-
-        document.getElementById("noDataMessage")
-            .style.color = "red";
     }
 
-    // ================= RESET =================
+    searchInput.addEventListener('keyup', filterByTeacherName);
+    filterByTeacherName();
 
-    function resetFilter() {
-
-        document.getElementById("page-info")
-            .style.display = "block";
-
-        document.getElementById("searchInput").value = "";
-
-        document.getElementById("mediumFilter").value = "";
-
-        document.getElementById("classFilter").value = "";
-
-        document.querySelectorAll(".teacher-card")
-            .forEach(card => {
-                card.style.display = "none";
-            });
-
-        document.getElementById("noDataMessage")
-            .style.display = "none";
-    }
-
-    // ================= SESSION + MEDIUM => CLASS =================
-
+    // ================= CASCADE: SESSION + MEDIUM => CLASS (AJAX) =================
     async function loadClasses() {
+        const sessionId = document.getElementById('sessionFilter').value;
+        const medium = document.getElementById('mediumFilter').value;
+        const classDropdown = document.getElementById('classFilter');
 
-        let sessionId =
-            document.getElementById("sessionFilter").value;
+        classDropdown.innerHTML = '<option value="">Loading...</option>';
 
-        let medium =
-            document.getElementById("mediumFilter").value;
-
-        let classDropdown =
-            document.getElementById("classFilter");
-
-        classDropdown.innerHTML =
-            '<option value="">Loading...</option>';
-
-        let response =
-            await fetch(`/TeacherSubjects/GetClassesBySessionMedium?sessionId=${sessionId}&medium=${medium}`);
-
-        let data = await response.json();
-
-        classDropdown.innerHTML =
-            '<option value="">All Classes</option>';
-
-        data.forEach(item => {
-
-            classDropdown.innerHTML +=
-                `<option value="${item.value}">
-                        ${item.text}
-                    </option>`;
-        });
+        try {
+            const response = await fetch(`/TeacherSubjects/GetClassesBySessionMedium?sessionId=${sessionId}&medium=${medium}`);
+            if (!response.ok) throw new Error();
+            const data = await response.json();
+            classDropdown.innerHTML = '<option value="">All Classes</option>';
+            data.forEach(item => {
+                classDropdown.innerHTML += `<option value="${item.value}">${item.text}</option>`;
+            });
+        } catch (error) {
+            classDropdown.innerHTML = '<option value="">All Classes</option>';
+        }
     }
 
-    document.getElementById("sessionFilter")
-        .addEventListener("change", loadClasses);
-
-    document.getElementById("mediumFilter")
-        .addEventListener("change", loadClasses);
-
-</script>
+    document.getElementById('sessionFilter').addEventListener('change', loadClasses);
+    document.getElementById('mediumFilter').addEventListener('change', loadClasses);
+</script>   

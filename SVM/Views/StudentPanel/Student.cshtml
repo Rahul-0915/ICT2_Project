@@ -1,22 +1,356 @@
 ﻿@model SVM.Models.Student
-@using Microsoft.AspNetCore.Http
 @{
-
-	Layout = "~/Views/Shared/_StudentsLayout.cshtml";   //for navbar
-
-
+	ViewData["Title"] = "Dashboard";
+	Layout = "~/Views/Shared/_StudentsLayout.cshtml";
 }
-<!DOCTYPE html>
-<html>
-<head>
-	<title>Student Panel</title>
 
-	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+<link rel="stylesheet"
+	  href="~/css/StudentsSide_Css/Dashboard.css"
+	  asp-append-version="true" />
 
-</head>
 
-<body>
+<div class="dashboard-container">
+	<!-- Welcome Banner -->
+	<div class="welcome-banner">
+		<h1>
+			Welcome back, @Model.FirstName @Model.LastName! 👋
+		</h1>
+		@* <p>Roll No: @Model.RollNo | GR No: @Model.Grno</p>
+		<p>Class: @ViewBag.ClassName | Section: @ViewBag.SectionName</p> *@
+		<div class="current-date">
+			<i class="fas fa-calendar-alt"></i>
+			@DateTime.Now.ToString("dddd, MMMM dd, yyyy")
+		</div>
+	</div>
+
+	<!-- Stats Cards -->
+	<div class="stats-grid">
+		<div class="stat-card" onclick="window.location.href='/StudentPanel/Attendance'">
+			<div class="stat-info">
+				<h3 id="attendancePercent">--%</h3>
+				<p>Attendance</p>
+			</div>
+			<div class="stat-icon">
+				<i class="fas fa-calendar-check"></i>
+			</div>
+		</div>		<div class="stat-card" onclick="window.location.href='/StudentPanel/MyTimetable'">
+		<div class="stat-info">
+			<h3 id="totalSubjects">--</h3>
+			<p>Total Subjects</p>
+		</div>
+		<div class="stat-icon">
+			<i class="fas fa-book-open"></i>
+		</div>
+	</div>
+	<div class="stat-card" onclick="window.location.href='/StudentPanel/Result'">
+		<div class="stat-info">
+			<h3 id="resultsCount">--</h3>
+			<p>Results Published</p>
+		</div>
+		<div class="stat-icon">
+			<i class="fas fa-chart-bar"></i>
+		</div>
+	</div>
+	<div class="stat-card" onclick="window.location.href='/StudentPanel/FeesPayment'">
+		<div class="stat-info">
+			<h3 id="pendingFees">₹--</h3>
+			<p>Pending Fees</p>
+		</div>
+		<div class="stat-icon">
+			<i class="fas fa-rupee-sign"></i>
+		</div>
+	</div>
+</div>
 
 	
-</body>
-</html>
+	<br />
+
+<!-- Two Column Layout -->
+<div class="two-columns">
+
+		<!-- Left Column - Notices -->
+		<div class="widget-card">
+			<div class="widget-header">
+				<h3><i class="fas fa-bell"></i> Latest Notices</h3>
+				<a href="/StudentPanel/NoticeBoard" class="view-all">View All →</a>
+			</div>
+			<ul class="notice-list" id="noticeList">
+				<li class="empty-state">
+					<i class="fas fa-spinner fa-spin"></i>
+					<p>Loading notices...</p>
+				</li>
+			</ul>
+		</div>
+
+		<!-- Attendance Widget -->
+		<div class="widget-card">
+			<div class="widget-header">
+				<h3><i class="fas fa-chart-line"></i> Attendance Overview</h3>
+				<a href="/StudentPanel/Attendance" class="view-all">Details →</a>
+			</div>
+			<div class="attendance-stats" id="attendanceWidget">
+				<div class="empty-state">
+					<i class="fas fa-spinner fa-spin"></i>
+					<p>Loading attendance...</p>
+				</div>
+			</div>
+		</div>
+
+		
+
+	<!-- Right Column - Today's Schedule -->
+	
+</div>
+
+<div class="two-columns">
+		<!-- Latest Result Card -->
+		<div id="latestResultCard" style="display: none;">
+			<div class="widget-card">
+				<div class="widget-header">
+					<h3><i class="fas fa-trophy"></i> Latest Exam Result</h3>
+					<a href="/StudentPanel/Result" class="view-all">View All →</a>
+				</div>
+				<div id="latestResultContent"></div>
+			</div>
+		</div>
+
+		<div class="widget-card">
+			<div class="widget-header">
+				<h3><i class="fas fa-clock"></i> Today's Schedule</h3>
+				<a href="/StudentPanel/MyTimetable" class="view-all">Full Timetable →</a>
+			</div>
+			<div class="timetable-preview" id="todayTimetable">
+				<div class="empty-state">
+					<i class="fas fa-spinner fa-spin"></i>
+					<p>Loading timetable...</p>
+				</div>
+			</div>
+		</div>
+	
+	</div>
+
+</div>
+<br>
+<!-- Quick Actions -->
+@* <div class="widget-card">
+	<div class="widget-header">
+		<h3><i class="fas fa-bolt"></i> Quick Actions</h3>
+	</div>
+	<div class="quick-actions-grid">
+		<a href="/StudentPanel/DigitalICard" class="quick-action-btn">
+			<i class="fas fa-id-card"></i>
+			<span>ID Card</span>
+		</a>
+		<a href="/StudentPanel/FeesPayment" class="quick-action-btn">
+			<i class="fas fa-rupee-sign"></i>
+			<span>Pay Fees</span>
+		</a>
+		<a href="/StudentPanel/Result" class="quick-action-btn">
+			<i class="fas fa-chart-bar"></i>
+			<span>Results</span>
+		</a>
+		<a href="/StudentPanel/MyProfile" class="quick-action-btn">
+			<i class="fas fa-user-edit"></i>
+			<span>Profile</span>
+		</a>
+	</div>
+</div> *@
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+	$(document).ready(function() {
+	loadDashboardData();
+	});
+
+	function loadDashboardData() {
+	// Load Notices
+	$.get('/StudentPanel/GetActiveNotices')
+	.done(function(notices) {
+	var noticeHtml = '';
+	if (notices && notices.length > 0) {
+	notices.slice(0, 5).forEach(function(notice) {
+	var date = notice.createdAt ? new Date(notice.createdAt) : new Date();
+	noticeHtml += `
+	<li class="notice-item">
+	<div class="notice-icon">
+	<i class="fas fa-bullhorn"></i>
+	</div>
+	<div class="notice-content">
+	<div class="notice-title">${escapeHtml(notice.title || 'Notice')}</div>
+	<div class="notice-date">${date.toLocaleDateString()}</div>
+	</div>
+	</li>
+	`;
+	});
+	} else {
+	noticeHtml = '<li class="empty-state"><i class="fas fa-inbox"></i><p>No notices available</p></li>';
+	}
+	$('#noticeList').html(noticeHtml);
+	})
+	.fail(function() {
+	$('#noticeList').html('<li class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Failed to load notices</p></li>');
+	});
+
+	// Load Today's Timetable
+	loadTodayTimetable();
+
+	// Load Attendance
+	loadAttendance();
+
+	// Load Subjects Count
+	$.get('/StudentPanel/GetSubjectsCount')
+	.done(function(data) {
+	$('#totalSubjects').text(data.count || '0');
+	})
+	.fail(function() {
+	$('#totalSubjects').text('0');
+	});
+
+	// Load Results Count (Published Results)
+	$.get('/StudentPanel/GetPublishedResultsCount')
+	.done(function(data) {
+	$('#resultsCount').text(data.count || '0');
+	})
+	.fail(function() {
+	$('#resultsCount').text('0');
+	});
+
+	// Load Latest Exam Result
+		$.get('/StudentPanel/GetLatestExamResult')
+			.done(function (data) {
+				if (data.hasResult && data.examName) {
+					$('#latestResultCard').show();
+
+					let html = `
+				<ul class="notice-list">
+					<li class="notice-item">
+						<div class="notice-icon">
+							<i class="fas fa-file-alt"></i>
+						</div>
+						<div class="notice-content">
+							<div class="notice-title">${escapeHtml(data.examName)}</div>
+							<div class="notice-date">Exam result has been declared </div>
+						</div>
+					</li>
+				</ul>
+			`;
+					$('#latestResultContent').html(html);
+				} else {
+					$('#latestResultCard').hide();
+				}
+			})
+
+	// Load Pending Fees
+	$.get('/StudentPanel/GetPendingFees')
+	.done(function(data) {
+	var amount = data.amount || 0;
+	$('#pendingFees').text('₹' + amount.toLocaleString());
+	})
+	.fail(function() {
+	$('#pendingFees').text('₹0');
+	});
+	}
+
+	function loadTodayTimetable() {
+	$.get('/StudentPanel/GetTodayTimetable')
+	.done(function(data) {
+	var html = '';
+	if (data && data.length > 0) {
+	var today = new Date().toLocaleDateString('en-US', { weekday: 'long' });
+	html = `<div class="tt-day">📅 ${today}</div>`;
+	data.forEach(function(subject) {
+	html += `
+	<div class="tt-subject">
+	<span class="subject-name">${escapeHtml(subject.subjectName)}</span>
+	<span class="subject-time">${subject.startTime} - ${subject.endTime}</span>
+	</div>
+	`;
+	});
+	} else {
+	html = '<div class="empty-state"><i class="fas fa-calendar-day"></i><p>No classes scheduled for today</p></div>';
+	}
+	$('#todayTimetable').html(html);
+	})
+	.fail(function() {
+	$('#todayTimetable').html('<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Failed to load timetable</p></div>');
+	});
+	}
+
+	function loadAttendance() {
+	console.log('Fetching attendance summary...');
+
+	$.get('/StudentPanel/GetAttendanceSummary')
+	.done(function(data) {
+	console.log('Attendance Summary Response:', data);
+	var html = '';
+
+	// Check if we have valid attendance data
+	if (data && data.percentage > 0) {
+	var percentage = data.percentage;
+	var presentDays = data.present;
+	var absentDays = data.absent;
+	var totalDays = presentDays + absentDays;
+
+	console.log('Present Days:', presentDays, 'Absent Days:', absentDays, 'Total Days:', totalDays, 'Percentage:', percentage);
+
+	var circumference = 2 * Math.PI * 65;
+	var dashArray = (percentage / 100) * circumference;
+
+	// If dashArray is 0, set a tiny value to still show the ring
+	if (dashArray === 0 && percentage === 0) {
+	dashArray = 1;
+	}
+
+	html = `
+	<div class="attendance-ring">
+	<svg width="150" height="150" viewBox="0 0 150 150">
+	<circle cx="75" cy="75" r="65" class="ring-bg" />
+	<circle cx="75" cy="75" r="65" class="ring-progress"
+	stroke-dasharray="${dashArray} ${circumference}"
+	transform="rotate(-90 75 75)" />
+	</svg>
+	<div class="attendance-percent">
+	<div class="percent">${percentage}%</div>
+	<div class="label">Attendance</div>
+	</div>
+	</div>
+	<div class="attendance-detail">
+	<div class="detail-item">
+	<div class="detail-value">${presentDays}</div>
+	<div class="detail-label">Present</div>
+	</div>
+	<div class="detail-item">
+	<div class="detail-value">${absentDays}</div>
+	<div class="detail-label">Absent</div>
+	</div>
+	<div class="detail-item">
+	<div class="detail-value">${totalDays}</div>
+	<div class="detail-label">Total Days</div>
+	</div>
+	</div>
+	`;
+	$('#attendancePercent').text(percentage + '%');
+	} else {
+	html = '<div class="empty-state"><i class="fas fa-chart-simple"></i><p>No attendance data for this month</p></div>';
+	$('#attendancePercent').text('0%');
+	}
+	$('#attendanceWidget').html(html);
+	})
+	.fail(function(xhr, status, error) {
+	console.error('Attendance API error:', error);
+	console.error('Status:', status);
+	console.error('Response:', xhr.responseText);
+	$('#attendanceWidget').html('<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><p>Failed to load attendance</p></div>');
+	$('#attendancePercent').text('0%');
+	});
+	}
+	function escapeHtml(str) {
+	if (!str) return '';
+	return str
+	.replace(/&/g, '&amp;')
+	.replace(/</g, '&lt;')
+	.replace(/>/g, '&gt;')
+	.replace(/"/g, '&quot;')
+	.replace(/'/g, '&#39;');
+	}
+</script>

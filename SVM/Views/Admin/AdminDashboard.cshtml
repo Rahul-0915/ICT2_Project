@@ -34,23 +34,27 @@
 
 <div class="container">
 	<div class="grid">
-		<div class="panel">
+		<div class="panel" onclick="parent.frames['mainFrame'].location.href='@Url.Action("Index", "Students")'"
+			 style="cursor:pointer;">
 			<div class="iconBox c1"><i class="fa fa-user-graduate"></i></div>
 			<h2>@ViewBag.TotalStudents</h2>
 			totalStudents
 		</div>
-		<div class="panel">
+		<div class="panel" onclick="parent.frames['mainFrame'].location.href='@Url.Action("Index", "Staffs")'"
+			 style="cursor:pointer;">
 			<div class="iconBox c2"><i class="fa fa-chalkboard-teacher"></i></div>
 			<h2>@ViewBag.TotalStaff</h2>
 			Staff
 		</div>
 		<!-- baki panels jaisa hai waise rakh (Fees, Expenses, Attendance, Exams) -->
-		<div class="panel">
+		<div class="panel" onclick="parent.frames['mainFrame'].location.href='@Url.Action("FeesPayment", "Admin")'"
+			 style="cursor:pointer;">
 			<div class="iconBox c3"><i class="fa fa-money-bill"></i></div>
 			<h2>₹2,50,000</h2>
 			Fees
 		</div>
-		<div class="panel">
+		<div class="panel" onclick="parent.frames['mainFrame'].location.href='@Url.Action("Index", "Expenses")'"
+			 style="cursor:pointer;">
 			<div class="iconBox c4"><i class="fa fa-wallet"></i></div>
 			<h2>₹@Convert.ToDecimal(ViewBag.TotalExpense).ToString("N0")</h2>
 			Expenses
@@ -65,14 +69,16 @@
 			<h2>25</h2>
 			Exams
 		</div> *@
-		<div class="panel">
+		<div class="panel" onclick="parent.frames['mainFrame'].location.href='@Url.Action("Index", "AdmissionInquiries")'"
+			 style="cursor:pointer;">
 			<div class="iconBox c8">
 				<i class="fa fa-list"></i>
 			</div>
 			<h2>@ViewBag.TotalInquiries</h2>
 			Total Inquiries
 		</div>
-		<div class="panel">
+		<div class="panel" onclick="parent.frames['mainFrame'].location.href='@Url.Action("Index", "AdmissionInquiries")'"
+			 style="cursor:pointer;">
 			<div class="iconBox c1">
 				<i class="fa fa-bell"></i>
 			</div>
@@ -81,7 +87,8 @@
 
 			New Inquiries
 		</div>
-		<div class="panel">
+		<div class="panel" onclick="parent.frames['mainFrame'].location.href='@Url.Action("Index", "Classes")'"
+			 style="cursor:pointer;">
 			<div class="iconBox c7"><i class="fa fa-school"></i></div>
 			<h2>@ViewBag.TotalClasses</h2>
 			Classes
