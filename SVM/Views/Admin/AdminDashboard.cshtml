@@ -50,7 +50,7 @@
 		<div class="panel" onclick="parent.frames['mainFrame'].location.href='@Url.Action("FeesPayment", "Admin")'"
 			 style="cursor:pointer;">
 			<div class="iconBox c3"><i class="fa fa-money-bill"></i></div>
-			<h2>₹2,50,000</h2>
+			<h2>₹@Convert.ToDecimal(ViewBag.TotalFeesCollection).ToString("N0")</h2>
 			Fees
 		</div>
 		<div class="panel" onclick="parent.frames['mainFrame'].location.href='@Url.Action("Index", "Expenses")'"

@@ -58,6 +58,11 @@
             border-radius: 8px;
         }
 
+        .btn-div {
+            display: flex;
+            gap: 5px;
+        }
+
         .btn {
             padding: 10px 20px;
             border-radius: 10px;
@@ -207,7 +212,7 @@
             <div class="filter-group"><label>Class</label><select id="classFilter"><option value="">Select Class</option></select></div>
             <div class="filter-group"><label>Section</label><select id="sectionFilter"><option value="">Select Section</option></select></div>
             <div class="filter-group"><label>Exam</label><select id="examFilter"><option value="">Select Exam</option></select></div>
-            <div><button class="btn btn-primary" onclick="generateReport()">Generate Report</button><button class="btn btn-secondary" onclick="resetFilters()">Reset</button><button class="btn btn-excel" onclick="exportToExcel()">Export Excel</button></div>
+            <div class="btn-div"><button class="btn btn-primary" onclick="generateReport()">Generate Report</button><button class="btn btn-secondary" onclick="resetFilters()">Reset</button><button class="btn btn-excel" onclick="exportToExcel()">Export Excel</button></div>
         </div>
 
         <div class="options-bar">
