@@ -225,6 +225,11 @@
             padding: 40px;
             color: #6b7280;
         }
+        .btn-div{
+           display:flex;
+           gap:5px;
+
+        }
 
         @@media (max-width: 768px) {
             body {
@@ -260,7 +265,7 @@
             <div class="filter-group"><label>Medium</label><select id="mediumFilter"><option value="">Select Medium</option><option value="Gujarati">Gujarati</option><option value="English">English</option></select></div>
             <div class="filter-group"><label>Class</label><select id="classFilter"><option value="">Select Class</option></select></div>
             <div class="filter-group"><label>Section</label><select id="sectionFilter"><option value="">Select Section</option></select></div>
-            <div><button class="btn-search" onclick="search()"><i class="fas fa-search"></i> Search</button><button class="btn-reset" onclick="resetFilters()"><i class="fas fa-undo"></i> Reset</button></div>
+            <div class="btn-div"><button class="btn-search" onclick="search()"><i class="fas fa-search"></i> Search</button><button class="btn-reset" onclick="resetFilters()"><i class="fas fa-undo"></i> Reset</button></div>
         </div>
         <div class="table-wrapper">
             <table>

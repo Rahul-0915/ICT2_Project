@@ -57,10 +57,11 @@ namespace SVM.Controllers
 
 			Session activeSession = null;   // ✅ ADD THIS
 			decimal totalExpense = 0;
+			decimal totalFeesCollection = 0;
 
-			
 
-            try
+
+			try
             {
 				var sessionsResp = await _client.GetAsync("Sessions");
 				if (sessionsResp.IsSuccessStatusCode)
@@ -93,6 +94,26 @@ namespace SVM.Controllers
 
 					if (activeSession != null)
 						activeSessionName = activeSession.SessionName;
+					// Active Session Total Fee Collection
+					if (activeSession != null)
+					{
+						var feeResponse = await _client.GetAsync(
+							$"FeePayments/FilteredPayments?sessionId={activeSession.SessionId}");
+
+						if (feeResponse.IsSuccessStatusCode)
+						{
+							var feeJson = await feeResponse.Content.ReadAsStringAsync();
+
+							var payments = JsonSerializer.Deserialize<List<FeePaymentReportVM>>(
+								feeJson,
+								new JsonSerializerOptions
+								{
+									PropertyNameCaseInsensitive = true
+								});
+
+							totalFeesCollection = payments?.Sum(x => x.AmountPaid) ?? 0;
+						}
+					}
 				}
 				// Students count (ACTIVE SESSION ONLY)
 				var studentsResp = await _client.GetAsync("Students");
@@ -161,6 +182,7 @@ namespace SVM.Controllers
             ViewBag.TotalExpense = totalExpense;
             ViewBag.ActiveSessionName = activeSessionName;
 			ViewBag.TotalClasses = totalClasses;
+			ViewBag.TotalFeesCollection = totalFeesCollection;
 
 			// =========================
 			// ADMISSION INQUIRIES LOAD
