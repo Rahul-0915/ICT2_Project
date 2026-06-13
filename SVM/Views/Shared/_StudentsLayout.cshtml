@@ -20,121 +20,121 @@
 		  href="~/css/StudentsSide_Css/Navbar.css"
 		  asp-append-version="true" />
 	<style>
-		#aiChatBtn {
-			position: fixed;
-			bottom: 20px;
-			right: 20px;
-			background: #4f46e5;
-			color: white;
-			width: 55px;
-			height: 55px;
-			border-radius: 50%;
-			display: flex;
-			justify-content: center;
-			align-items: center;
-			font-size: 22px;
-			cursor: pointer;
-			box-shadow: 0 6px 18px rgba(0,0,0,0.2);
-			z-index: 9999;
-		}
-
-		#aiChatBox {
-			position: fixed;
-			bottom: 85px;
-			right: 20px;
-			width: 320px;
-			height: 420px;
-			background: #fff;
-			border-radius: 12px;
-			box-shadow: 0 8px 25px rgba(0,0,0,0.2);
-			display: flex;
-			flex-direction: column;
-			overflow: hidden;
-			z-index: 9999;
-		}
-
-		.chat-header {
-			background: #4f46e5;
-			color: white;
-			padding: 10px;
-			font-weight: 600;
-			display: flex;
-			justify-content: space-between;
-		}
-
-		#chatBody {
-			flex: 1;
-			padding: 10px;
-			overflow-y: auto;
-			font-size: 13px;
-		}
-
-		/* Quick actions buttons */
-		.quick-actions {
-			display: flex;
-			gap: 8px;
-			padding: 8px;
-			border-top: 1px solid #e2e8f0;
-			flex-wrap: wrap;
-			background: #f9fafb;
-		}
-
-		.qa-btn {
-			background: white;
-			border: 1px solid #e2e8f0;
-			border-radius: 20px;
-			padding: 6px 12px;
-			font-size: 12px;
-			cursor: pointer;
-			transition: all 0.2s;
-		}
-
-			.qa-btn:hover {
+			#aiChatBtn {
+				position: fixed;
+				bottom: 20px;
+				right: 20px;
 				background: #4f46e5;
 				color: white;
-				border-color: #4f46e5;
+				width: 55px;
+				height: 55px;
+				border-radius: 50%;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+				font-size: 22px;
+				cursor: pointer;
+				box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+				z-index: 9999;
 			}
 
-		.chat-input {
-			display: flex;
-			border-top: 1px solid #eee;
-		}
+			#aiChatBox {
+				position: fixed;
+				bottom: 85px;
+				right: 20px;
+				width: 320px;
+				height: 420px;
+				background: #fff;
+				border-radius: 12px;
+				box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+				display: flex;
+				flex-direction: column;
+				overflow: hidden;
+				z-index: 9999;
+			}
 
-			.chat-input input {
-				flex: 1;
-				border: none;
+			.chat-header {
+				background: #4f46e5;
+				color: white;
 				padding: 10px;
-				outline: none;
+				font-weight: 600;
+				display: flex;
+				justify-content: space-between;
 			}
 
-			.chat-input button {
-				background: #4f46e5;
-				color: white;
-				border: none;
-				padding: 0 15px;
+			#chatBody {
+				flex: 1;
+				padding: 10px;
+				overflow-y: auto;
+				font-size: 13px;
+			}
+
+			/* Quick actions buttons */
+			.quick-actions {
+				display: flex;
+				gap: 8px;
+				padding: 8px;
+				border-top: 1px solid #e2e8f0;
+				flex-wrap: wrap;
+				background: #f9fafb;
+			}
+
+			.qa-btn {
+				background: white;
+				border: 1px solid #e2e8f0;
+				border-radius: 20px;
+				padding: 6px 12px;
+				font-size: 12px;
+				cursor: pointer;
+				transition: all 0.2s;
+			}
+
+				.qa-btn:hover {
+					background: #4f46e5;
+					color: white;
+					border-color: #4f46e5;
+				}
+
+			.chat-input {
+				display: flex;
+				border-top: 1px solid #eee;
+			}
+
+				.chat-input input {
+					flex: 1;
+					border: none;
+					padding: 10px;
+					outline: none;
+				}
+
+				.chat-input button {
+					background: #4f46e5;
+					color: white;
+					border: none;
+					padding: 0 15px;
+					cursor: pointer;
+				}
+
+			.notice-badge {
+				position: relative;
+				top: -8px;
+				margin-left: 3px;
+				background: #ef4444;
+				color: #fff;
+				min-width: 18px;
+				height: 18px;
+				line-height: 18px;
+				text-align: center;
+				border-radius: 999px;
+				font-size: 10px;
+				font-weight: 700;
+				display: none;
+				padding: 0 5px;
+			}
+
+			#aiChatBtn {
 				cursor: pointer;
 			}
-
-		.notice-badge {
-			position: relative;
-			top: -8px;
-			margin-left: 3px;
-			background: #ef4444;
-			color: #fff;
-			min-width: 18px;
-			height: 18px;
-			line-height: 18px;
-			text-align: center;
-			border-radius: 999px;
-			font-size: 10px;
-			font-weight: 700;
-			display: none;
-			padding: 0 5px;
-		}
-
-		#aiChatBtn {
-			cursor: pointer;
-		}
 	</style>
 </head>
 <body>
@@ -210,7 +210,7 @@
 								Result
 							</a>
 						</li>
-						
+
 					</ul>
 				</li>
 
@@ -261,54 +261,67 @@
 
 					</a>
 				</li>
+
+
+				<li>
+					<a href="https://gujarattextbooks.in/" target="_blank">
+						<i class="fas fa-book-open"></i>
+						GSEB E-Book
+
+						<span id="noticeBadge"
+							  class="notice-badge"
+							  style="display:none;">
+						</span>
+					</a>
 				</li>
+			</li>
 
 
-			</ul>
+		</ul>
 
-		</nav>
+	</nav>
 
-	</header>
-
-
+</header>
 
 
-	<!-- PAGE BODY -->
-
-	<main class="page-wrapper">
-
-		@RenderBody()
 
 
-	</main>
+<!-- PAGE BODY -->
 
-	<!-- AI CHAT BUTTON -->
-	<div id="aiChatBtn">💬</div>
+<main class="page-wrapper">
 
-	<!-- AI CHAT BOX -->
-	<div id="aiChatBox" style="display:none;">
-		<div class="chat-header">
-			🤖 SVM AI Assistant
-			<span onclick="toggleChat()" style="cursor:pointer;">✖</span>
-		</div>
+	@RenderBody()
 
-		<div id="chatBody"></div>
 
-		<!-- Quick action buttons -->
-		<div class="quick-actions">
-			<button class="qa-btn" data-msg="Attendance">📊 Attendance</button>
-			<button class="qa-btn" data-msg="Timetable">📅 Timetable</button>
-			<button class="qa-btn" data-msg="ID card">🪪 ID Card</button>
-			<button class="qa-btn" data-msg="Notices">📢 Notices</button>
-			<button class="qa-btn" data-msg="My Profile">👤 Profile</button>
-			<button class="qa-btn" data-msg="Help">❓ Help</button>
-		</div>
+</main>
 
-		<div class="chat-input">
-			<input type="text" id="userInput" placeholder="Ask your doubt..." />
-			<button onclick="sendMessage()">Send</button>
-		</div>
+<!-- AI CHAT BUTTON -->
+<div id="aiChatBtn">💬</div>
+
+<!-- AI CHAT BOX -->
+<div id="aiChatBox" style="display:none;">
+	<div class="chat-header">
+		🤖 SVM AI Assistant
+		<span onclick="toggleChat()" style="cursor:pointer;">✖</span>
 	</div>
+
+	<div id="chatBody"></div>
+
+	<!-- Quick action buttons -->
+	<div class="quick-actions">
+		<button class="qa-btn" data-msg="Attendance">📊 Attendance</button>
+		<button class="qa-btn" data-msg="Timetable">📅 Timetable</button>
+		<button class="qa-btn" data-msg="ID card">🪪 ID Card</button>
+		<button class="qa-btn" data-msg="Notices">📢 Notices</button>
+		<button class="qa-btn" data-msg="My Profile">👤 Profile</button>
+		<button class="qa-btn" data-msg="Help">❓ Help</button>
+	</div>
+
+	<div class="chat-input">
+		<input type="text" id="userInput" placeholder="Ask your doubt..." />
+		<button onclick="sendMessage()">Send</button>
+	</div>
+</div>
 
 </body>
 </html>
@@ -320,130 +333,130 @@
 
 	/* Mobile Main Menu */
 	menuBtn.addEventListener("click", function () {
-		navMenu.classList.toggle("active");
-		if (!navMenu.classList.contains("active")) {
-			document.querySelectorAll(".has-submenu").forEach(x => {
-				x.classList.remove("open");
-			});
-		}
+	navMenu.classList.toggle("active");
+	if (!navMenu.classList.contains("active")) {
+	document.querySelectorAll(".has-submenu").forEach(x => {
+	x.classList.remove("open");
+	});
+	}
 	});
 
 	/* Mobile Submenu */
 	document.querySelectorAll(".has-submenu > a").forEach(item => {
-		item.addEventListener("click", function (e) {
-			if (window.innerWidth <= 768) {
-				e.preventDefault();
-				const parent = this.parentElement;
-				if (parent.classList.contains("open")) {
-					parent.classList.remove("open");
-					return;
-				}
-				document.querySelectorAll(".has-submenu").forEach(x => {
-					x.classList.remove("open");
-				});
-				parent.classList.add("open");
-			}
-		});
+	item.addEventListener("click", function (e) {
+	if (window.innerWidth <= 768) {
+	e.preventDefault();
+	const parent = this.parentElement;
+	if (parent.classList.contains("open")) {
+	parent.classList.remove("open");
+	return;
+	}
+	document.querySelectorAll(".has-submenu").forEach(x => {
+	x.classList.remove("open");
+	});
+	parent.classList.add("open");
+	}
+	});
 	});
 
 	/* Student Profile Dropdown Mobile */
 	const studentBtn = document.querySelector(".student-btn");
 	const dropdown = document.querySelector(".dropdown");
 	studentBtn.addEventListener("click", function (e) {
-		if (window.innerWidth <= 768) {
-			e.stopPropagation();
-			dropdown.classList.toggle("show");
-		}
+	if (window.innerWidth <= 768) {
+	e.stopPropagation();
+	dropdown.classList.toggle("show");
+	}
 	});
 	document.addEventListener("click", function () {
-		if (window.innerWidth <= 768) {
-			dropdown.classList.remove("show");
-		}
+	if (window.innerWidth <= 768) {
+	dropdown.classList.remove("show");
+	}
 	});
 
 	$(function () {
-		$.get('/StudentPanel/GetActiveNotices', function (data) {
-			console.log("Notices:", data);
-			let seenId = parseInt(localStorage.getItem("StudentNoticeSeen") || "0");
-			console.log("Seen:", seenId);
-			let unreadCount = data.filter(x => x.id > seenId).length;
-			console.log("Unread:", unreadCount);
-			if (unreadCount > 0) {
-				$("#noticeBadge").text(unreadCount).show();
-			}
-		});
+	$.get('/StudentPanel/GetActiveNotices', function (data) {
+	console.log("Notices:", data);
+	let seenId = parseInt(localStorage.getItem("StudentNoticeSeen") || "0");
+	console.log("Seen:", seenId);
+	let unreadCount = data.filter(x => x.id > seenId).length;
+	console.log("Unread:", unreadCount);
+	if (unreadCount > 0) {
+	$("#noticeBadge").text(unreadCount).show();
+	}
+	});
 	});
 
 	$(document).ready(function () {
-		// OPEN / CLOSE CHAT
-		$("#aiChatBtn").click(function () {
-			$("#aiChatBox").toggle();
-		});
+	// OPEN / CLOSE CHAT
+	$("#aiChatBtn").click(function () {
+	$("#aiChatBox").toggle();
+	});
 
-		// CLOSE BUTTON
-		window.toggleChat = function () {
-			$("#aiChatBox").hide();
-		};
+	// CLOSE BUTTON
+	window.toggleChat = function () {
+	$("#aiChatBox").hide();
+	};
 
-		// SEND MESSAGE
-		window.sendMessage = function () {
-			let msg = $("#userInput").val();
-			if (msg.trim() === "") return;
-			appendMessage("You", msg);
-			$("#userInput").val("");
-			$.ajax({
-				url: '/StudentPanel/AiChat',
-				type: 'POST',
-				data: { message: msg },
-				success: function (res) {
-					appendMessage("AI", res.reply, res.options);
-				},
-				error: function () {
-					appendMessage("AI", "Server error!");
-				}
-			});
-		};
+	// SEND MESSAGE
+	window.sendMessage = function () {
+	let msg = $("#userInput").val();
+	if (msg.trim() === "") return;
+	appendMessage("You", msg);
+	$("#userInput").val("");
+	$.ajax({
+	url: '/StudentPanel/AiChat',
+	type: 'POST',
+	data: { message: msg },
+	success: function (res) {
+	appendMessage("AI", res.reply, res.options);
+	},
+	error: function () {
+	appendMessage("AI", "Server error!");
+	}
+	});
+	};
 
-		window.handleOption = function (action) {
-			if (action.startsWith("/")) {
-				window.location.href = action;
-				return;
-			}
-			let reply = "";
-			if (action === "info_attendance") {
-				reply = "Attendance daily teacher mark karta hai. Monthly report available hoti hai.";
-			}
-			else if (action === "info_result") {
-				reply = "Result exam evaluation ke baad publish hota hai.";
-			}
-			appendMessage("AI", reply);
-		};
+	window.handleOption = function (action) {
+	if (action.startsWith("/")) {
+	window.location.href = action;
+	return;
+	}
+	let reply = "";
+	if (action === "info_attendance") {
+	reply = "Attendance daily teacher mark karta hai. Monthly report available hoti hai.";
+	}
+	else if (action === "info_result") {
+	reply = "Result exam evaluation ke baad publish hota hai.";
+	}
+	appendMessage("AI", reply);
+	};
 
-		function appendMessage(sender, text, options) {
-			let html = `<div style="margin:8px 0;">
-				<b>${sender}:</b>
-				<div>${text}</div>
-			</div>`;
-			if (options && options.length > 0) {
-				html += `<div style="display:flex;flex-direction:column;gap:6px;margin-top:6px;">`;
-				options.forEach(opt => {
-					html += `
-					<button onclick="handleOption('${opt.action}')"
-						style="padding:7px;background:#4f46e5;color:white;border:none;border-radius:8px;cursor:pointer;">
-						${opt.text}
-					</button>`;
-				});
-				html += `</div>`;
-			}
-			$("#chatBody").append(html);
-			$("#chatBody").scrollTop($("#chatBody")[0].scrollHeight);
-		}
+	function appendMessage(sender, text, options) {
+	let html = `<div style="margin:8px 0;">
+	<b>${sender}:</b>
+	<div>${text}</div>
+	</div>`;
+	if (options && options.length > 0) {
+	html += `<div style="display:flex;flex-direction:column;gap:6px;margin-top:6px;">`;
+	options.forEach(opt => {
+	html += `
+	<button onclick="handleOption('${opt.action}')"
+	style="padding:7px;background:#4f46e5;color:white;border:none;border-radius:8px;cursor:pointer;">
+	${opt.text}
+	</button>`;
+	});
+	html += `</div>`;
+	}
+	$("#chatBody").append(html);
+	$("#chatBody").scrollTop($("#chatBody")[0].scrollHeight);
+	}
 
-		// Quick action buttons click handler
-		$(".qa-btn").click(function() {
-			let msg = $(this).data("msg");
-			$("#userInput").val(msg);
-			sendMessage();
-		});
+	// Quick action buttons click handler
+	$(".qa-btn").click(function() {
+	let msg = $(this).data("msg");
+	$("#userInput").val(msg);
+	sendMessage();
+	});
 	});
 </script>
