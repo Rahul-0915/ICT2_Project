@@ -14,8 +14,7 @@ public partial class Student
     public int? UserId { get; set; }
 
     // Admission Number - Auto generated (no need for Required attribute)
-    [StringLength(6, MinimumLength = 6, ErrorMessage = "Admission Number must be exactly 6 digits")]
-    [RegularExpression(@"^[0-9]{6}$", ErrorMessage = "Admission Number must contain only 6 digits")]
+  
     [Display(Name = "Admission Number")]
     public string? AdmissionNo { get; set; }  // Removed Required - will be auto-generated
 
