@@ -540,6 +540,13 @@ namespace SVM.Controllers.StudentPanel
                 TotalDays = 0
             };
 
+            var currentStudent = data.Students?
+    .FirstOrDefault(x => x.RollNo == student.RollNo);
+
+            data.Students = currentStudent != null
+                ? new List<StudentMonthItem> { currentStudent }
+                : new List<StudentMonthItem>();
+
             // ================= SET VIEWBAG FOR DISPLAY =================
             ViewBag.Year = y;
             ViewBag.Month = m;
@@ -1279,7 +1286,9 @@ Student Question:
                     PropertyNameCaseInsensitive = true
                 });
 
-            var item = data?.Students?.FirstOrDefault();
+            var item = data?.Students?
+    .FirstOrDefault(x => x.RollNo == student.RollNo);
+
 
             return Json(new
             {
