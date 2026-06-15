@@ -16,10 +16,11 @@ body {
     position: relative;
     overflow-x: hidden;
 }
-
+ 
     /* Purple Header */
     body::before {
         content: "";
+
         position: fixed;
         top: 0;
         left: 0;
@@ -27,7 +28,7 @@ body {
         height: 300px;
         background: url('../images/AboutSchoolModelPic.png') no-repeat center top;
         /* IMPORTANT */
-        background-size:100% 150%;
+        background-size: 100% 150%;
         /* ya */
         /* background-size: 100% 0%; */
 
@@ -75,7 +76,7 @@ body {
 /* CONTAINER */
 
 .login-container {
-    margin-top:40%;
+    margin-top:20%;
     width: 120%;
     max-width: 380px;
 }
@@ -83,7 +84,7 @@ body {
 /* LOGIN BOX */
 
 .login-box {
-    
+    height:30%;
     background: white;
     border-radius: 7px;
     padding: 32px 39px;
