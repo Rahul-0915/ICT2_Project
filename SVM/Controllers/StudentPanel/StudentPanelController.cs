@@ -292,7 +292,7 @@ namespace SVM.Controllers.StudentPanel
             }
 
             // ================= QR CODE GENERATION =================
-            string qrText = $"http://192.168.1.78:5269/StudentPanel/ViewCard?id={student.StudentId}";
+            string qrText = $"http://192.168.1.84:5269/StudentPanel/ViewCard?id={student.StudentId}";
             using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
             {
                 QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrText, QRCodeGenerator.ECCLevel.Q);
