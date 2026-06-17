@@ -3,10 +3,10 @@
     var receipt = ViewBag.Receipt as dynamic;
     var feeStructure = ViewBag.FeeStructure as dynamic;
 
-    // Get medium from student's class (Tumhare logic ke hisaab se)
+    // Get medium from student's class 
     var medium = ViewBag.Medium as string ?? "Gujarati";
 
-    // School Details based on Medium - Tumhare Student Details wale logic ke hisaab se
+    // School Details based on Medium 
     var schoolName = medium == "English" ? "S.V.M ENGLISH MEDIUM" : "શારદા વિદ્યામંદિર";
     var logoPath = medium == "English" ? "/images/SVMEng_logo.png" : "/images/SVMGuj_logo.png";
 

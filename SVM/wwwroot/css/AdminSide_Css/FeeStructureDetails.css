@@ -147,7 +147,7 @@ body {
     border-top: 2px solid #1e293b;
 }
 
-/* ================= PRINT CSS ================= */
+/*  PRINT CSS  */
 
 @page {
     size: A4 portrait;

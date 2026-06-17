@@ -16,7 +16,6 @@ body {
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     font-size: 13px;
     line-height: 1.5;
-
 }
 
 /* PAGE */
@@ -53,7 +52,7 @@ body {
 .right-side {
     display: flex;
     gap: 8px;
-    margin-left:18%;
+    margin-left: 18%;
     align-items: center;
 }
 
@@ -108,10 +107,9 @@ body {
 /* TABLE CONTAINER */
 .table-container {
     width: 100%;
-    margin:auto;
-    padding:15px;
+    margin: auto;
+    padding: 15px;
     overflow-x: auto;
-    
     border-radius: 14px;
     box-shadow: 0 2px 8px rgba(0,0,0,0.05);
 }
@@ -264,7 +262,7 @@ tbody td {
     font-size: 14px;
 }
 
-/* ========== RESPONSIVE ========== */
+/*  RESPONSIVE  */
 
 /* TABLET */
 @media screen and (max-width: 1024px) {

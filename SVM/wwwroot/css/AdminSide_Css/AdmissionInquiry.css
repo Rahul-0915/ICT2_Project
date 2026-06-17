@@ -1,6 +1,4 @@
-﻿/* =========================
-   BASE
-========================= */
+﻿/* BASE */
 body {
     margin: 0;
     font-family: "Segoe UI", sans-serif;
@@ -9,17 +7,13 @@ body {
     background-repeat: repeat;
 }
 
-/* =========================
-   WRAPPER
-========================= */
+/*  WRAPPER */
 .admin-wrapper {
     padding: 20px;
     max-width: 100%;
 }
 
-/* =========================
-   HEADER
-========================= */
+/* HEADER */
 .admin-header {
     display: flex;
     justify-content: space-between;
@@ -44,9 +38,7 @@ body {
         font-size: 14px;
     }
 
-/* =========================
-   COUNT BADGE
-========================= */
+/*  COUNT BADGE */
 .count-badge {
     background: #0d6efd;
     color: #fff;
@@ -55,9 +47,7 @@ body {
     font-size: 13px;
 }
 
-/* =========================
-   NOTIFICATION
-========================= */
+/*  NOTIFICATION */
 .notify-box {
     font-size: 14px;
     font-weight: 600;
@@ -72,9 +62,7 @@ body {
     margin-left: 5px;
 }
 
-/* =========================
-   SUCCESS ALERT
-========================= */
+/* SUCCESS ALERT */
 .alert-success {
     background: #d1fae5;
     color: #065f46;
@@ -84,9 +72,7 @@ body {
     font-size: 14px;
 }
 
-/* =========================
-   TABLE CARD
-========================= */
+/* TABLE CARD */
 .table-card {
     
     
@@ -94,9 +80,7 @@ body {
     box-shadow: 0 3px 15px rgba(0,0,0,0.08);
 }
 
-/* =========================
-   TABLE
-========================= */
+/*  TABLE */
 .admin-table {
     width: 100%;
     border-collapse: collapse;
@@ -129,9 +113,7 @@ body {
     background: #fff7e6;
 }
 
-/* =========================
-   BADGES
-========================= */
+/* BADGES */
 .badge {
     padding: 5px 10px;
     border-radius: 20px;
@@ -149,9 +131,7 @@ body {
     color: #fff;
 }
 
-/* =========================
-   BUTTONS
-========================= */
+/* BUTTONS */
 .btn {
     padding: 6px 12px;
     
@@ -179,9 +159,7 @@ body {
     transform: scale(1.03);
 }
 
-/* =========================
-   RESPONSIVE (IMPORTANT 100% ZOOM SAFE)
-========================= */
+/* RESPONSIVE  */
 @media (max-width: 992px) {
     .admin-header {
         flex-direction: column;

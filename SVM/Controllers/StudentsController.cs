@@ -41,7 +41,7 @@ namespace SVM.Controllers
         {
             List<Student> studentList = new List<Student>();
 
-            // 🔥 Build URL with filters
+            //  Build URL with filters
             var url = $"Students/WithDetails?sessionId={sessionId}&medium={medium}&classId={classId}&sectionId={sectionId}";
             var response = await _client.GetAsync(url);
 
@@ -70,7 +70,7 @@ namespace SVM.Controllers
                 var error = await response.Content.ReadAsStringAsync();
                 ModelState.AddModelError("", $"Failed to load students: {error}");
             }
-            // ================= ACTIVE SESSION AUTO SELECT =================
+            //  ACTIVE SESSION AUTO SELECT 
 
             if (!sessionId.HasValue)
             {
@@ -98,7 +98,7 @@ namespace SVM.Controllers
                 }
             }
 
-            // ✅ FIXED: Only pass 2 parameters
+            //  Only pass 2 parameters
             await LoadFiltersAsync(sessionId, medium);
 
             ViewBag.SelectedMedium = medium;
@@ -109,7 +109,7 @@ namespace SVM.Controllers
             return View(studentList);
         }
 
-        // Helper method for filters only - Yeh sahi hai
+        // Helper method for filters only 
         private async Task LoadFiltersAsync(int? sessionId, string medium)
         {
             // Load sessions (1 call)
@@ -122,7 +122,7 @@ namespace SVM.Controllers
                 ViewBag.AllSessions = allSessions;
             }
 
-            // Load classes with filters (1 call)
+            // Load classes with filters 
             var classUrl = $"Classes/WithFilters?sessionId={sessionId}&medium={medium}";
             var classResponse = await _client.GetAsync(classUrl);
             if (classResponse.IsSuccessStatusCode)
@@ -134,7 +134,6 @@ namespace SVM.Controllers
             }
         }
 
-        // DTO class - Add this in your Models folder
         public class StudentWithDetails
         {
             public Student Student { get; set; }
@@ -274,10 +273,9 @@ namespace SVM.Controllers
 
             if (ModelState.IsValid)
             {
-                // ========== CREATE USER FIRST (GroupId = 3 for Students) ==========
+                //  CREATE USER FIRST (GroupId = 3 for Students) 
                 string username = (student.FirstName + student.LastName).Replace(" ", "").ToLower();
-                //// Add random numbers to username to avoid duplicates
-                //username = username + new Random().Next(100, 999);
+
 
                 var userForApi = new
                 {
@@ -302,14 +300,14 @@ namespace SVM.Controllers
 
                 var createdUser = await userResponse.Content.ReadFromJsonAsync<User>();
                 student.UserId = createdUser.UserId;
-                // ========== END USER CREATION ==========
+                //  END USER CREATION 
 
                 var response = await _client.PostAsJsonAsync("Students", student);
                 if (response.IsSuccessStatusCode)
                 {
                     TempData["Success"] = "Student created successfully! Login credentials have been created.";
 
-                    // 🔥 IMPORTANT: Get the medium from the selected class
+                    //  Get the medium from the selected class
                     string medium = null;
                     if (student.ClassId.HasValue)
                     {
@@ -322,7 +320,7 @@ namespace SVM.Controllers
                         }
                     }
 
-                    // 🔥 REDIRECT WITH ALL FILTER VALUES PRESERVED
+                    //  REDIRECT WITH ALL FILTER VALUES PRESERVED
                     return RedirectToAction(nameof(Index), new
                     {
                         sessionId = student.SessionId,
@@ -435,7 +433,7 @@ namespace SVM.Controllers
 
             if (ModelState.IsValid)
             {
-                // ========== UPDATE USER TABLE ==========
+                //  UPDATE USER TABLE 
                 if (student.UserId.HasValue)
                 {
                     var userGetResponse = await _client.GetAsync($"Users/{student.UserId}");
@@ -449,7 +447,7 @@ namespace SVM.Controllers
                         {
                             // Update all user fields
                             existingUser.FullName = $"{student.FirstName} {student.LastName}";
-                            existingUser.Email = student.Email;  // 🔥 IMPORTANT: Email update
+                            existingUser.Email = student.Email;  //  Email update
                             existingUser.Phone = student.Phone;
                             existingUser.ProfilePhoto = student.StudentPhoto;
                             existingUser.GroupId = 3;
@@ -465,7 +463,7 @@ namespace SVM.Controllers
                         }
                     }
                 }
-                // ========== END USER UPDATE ==========
+                //  END USER UPDATE 
 
                 var response = await _client.PutAsJsonAsync($"Students/{id}", student);
                 if (response.IsSuccessStatusCode)
@@ -607,8 +605,7 @@ namespace SVM.Controllers
                 ModelState.AddModelError("", "Delete failed!");
                 return View(student);
             }
-
-            // ========== DELETE ASSOCIATED USER ==========
+            //  DELETE ASSOCIATED USER 
             if (student?.UserId != null)
             {
                 var userDeleteResponse = await _client.DeleteAsync($"Users/{student.UserId}");
@@ -618,7 +615,7 @@ namespace SVM.Controllers
                     TempData["Warning"] = $"Student deleted but user deletion failed: {userError}";
                 }
             }
-            // ========== END USER DELETE ==========
+            //  END USER DELETE 
 
             TempData["Success"] = "Student deleted successfully!";
 
@@ -631,7 +628,7 @@ namespace SVM.Controllers
             });
         }
 
-        // ---------------------- Helper Methods ----------------------
+        //  Helper Methods 
 
         private async Task<bool> StudentExists(int id)
         {
@@ -792,7 +789,7 @@ namespace SVM.Controllers
                 PropertyNameCaseInsensitive = true
             };
 
-            // ================= STUDENTS =================
+            //  STUDENTS 
             var studentResponse = await _client.GetAsync("Students");
 
             if (studentResponse.IsSuccessStatusCode)
@@ -802,7 +799,7 @@ namespace SVM.Controllers
                 studentList = JsonSerializer.Deserialize<List<Student>>(studentData, options) ?? new();
             }
 
-            // ================= CLASSES =================
+            //  CLASSES 
             var classResponse = await _client.GetAsync("Classes");
 
             List<Class> allClasses = new();
@@ -814,7 +811,7 @@ namespace SVM.Controllers
                 allClasses = JsonSerializer.Deserialize<List<Class>>(classData, options) ?? new();
             }
 
-            // ================= SECTIONS =================
+            //  SECTIONS 
             var sectionResponse = await _client.GetAsync("Sections");
 
             List<Section> allSections = new();
@@ -826,7 +823,7 @@ namespace SVM.Controllers
                 allSections = JsonSerializer.Deserialize<List<Section>>(sectionData, options) ?? new();
             }
 
-            // ================= SESSIONS =================
+            //  SESSIONS 
             var sessionResponse = await _client.GetAsync("Sessions");
 
             List<Session> allSessions = new();
@@ -849,7 +846,7 @@ namespace SVM.Controllers
                 }
             }
 
-            // ================= MAP DATA =================
+            //  MAP DATA 
             foreach (var student in studentList)
             {
                 student.Class = allClasses

@@ -18,9 +18,9 @@ namespace SVM.Controllers
             _environment = environment;
         }
 
-        // =========================
+      
         // Helper : Current User ID
-        // =========================
+        
         private int? GetCurrentUserId()
         {
             var userIdString = HttpContext.Session.GetString("UserId");
@@ -29,17 +29,13 @@ namespace SVM.Controllers
             return null;
         }
 
-        // =========================
         // Helper : Current User Name
-        // =========================
         private string GetCurrentUserName()
         {
             return HttpContext.Session.GetString("FullName") ?? "Admin";
         }
 
-        // =========================
         // GET : Expenses Index
-        // =========================
         public async Task<IActionResult> Index()
         {
             List<Expense> expenses = new();
@@ -60,9 +56,7 @@ namespace SVM.Controllers
             return View(expenses);
         }
 
-        // =========================
         // GET : Create
-        // =========================
         public IActionResult Create()
         {
             var userId = GetCurrentUserId();
@@ -76,9 +70,7 @@ namespace SVM.Controllers
             return View();
         }
 
-        // =========================
         // POST : Create
-        // =========================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create(Expense expense, IFormFile? receiptFile)
@@ -126,9 +118,7 @@ namespace SVM.Controllers
             return View(expense);
         }
 
-        // =========================
         // GET : Edit
-        // =========================
         public async Task<IActionResult> Edit(int id)
         {
             var response = await _client.GetAsync($"Expenses/{id}");
@@ -143,9 +133,7 @@ namespace SVM.Controllers
             return View(expense);
         }
 
-        // =========================
         // POST : Edit
-        // =========================
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Expense expense, IFormFile? receiptFile)
@@ -183,9 +171,8 @@ namespace SVM.Controllers
             return View(expense);
         }
 
-        // =========================
         // GET : Delete
-        // =========================
+        
         public async Task<IActionResult> Delete(int id)
         {
             var response = await _client.GetAsync($"Expenses/{id}");
@@ -199,9 +186,7 @@ namespace SVM.Controllers
             return View(expense);
         }
 
-        // =========================
         // POST : Delete
-        // =========================
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
@@ -219,9 +204,8 @@ namespace SVM.Controllers
 
             return RedirectToAction(nameof(Index));
         }
-        // =========================
         // GET : Print Voucher
-        // =========================
+        
         public async Task<IActionResult> Print(int id)
         {
             var response = await _client.GetAsync($"Expenses/{id}");
@@ -234,12 +218,9 @@ namespace SVM.Controllers
 
             return View(expense);
         }
-        // =========================
-        // EXPORT EXCEL - Direct Download
-        // =========================
-        // =========================
-        // EXPORT EXCEL/CSV - Direct Download
-        // =========================
+       
+        // EXPORT EXCEL 
+        // EXPORT EXCEL/CSV 
         public async Task<IActionResult> ExportExcel()
         {
             var response = await _client.GetAsync("Expenses/ExportExcel");

@@ -224,7 +224,7 @@ textarea.form-control {
     }
 }
 
-/* FOR LARGE SCREENS - PREVENT OVERSTRETCH */
+/* FOR LARGE SCREENS  */
 @media screen and (min-width: 1400px) {
     .expense-card {
         max-width: 1300px;
@@ -240,7 +240,7 @@ textarea.form-control {
     }
 }
 
-/* PRINT STYLES - Agar print karna ho toh */
+/* PRINT STYLES  */
 @media print {
     body {
         background: white;

@@ -1,10 +1,11 @@
-﻿/* Login.css - Professional Scale Fixed */
+﻿/* Login.css */
 
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
+
 body {
     background: #eef2f5;
     font-family: 'Segoe UI', 'Roboto', 'Inter', sans-serif;
@@ -16,24 +17,20 @@ body {
     position: relative;
     overflow-x: hidden;
 }
- 
+
     /* Purple Header */
     body::before {
         content: "";
-
         position: fixed;
         top: 0;
         left: 0;
         width: 100%;
         height: 300px;
         background: url('../images/AboutSchoolModelPic.png') no-repeat center top;
-        /* IMPORTANT */
         background-size: 100% 150%;
-        /* ya */
-        /* background-size: 100% 0%; */
-
         z-index: -2;
     }
+
     body::after {
         content: "";
         position: fixed;
@@ -76,7 +73,7 @@ body {
 /* CONTAINER */
 
 .login-container {
-    margin-top:20%;
+    margin-top: 20%;
     width: 120%;
     max-width: 380px;
 }
@@ -84,7 +81,7 @@ body {
 /* LOGIN BOX */
 
 .login-box {
-    height:30%;
+    height: 30%;
     background: white;
     border-radius: 7px;
     padding: 32px 39px;
@@ -96,7 +93,7 @@ body {
 
     .login-box h2 {
         text-align: center;
-        color:#3b3b9f;
+        color: #3b3b9f;
         margin-bottom: 8px;
         font-weight: 600;
         font-size: 28px;
@@ -141,9 +138,8 @@ body {
 }
 
     .form-control:focus {
-        border-color:darkblue;
+        border-color: darkblue;
         outline: none;
-        
     }
 
 /* LOGIN BUTTON */
@@ -151,7 +147,7 @@ body {
 .btn-login {
     width: 100%;
     height: 46px;
-    background:#4e4e94;
+    background: #4e4e94;
     border: none;
     border-radius: 5px;
     color: white;

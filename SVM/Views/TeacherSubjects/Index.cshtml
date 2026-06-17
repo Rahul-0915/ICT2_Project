@@ -139,7 +139,7 @@
 </div>
 
 <script>
-    // ================= CLIENT-SIDE FILTER FOR TEACHER NAME ONLY =================
+    //  CLIENT-SIDE FILTER FOR TEACHER NAME ONLY 
     const searchInput = document.getElementById('searchInput');
     const teacherCards = document.querySelectorAll('.teacher-card');
 
@@ -157,7 +157,7 @@
     searchInput.addEventListener('keyup', filterByTeacherName);
     filterByTeacherName();
 
-    // ================= CASCADE: SESSION + MEDIUM => CLASS (AJAX) =================
+    //  CASCADE: SESSION + MEDIUM => CLASS (AJAX) 
     async function loadClasses() {
         const sessionId = document.getElementById('sessionFilter').value;
         const medium = document.getElementById('mediumFilter').value;

@@ -46,10 +46,10 @@ hr {
     margin: 0;
 }
 
-/* Form Box - fits exactly content height */
+/* Form Box  */
 .col-md-4 {
     background: #fff;
-    padding: 30px 30px 20px 30px; /* Reduced bottom padding */
+    padding: 30px 30px 20px 30px;
     border-radius: 10px;
     box-shadow: 0 8px 20px rgba(0,0,0,0.08);
     width: 100%;
@@ -100,7 +100,7 @@ label {
     display: block;
 }
 
-/* Create Button - matching .btn-add style */
+/* Create Button  */
 .btn-primary {
     width: 100%;
     padding: 12px 22px;
@@ -123,11 +123,11 @@ label {
         transform: translateY(-1px);
     }
 
-/* Back To List - compact spacing */
+/* Back To List  */
 .back-link {
     text-align: center;
     margin-top: 15px;
-    margin-bottom: 0; /* Removed bottom margin */
+    margin-bottom: 0;
     padding-bottom: 5px;
 }
 

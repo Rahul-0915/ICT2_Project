@@ -63,7 +63,7 @@ namespace SVM_API.Controllers
                     PaymentDate = DateTime.Now,
                     PaymentMode = "Cash",
                     TransactionId = request.TransactionId ?? $"CASH-{DateTime.Now.Ticks}"
-                    // ❌ NO Remark property - remove this line
+                    // NO Remark property - remove this line
                 };
 
                 _context.FeePayments.Add(payment);
@@ -221,7 +221,7 @@ namespace SVM_API.Controllers
                 paymentDate = payment.PaymentDate?.ToString("dd MMM yyyy, hh:mm tt") ?? DateTime.Now.ToString("dd MMM yyyy, hh:mm tt"),
                 paymentMode = payment.PaymentMode,
                 transactionId = payment.TransactionId
-                // ❌ NO Remark
+                //  NO Remark
             });
         }
     }
@@ -232,6 +232,6 @@ namespace SVM_API.Controllers
         public int FeeId { get; set; }
         public decimal AmountPaid { get; set; }
         public string? TransactionId { get; set; }
-        // ❌ NO Remark property
+        // NO Remark property
     }
 }

@@ -4,7 +4,6 @@
     ViewData["Title"] = "Fee Structure Details";
     Layout = null;
 
-    // Student ke liye values
     var admissionFees = Model?.AdmissionFees ?? 0;
     var monthlyFees = Model?.MonthlyFees ?? 0;
     var yearlyFees = monthlyFees * 12;
@@ -12,7 +11,6 @@
     var computerFees = Model?.ComputerFees ?? 0;    
     var totalAmount = Model?.TotalAmount ?? 0;
 
-    // Session se student ki info
     var medium = ViewBag.Medium ?? "English";
     var className = ViewBag.ClassName ?? "Not Available";
     var sessionName = ViewBag.SessionName ?? "2024-25";

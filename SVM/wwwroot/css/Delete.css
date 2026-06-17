@@ -65,7 +65,7 @@ div > dl.row {
     margin: 0 auto 25px auto;
 }
 
-/* Term (Label) Styling */
+/*  Label Styling */
 dt.col-sm-2 {
     font-weight: 700;
     color: #555;
@@ -75,7 +75,7 @@ dt.col-sm-2 {
     margin-bottom: 3px;
 }
 
-/* Definition (Value) Styling */
+/* Definition  Styling */
 dd.col-sm-10 {
     font-size: 14px;
     color: #222;

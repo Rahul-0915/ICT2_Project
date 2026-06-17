@@ -1,6 +1,4 @@
-﻿/* ========================================
-   FEE RECEIPT - PROFESSIONAL DESIGN
-   ======================================== */
+﻿/* FEE RECEIPT - DESIGN */
 
 * {
     margin: 0;
@@ -20,7 +18,7 @@ body {
     margin: 0 auto;
 }
 
-/* ========== TOP ACTIONS ========== */
+/*  TOP ACTIONS  */
 .top-actions {
     display: flex;
     justify-content: flex-end;
@@ -61,7 +59,7 @@ body {
         transform: translateY(-1px);
     }
 
-/* ========== RECEIPT CONTAINER ========== */
+/*  RECEIPT CONTAINER  */
 .receipt-container {
     background: white;
     padding: 25px;
@@ -70,7 +68,7 @@ body {
     box-shadow: 0 4px 20px rgba(0,0,0,0.08);
 }
 
-/* ========== HEADER ========== */
+/*  HEADER  */
 .receipt-header {
     display: flex;
     align-items: center;
@@ -105,7 +103,7 @@ body {
     color: #4b5563;
 }
 
-/* ========== RECEIPT TITLE ========== */
+/*  RECEIPT TITLE  */
 .receipt-title {
     text-align: center;
     font-size: 20px;
@@ -117,7 +115,7 @@ body {
     letter-spacing: 2px;
 }
 
-/* ========== INFO SECTION ========== */
+/*  INFO SECTION  */
 .info-section {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
@@ -147,7 +145,7 @@ body {
         font-size: 13px;
     }
 
-/* ========== SECTION TITLE ========== */
+/*  SECTION TITLE  */
 .section-title {
     font-size: 15px;
     font-weight: 700;
@@ -159,7 +157,7 @@ body {
     border-radius: 6px;
 }
 
-/* ========== FEE TABLE ========== */
+/*  FEE TABLE  */
 .fee-table {
     width: 100%;
     border-collapse: collapse;
@@ -192,7 +190,7 @@ body {
     text-align: right;
 }
 
-/* ========== PAYMENT DETAILS ========== */
+/*  PAYMENT DETAILS  */
 .payment-details {
     background: #f0fdf4;
     border-radius: 10px;
@@ -228,7 +226,7 @@ body {
             color: #059669;
         }
 
-/* ========== AMOUNT BOX ========== */
+/*  AMOUNT BOX  */
 .amount-box {
     background: #f0fdf4;
     border: 1px solid #22c55e;
@@ -255,7 +253,7 @@ body {
     text-transform: uppercase;
 }
 
-/* ========== FOOTER ========== */
+/*  FOOTER  */
 .receipt-footer {
     margin-top: 20px;
     padding-top: 15px;
@@ -297,7 +295,7 @@ body {
     line-height: 1.4;
 }
 
-/* ========== PRINT STYLES ========== */
+/*  PRINT STYLES  */
 @page {
     size: A4;
     margin: 10mm;
@@ -350,7 +348,7 @@ body {
     }
 }
 
-/* ========== RESPONSIVE ========== */
+/*  RESPONSIVE  */
 @media (max-width: 600px) {
     body {
         padding: 10px;

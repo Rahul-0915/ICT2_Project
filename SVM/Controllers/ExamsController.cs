@@ -26,7 +26,7 @@ namespace SVM.Controllers
             return 0;
         }
 
-        // ==================== INDEX ====================
+        //  INDEX 
         public async Task<IActionResult> Index(int? sessionId, string medium, int? classId, int? sectionId)
         {
             var sessions = await GetSessions();
@@ -70,7 +70,7 @@ namespace SVM.Controllers
             return View(exams);
         }
 
-        // ==================== CREATE ====================
+        //  CREATE 
         [HttpGet] public async Task<IActionResult> Create() { await LoadDropdowns(); return View(); }
         [HttpPost]
         public async Task<IActionResult> Create(ExamDTO exam)
@@ -103,7 +103,7 @@ namespace SVM.Controllers
             return View(exam);
         }
 
-        // ==================== EDIT ====================
+        //  EDIT 
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
@@ -131,7 +131,7 @@ namespace SVM.Controllers
             return View(exam);
         }
 
-        // ==================== DELETE ====================
+        //  DELETE 
         [HttpGet]
         public async Task<IActionResult> Delete(int id)
         {
@@ -148,7 +148,7 @@ namespace SVM.Controllers
             return RedirectToAction(nameof(Index), new { sessionId, medium, classId, sectionId });
         }
 
-        // ==================== PUBLISH ====================
+        //  PUBLISH 
         [HttpPost]
         public async Task<IActionResult> Publish(int id, int? sessionId, string medium, int? classId, int? sectionId)
         {
@@ -157,7 +157,7 @@ namespace SVM.Controllers
             return RedirectToAction(nameof(Index), new { sessionId, medium, classId, sectionId });
         }
 
-        // ==================== SUBJECTS ====================
+        //  SUBJECTS 
         public async Task<IActionResult> Subjects(int examId)
         {
             var examResp = await _client.GetAsync($"Exams/{examId}");
@@ -214,7 +214,7 @@ namespace SVM.Controllers
             return RedirectToAction("Subjects", new { examId });
         }
 
-        // ==================== MARKS ENTRY ====================
+        //  MARKS ENTRY 
         public async Task<IActionResult> MarksEntry(int examId, int? classId = null, int? sectionId = null)
         {
             var examResp = await _client.GetAsync($"Exams/{examId}");
@@ -238,7 +238,7 @@ namespace SVM.Controllers
             }
             var marksJson = await marksResp.Content.ReadAsStringAsync();
 
-            // For debugging – you can remove this line later
+
             ViewBag.DebugJson = marksJson;
 
             using JsonDocument doc = JsonDocument.Parse(marksJson);
@@ -265,7 +265,7 @@ namespace SVM.Controllers
                 }).ToList()
             }).ToList();
 
-            // Ensure students is not null (it will be a list, possibly empty)
+
             if (students == null || !students.Any())
             {
                 ViewBag.Error = "No students found for the selected class and section. Please check student enrollment.";
@@ -275,7 +275,7 @@ namespace SVM.Controllers
             ViewBag.Students = students.Select(s => (dynamic)s).ToList();
 
             ViewBag.Exam = exam;
-            
+
             return View();
         }
         [HttpPost]
@@ -302,7 +302,7 @@ namespace SVM.Controllers
             });
         }
 
-        // ==================== REPORT ====================
+        //  REPORT 
         public async Task<IActionResult> Report(int? sessionId, string medium, int? classId, int? sectionId, int? examId)
         {
             var sessions = await GetSessions();
@@ -340,7 +340,7 @@ namespace SVM.Controllers
             return View(new ExamReportVM());
         }
 
-        // ==================== AJAX HELPERS ====================
+        //  AJAX HELPERS 
         [HttpGet]
         public async Task<JsonResult> GetClassesByMedium(string medium, int sessionId) => Json(await GetClassesBySessionAndMedium(sessionId, medium));
         [HttpGet]
@@ -361,7 +361,7 @@ namespace SVM.Controllers
             return Json(sessions.Select(s => new { s.SessionId, s.SessionName, IsActive = s.IsActive == 1 }));
         }
 
-        // ==================== PRIVATE HELPERS ====================
+        //  PRIVATE HELPERS 
         private async Task LoadDropdowns() => ViewBag.Sessions = await GetSessions();
         private async Task<List<Session>> GetSessions()
         {

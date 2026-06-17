@@ -23,8 +23,8 @@ namespace SVM.Controllers
             _client.BaseAddress = new Uri("https://localhost:7191/api/");
         }
 
-        // ============================= INDEX (Report with filters) =============================
-     
+        //  INDEX 
+
         public async Task<IActionResult> Index(int? sessionId, string? medium, int? classId, int? sectionId, string? date)
         {
             // AUTO SELECT ACTIVE SESSION
@@ -44,7 +44,7 @@ namespace SVM.Controllers
                     var allSessions = JsonSerializer.Deserialize<List<Session>>(sessionData, options);
 
                     var activeSession = allSessions?
-                        .FirstOrDefault(x => x.IsActive==1);
+                        .FirstOrDefault(x => x.IsActive == 1);
 
                     if (activeSession != null)
                     {
@@ -103,7 +103,7 @@ namespace SVM.Controllers
             return View(new List<AttendanceReportItem>());
         }
 
-        // ============================= DETAILS =============================
+        //  DETAILS 
         public async Task<IActionResult> Details(int? id)
         {
             if (id == null) return NotFound();
@@ -119,7 +119,7 @@ namespace SVM.Controllers
             return View(attendance);
         }
 
-        // ============================= CREATE =============================
+        //  CREATE 
         public async Task<IActionResult> Create()
         {
             await LoadClassesDropdown();
@@ -149,7 +149,7 @@ namespace SVM.Controllers
             return View(studentAttendance);
         }
 
-        // ============================= EDIT =============================
+        //  EDIT 
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null) return NotFound();
@@ -193,7 +193,7 @@ namespace SVM.Controllers
             return View(studentAttendance);
         }
 
-        // ============================= DELETE =============================
+        //  DELETE 
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -221,7 +221,7 @@ namespace SVM.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // ============================= HELPER METHODS =============================
+        //  HELPER METHODS 
         private async Task LoadNavigationProperties(StudentAttendance attendance, JsonSerializerOptions options)
         {
             if (attendance.StudentId > 0)
@@ -459,7 +459,7 @@ namespace SVM.Controllers
                 TempData["Error"] = "No attendance data available to export.";
                 return RedirectToAction(nameof(Index), new { sessionId, medium, classId, sectionId, date });
             }
-            // ================= GET CLASS / SECTION NAME =================
+            //  GET CLASS / SECTION NAME 
 
             string className = "";
             string sectionName = "";
@@ -510,7 +510,7 @@ namespace SVM.Controllers
                 }
             }
             // Build CSV content
-            // ================= CSV =================
+            //  CSV 
 
             var csv = new StringBuilder();
 
@@ -557,7 +557,6 @@ namespace SVM.Controllers
             return File(fileBytes, "text/csv", fileName);
         }
 
-        // ============================= DTOs =============================
         public class ApiReportResponse
         {
             public List<ApiStudentItem> Students { get; set; }
@@ -572,7 +571,7 @@ namespace SVM.Controllers
             public int? RollNo { get; set; }
             public string Gender { get; set; }
             public string Status { get; set; }
-            public int AttendanceId { get; set; }   // ✅ Added
+            public int AttendanceId { get; set; }
         }
 
         public class ApiTotals
@@ -592,7 +591,7 @@ namespace SVM.Controllers
             public int RollNo { get; set; }
             public string Gender { get; set; } = "";
             public string Status { get; set; } = "";
-            public int AttendanceId { get; set; }   // ✅ Added
+            public int AttendanceId { get; set; }
         }
 
         public class AttendanceTotals
@@ -604,7 +603,7 @@ namespace SVM.Controllers
             public int BoysPresent { get; set; }
             public int BoysAbsent { get; set; }
         }
-        // ============================= MONTHLY REPORT (MONTH WISE) =============================
+        //  MONTHLY REPORT (MONTH WISE) 
         public async Task<IActionResult> MonthlyReport(int? sessionId, string? medium, int? classId, int? sectionId, int? year, int? month)
         {
             // AUTO SELECT ACTIVE SESSION
@@ -624,7 +623,7 @@ namespace SVM.Controllers
                     var allSessions = JsonSerializer.Deserialize<List<Session>>(sessionData, options);
 
                     var activeSession = allSessions?
-                        .FirstOrDefault(x => x.IsActive==1);
+                        .FirstOrDefault(x => x.IsActive == 1);
 
                     if (activeSession != null)
                     {
@@ -637,7 +636,7 @@ namespace SVM.Controllers
             int reportYear = year ?? DateTime.Now.Year;
             int reportMonth = month ?? DateTime.Now.Month;
 
-            // Load dropdowns (same as Index)
+            // Load dropdowns 
             await LoadSessionsDropdown(sessionId);
             await LoadMediumsDropdown();
 
@@ -709,7 +708,7 @@ namespace SVM.Controllers
             return View(new List<MonthlyReportStudent>());
         }
 
-        // ============================= EXPORT MONTHLY REPORT TO EXCEL =============================
+        //  EXPORT MONTHLY REPORT TO EXCEL 
         public async Task<IActionResult> ExportMonthlyToExcel(int? sessionId, string? medium, int? classId, int? sectionId, int year, int month)
         {
             string url = $"StudentAttendances/monthly-report?sessionId={sessionId}&classId={classId}&sectionId={sectionId}&year={year}&month={month}";
@@ -761,7 +760,7 @@ namespace SVM.Controllers
             return File(fileBytes, "text/csv", fileName);
         }
 
-        // ============================= RESPONSE CLASSES =============================
+        //  RESPONSE CLASSES 
         public class MonthlyReportResponse
         {
             public List<MonthlyReportStudent> Students { get; set; }

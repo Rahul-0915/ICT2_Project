@@ -205,23 +205,17 @@
 				$('#sessionFilter').val(selectedSessionId);
 			}
 
-			// Sabse pehle saare cards hide karo
 			document.querySelectorAll(".class-card").forEach(card => {
 				card.style.display = "none";
 			});
 
-			// Agar classId select hai (section add karne ke baad)
 			if (selectedClassId && selectedClassId !== '' && selectedClassId !== '0') {
-				// Sirf woh specific class dikhao
 				showSpecificClass(selectedClassId);
 			}
-			// Agar filters select hain
 			else if (selectedMedium !== '' || selectedClassName !== '' || selectedSessionId !== '') {
-				// Auto search karo
 				filterClasses();
 			}
 			else {
-				// Koi filter nahi, sirf message dikhao
 				let noDataMsg = document.getElementById("noDataMessage");
 				noDataMsg.style.display = "block";
 				noDataMsg.style.color = "#6b7280";
@@ -229,21 +223,17 @@
 			}
 		});
 
-		// Sirf specific class dikhane ka function
 		function showSpecificClass(classId) {
 			let cards = document.querySelectorAll(".class-card");
 			let visible = 0;
 
 			cards.forEach(card => {
-				// Get class ID from data attribute
 				let cardClassId = card.getAttribute('data-classid');
 
-				// Agar card ka ID selected ID se match kare
 				if (cardClassId == classId) {
 					card.style.display = "block";
 					visible++;
 
-					// Card ko highlight karo
 					card.style.transition = 'all 0.3s ease';
 					card.style.boxShadow = '0 0 0 3px rgba(40, 167, 69, 0.5)';
 					card.style.border = '2px solid #28a745';
@@ -252,14 +242,13 @@
 						card.style.border = '';
 					}, 3000);
 
-					// Card tak scroll karo
 					card.scrollIntoView({ behavior: 'smooth', block: 'center' });
 				} else {
 					card.style.display = "none";
 				}
 			});
 
-			// Message update karo
+			
 			let noDataMsg = document.getElementById("noDataMessage");
 			if (visible === 0) {
 				noDataMsg.style.display = "block";
@@ -270,7 +259,6 @@
 			}
 		}
 
-		// Search button ka function
 		function filterClasses() {
 			let sessionValue = document.getElementById("sessionFilter").value;
 			let searchValue = document.getElementById("searchInput").value.toLowerCase().trim();
@@ -312,7 +300,6 @@
 			document.getElementById("searchInput").value = "";
 			document.getElementById("mediumFilter").value = "all";
 
-			// Saare cards hide karo
 			document.querySelectorAll(".class-card").forEach(card => {
 				card.style.display = "none";
 			});

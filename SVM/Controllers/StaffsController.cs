@@ -247,8 +247,7 @@ namespace SVM.Controllers
         {
             ModelState.Remove("StafPhoto");
 
-            // ========== VALIDATION START ==========
-            // Manual negative value guards
+            //  VALIDATION START 
             if (updatedStaff.ExperienceYears < 0)
             {
                 ModelState.AddModelError("ExperienceYears", "Experience years cannot be negative.");
@@ -258,7 +257,7 @@ namespace SVM.Controllers
                 ModelState.AddModelError("Salary", "Salary cannot be negative.");
             }
 
-            // Check ModelState (includes Range attributes from Model)
+            // Check ModelState 
             if (!ModelState.IsValid)
             {
                 // Reload existing staff to preserve the photo in the view
@@ -289,7 +288,7 @@ namespace SVM.Controllers
                 ViewBag.AdminName = GetCurrentUserName();
                 return View(updatedStaff);
             }
-            // ========== VALIDATION END ==========
+            //  VALIDATION END 
 
             if (id != updatedStaff.StaffId) return NotFound();
 

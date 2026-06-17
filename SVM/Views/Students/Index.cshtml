@@ -398,7 +398,7 @@
             $("#tableBody").html("");
         });
 
-        // ========== MEDIUM CHANGE - LOAD CLASSES (NO SEARCH) ==========
+        //  MEDIUM CHANGE - LOAD CLASSES 
         $("#mediumFilter").change(function () {
             let medium = $(this).val();
             let sessionId = $("#sessionFilter").val();
@@ -438,7 +438,7 @@
             }
         });
 
-        // ========== CLASS CHANGE - LOAD SECTIONS (NO SEARCH) ==========
+        //  CLASS CHANGE - LOAD SECTIONS
         $("#classFilter").change(function () {
             let classId = $(this).val();
             let sessionId = $("#sessionFilter").val();
@@ -472,7 +472,7 @@
             }
         });
 
-        // ========== PRE-SELECT FILTERS FROM ViewBag (only when coming back from Edit/Delete/Details) ==========
+        //  PRE-SELECT FILTERS FROM ViewBag 
         var selectedSessionId = '@ViewBag.SelectedSessionId';
         var selectedMedium = '@ViewBag.SelectedMedium';
         var selectedClassId = '@ViewBag.SelectedClassId';
@@ -541,7 +541,7 @@
         }
     });
 
-    // ========== SEARCH STUDENTS FUNCTION (Only called on Search button click) ==========
+    //  SEARCH STUDENTS FUNCTION
     function searchStudents() {
         let session = $("#sessionFilter").val();
         let medium = $("#mediumFilter").val();
@@ -589,7 +589,7 @@
         }
     }
 
-    // ========== FILTER CURRENT DATA (Search within results) ==========
+    //  FILTER CURRENT DATA 
     function filterCurrentData() {
         let value = $("#studentSearch").val().toLowerCase();
         let session = $("#sessionFilter").val();
@@ -622,7 +622,7 @@
         buildTable();
     }
 
-    // ========== TOGGLE VIEW (Card/Table) ==========
+    //  TOGGLE VIEW (Card/Table) 
     function toggleView() {
         tableMode = !tableMode;
         if (tableMode) {
@@ -636,7 +636,7 @@
         }
     }
 
-    // ========== BUILD TABLE FROM VISIBLE CARDS ==========
+    //  BUILD TABLE FROM VISIBLE CARDS 
     function buildTable() {
         let html = "";
         $(".student-card").each(function () {
@@ -671,7 +671,7 @@
         $("#tableBody").html(html);
     }
 
-    // ========== DOWNLOAD PDF ==========
+    //  DOWNLOAD PDF 
     async function downloadPDF() {
         await document.fonts.ready;
         let cards = [...document.querySelectorAll(".student-card")].filter(x => x.style.display != "none");
@@ -764,7 +764,7 @@
         }).from(printArea).save();
     }
 
-    // ========== DOWNLOAD EXCEL ==========
+    //  DOWNLOAD EXCEL 
     function downloadExcel() {
         let rows = [];
         let mediumText = $("#mediumFilter option:selected").val() || "";
@@ -799,7 +799,7 @@
         XLSX.writeFile(wb, "Students_List.xlsx");
     }
 
-    // ========== RESET FILTERS ==========
+    //  RESET FILTERS 
     function resetFilters() {
         location.reload();
     }

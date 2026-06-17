@@ -1,6 +1,4 @@
-﻿/* ==========================
-   PAGE
-========================== */
+﻿/*  PAGE */
 
 .notice-container {
     
@@ -25,9 +23,7 @@
     font-size: 14px;
     color: #64748b;
 }
-/* ==========================
-   NOTICE CARD
-========================== */
+/* NOTICE CARD */
 
 .notice-card {
     background: #fff;
@@ -49,9 +45,7 @@
     min-height: 130px;
 }
 
-/* ==========================
-   DATE BOX
-========================== */
+/* DATE BOX */
 
 .notice-date {
     width: 90px;
@@ -83,9 +77,7 @@
     color: #64748b;
 }
 
-/* ==========================
-   CONTENT
-========================== */
+/* CONTENT */
 
 .notice-content {
     text-align:left;
@@ -124,9 +116,7 @@
     font-size: 13px;
 }
 
-/* ==========================
-   FILE SECTION
-========================== */
+/*  FILE SECTION */
 
 .notice-preview {
     width: 130px;
@@ -164,9 +154,7 @@
     font-weight: 600;
 }
 
-/* ==========================
-   VIEW MORE BUTTON
-========================== */
+/*  VIEW MORE BUTTON */
 
 .more-notices {
     text-align: center;
@@ -187,9 +175,7 @@
         background: #1d4ed8;
     }
 
-/* ==========================
-   LOADING
-========================== */
+/* LOADING */
 
 .loading {
     text-align: center;
@@ -197,9 +183,7 @@
     color: #64748b;
 }
 
-/* ==========================
-   MODAL
-========================== */
+/* MODAL */
 
 .img-modal {
     display: none;
@@ -225,9 +209,7 @@
     cursor: pointer;
 }
 
-/* ==========================
-   MOBILE
-========================== */
+/* MOBILE */
 
 @media(max-width:768px) {
 

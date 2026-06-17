@@ -66,7 +66,6 @@ namespace SVM.Controllers
             return View(payments);
         }
 
-        // ✅ SIMPLE GET METHOD - Direct download (like ID Cards page)
         [HttpGet]
         public async Task<IActionResult> ExportToExcel(int sessionId, string medium, int? classId, int? sectionId,
             string searchTransactionId, string paymentMode, DateTime? fromDate, DateTime? toDate)
@@ -209,7 +208,7 @@ namespace SVM.Controllers
             }
         }
 
-        // ========== HELPER METHODS ==========
+        //  HELPER METHODS 
         private async Task<List<Session>> GetSessions()
         {
             var res = await _client.GetAsync("Sessions");
@@ -251,7 +250,7 @@ namespace SVM.Controllers
         {
             try
             {
-                // Build the URL with all parameters - SINGLE API CALL!
+                // Build the URL with all parameters 
                 string url = $"FeePayments/FilteredPayments?sessionId={sessionId}";
 
                 if (!string.IsNullOrEmpty(medium))
@@ -293,7 +292,6 @@ namespace SVM.Controllers
             var payments = await GetAllPayments(sessionId, medium ?? "", classId, sectionId,
                 searchTransactionId, paymentMode, fromDate, toDate);
 
-            // Build the HTML directly
             if (payments == null || !payments.Any())
             {
                 return Content(@"
@@ -436,7 +434,6 @@ namespace SVM.Controllers
         }
     }
 
-    // DTO Classes
     public class FeePaymentReportVM
     {
         public int StudentId { get; set; }

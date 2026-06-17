@@ -304,7 +304,7 @@ namespace SVM.Controllers
         {
             if (id != classData.ClassId) return NotFound();
 
-            // Duplicate check with SessionId (excluding current class)
+            // Duplicate check with SessionId 
             if (await IsClassDuplicate(classData.ClassName, classData.Medium, classData.SessionId, id))
             {
                 ModelState.AddModelError("ClassName", $"Class '{classData.ClassName}' with Medium '{classData.Medium}' already exists in this session!");
@@ -319,13 +319,13 @@ namespace SVM.Controllers
                 var response = await _client.PutAsJsonAsync($"Classes/{id}", classData);
                 if (response.IsSuccessStatusCode)
                 {
-                    // ✅ IMPORTANT: Pass classId also in redirect
+                    // Pass classId also in redirect
                     return RedirectToAction(nameof(Index), new
                     {
                         medium = classData.Medium,
                         className = classData.ClassName,
                         sessionId = classData.SessionId,
-                        classId = id  // ← YEH ADD KARO
+                        classId = id 
                     });
                 }
                 ModelState.AddModelError("", "Update failed!");
@@ -408,7 +408,6 @@ namespace SVM.Controllers
 
         private async Task<bool> IsClassDuplicate(string className, string medium, int? sessionId, int? excludeId = null)
         {
-            // If no session is selected, duplicate doesn't make sense
             if (sessionId == null) return false;
 
             var response = await _client.GetAsync("Classes");

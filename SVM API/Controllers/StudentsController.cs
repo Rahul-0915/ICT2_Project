@@ -280,7 +280,7 @@ namespace SVM_API.Controllers
                 }
             }).ToList();
 
-            // ✅ Set JsonSerializerOptions to handle cycles
+            //  Set JsonSerializerOptions to handle cycles
             var options = new JsonSerializerOptions
             {
                 ReferenceHandler = System.Text.Json.Serialization.ReferenceHandler.IgnoreCycles,
@@ -303,7 +303,6 @@ namespace SVM_API.Controllers
         {
             IQueryable<Student> query = _context.Students;
 
-            // Sirf tabhi session filter lagao jab checkSession = true ho
             if (checkSession)
             {
                 var activeSession = await _context.Sessions
@@ -315,7 +314,6 @@ namespace SVM_API.Controllers
                 }
                 else
                 {
-                    // Agar active session nahi hai toh koi student nahi milega
                     return NotFound(new { error = "No active session found" });
                 }
             }
@@ -364,7 +362,7 @@ namespace SVM_API.Controllers
                 student.AdmissionNo
             });
         }
-        // DTO for response
+        //  for response
         public class StudentWithDetails
         {
             public Student Student { get; set; }

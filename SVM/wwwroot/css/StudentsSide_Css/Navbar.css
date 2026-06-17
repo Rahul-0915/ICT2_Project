@@ -1,7 +1,4 @@
-﻿/* =========================
-   SVM STUDENT PORTAL
-   CLASSIC PREMIUM DESIGN
-========================= */
+﻿/* SVM STUDENT PORTAL CLASSIC PREMIUM DESIGN */
 
 :root {
     --primary: #163b65;
@@ -25,9 +22,7 @@ body {
     min-height: 100vh;
 }
 
-/* =========================
-   HEADER
-========================= */
+/*  HEADER */
 
 .header {
     width: 100%;
@@ -41,9 +36,7 @@ body {
     box-shadow: 0 4px 18px rgba(0,0,0,.12);
 }
 
-/* =========================
-   LOGO
-========================= */
+/*  LOGO */
 
 .logo {
     display: flex;
@@ -75,9 +68,7 @@ body {
     color: rgba(255,255,255,.85);
 }
 
-/* =========================
-   STUDENT MENU
-========================= */
+/*  STUDENT MENU */
 
 .student-box {
     position: relative;
@@ -107,14 +98,9 @@ body {
         font-size: 14px;
     }
 
-/* =========================
-   DROPDOWN
-========================= */
+/*  DROPDOWN */
 
-/* =========================
-   SVM STUDENT PORTAL
-   CLASSIC PREMIUM DESIGN
-========================= */
+/* SVM STUDENT PORTAL CLASSIC PREMIUM DESIGN */
 
 :root {
     --primary: #163b65;
@@ -138,9 +124,7 @@ body {
     min-height: 100vh;
 }
 
-/* =========================
-   HEADER
-========================= */
+/*  HEADER */
 
 .header {
     width: 100%;
@@ -154,9 +138,7 @@ body {
     box-shadow: 0 4px 18px rgba(0,0,0,.12);
 }
 
-/* =========================
-   LOGO
-========================= */
+/*  LOGO */
 
 .logo {
     display: flex;
@@ -188,9 +170,7 @@ body {
     color: rgba(255,255,255,.85);
 }
 
-/* =========================
-   STUDENT MENU
-========================= */
+/* STUDENT MENU */
 
 .student-box {
     position: relative;
@@ -220,9 +200,7 @@ body {
         font-size: 14px;
     }
 
-/* =========================
-   DROPDOWN
-========================= */
+/* DROPDOWN */
 
 .dropdown {
     position: absolute;
@@ -232,8 +210,7 @@ body {
     background: #fff;
     border-radius: 14px;
     display: none;
-    overflow: visible; /* hidden hata do */
-
+    overflow: visible; 
     box-shadow: 0 15px 35px rgba(0,0,0,.12);
     border: 1px solid #edf2f7;
     z-index: 99999;
@@ -267,17 +244,13 @@ body {
         border-radius:12px;
     }
 
-/* =========================
-   CONTENT
-========================= */
+/*  CONTENT */
 
 .content {
     padding: 35px;
 }
 
-/* =========================
-   WELCOME CARD
-========================= */
+/* WELCOME CARD */
 
 .welcome-card {
     background: white;
@@ -299,9 +272,7 @@ body {
         line-height: 1.8;
     }
 
-/* =========================
-   RESPONSIVE
-========================= */
+/* RESPONSIVE */
 
 @media (max-width: 768px) {
 
@@ -349,9 +320,7 @@ body {
     }
         
 }
-/* =========================
-   RESPONSIVE
-========================= */
+/* RESPONSIVE */
 
 @media (max-width: 768px) {
 
@@ -476,9 +445,7 @@ body {
 }
 
 
-/* ======================
-   NAVBAR
-====================== */
+/*  NAVBAR */
 
 .main-navbar {
     background: #fff;
@@ -553,9 +520,7 @@ body {
         width: calc(100% - 36px);
     }
 
-/* ======================
-   SUBMENU
-====================== */
+/* SUBMENU */
 
 .submenu {
     position: absolute;
@@ -590,9 +555,7 @@ body {
         color: #163b65;
     }
 
-/* ======================
-   MOBILE
-====================== */
+/*MOBILE */
 
 @media (max-width:768px) {
 
@@ -672,17 +635,13 @@ body {
         padding: 12px 20px 12px 45px;
     }
 }
-/* =========================
-   CONTENT
-========================= */
+/* CONTENT */
 
 .content {
     padding: 35px;
 }
 
-/* =========================
-   WELCOME CARD
-========================= */
+/*  WELCOME CARD */
 
 .welcome-card {
     background: white;
@@ -704,9 +663,7 @@ body {
         line-height: 1.8;
     }
 
-/* =========================
-   RESPONSIVE
-========================= */
+/*  RESPONSIVE */
 
 @media (max-width: 768px) {
 
@@ -754,9 +711,7 @@ body {
     }
    
 }
-/* =========================
-   RESPONSIVE
-========================= */
+/* RESPONSIVE */
 
 @media (max-width: 768px) {
 
@@ -881,9 +836,7 @@ body {
 }
 
 
-/* ======================
-   NAVBAR
-====================== */
+/*  NAVBAR */
 
 .main-navbar {
     background: #fff;
@@ -936,12 +889,7 @@ body {
     transition: .3s;
 }
 
-/* ======================
-   SUBMENU
-====================== */
-/* ======================
-   SUBMENU
-====================== */
+/* SUBMENU */
 
 .submenu {
     position: absolute;
@@ -979,9 +927,7 @@ body {
         padding-left: 22px;
     }
 
-/* ======================
-   MOBILE
-====================== */
+/*  MOBILE */
 
 @media (max-width:768px) {
 

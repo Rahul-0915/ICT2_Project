@@ -1,6 +1,4 @@
-﻿/* =========================
-   ADMISSION INQUIRY PAGE
-========================= */
+﻿/*   ADMISSION INQUIRY PAGE */
 
 .inquiry-page {
     width: 100%;
@@ -22,9 +20,7 @@
     align-items: center;
 }
 
-/* =========================
-   LEFT SIDE
-========================= */
+/*  LEFT SIDE */
 
 .inquiry-left {
     padding-right: 6px;
@@ -95,9 +91,7 @@
         font-weight: 600;
     }
 
-/* =========================
-   FORM BOX
-========================= */
+/*  FORM BOX */
 
 .inquiry-form-box {
     background: white;
@@ -208,9 +202,7 @@
     border: 1px solid #bbf7d0;
 }
 
-/* =========================
-   MOBILE
-========================= */
+/* MOBILE */
 
 @media(max-width:768px) {
 

@@ -25,7 +25,7 @@ namespace SVM.Controllers
         {
             var sessions = await GetSessions();
 
-            // ✅ Active session auto select
+            //  Active session auto select
             if (sessionId == null)
             {
                 var activeSession = sessions.FirstOrDefault(s => s.IsActive == 1);
@@ -269,7 +269,7 @@ namespace SVM.Controllers
             });
         }
 
-        // -------------------------- EXPORT METHODS --------------------------
+        //  EXPORT METHODS 
         public async Task<IActionResult> ExportExcel(int sessionId, int classId, int sectionId, string medium)
         {
             var timetables = await GetTimetables(sessionId, classId, sectionId);
@@ -315,7 +315,7 @@ namespace SVM.Controllers
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var allMappings = JsonSerializer.Deserialize<List<TeacherSubject>>(data, options) ?? new List<TeacherSubject>();
 
-            // ✅ Filter by subject, class, and session
+            //  Filter by subject, class, and session
             var filteredMappings = allMappings
                 .Where(m => m.SubjectId == subjectId && m.ClassId == classId && m.SessionId == sessionId)
                 .ToList();
@@ -339,7 +339,7 @@ namespace SVM.Controllers
             return teachers;
         }
 
-        // -------------------------- HELPER METHODS --------------------------
+        //  HELPER METHODS 
         private string GenerateHtmlTable(Dictionary<string, Dictionary<int, Timetable>> grid,
             string sessionName, string className, string sectionName, string medium)
         {
@@ -542,7 +542,7 @@ Principal Sign: ____________________
             });
         }
 
-        // -------------------------- NAME FETCHING HELPERS --------------------------
+        //  NAME FETCHING HELPERS 
         private async Task<string> GetSessionName(int sessionId)
         {
             var sessions = await GetSessions();
@@ -570,7 +570,7 @@ Principal Sign: ____________________
             return section?.SectionName ?? sectionId.ToString();
         }
 
-        // -------------------------- API HELPER METHODS --------------------------
+        //  API HELPER METHODS 
         private async Task<List<Session>> GetSessions()
         {
             var response = await _client.GetAsync("Sessions");
@@ -650,9 +650,9 @@ Principal Sign: ____________________
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var allClasses = JsonSerializer.Deserialize<List<Class>>(data, options) ?? new List<Class>();
 
-            // ✅ Filter by BOTH medium AND sessionId (like Student reference)
+            // Filter by BOTH medium AND sessionId (like Student reference)
             var filtered = allClasses.Where(c => c.Medium == medium && c.SessionId == sessionId)
-                                     .Select(c => new { value = c.ClassId, text = c.ClassName })  // ✅ Only Class Name, not "1 - Gujarati"
+                                     .Select(c => new { value = c.ClassId, text = c.ClassName })
                                      .ToList();
             return Json(filtered);
         }
@@ -678,7 +678,7 @@ Principal Sign: ____________________
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var allMappings = JsonSerializer.Deserialize<List<TeacherSubject>>(data, options) ?? new List<TeacherSubject>();
 
-            // ✅ Filter by session and class (section is often not in TeacherSubject, so ignore or add if your schema has it)
+            //  Filter by session and class (section is often not in TeacherSubject, so ignore or add if your schema has it)
             var filteredMappings = allMappings
                 .Where(m => m.SessionId == sessionId && m.ClassId == classId)
                 .ToList();
@@ -701,7 +701,7 @@ Principal Sign: ____________________
             return teacherMapping;
         }
 
-      
+
         private async Task<Staff> GetStaffById(int staffId)
         {
             var response = await _client.GetAsync($"Staffs/{staffId}");

@@ -28,9 +28,8 @@ namespace SVM.Controllers
             context.HttpContext.Response.Headers["Expires"] =
                 "0";
 
-            // =========================
             // LOGIN PAGE
-            // =========================
+           
 
             if (controller == "Account" &&
                 action == "Login")
@@ -63,9 +62,7 @@ namespace SVM.Controllers
                 return;
             }
 
-            // =========================
             // NOT LOGGED IN
-            // =========================
 
             if (string.IsNullOrEmpty(userId))
             {
@@ -78,9 +75,7 @@ namespace SVM.Controllers
                 return;
             }
 
-            // =========================
             // STUDENT PANEL PROTECTION
-            // =========================
 
             if (controller == "StudentPanel" &&
                 action == "Student")

@@ -4,10 +4,7 @@
     overflow: auto;
 }
 
-
 /* LOG ANIMATION */
-/* 🔥 PRELOADER */
-/* 🔥 PRELOADER */
 #preloader {
     position: fixed;
     width: 100%;
@@ -28,7 +25,7 @@
     animation: fadeIn 1.2s ease-in-out;
 }
 
-/* 🔥 COIN FLIP LOGO */
+/* COIN FLIP LOGO */
 .coin {
     width: 250px;
     height: 250px;
@@ -61,7 +58,7 @@
     transform: rotateY(180deg);
 }
 
-/* 🔥 ANIMATION */
+/* ANIMATION */
 @keyframes flip {
     0% {
         transform: rotateY(0deg);
@@ -90,4 +87,3 @@
         opacity: 1;
     }
 }
-

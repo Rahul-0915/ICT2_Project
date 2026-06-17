@@ -10,7 +10,6 @@
 
         public int TotalMarks { get; set; }
 
-        // New Column
         public int? PassingMarks { get; set; }
 
         // Navigation Properties

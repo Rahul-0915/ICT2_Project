@@ -55,43 +55,43 @@ namespace SVM.Controllers
         //    return View(subjectList);
         //}
 
-  public async Task<IActionResult> Index()
-{
-    List<Subject> subjectList = new List<Subject>();
+        public async Task<IActionResult> Index()
+        {
+            List<Subject> subjectList = new List<Subject>();
 
-    var option = new JsonSerializerOptions
-    {
-        PropertyNameCaseInsensitive = true
-    };
+            var option = new JsonSerializerOptions
+            {
+                PropertyNameCaseInsensitive = true
+            };
 
-    // SUBJECTS
-    var response = await _client.GetAsync("Subjects");
+            // SUBJECTS
+            var response = await _client.GetAsync("Subjects");
 
-    if (response.IsSuccessStatusCode)
-    {
-        var data = await response.Content.ReadAsStringAsync();
+            if (response.IsSuccessStatusCode)
+            {
+                var data = await response.Content.ReadAsStringAsync();
 
-        subjectList = JsonSerializer.Deserialize<List<Subject>>(data, option);
-    }
+                subjectList = JsonSerializer.Deserialize<List<Subject>>(data, option);
+            }
 
-    // SESSIONS
-    var sessionResponse = await _client.GetAsync("Sessions");
+            // SESSIONS
+            var sessionResponse = await _client.GetAsync("Sessions");
 
-    if (sessionResponse.IsSuccessStatusCode)
-    {
-        var sessionData = await sessionResponse.Content.ReadAsStringAsync();
+            if (sessionResponse.IsSuccessStatusCode)
+            {
+                var sessionData = await sessionResponse.Content.ReadAsStringAsync();
 
-        var sessions = JsonSerializer.Deserialize<List<Session>>(sessionData, option);
+                var sessions = JsonSerializer.Deserialize<List<Session>>(sessionData, option);
 
-        ViewBag.Sessions = sessions;
+                ViewBag.Sessions = sessions;
 
                 // ACTIVE SESSION AUTO SELECT
                 var activeSession =
         sessions.FirstOrDefault(x => x.IsActive == 1);
 
                 ViewBag.ActiveSessionId = activeSession?.SessionId;
-    }
-     var classesResponse = await _client.GetAsync("Classes");
+            }
+            var classesResponse = await _client.GetAsync("Classes");
 
             if (classesResponse.IsSuccessStatusCode)
             {
@@ -107,7 +107,7 @@ namespace SVM.Controllers
             }
 
             return View(subjectList);
-}
+        }
 
         // GET: Subjects/Details/5
         public async Task<IActionResult> Details(int? id)
@@ -172,7 +172,6 @@ namespace SVM.Controllers
             return View(subject);
         }
 
-        // GET: Subjects/Edit/5
         // GET: Subjects/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {

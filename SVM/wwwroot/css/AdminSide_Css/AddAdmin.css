@@ -1,8 +1,4 @@
-﻿/* ============================================
-   COMPACT & CLEAN FORM CSS
-   Perfect at 100% zoom - No oversized elements
-   Works on every browser, no AI
-   ============================================ */
+﻿
 
 /* ----- RESET ----- */
 * {
@@ -143,7 +139,7 @@ body {
         box-shadow: 0 0 0 2px rgba(59,130,246,0.15);
     }
 
-/* select dropdown - clean */
+/* select dropdown  */
 select.form-control {
     appearance: none;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%234b5563' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
@@ -185,7 +181,7 @@ input[type="file"].form-control {
         font-weight: 600;
     }
 
-    /* simple info icon fallback - no FA required */
+    /* simple info icon fallback  */
     .alert-info i.fa-info-circle::before {
         content: "ⓘ";
         font-style: normal;
@@ -194,7 +190,7 @@ input[type="file"].form-control {
         font-size: 11px;
     }
 
-/* ----- BUTTONS - smaller, rounded, not bulky ----- */
+/* ----- BUTTONS - smaller, rounded----- */
 .btn {
     width:40%;
     margin:auto;
@@ -242,7 +238,7 @@ input[type="file"].form-control {
     justify-content: space-between;
 }
 
-/* ----- IMAGE PREVIEW - compact, controlled size ----- */
+/* ----- IMAGE PREVIEW ----- */
 .img-thumbnail {
     padding: 3px;
     background-color: #f9fafb;
@@ -268,7 +264,7 @@ input[type="file"].form-control {
     margin-top: 6px;
 }
 
-/* ----- RESPONSIVE - stays compact on any screen ----- */
+/* ----- RESPONSIVE ----- */
 @media (max-width: 640px) {
     body {
         padding: 8px;
@@ -372,7 +368,7 @@ input[type="hidden"] {
     -webkit-font-smoothing: antialiased;
 }
 
-/* Preview container - subtle */
+/* Preview container  */
 #imagePreviewContainer {
     display: none;
 }

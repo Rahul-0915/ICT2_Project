@@ -16,7 +16,7 @@ h1 {
     text-align: center;
 }
 
-/* Create Button - Perfect Centered Plus */
+/* Create Button */
 p {
     text-align: right;
     margin-bottom: 20px;
@@ -217,7 +217,6 @@ p {
         min-width: 45px;
     }
 }
-/* Add these styles to your existing Index.css */
 
 /* Filter Container */
 .filter-container {
@@ -226,7 +225,6 @@ p {
     justify-content: flex-end;
     gap: 12px;
     margin-bottom: 20px;
-    
     padding: 10px 15px;
     background: white;
     border-radius: 12px;
@@ -243,7 +241,6 @@ p {
 .filter-dropdown {
     padding: 8px 15px;
     font-size: 14px;
-    
     font-weight: 500;
     border: 1px solid #ddd;
     border-radius: 8px;

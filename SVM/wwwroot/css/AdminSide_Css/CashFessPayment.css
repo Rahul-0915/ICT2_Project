@@ -1,6 +1,4 @@
-﻿/* ========================================
-   FEES PAYMENT PAGE - PROFESSIONAL CLASSIC DESIGN
-   ======================================== */
+﻿/*  FEES PAYMENT PAGE - PROFESSIONAL CLASSIC DESIGN */
 
 * {
     margin: 0;
@@ -17,7 +15,7 @@ body {
     font-family: "Segoe UI", sans-serif;
 }
 
-/* ========== FILTER BAR ========== */
+/* FILTER BAR */
 .filter-bar {
     background: #ffffff;
     border-radius: 16px;
@@ -111,7 +109,7 @@ body {
         background: #059669;
         transform: translateY(-1px);
     }
-/* ========== RESULT TITLE ========== */
+/*  RESULT TITLE  */
 .result-title {
     background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
     color: white;
@@ -123,7 +121,7 @@ body {
     display: none;
 }
 
-/* ========== SEARCH BAR ========== */
+/*  SEARCH BAR  */
 .search-section {
     margin-bottom: 20px;
 }
@@ -205,7 +203,7 @@ body {
     flex-wrap: wrap;
 }
 
-/* ========== TABLE ========== */
+/*  TABLE  */
 .table-wrapper {
     background: white;
     border-radius: 16px;
@@ -341,7 +339,7 @@ body {
     border: 1px solid #e5e7eb;
 }
 
-/* ========== MODAL - FIXED SIZE (NOT TOO BIG) ========== */
+/*  MODAL - FIXED SIZE S */
 .payment-modal {
     margin-top:-25px;
     display: none;

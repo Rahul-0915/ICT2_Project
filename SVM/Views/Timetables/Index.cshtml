@@ -166,7 +166,7 @@
         if (sessionId) $('#sessionSelect').val(sessionId);
         if (medium) $('#mediumSelect').val(medium);
         
-        // ✅ Load classes only if both session AND medium are present (like Student reference)
+        // Load classes only if both session AND medium are present (like Student reference)
         if (sessionId && medium) {
             loadClasses(medium, sessionId, classId);
         }
@@ -176,7 +176,7 @@
         let sessionId = $(this).val();
         let medium = $('#mediumSelect').val();
         
-        // ✅ Reset class and section when session changes
+        //  Reset class and section when session changes
         $('#classSelect').empty().append('<option value="">-- Select Class --</option>');
         $('#sectionSelect').empty().append('<option value="">-- Select Section --</option>');
         
@@ -189,7 +189,7 @@
         let medium = $(this).val();
         let sessionId = $('#sessionSelect').val();
         
-        // ✅ Reset class and section when medium changes
+        //  Reset class and section when medium changes
         $('#classSelect').empty().append('<option value="">-- Select Class --</option>');
         $('#sectionSelect').empty().append('<option value="">-- Select Section --</option>');
         

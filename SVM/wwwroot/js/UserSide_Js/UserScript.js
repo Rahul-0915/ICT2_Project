@@ -8,9 +8,7 @@ function toggleMenu() {
     }
 }
 
-/* =========================
-   PRELOADER + SLIDER
-========================= */
+/* PRELOADER + SLIDER */
 
 window.onload = function () {
 
@@ -63,9 +61,7 @@ window.onload = function () {
     showSlides();
 };
 
-/* =========================
-   EVENT IMAGE POPUP
-========================= */
+/*  EVENT IMAGE POPUP */
 
 window.openEventLightbox = function (src) {
 

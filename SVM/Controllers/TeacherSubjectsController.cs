@@ -23,7 +23,7 @@ namespace SVM.Controllers
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             List<TeacherSubject> teacherSubjects = new();
 
-            // ================= 1. SESSIONS (dropdown ke liye) =================
+            //  1. SESSIONS 
             var sessRes = await _client.GetAsync("Sessions");
             List<Session> sessions = new();
             int? activeSessionId = null;
@@ -33,14 +33,13 @@ namespace SVM.Controllers
                 sessions = JsonSerializer.Deserialize<List<Session>>(sessData, options) ?? new List<Session>();
                 activeSessionId = sessions.FirstOrDefault(x => x.IsActive == 1)?.SessionId;
             }
-            // Dropdown ki selected value: agar URL se sessionId aaya hai to woh, warna active session
             int? selectedSessionId = sessionId ?? activeSessionId;
             ViewBag.SessionId = new SelectList(sessions, "SessionId", "SessionName", selectedSessionId);
 
-            // ================= 2. MEDIUM =================
+            //  2. MEDIUM 
             ViewBag.Mediums = new List<string> { "Gujarati", "English" };
 
-            // ================= 3. BULK LOAD: CLASSES =================
+            //  3. BULK LOAD: CLASSES 
             var classRes = await _client.GetAsync("Classes");
             List<Class> allClasses = new();
             if (classRes.IsSuccessStatusCode)
@@ -50,7 +49,7 @@ namespace SVM.Controllers
             }
             var classDict = allClasses.ToDictionary(c => c.ClassId);
 
-            // ================= 4. BULK LOAD: STAFFS =================
+            //  4. BULK LOAD: STAFFS 
             var staffRes = await _client.GetAsync("Staffs");
             List<Staff> allStaff = new();
             if (staffRes.IsSuccessStatusCode)
@@ -60,7 +59,7 @@ namespace SVM.Controllers
             }
             var staffDict = allStaff.ToDictionary(s => s.StaffId);
 
-            // ================= 5. BULK LOAD: SUBJECTS =================
+            //  5. BULK LOAD: SUBJECTS 
             var subRes = await _client.GetAsync("Subjects");
             List<Subject> allSubjects = new();
             if (subRes.IsSuccessStatusCode)
@@ -70,10 +69,10 @@ namespace SVM.Controllers
             }
             var subjectDict = allSubjects.ToDictionary(s => s.SubjectId);
 
-            // ================= 6. SESSIONS DICTIONARY =================
+            //  6. SESSIONS DICTIONARY 
             var sessionDict = sessions.ToDictionary(s => s.SessionId);
 
-            // ================= 7. CHECK FILTER =================
+            //  7. CHECK FILTER 
             bool hasFilter = sessionId.HasValue || !string.IsNullOrEmpty(medium) || classId.HasValue;
 
             if (hasFilter)
@@ -120,7 +119,7 @@ namespace SVM.Controllers
                 Console.WriteLine("No filters provided – returning empty list.");
             }
 
-            // ================= 8. CLASS DROPDOWN (cascade ke liye) =================
+            //  8. CLASS DROPDOWN  
             List<Class> filteredForDropdown = allClasses;
             if (selectedSessionId.HasValue) // Use selected sessionId for dropdown filtering
                 filteredForDropdown = filteredForDropdown.Where(c => c.SessionId == selectedSessionId).ToList();
@@ -262,7 +261,7 @@ namespace SVM.Controllers
             var teacherSubject =
                 JsonSerializer.Deserialize<TeacherSubject>(data, options);
 
-            // ================= LOAD CLASS =================
+            //  LOAD CLASS 
 
             if (teacherSubject.ClassId.HasValue)
             {
@@ -279,7 +278,7 @@ namespace SVM.Controllers
                 }
             }
 
-            // ================= STAFF =================
+            //  STAFF 
 
             var staffRes = await _client.GetAsync("Staffs");
 
@@ -306,7 +305,7 @@ namespace SVM.Controllers
                         teacherSubject.StaffId);
             }
 
-            // ================= SESSION =================
+            //  SESSION 
 
             var sessRes =
                 await _client.GetAsync("Sessions");
@@ -327,7 +326,7 @@ namespace SVM.Controllers
                         teacherSubject.SessionId);
             }
 
-            // ================= CLASS =================
+            //  CLASS 
 
             var classResponse =
                 await _client.GetAsync("Classes");
@@ -355,7 +354,7 @@ namespace SVM.Controllers
                         teacherSubject.ClassId);
             }
 
-            // ================= SUBJECT =================
+            //  SUBJECT 
 
             var subRes =
                 await _client.GetAsync(
@@ -377,7 +376,7 @@ namespace SVM.Controllers
                         teacherSubject.SubjectId);
             }
 
-            // ================= MEDIUM =================
+            //  MEDIUM 
 
             ViewBag.SelectedMedium =
                 teacherSubject.Class?.Medium;
@@ -417,7 +416,6 @@ namespace SVM.Controllers
         }
 
         // GET: TeacherSubjects/Delete/5
-        // GET: TeacherSubjects/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null) return NotFound();
@@ -451,7 +449,7 @@ namespace SVM.Controllers
                 }
             }
 
-            // ✅ Add Class loading
+            //  Add Class loading
             if (teacherSubject.ClassId.HasValue)
             {
                 var classRes = await _client.GetAsync($"Classes/{teacherSubject.ClassId}");
@@ -462,7 +460,7 @@ namespace SVM.Controllers
                 }
             }
 
-            // ✅ Add Session loading
+            //  Add Session loading
             if (teacherSubject.SessionId.HasValue)
             {
                 var sessRes = await _client.GetAsync($"Sessions/{teacherSubject.SessionId}");
@@ -488,11 +486,11 @@ namespace SVM.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        // ========== HELPER METHODS ==========
+        //  HELPER METHODS 
 
         private async Task LoadDropdowns(TeacherSubject teacherSubject = null)
         {
-            // ✅ Staff dropdown - Sirf "Teacher" designation wale
+            //  Staff dropdown 
             var staffRes = await _client.GetAsync("Staffs");
             if (staffRes.IsSuccessStatusCode)
             {
@@ -500,11 +498,11 @@ namespace SVM.Controllers
                 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 var allStaff = JsonSerializer.Deserialize<List<Staff>>(staffData, options);
 
-                // Filter by Designation == "Teacher" (case-insensitive)
+                // Filter by Designation 
                 var teachers = allStaff.Where(s => s.Designation != null && s.Designation.Equals("Teacher", StringComparison.OrdinalIgnoreCase)).ToList();
 
                 ViewData["StaffId"] = new SelectList(teachers, "StaffId", "FirstName", teacherSubject?.StaffId);
-                // Note: Agar FirstName+LastName chahiye toh "StaffName" property banao ya select karte waqt concatenate karo
+                
             }
 
             // Subjects dropdown

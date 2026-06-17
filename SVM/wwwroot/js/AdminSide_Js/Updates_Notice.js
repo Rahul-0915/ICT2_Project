@@ -13,8 +13,8 @@
         // raw date from table
         let rowDateRaw = row.cells[5].innerText.trim();
 
-        // 🔥 IMPORTANT: take only date part
-        // works for: "06/05/2026", "06-05-2026", "2026-05-06 10:30"
+        // take only date part
+     
         let rowDateOnly = rowDateRaw.split(" ")[0];
 
         // normalize slashes to match input format

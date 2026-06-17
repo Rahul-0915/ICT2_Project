@@ -70,8 +70,7 @@ namespace SVM.Controllers
         }
 
         // GET: Users/Create
-        // GET: Users/Create
-        public async Task<IActionResult> Create(int? fixedGroupId)  // ← fixedGroupId rakho
+        public async Task<IActionResult> Create(int? fixedGroupId)
         {
             if (fixedGroupId.HasValue)
             {
@@ -159,7 +158,7 @@ namespace SVM.Controllers
                 }
             }
 
-            // 🔥 VALIDATION FAILED – Restore fixedGroupId 🔥
+            // VALIDATION FAILED – Restore fixedGroupId 
             if (fixedGroupId.HasValue)
             {
                 ViewBag.FixedGroupId = fixedGroupId.Value;

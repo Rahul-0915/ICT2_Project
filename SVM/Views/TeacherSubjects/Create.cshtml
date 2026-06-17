@@ -30,7 +30,7 @@
                         </div>
                     </div>
 
-                    <!-- SESSION (AUTO ACTIVE) -->
+                    <!-- SESSION  -->
                     <div class="col-md-6">
                         <div class="form-group">
                             <label asp-for="SessionId" class="form-label fw-semibold">Session</label>
@@ -103,9 +103,7 @@
             return $('#SessionId').val();
         }
 
-        // =========================
         // MEDIUM + SESSION → CLASS
-        // =========================
         $('#Medium, #SessionId').change(function () {
 
             let medium = $('#Medium').val();
@@ -135,9 +133,7 @@
             });
         });
 
-        // =========================
         // CLASS → SUBJECT
-        // =========================
         $('#ClassId').change(function () {
 
             let classId = $(this).val();
