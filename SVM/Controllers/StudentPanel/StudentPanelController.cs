@@ -262,7 +262,7 @@ namespace SVM.Controllers.StudentPanel
                 return View("Error");
             }
 
-            // ================= CLASS DETAILS =================
+            //  CLASS DETAILS 
             if (student.ClassId.HasValue)
             {
                 var classResponse = await _client.GetAsync($"Classes/{student.ClassId}");
@@ -273,11 +273,11 @@ namespace SVM.Controllers.StudentPanel
                         classJson,
                         new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
                     ViewBag.ClassName = classObj?.ClassName;
-                    ViewBag.Medium = classObj?.Medium;   // ✅ Used for logo & school name
+                    ViewBag.Medium = classObj?.Medium;   // Used for logo & school name
                 }
             }
 
-            // ================= SECTION DETAILS =================
+            //  SECTION DETAILS 
             if (student.SectionId.HasValue)
             {
                 var sectionResponse = await _client.GetAsync($"Sections/{student.SectionId}");
@@ -290,9 +290,8 @@ namespace SVM.Controllers.StudentPanel
                     ViewBag.SectionName = sectionObj?.SectionName;
                 }
             }
-
-            // ================= QR CODE GENERATION =================
-            string qrText = $"http://192.168.1.84:5269/StudentPanel/ViewCard?id={student.StudentId}";
+            //  QR CODE GENERATION 
+            string qrText = $"http://10.25.9.69:5269/StudentPanel/ViewCard?id={student.StudentId}";
             using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
             {
                 QRCodeData qrCodeData = qrGenerator.CreateQrCode(qrText, QRCodeGenerator.ECCLevel.Q);
@@ -320,7 +319,7 @@ namespace SVM.Controllers.StudentPanel
             if (student == null)
                 return NotFound("Student data invalid");
 
-            // ================= CLASS DETAILS =================
+            //  CLASS DETAILS 
             if (student.ClassId.HasValue)
             {
                 var classResponse = await _client.GetAsync($"Classes/{student.ClassId}");
@@ -343,7 +342,7 @@ namespace SVM.Controllers.StudentPanel
                 }
             }
 
-            // ================= SECTION DETAILS =================
+            //  SECTION DETAILS 
             if (student.SectionId.HasValue)
             {
                 var sectionResponse = await _client.GetAsync($"Sections/{student.SectionId}");
@@ -449,7 +448,7 @@ namespace SVM.Controllers.StudentPanel
             if (string.IsNullOrEmpty(studentId))
                 return RedirectToAction("Login", "Account");
 
-            // ================= GET STUDENT =================
+            //  GET STUDENT 
             var studentRes = await _client.GetAsync($"Students/{studentId}");
 
             if (!studentRes.IsSuccessStatusCode)
@@ -480,7 +479,7 @@ namespace SVM.Controllers.StudentPanel
                 });
             }
 
-            // ================= VALIDATE CLASS/SESSION =================
+            //  VALIDATE CLASS/SESSION 
             if (student.ClassId == null || student.SessionId == null || student.SectionId == null)
             {
                 ViewBag.Error = "Attendance configuration missing.";
@@ -492,19 +491,19 @@ namespace SVM.Controllers.StudentPanel
                 });
             }
 
-            // ✅ FIX: Use current date if no year/month provided
+            //  Use current date if no year/month provided
             int y = year ?? DateTime.Now.Year;
             int m = month ?? DateTime.Now.Month;
 
-            // ✅ Validate that month is between 1-12
+            //  Validate that month is between 1-12
             if (m < 1) m = 1;
             if (m > 12) m = 12;
 
-            // ✅ Validate year is reasonable (not future beyond current year)
+            //  Validate year is reasonable
             if (y > DateTime.Now.Year) y = DateTime.Now.Year;
             if (y < 2000) y = DateTime.Now.Year;
 
-            // ================= API CALL =================
+            //  API CALL 
             var response = await _client.GetAsync(
                 $"StudentAttendances/monthly-report" +
                 $"?sessionId={student.SessionId}" +
@@ -532,7 +531,7 @@ namespace SVM.Controllers.StudentPanel
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
             );
 
-            // ================= SAFE FALLBACK =================
+            //  SAFE FALLBACK 
             data ??= new StudentAttendanceVM
             {
                 Students = new List<StudentMonthItem>(),
@@ -547,7 +546,7 @@ namespace SVM.Controllers.StudentPanel
                 ? new List<StudentMonthItem> { currentStudent }
                 : new List<StudentMonthItem>();
 
-            // ================= SET VIEWBAG FOR DISPLAY =================
+            //  SET VIEWBAG FOR DISPLAY 
             ViewBag.Year = y;
             ViewBag.Month = m;
             ViewBag.MonthName = new DateTime(y, m, 1).ToString("MMMM");
@@ -595,7 +594,7 @@ Student Question:
 {message}
 ";
 
-            // *** YAHAN CHANGE KIYA HAI ***
+
             string reply;
             try
             {
@@ -606,9 +605,9 @@ Student Question:
             {
                 reply = $"Error: {ex.Message}";
             }
-            // ***************************
 
-            // Smart Buttons (ye waisa hi rahega)
+
+            // Smart Buttons 
             List<object> options = new();
             string lowerMsg = message.ToLower();
             if (lowerMsg.Contains("attendance") || lowerMsg.Contains("present") || lowerMsg.Contains("absent"))
@@ -692,13 +691,13 @@ Student Question:
                         var classJson = await classResponse.Content.ReadAsStringAsync();
                         var classObj = JsonSerializer.Deserialize<Class>(classJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-                        // ✅ Set Medium
+                        //  Set Medium
                         receipt.Medium = classObj?.Medium ?? "Gujarati";
                         ViewBag.Medium = receipt.Medium;
                     }
                 }
 
-                // ✅ Set Section Name
+                //  Set Section Name
                 if (student?.SectionId != null)
                 {
                     var sectionResponse = await _client.GetAsync($"Sections/{student.SectionId}");
@@ -745,7 +744,7 @@ Student Question:
                 json,
                 new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-            // Additional check: if fee object is null or has no FeeId (i.e., no structure)
+            // if fee object is null or has no FeeId 
             if (fee == null || fee.FeeId == 0)
             {
                 TempData["FeeError"] = "Fee structure is not available for your class/session.";
@@ -801,7 +800,7 @@ Student Question:
 
             return View(fee);
         }
-        // Add this method to StudentPanelController.cs
+
         public async Task<IActionResult> Result()
         {
             string? studentId = HttpContext.Session.GetString("StudentId");
@@ -855,7 +854,7 @@ Student Question:
 
             var examsJson = await examsResponse.Content.ReadAsStringAsync();
 
-            // ✅ Deserialize with proper DateOnly handling
+            // Deserialize with proper DateOnly handling
             var options = new JsonSerializerOptions
             {
                 PropertyNameCaseInsensitive = true,
@@ -912,7 +911,7 @@ Student Question:
 
                     if (marksData != null)
                     {
-                        // ✅ Convert DateOnly to DateTime
+                        // Convert DateOnly to DateTime
                         DateTime examDate = new DateTime(exam.StartDate.Year, exam.StartDate.Month, exam.StartDate.Day);
 
                         var examResult = new StudentExamResult
@@ -981,10 +980,10 @@ Student Question:
             if (student == null)
                 return Json(new List<object>());
 
-            // Get today's day name (Monday, Tuesday, etc.)
+            // Get today's day name
             string today = DateTime.Now.DayOfWeek.ToString();
 
-            // Fix: DayName in your model might be stored differently
+            // DayName in your model might be stored differently
             // Try both possible formats
             var response = await _client.GetAsync($"Timetables?sessionId={student.SessionId}&classId={student.ClassId}&sectionId={student.SectionId}");
 
@@ -994,7 +993,7 @@ Student Question:
             var json = await response.Content.ReadAsStringAsync();
             var allTimetable = JsonSerializer.Deserialize<List<Timetable>>(json, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-            // Filter for today's day (case insensitive)
+            // Filter for today's day 
             var todayTimetable = allTimetable?
                 .Where(t => t.DayName.Equals(today, StringComparison.OrdinalIgnoreCase))
                 .OrderBy(t => t.LectureNo)

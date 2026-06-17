@@ -241,9 +241,6 @@ body {
 }
 
 /* PRINT */
-
-/* ================= PRINT ================= */
-
 @page {
     size: A4 portrait;
     margin: 8mm;

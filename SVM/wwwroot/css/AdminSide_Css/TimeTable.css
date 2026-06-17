@@ -16,7 +16,7 @@ h2 {
     color: #1f2937;
 }
 
-/* ===== FILTER FORM - BOOTSTRAP COLUMN FIX ===== */
+/*  FILTER FORM - BOOTSTRAP COLUMN FIX  */
 form#filterForm.row {
     display: flex;
     flex-wrap: wrap;

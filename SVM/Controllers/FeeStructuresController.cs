@@ -141,7 +141,6 @@ namespace SVM.Controllers
     FeeStructure feeStructure,
     string medium)
         {
-            // REMOVE NAVIGATION VALIDATION
 
             ModelState.Remove("Class");
 
@@ -163,7 +162,6 @@ namespace SVM.Controllers
                         error.ErrorMessage;
                 }
 
-                // DROPDOWNS RELOAD
 
                 var sessions = await GetSessions();
 
@@ -212,7 +210,6 @@ namespace SVM.Controllers
                         });
                 }
 
-                // DUPLICATE
 
                 else if (
                     response.StatusCode ==
@@ -224,7 +221,6 @@ namespace SVM.Controllers
                     );
                 }
 
-                // OTHER API ERROR
 
                 else
                 {
@@ -245,8 +241,6 @@ namespace SVM.Controllers
                     $"Exception: {ex.Message}"
                 );
             }
-
-            // DROPDOWNS RELOAD AGAIN
 
             var sessionList =
                 await GetSessions();
@@ -319,7 +313,7 @@ namespace SVM.Controllers
                 var response = await _client.PutAsJsonAsync($"FeeStructures/{id}", feeStructure);
                 if (response.IsSuccessStatusCode)
                 {
-                    // ✅ Redirect with all filters
+                    // Redirect with all filters
                     return RedirectToAction(nameof(Index), new
                     {
                         sessionId = feeStructure.SessionId,
@@ -341,7 +335,7 @@ namespace SVM.Controllers
             var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
             var feeStructure = JsonSerializer.Deserialize<FeeStructure>(data, options);
 
-            // --- Fetch Class Name ---
+            //  Fetch Class Name 
             int classIdToFetch = feeStructure.ClassId ?? classId ?? 0;
             if (classIdToFetch != 0)
             {
@@ -369,7 +363,7 @@ namespace SVM.Controllers
                 ViewBag.ClassName = "No class assigned";
             }
 
-            // --- Fetch Session Name ---
+            //  Fetch Session Name 
             int sessionIdToFetch = feeStructure.SessionId ?? sessionId ?? 0;
             if (sessionIdToFetch != 0)
             {
@@ -414,7 +408,7 @@ namespace SVM.Controllers
         {
             await _client.DeleteAsync($"FeeStructures/{id}");
 
-            // Use passed parameters if available; fallback to TempData
+            // Use passed parameters 
             sessionId ??= TempData["ReturnSessionId"] as int?;
             medium ??= TempData["ReturnMedium"] as string;
             classId ??= TempData["ReturnClassId"] as int?;
@@ -505,7 +499,7 @@ namespace SVM.Controllers
 
             return View(feeStructure);
         }
-        // ------------------ HELPERS ------------------
+        //  HELPERS METHODS
         private async Task<List<Session>> GetSessions()
         {
             var res = await _client.GetAsync("Sessions");
@@ -541,7 +535,6 @@ namespace SVM.Controllers
 
             return Json(classes);
         }
-        // In FeesStructuresController.cs
         public async Task<IActionResult> DownloadPdf(int? sessionId, string medium, int? classId)
         {
             // Validate filters
@@ -568,7 +561,7 @@ namespace SVM.Controllers
             string fileName = $"FeeStructure_{sessionName}_{className}_{medium}_{DateTime.Now:yyyyMMdd}.pdf";
             return File(pdfBytes, "application/pdf", fileName);
         }
-        // Fetch session name by ID (reuse from existing sessions list)
+        // Fetch session name by ID 
         private async Task<string> GetSessionName(int sessionId)
         {
             var sessions = await GetSessions();
@@ -576,7 +569,7 @@ namespace SVM.Controllers
             return session?.SessionName ?? sessionId.ToString();
         }
 
-        // Fetch class name by ID (calls your API)
+        // Fetch class name by ID 
         private async Task<string> GetClassName(int classId)
         {
             var response = await _client.GetAsync($"Classes/{classId}");

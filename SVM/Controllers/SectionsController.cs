@@ -34,7 +34,7 @@ namespace SVM.Controllers
                 var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 sectionList = JsonSerializer.Deserialize<List<Section>>(data, option);
 
-                // Load Class details for each section (to get Medium and ClassName)
+                // Load Class details for each section (
                 foreach (var section in sectionList)
                 {
                     if (section.ClassId.HasValue)
@@ -87,13 +87,6 @@ namespace SVM.Controllers
 
         }
 
-        // GET: Sections/Create
-        //public async Task<IActionResult> Create()
-        //{
-        //    // Class dropdown initially empty – will be populated by JS after medium selection
-        //    ViewData["ClassId"] = new SelectList(new List<Class>(), "ClassId", "ClassName");   // ← only ClassName
-        //    return View();
-        //}
 
         public IActionResult Create(int? classId, string medium)
         {
@@ -111,7 +104,7 @@ namespace SVM.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Create([Bind("SectionId,SectionName,ClassId")] Section section)
         {
-            // ✅ Duplicate check - Same Section under same Class
+            //Duplicate check - Same Section under same Class
             if (await IsSectionDuplicate(section.SectionName, section.ClassId))
             {
                 ModelState.AddModelError("SectionName", $"⚠️ Section '{section.SectionName}' already exists in this Class!");
@@ -178,10 +171,8 @@ namespace SVM.Controllers
                 }
             }
 
-            // Do NOT populate ViewData["ClassId"] here – will be filled by JS
             return View(section);
         }
-        // POST: Sections/Edit/5
         // POST: Sections/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -190,7 +181,7 @@ namespace SVM.Controllers
             if (id != section.SectionId)
                 return NotFound();
 
-            // ✅ Duplicate check while editing (excluding current section)
+            //  Duplicate check 
             if (await IsSectionDuplicate(section.SectionName, section.ClassId, id))
             {
                 ModelState.AddModelError("SectionName", $"⚠️ Section '{section.SectionName}' already exists in this Class!");
@@ -231,7 +222,7 @@ namespace SVM.Controllers
             return View(section);
         }
 
-       
+
         // GET: Sections/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -317,10 +308,9 @@ namespace SVM.Controllers
                 var option = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
                 var classes = JsonSerializer.Deserialize<List<Class>>(data, option);
 
-                ViewData["ClassId"] = new SelectList(classes, "ClassId", "ClassName");   // ← only ClassName
+                ViewData["ClassId"] = new SelectList(classes, "ClassId", "ClassName");
             }
         }
-        // Add this method in SectionsController
         private async Task<bool> IsSectionDuplicate(string sectionName, int? classId, int? excludeId = null)
         {
             var response = await _client.GetAsync("Sections");

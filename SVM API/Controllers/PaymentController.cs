@@ -19,7 +19,7 @@ namespace SVM_API.Controllers
         [HttpPost("create-order")]
         public IActionResult CreateOrder([FromBody] decimal amount)
         {
-            // ✅ Validate amount
+            //  Validate amount
             if (amount <= 0)
             {
                 return BadRequest(new { error = "Invalid amount. Fee structure may not be available for your class/session." });
@@ -67,12 +67,12 @@ namespace SVM_API.Controllers
                 if (dto.FeeId <= 0)
                     return BadRequest("Invalid FeeId");
 
-                // ✅ Check if student exists
+                //  Check if student exists
                 var student = await _context.Students.FindAsync(dto.StudentId);
                 if (student == null)
                     return BadRequest($"Student with ID {dto.StudentId} does not exist");
 
-                // ✅ Check if fee structure exists
+                //  Check if fee structure exists
                 var fee = await _context.FeeStructures.FindAsync(dto.FeeId);
                 if (fee == null)
                     return BadRequest($"Fee structure with ID {dto.FeeId} does not exist");
@@ -110,7 +110,7 @@ namespace SVM_API.Controllers
         {
             var payment = await _context.FeePayments
       .Include(p => p.Student)
-          .ThenInclude(s => s.Class)   // ✅ Load Class details
+          .ThenInclude(s => s.Class)   //  Load Class details
       .Include(p => p.Fee)
       .Where(p => p.StudentId == studentId)
       .OrderByDescending(p => p.PaymentDate)

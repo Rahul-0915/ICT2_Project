@@ -17,7 +17,7 @@ namespace SVM_API.Controllers
             _context = context;
         }
 
-        // ==================== ADMIN/TEACHER ENDPOINTS ====================
+        //  ADMIN/TEACHER ENDPOINTS 
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Exam>>> GetExams(int? sessionId, string? medium, int? classId, int? sectionId, bool? publishedOnly = false)
@@ -202,7 +202,7 @@ namespace SVM_API.Controllers
                     }
                 }
 
-                // 4. Build final result (students and marksDict are now in scope)
+                // 4. Build final result 
                 var finalStudents = students.Select(s =>
                 {
                     dynamic student = s;
@@ -340,7 +340,7 @@ namespace SVM_API.Controllers
                     });
                 }
 
-                // ✅ Rank assignment with tie handling (dense ranking)
+                //  Rank assignment with tie handling 
                 var sortedByPercentage = studentResults
                     .OrderByDescending(r => ((dynamic)r).Percentage)
                     .ToList();
@@ -424,7 +424,7 @@ namespace SVM_API.Controllers
             return Ok(exams);
         }
 
-        // ==================== STUDENT ENDPOINTS ====================
+        //  STUDENT ENDPOINTS 
 
         [HttpGet("student-exams")]
         public async Task<IActionResult> GetStudentExams(int sessionId, string medium, int classId, int sectionId)
@@ -437,7 +437,7 @@ namespace SVM_API.Controllers
             return Ok(exams);
         }
 
-        // ✅ FIXED GetStudentMarks - Only ONE method
+        // FIXED GetStudentMarks - Only ONE method
         [HttpGet("student-marks")]
         public async Task<IActionResult> GetStudentMarks(int examId, int studentId)
         {

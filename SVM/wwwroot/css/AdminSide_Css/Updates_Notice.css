@@ -1,4 +1,4 @@
-﻿/* Background (simple & real) Craete form................*/
+﻿/* Background (simple & real) Craete form */
 body {
     margin: 0;
     font-family: 'Segoe UI', sans-serif;
@@ -14,7 +14,7 @@ body {
     padding: 40px 15px;
 }
 
-/* Card (clean, no fake glass) */
+/* Card  */
 .update-card {
     width: 100%;
     max-width: 900px;
@@ -73,7 +73,7 @@ body {
     transition: border-color 0.2s ease;
 }
 
-    /* Focus (simple, real) */
+    /* Focus */
     .form-input:focus {
         border-color: #2563eb;
         outline: none;
@@ -89,7 +89,7 @@ body {
     cursor: pointer;
 }
 
-/* File input (clean box, not flashy) */
+/* File input  */
 .file-input {
     border: 1px dashed #cbd5e1;
     background: #f9fafb;
@@ -104,7 +104,7 @@ body {
     border: 1px solid #e5e7eb;
 }
 
-/* Button (real admin style) */
+/* Button */
 .submit-btn {
     grid-column: span 2;
     padding: 11px;
@@ -158,7 +158,7 @@ body {
 }
 
 
-/* display notice css* Index page ............................../
+/* display notice css* Index page /
 /* Page */
 body {
     margin-top:15px;
@@ -207,7 +207,7 @@ body {
     width: 80%;
     margin:auto;
     
-    border-collapse: separate; /* IMPORTANT */
+    border-collapse: separate; 
     border-spacing: 0 12px; /* ROW GAP */
 }
 
@@ -238,12 +238,12 @@ body {
     /* Cells */
     .table td {
         padding: 14px;
-        font-size: 19px; /* bigger font */
+        font-size: 19px; 
         vertical-align: middle;
-        color: #111827; /* darker */
+        color: #111827; 
     }
 
-    /* Rounded corners (important for gap look) */
+    /* Rounded corners  */
     .table tbody tr td:first-child {
         border-top-left-radius: 10px;
         border-bottom-left-radius: 10px;
@@ -323,7 +323,7 @@ body {
     }
 }
 
-/*edit delete update btn css................*/
+/*edit delete update btn css */
 /* Action buttons base */
 .action-btn {
     display: inline-flex;
@@ -356,7 +356,7 @@ body {
         background: linear-gradient(135deg, #ef4444, #dc2626);
     }
 
-    /* Hover effect (lift + glow) */
+    /* Hover effect  */
     .action-btn:hover {
         transform: translateY(-3px) scale(1.08);
         box-shadow: 0 8px 18px rgba(0,0,0,0.15);
@@ -372,7 +372,7 @@ body {
         pointer-events: none;
     }
 
-    /*search section________________________________*/
+    /*search section*/
 
 
 /* Search bar container */
@@ -434,7 +434,7 @@ body {
                 background: #d1d5db;
             }
 
-            /*img preview*____________________________________*/
+            /* img preview */
 .image-preview-container {
     margin-top: 10px;
 }
@@ -453,5 +453,5 @@ body {
     background: #f5f5f5;
     border-radius: 4px;
 }
-/*Detile page css___________________________*/
+
 

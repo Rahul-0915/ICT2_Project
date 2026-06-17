@@ -11,7 +11,7 @@
         fatherName = fatherName.Substring(0, fatherName.Length - lastName.Length).Trim();
     }
 
-    // ✅ Use ViewBag.Medium from controller (not Model.Class)
+    // Use ViewBag.Medium from controller 
     var medium = ViewBag.Medium as string ?? "";
 
     var schoolName = medium == "English"
@@ -180,15 +180,15 @@
             </div>
             <div class="row">
                 <div class="label">Class</div>
-                <div class="value">@ViewBag.ClassName</div>   <!-- ✅ from controller -->
+                <div class="value">@ViewBag.ClassName</div>  
             </div>
             <div class="row">
                 <div class="label">Section</div>
-                <div class="value">@ViewBag.SectionName</div> <!-- ✅ from controller -->
+                <div class="value">@ViewBag.SectionName</div> 
             </div>
             <div class="row">
                 <div class="label">Medium</div>
-                <div class="value">@ViewBag.Medium</div>      <!-- ✅ from controller -->
+                <div class="value">@ViewBag.Medium</div>      
             </div>
             <div class="row">
                 <div class="label">DOB</div>

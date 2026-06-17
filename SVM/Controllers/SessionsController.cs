@@ -130,7 +130,6 @@ namespace SVM.Controllers
         }
 
         // POST: Sessions/Edit/5
-        // POST: Sessions/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(int id, Session session)

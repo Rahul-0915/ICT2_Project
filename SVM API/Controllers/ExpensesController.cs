@@ -17,10 +17,7 @@ namespace SVM_API.Controllers
             _context = context;
             _environment = environment;
         }
-
-        // =========================
         // GET ALL
-        // =========================
         [HttpGet]
         public async Task<IActionResult> GetExpenses()
         {
@@ -31,9 +28,7 @@ namespace SVM_API.Controllers
             return Ok(expenses);
         }
 
-        // =========================
         // GET BY ID
-        // =========================
         [HttpGet("{id}")]
         public async Task<IActionResult> GetExpense(int id)
         {
@@ -45,9 +40,7 @@ namespace SVM_API.Controllers
             return Ok(expense);
         }
 
-        // =========================
         // CREATE
-        // =========================
         [HttpPost]
         public async Task<IActionResult> CreateExpense(
             [FromForm] Expense expense,
@@ -104,9 +97,7 @@ namespace SVM_API.Controllers
             }
         }
 
-        // =========================
         // UPDATE
-        // =========================
         [HttpPut("{id}")]
         public async Task<IActionResult> UpdateExpense(
             int id,
@@ -169,9 +160,8 @@ namespace SVM_API.Controllers
             }
         }
 
-        // =========================
         // DELETE
-        // =========================
+        
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteExpense(int id)
         {
@@ -202,7 +192,6 @@ namespace SVM_API.Controllers
             }
         }
 
-        // =========================
         [HttpGet("ExportExcel")]
         public async Task<IActionResult> ExportToCsv()
         {
@@ -212,10 +201,10 @@ namespace SVM_API.Controllers
 
             var sb = new StringBuilder();
 
-            // ===== HEADERS =====
+            //  HEADERS 
             sb.AppendLine("S.No,Voucher No,Title,Category,Amount,Payment Method,Paid To,Date,Status,Description");
 
-            // ===== DATA ROWS =====
+            //  DATA ROWS 
             int serialNo = 1;
             decimal totalAmount = 0;
 
@@ -235,7 +224,7 @@ namespace SVM_API.Controllers
                               $"{EscapeCsv(expense.Description)}");
             }
 
-            // ===== TOTAL SUMMARY (Same line mein proper format) =====
+            //  TOTAL SUMMARY 
             sb.AppendLine(); // Blank line
             sb.AppendLine($"\"TOTAL AMOUNT\",\"{totalAmount:N2}\",\"Total Records: {expenses.Count}\",,,,,,,");
             sb.AppendLine($"\"Generated On\",\"{DateTime.Now:dd-MM-yyyy HH:mm:ss}\",,,,,,,,");

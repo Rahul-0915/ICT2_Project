@@ -1,4 +1,4 @@
-﻿/* ===== FIX SIZE ISSUE ===== */
+﻿/*  FIX SIZE ISSUE  */
 
 * {
     box-sizing: border-box;
@@ -141,7 +141,7 @@ body {
     font-weight: 700;
 }
 
-/* ===== MAIN FIX HERE ===== */
+/*  MAIN FIX HERE  */
 .class-container {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));

@@ -519,7 +519,7 @@
                 }
             });
 
-            // Auto search on filter change (with debounce)
+            // Auto search on filter change 
             $("#sessionFilter, #mediumFilter, #classFilter, #sectionFilter, #paymentModeFilter, #fromDate, #toDate").on('change', function () {
                 if ($("#sessionFilter").val()) {
                     searchReports();
@@ -643,7 +643,7 @@
             window.location.href = '@Url.Action("Index", "FeeReports")';
         }
 
-        // ========== EXCEL DOWNLOAD - UNCHANGED ==========
+        //  EXCEL DOWNLOAD 
         function downloadExcel() {
             let rows = [];
 

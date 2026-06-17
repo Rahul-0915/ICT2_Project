@@ -21,10 +21,10 @@ namespace SVM.Models
         [Column("monthly_fees")]
         public decimal? MonthlyFees { get; set; }
 
-        [Column("other_activity_fees")]   // new column
+        [Column("other_activity_fees")]   
         public decimal? OtherActivityFees { get; set; }
 
-        [Column("computer_fees")]          // new column
+        [Column("computer_fees")]          
         public decimal? ComputerFees { get; set; }
 
         [Column("total_amount")]

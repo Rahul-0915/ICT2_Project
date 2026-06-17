@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <style>
-        /* ===== RESET + GLOBAL BOX-SIZING ===== */
+        /*  RESET + GLOBAL BOX-SIZING  */
         *,
         *::before,
         *::after {
@@ -52,7 +52,7 @@
             color: #334155;
         }
 
-        /* ===== UNIFIED INPUT, SELECT & BUTTON STYLES ===== */
+        /*  UNIFIED INPUT, SELECT & BUTTON STYLES  */
         input,
         select,
         .btn {
@@ -67,13 +67,10 @@
             border: 1px solid #d1d5db;
             background-color: #ffffff;
             transition: all 0.2s ease;
-            /* fix any inconsistent height issues */
             height: auto;
             min-height: 48px;
-            /* remove extra spacing defaults */
             margin: 0;
             vertical-align: middle;
-            /* ensure background & text consistency */
             color: #1e293b;
             appearance: none;
             -webkit-appearance: none;
@@ -287,7 +284,7 @@
             $("#SessionId, #Medium").change(loadClasses);
             $("#ClassId").change(loadSections);
 
-            // Trigger initial load if session and medium are already selected (e.g., after validation error)
+            // Trigger initial load if session and medium are already selected 
             if ($("#SessionId").val() && $("#Medium").val()) loadClasses();
         });
     </script>

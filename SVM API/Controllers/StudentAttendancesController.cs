@@ -21,7 +21,7 @@ namespace SVM_API.Controllers
             _context = context;
         }
 
-        // ========== EXISTING METHODS ==========
+        //  EXISTING METHODS 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<StudentAttendance>>> GetStudentAttendances()
         {
@@ -73,7 +73,7 @@ namespace SVM_API.Controllers
             return _context.StudentAttendances.Any(e => e.Id == id);
         }
 
-        // ========== NEW METHODS FOR ANDROID ==========
+        //  NEW METHODS FOR ANDROID 
         [HttpGet("students")]
         public async Task<ActionResult<IEnumerable<object>>> GetFilteredStudents(
             [FromQuery] int sessionId,
@@ -198,7 +198,6 @@ namespace SVM_API.Controllers
         }
 
         // GET: api/StudentAttendances/advanced-report
-        // GET: api/StudentAttendances/advanced-report
         [HttpGet("advanced-report")]
         public async Task<ActionResult<object>> GetAdvancedAttendanceReport(
             [FromQuery] int sessionId,
@@ -254,7 +253,7 @@ namespace SVM_API.Controllers
             if (!string.IsNullOrEmpty(medium))
                 attendanceQuery = attendanceQuery.Where(a => a.Class != null && a.Class.Medium == medium);
 
-            // ✅ Check if any attendance exists for this date & filters
+            //  Check if any attendance exists for this date & filters
             bool anyAttendanceExists = await attendanceQuery.AnyAsync();
 
             if (!anyAttendanceExists)
@@ -267,7 +266,7 @@ namespace SVM_API.Controllers
                 });
             }
 
-            // ✅ Get attendance data including Id
+            // Get attendance data including Id
             var attendanceData = await attendanceQuery
                 .Select(a => new { a.StudentId, a.Id, a.Status })
                 .ToListAsync();

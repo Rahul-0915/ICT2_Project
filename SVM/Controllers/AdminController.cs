@@ -22,15 +22,15 @@ namespace SVM.Controllers
 
         public async Task<IActionResult> AdminDashboard()
         {
-			int totalClasses = 0;
-			if (HttpContext.Session.GetString("UserId") == null)
+            int totalClasses = 0;
+            if (HttpContext.Session.GetString("UserId") == null)
                 return RedirectToAction("Login", "Account");
 
             Response.Headers["Cache-Control"] = "no-cache, no-store, must-revalidate";
             ViewBag.Username = HttpContext.Session.GetString("Username");
             ViewBag.FullName = HttpContext.Session.GetString("FullName");
 
-            // ----- Existing updates logic (bilkul same) -----
+            //  Existing updates logic 
             List<Updates> updatesList = new List<Updates>();
             try
             {
@@ -49,91 +49,90 @@ namespace SVM.Controllers
                 Console.WriteLine(ex.Message);
             }
 
-			// ----- Naye counts (students, staff, subjects, active session) -----
-			int totalStudents = 0;
-			int totalStaff = 0;
-			int totalSubjects = 0;
-			string activeSessionName = "N/A";
+            int totalStudents = 0;
+            int totalStaff = 0;
+            int totalSubjects = 0;
+            string activeSessionName = "N/A";
 
-			Session activeSession = null;   // ✅ ADD THIS
-			decimal totalExpense = 0;
-			decimal totalFeesCollection = 0;
-
+            Session activeSession = null;
+            decimal totalExpense = 0;
+            decimal totalFeesCollection = 0;
 
 
-			try
+
+            try
             {
-				var sessionsResp = await _client.GetAsync("Sessions");
-				if (sessionsResp.IsSuccessStatusCode)
-				{
-					var sessionsJson = await sessionsResp.Content.ReadAsStringAsync();
-					var sessions = JsonSerializer.Deserialize<List<Session>>(sessionsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                var sessionsResp = await _client.GetAsync("Sessions");
+                if (sessionsResp.IsSuccessStatusCode)
+                {
+                    var sessionsJson = await sessionsResp.Content.ReadAsStringAsync();
+                    var sessions = JsonSerializer.Deserialize<List<Session>>(sessionsJson, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-					activeSession = sessions?.FirstOrDefault(s => s.IsActive == 1);
-					var classesResp = await _client.GetAsync("Classes");
+                    activeSession = sessions?.FirstOrDefault(s => s.IsActive == 1);
+                    var classesResp = await _client.GetAsync("Classes");
 
-					if (classesResp.IsSuccessStatusCode)
-					{
-						var classesJson = await classesResp.Content.ReadAsStringAsync();
+                    if (classesResp.IsSuccessStatusCode)
+                    {
+                        var classesJson = await classesResp.Content.ReadAsStringAsync();
 
-						var classes = JsonSerializer.Deserialize<List<Class>>(classesJson,
-							new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                        var classes = JsonSerializer.Deserialize<List<Class>>(classesJson,
+                            new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-						if (activeSession != null)
-						{
-							totalClasses = classes?
-								.Count(c => c.SessionId == activeSession.SessionId) ?? 0;
-						}
-					}
+                        if (activeSession != null)
+                        {
+                            totalClasses = classes?
+                                .Count(c => c.SessionId == activeSession.SessionId) ?? 0;
+                        }
+                    }
 
-					if (activeSession == null && sessions != null)
-					{
-						var today = DateOnly.FromDateTime(DateTime.Today);
-						activeSession = sessions.FirstOrDefault(s => today >= s.StartDate && today <= s.EndDate);
-					}
+                    if (activeSession == null && sessions != null)
+                    {
+                        var today = DateOnly.FromDateTime(DateTime.Today);
+                        activeSession = sessions.FirstOrDefault(s => today >= s.StartDate && today <= s.EndDate);
+                    }
 
-					if (activeSession != null)
-						activeSessionName = activeSession.SessionName;
-					// Active Session Total Fee Collection
-					if (activeSession != null)
-					{
-						var feeResponse = await _client.GetAsync(
-							$"FeePayments/FilteredPayments?sessionId={activeSession.SessionId}");
+                    if (activeSession != null)
+                        activeSessionName = activeSession.SessionName;
+                    // Active Session Total Fee Collection
+                    if (activeSession != null)
+                    {
+                        var feeResponse = await _client.GetAsync(
+                            $"FeePayments/FilteredPayments?sessionId={activeSession.SessionId}");
 
-						if (feeResponse.IsSuccessStatusCode)
-						{
-							var feeJson = await feeResponse.Content.ReadAsStringAsync();
+                        if (feeResponse.IsSuccessStatusCode)
+                        {
+                            var feeJson = await feeResponse.Content.ReadAsStringAsync();
 
-							var payments = JsonSerializer.Deserialize<List<FeePaymentReportVM>>(
-								feeJson,
-								new JsonSerializerOptions
-								{
-									PropertyNameCaseInsensitive = true
-								});
+                            var payments = JsonSerializer.Deserialize<List<FeePaymentReportVM>>(
+                                feeJson,
+                                new JsonSerializerOptions
+                                {
+                                    PropertyNameCaseInsensitive = true
+                                });
 
-							totalFeesCollection = payments?.Sum(x => x.AmountPaid) ?? 0;
-						}
-					}
-				}
-				// Students count (ACTIVE SESSION ONLY)
-				var studentsResp = await _client.GetAsync("Students");
-				if (studentsResp.IsSuccessStatusCode)
-				{
-					var studentsJson = await studentsResp.Content.ReadAsStringAsync();
+                            totalFeesCollection = payments?.Sum(x => x.AmountPaid) ?? 0;
+                        }
+                    }
+                }
+                // Students count ACTIVE SESSION ONLY
+                var studentsResp = await _client.GetAsync("Students");
+                if (studentsResp.IsSuccessStatusCode)
+                {
+                    var studentsJson = await studentsResp.Content.ReadAsStringAsync();
 
-					var students = JsonSerializer.Deserialize<List<Student>>(
-						studentsJson,
-						new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    var students = JsonSerializer.Deserialize<List<Student>>(
+                        studentsJson,
+                        new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
 
-					if (activeSession != null)
-					{
-						totalStudents = students?
-							.Count(s => s.SessionId == activeSession.SessionId) ?? 0;
-					}
-				}
+                    if (activeSession != null)
+                    {
+                        totalStudents = students?
+                            .Count(s => s.SessionId == activeSession.SessionId) ?? 0;
+                    }
+                }
 
-				// Staff count (agar API exist karti hai)
-				var staffResp = await _client.GetAsync("Staffs");
+                // Staff count
+                var staffResp = await _client.GetAsync("Staffs");
                 if (staffResp.IsSuccessStatusCode)
                 {
                     var staffJson = await staffResp.Content.ReadAsStringAsync();
@@ -167,9 +166,7 @@ namespace SVM.Controllers
 
                     totalExpense = expenses?.Sum(e => e.Amount) ?? 0;
                 }
-                // Active session name
-                // Active session name
-         
+
             }
             catch (Exception ex)
             {
@@ -181,28 +178,26 @@ namespace SVM.Controllers
             ViewBag.TotalSubjects = totalSubjects;
             ViewBag.TotalExpense = totalExpense;
             ViewBag.ActiveSessionName = activeSessionName;
-			ViewBag.TotalClasses = totalClasses;
-			ViewBag.TotalFeesCollection = totalFeesCollection;
+            ViewBag.TotalClasses = totalClasses;
+            ViewBag.TotalFeesCollection = totalFeesCollection;
 
-			// =========================
-			// ADMISSION INQUIRIES LOAD
-			// =========================
-			var inquiryResp = await _client.GetAsync("AdmissionInquiries");
+            // ADMISSION INQUIRIES LOAD
+            var inquiryResp = await _client.GetAsync("AdmissionInquiries");
 
-			var inquiryJson = await inquiryResp.Content.ReadAsStringAsync();
+            var inquiryJson = await inquiryResp.Content.ReadAsStringAsync();
 
-			var inquiries = JsonSerializer.Deserialize<List<AdmissionInquiry>>(
-				inquiryJson,
-				new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
-			);
+            var inquiries = JsonSerializer.Deserialize<List<AdmissionInquiry>>(
+                inquiryJson,
+                new JsonSerializerOptions { PropertyNameCaseInsensitive = true }
+            );
 
-			// TOTAL
-			ViewBag.TotalInquiries = inquiries?.Count ?? 0;
+            // TOTAL
+            ViewBag.TotalInquiries = inquiries?.Count ?? 0;
 
-			// UNSEEN
-			ViewBag.UnseenCount = inquiries?.Count(x => x.IsSeen == false) ?? 0;
+            // UNSEEN
+            ViewBag.UnseenCount = inquiries?.Count(x => x.IsSeen == false) ?? 0;
 
-			return View(updatesList ?? new List<Updates>());
+            return View(updatesList ?? new List<Updates>());
         }
 
         // Keep AdminPanel as it was, or remove if not used
@@ -237,7 +232,7 @@ namespace SVM.Controllers
             return View(updatesList ?? new List<Updates>());
         }
 
-        // GET: Admin/FeesPayment (Search Page)
+        // GET: Admin/FeesPayment 
         public async Task<IActionResult> FeesPayment(int? sessionId, string medium, int? classId, int? sectionId)
         {
             if (HttpContext.Session.GetString("UserId") == null)
@@ -324,15 +319,15 @@ namespace SVM.Controllers
             }
         }
 
-       
 
-		// REPLACE the existing GetStudentFeeForCash method with this:
-		[HttpGet]
-		public async Task<JsonResult> GetStudentFeeForCash(int studentId)
-		{
-			try
-			{
-				var response = await _client.GetAsync($"FeePayments/StudentFeeDetails/{studentId}");
+
+
+        [HttpGet]
+        public async Task<JsonResult> GetStudentFeeForCash(int studentId)
+        {
+            try
+            {
+                var response = await _client.GetAsync($"FeePayments/StudentFeeDetails/{studentId}");
 
                 if (!response.IsSuccessStatusCode)
                 {
@@ -362,62 +357,60 @@ namespace SVM.Controllers
                     }
                 }
                 var json = await response.Content.ReadAsStringAsync();
-				var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-				var feeDetails = JsonSerializer.Deserialize<dynamic>(json, options);
+                var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+                var feeDetails = JsonSerializer.Deserialize<dynamic>(json, options);
 
-				return Json(new { success = true, data = feeDetails });
-			}
-			catch (Exception ex)
-			{
-				return Json(new { success = false, message = ex.Message });
-			}
-		}
+                return Json(new { success = true, data = feeDetails });
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
 
-		// REPLACE CashPayment method with this:
-		[HttpPost]
-		public async Task<IActionResult> CashPayment([FromBody] CashPaymentRequest request)
-		{
-			try
-			{
-				if (request == null)
-					return Json(new { success = false, message = "Invalid payment data" });
+        [HttpPost]
+        public async Task<IActionResult> CashPayment([FromBody] CashPaymentRequest request)
+        {
+            try
+            {
+                if (request == null)
+                    return Json(new { success = false, message = "Invalid payment data" });
 
-				if (request.StudentId <= 0)
-					return Json(new { success = false, message = "Invalid Student ID" });
+                if (request.StudentId <= 0)
+                    return Json(new { success = false, message = "Invalid Student ID" });
 
-				if (request.AmountPaid <= 0)
-					return Json(new { success = false, message = "Amount must be greater than 0" });
+                if (request.AmountPaid <= 0)
+                    return Json(new { success = false, message = "Amount must be greater than 0" });
 
-				var paymentRequest = new
-				{
-					StudentId = request.StudentId,
-					FeeId = request.FeeId,
-					AmountPaid = request.AmountPaid,
-					TransactionId = $"CASH-{DateTime.Now.Ticks}",
-					
-				};
+                var paymentRequest = new
+                {
+                    StudentId = request.StudentId,
+                    FeeId = request.FeeId,
+                    AmountPaid = request.AmountPaid,
+                    TransactionId = $"CASH-{DateTime.Now.Ticks}",
 
-				var response = await _client.PostAsJsonAsync("FeePayments/CashPayment", paymentRequest);
-				var responseContent = await response.Content.ReadAsStringAsync();
+                };
 
-				if (response.IsSuccessStatusCode)
-				{
-					var result = JsonSerializer.Deserialize<dynamic>(responseContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
-					int paymentId = result?.GetProperty("paymentId").GetInt32() ?? 0;
+                var response = await _client.PostAsJsonAsync("FeePayments/CashPayment", paymentRequest);
+                var responseContent = await response.Content.ReadAsStringAsync();
 
-					return Json(new { success = true, message = "Payment recorded successfully!", paymentId = paymentId });
-				}
-				else
-				{
-					return Json(new { success = false, message = $"Payment failed: {responseContent}" });
-				}
-			}
-			catch (Exception ex)
-			{
-				return Json(new { success = false, message = ex.Message });
-			}
-		}
-        // Add this method to AdminController
+                if (response.IsSuccessStatusCode)
+                {
+                    var result = JsonSerializer.Deserialize<dynamic>(responseContent, new JsonSerializerOptions { PropertyNameCaseInsensitive = true });
+                    int paymentId = result?.GetProperty("paymentId").GetInt32() ?? 0;
+
+                    return Json(new { success = true, message = "Payment recorded successfully!", paymentId = paymentId });
+                }
+                else
+                {
+                    return Json(new { success = false, message = $"Payment failed: {responseContent}" });
+                }
+            }
+            catch (Exception ex)
+            {
+                return Json(new { success = false, message = ex.Message });
+            }
+        }
         [HttpGet]
         public async Task<IActionResult> PrintReceipt(int id)
         {
@@ -476,19 +469,17 @@ namespace SVM.Controllers
             // Get fee structure for the student
             // You can fetch based on student's class and session
             ViewBag.Receipt = receipt;
-            ViewBag.FeeStructure = null; // Set actual fee structure if needed
+            ViewBag.FeeStructure = null;
 
             return View();
         }
-        // Add this at the end of the file, after the AdminController class closing brace
         public class CashPaymentRequest
         {
             public int StudentId { get; set; }
             public int FeeId { get; set; }
             public decimal AmountPaid { get; set; }
-            
+
         }
-        // Add this inside the AdminController class
         public class StudentWithDetails
         {
             public Student Student { get; set; }

@@ -50,7 +50,7 @@
 
 		</div>
 
-		<!-- Admin Dropdown - exactly like submenu-item -->
+		<!-- Admin Dropdown  -->
 		<div class="admin-dropdown" tabindex="0">
 
 			<a href="javascript:void(0)">
@@ -78,7 +78,7 @@
 				</a>
 			</li>
 
-			<!-- ================= STUDENT MANAGEMENT ================= -->
+			<!--  STUDENT MANAGEMENT  -->
 			<li>
 				<a href="#">
 					<i class="fa fa-user-graduate"></i>
@@ -118,7 +118,7 @@
 				</div>
 			</li>
 
-			<!-- ================= STAFF ================= -->
+			<!--  STAFF  -->
 			<li>
 				<a href="#"><i class="fa fa-chalkboard-teacher"></i> Staff</a>
 				<div class="submenu">
@@ -127,7 +127,7 @@
 				</div>
 			</li>
 
-			<!-- ================= ACADEMIC ================= -->
+			<!--  ACADEMIC  -->
 			<li>
 				<a href="#"><i class="fa fa-book"></i> Academic</a>
 				<div class="submenu">
@@ -150,8 +150,7 @@
 					</a>
 				</div>
 			</li>
-			<!-- ================= ACCOUNTS (Fees + Salary yahan ayega) ================= -->
-			<!-- ================= ACCOUNTS (Fees + Salary yahan ayega) ================= -->
+			<!--  ACCOUNTS Fees + Salary  ================= -->
 			<li>
 				<a href="#"><i class="fa fa-wallet"></i> Accounts</a>
 				<div class="submenu">
@@ -182,7 +181,7 @@
 				</div>
 			</li>
 
-			<!-- ================= SETTINGS ================= -->
+			<!--  SETTINGS  -->
 			<li>
 				<a href="#"><i class="fa fa-cog"></i> Settings</a>
 				<div class="submenu">
@@ -211,7 +210,7 @@
 			const res = await fetch('/AdmissionInquiries/GetUnseenInquiryCount');
 			const count = await res.json();
 
-			// 🚀 ONLY update DOM if value changed
+			//  ONLY update DOM if value changed
 			if (count !== lastCount) {
 				lastCount = count;
 

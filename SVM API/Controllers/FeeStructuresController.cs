@@ -28,7 +28,7 @@ namespace SVM_API.Controllers
             return fee;
         }
 
-        // ✅ NEW API: Get classes by both Medium AND Session
+        // Get classes by both Medium AND Session
         [HttpGet("GetClassesByMediumAndSession")]
         public async Task<ActionResult<IEnumerable<object>>> GetClassesByMediumAndSession(
     [FromQuery] string medium,

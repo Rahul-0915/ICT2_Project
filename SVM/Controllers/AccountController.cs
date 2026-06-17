@@ -67,7 +67,6 @@ namespace SVM.Controllers
                     HttpContext.Session.SetString("GroupId", user.GroupId?.ToString() ?? "");
                     HttpContext.Session.SetString("Email", user.Email ?? "");
 
-                    // ✅ IMPORTANT: Agar student hai (GroupId = 3) toh student details bhi fetch karo
                     if (user.GroupId == 3)
                     {
                         await LoadStudentDataInSession(user.UserId);
@@ -121,15 +120,13 @@ namespace SVM.Controllers
             return View(model);
         }
 
-        // ✅ New method: Load student data into session
+        // Load student data into session
         private async Task LoadStudentDataInSession(int userId)
         {
             try
             {
-                // Pehle try karo session filter wale endpoint se (current session)
                 var response = await _client.GetAsync($"Students/ByUser/{userId}");
 
-                // Agar nahi mila toh bina session filter wale endpoint se try karo
                 if (!response.IsSuccessStatusCode)
                 {
                     response = await _client.GetAsync($"Students/ByUserNoSession/{userId}");
@@ -157,14 +154,12 @@ namespace SVM.Controllers
                 }
                 else
                 {
-                    // Log but don't throw - student might be new
                     Console.WriteLine($"Student data not found for UserId: {userId}");
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error loading student data: {ex.Message}");
-                // Don't throw - login should still work even if student data not found
             }
         }
 
@@ -184,7 +179,6 @@ namespace SVM.Controllers
                 return RedirectToAction("Login", "Account");
             }
 
-            // Student aur baki users
             return RedirectToAction("UserHome", "UserHome");
         }
         [HttpGet]

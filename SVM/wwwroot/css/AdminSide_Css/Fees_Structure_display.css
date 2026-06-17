@@ -1,6 +1,4 @@
-﻿/* =========================
-   PAGE
-========================= */
+﻿/* PAGE */
 
 body {
     margin: 0;
@@ -11,9 +9,7 @@ body {
     font-family: "Segoe UI", sans-serif;
 }
 
-/* =========================
-   TITLE
-========================= */
+/* TITLE */
 
 .page-title {
     font-size: 28px;
@@ -22,9 +18,7 @@ body {
     color: #1e293b;
 }
 
-/* =========================
-   SEARCH BAR
-========================= */
+/* SEARCH BAR */
 
 .top-bar {
     width: 100%;
@@ -44,9 +38,7 @@ body {
     flex: 1;
 }
 
-/* =========================
-   DROPDOWN
-========================= */
+/* DROPDOWN */
 
 .filter-dropdown {
     width: 190px;
@@ -66,9 +58,7 @@ body {
         box-shadow: 0 0 0 3px rgba(37,99,235,0.10);
     }
 
-/* =========================
-   BUTTONS
-========================= */
+/* BUTTONS */
 
 .search-btn,
 .add-btn,
@@ -170,9 +160,7 @@ body {
         background: #b91c1c;
     }
 
-/* =========================
-   MESSAGE
-========================= */
+/* MESSAGE */
 
 .search-msg,
 .no-data-msg {
@@ -198,9 +186,7 @@ body {
     margin-top: 30px;
 }
 
-/* =========================
-   TABLE CONTAINER
-========================= */
+/* TABLE CONTAINER */
 
 .table-card {
     background: white;
@@ -214,9 +200,7 @@ body {
     overflow-x: auto;
 }
 
-/* =========================
-   TABLE
-========================= */
+/* TABLE */
 
 .table {
     width: 100%;
@@ -241,9 +225,7 @@ body {
         background: #f9fafb;
     }
 
-/* =========================
-   RESPONSIVE
-========================= */
+/* RESPONSIVE */
 
 @media (max-width: 768px) {
 

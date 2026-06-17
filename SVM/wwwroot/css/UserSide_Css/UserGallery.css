@@ -1,6 +1,4 @@
-﻿/* =========================
-   GALLERY PAGE
-========================= */
+﻿/* GALLERY PAGE */
 
 .gallery-page {
     width: 90%;
@@ -8,7 +6,6 @@
     margin: 35px auto;
     background: white;
     border: 1px solid #d1d5db;
-    
     padding: 45px 20px 60px;
     box-sizing: border-box;
     box-shadow: 0 4px 18px rgba(0,0,0,0.04);

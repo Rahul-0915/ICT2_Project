@@ -10,7 +10,7 @@ function toggleMenu() {
 // PAGE LOAD
 window.onload = function () {
 
-    // 🔥 PRELOADER
+    // PRELOADER
     let preloader = document.getElementById("preloader");
 
     if (preloader) {
@@ -26,7 +26,7 @@ window.onload = function () {
         }, 1500);
     }
 
-    // 🔥 SLIDER
+    //  SLIDER
     let index = 0;
     let slides = document.getElementsByClassName("slides");
 

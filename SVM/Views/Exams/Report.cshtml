@@ -338,7 +338,6 @@
                 }
             });
 
-            // Rank All toggle
             // Rank All toggle with tie handling
             $("#showAllRankCheckbox").change(function () {
                 if ($(this).is(":checked")) {
@@ -360,7 +359,7 @@
                         rows[i].element.find(".rankCell").text(currentRank);
                     }
                 } else {
-                    // Restore original rank (only top 5 with ties preserved)
+                    // Restore original rank 
                     $("#reportBody tr").each(function () {
                         let originalRank = $(this).find(".rankCell").data("original-rank");
                         if (originalRank === undefined) {

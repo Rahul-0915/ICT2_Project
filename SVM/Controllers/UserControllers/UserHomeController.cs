@@ -37,10 +37,10 @@ namespace SVM.Controllers.UserControllers
 
                 var updates = JsonSerializer.Deserialize<List<Updates>>(data, options);
 
-                // sirf events + latest 10
+                //  events 
                 var latestEvents = updates
-					.Where(x => x.Category == "Event")
-					.OrderByDescending(x => x.CreatedAt)
+                    .Where(x => x.Category == "Event")
+                    .OrderByDescending(x => x.CreatedAt)
                     .Take(10)
                     .ToList();
 
@@ -56,9 +56,9 @@ namespace SVM.Controllers.UserControllers
             return View();
         }
 
-        // =========================
+
         // NOTICE BOARD
-        // =========================
+
 
         public async Task<IActionResult> Notice()
         {
@@ -81,9 +81,9 @@ namespace SVM.Controllers.UserControllers
             var updates = JsonSerializer.Deserialize<List<Updates>>(data, options);
 
             var notices = updates
-				.Where(x => x.Category != null &&
-			x.Category.ToLower() == "publicnotice")
-				.OrderByDescending(x => x.CreatedAt)
+                .Where(x => x.Category != null &&
+            x.Category.ToLower() == "publicnotice")
+                .OrderByDescending(x => x.CreatedAt)
                 .ToList();
 
             return View(notices);
@@ -115,7 +115,7 @@ namespace SVM.Controllers.UserControllers
 
             return Json(notices ?? new List<Updates>());
         }
-        // New method: Get latest notice date (timestamp based)
+        //  Get latest notice date
         [HttpGet]
         public async Task<IActionResult> GetLatestNoticeTimestamp()
         {
@@ -145,9 +145,8 @@ namespace SVM.Controllers.UserControllers
             });
         }
 
-        // =========================
+
         // GALLERY
-        // =========================
 
         public async Task<IActionResult> Gallery()
         {
@@ -171,8 +170,8 @@ namespace SVM.Controllers.UserControllers
 
             var gallery = updates
                 .Where(x => x.Category != null &&
-							x.Category.ToLower() == "event")
-				.OrderByDescending(x => x.CreatedAt)
+                            x.Category.ToLower() == "event")
+                .OrderByDescending(x => x.CreatedAt)
                 .ToList();
 
             return View(gallery);
@@ -203,9 +202,9 @@ namespace SVM.Controllers.UserControllers
                 PropertyNameCaseInsensitive = true
             };
 
-            // =========================
+
             // ACTIVE SESSION
-            // =========================
+
 
             var activeSession = await GetActiveSessionAsync();
 
@@ -215,9 +214,9 @@ namespace SVM.Controllers.UserControllers
             ViewBag.ActiveSession =
                 activeSession.SessionName;
 
-            // =========================
+
             // TOTAL STUDENTS
-            // =========================
+
 
             int totalStudents = 0;
 
@@ -238,9 +237,9 @@ namespace SVM.Controllers.UserControllers
 
             ViewBag.TotalStudents = totalStudents;
 
-            // =========================
+
             // TOTAL STAFF
-            // =========================
+
 
             int totalStaff = 0;
 
@@ -274,9 +273,8 @@ namespace SVM.Controllers.UserControllers
 
             ViewBag.TotalAdminStaff = totalAdminStaff;
         }
-        // =========================
         // TOPPER STUDENTS IMAGES
-        // =========================
+       
 
         private async Task LoadTopperStudentsAsync()
         {
@@ -300,11 +298,9 @@ namespace SVM.Controllers.UserControllers
 
             var topperStudents = updates?
                 .Where(x =>
-                    //x.Title != null &&
-                    //x.Title.ToLower() == "toperstudents")
                 x.Category != null &&
-				x.Category.ToLower() == "topperstudents")
-				.OrderByDescending(x => x.CreatedAt)
+                x.Category.ToLower() == "topperstudents")
+                .OrderByDescending(x => x.CreatedAt)
                 .ToList();
 
             ViewBag.TopperStudents = topperStudents;

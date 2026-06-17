@@ -1,181 +1,180 @@
 ﻿@model IEnumerable<SVM.Models.Staff>
 
 @{
-    ViewData["Title"] = "Staff List";
+	ViewData["Title"] = "Staff List";
 }
 
 <link rel="stylesheet" href="~/css/AdminSide_Css/StaffDisplay.css" asp-append-version="true" />
 <link rel="stylesheet" href="/css/AdminSide_Css/SearchBar.css" asp-append-version="true" />
 <link rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+	  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
 
 <div class="staff-page">
 
-    <!-- HEADER -->
-    <div class="page-header">
-        <h2>Staff Management</h2>
-        
-    </div>
+	<!-- HEADER -->
+	<div class="page-header">
+		<h2>Staff Management</h2>
 
-    <!-- SEARCH BAR -->
-    <!-- SEARCH BAR -->
-    <div class="top-bar">
+	</div>
 
-        <div class="left-side">
+	<!-- SEARCH BAR -->
+	<div class="top-bar">
 
-            <!-- NAME SEARCH -->
-            <input type="text"
-                   id="nameSearch"
-                   class="search-box"
-                   placeholder="Search name..." />
+		<div class="left-side">
 
-            <!-- DESIGNATION -->
-            <select id="designationFilter"
-                    class="search-box">
+			<!-- NAME SEARCH -->
+			<input type="text"
+				   id="nameSearch"
+				   class="search-box"
+				   placeholder="Search name..." />
 
-                <option value="all">All Designation</option>
-                <option value="Teacher">Teacher</option>
-                <option value="Clerk">Clerk</option>
-                <option value="Peon">Peon</option>
-                <option value="Principal">Principal</option>
+			<!-- DESIGNATION -->
+			<select id="designationFilter"
+					class="search-box">
 
-            </select>
+				<option value="all">All Designation</option>
+				<option value="Teacher">Teacher</option>
+				<option value="Clerk">Clerk</option>
+				<option value="Peon">Peon</option>
+				<option value="Principal">Principal</option>
 
-            <!-- JOINING DATE -->
-            <input type="date"
-                   id="joinDate"
-                   class="search-box" />
+			</select>
 
-            <!-- SEARCH -->
-            <button type="button"
-                    class="search-btn"
-                    onclick="filterStaff()">
-                <i class="fa-solid fa-magnifying-glass"></i>
-                Search
+			<!-- JOINING DATE -->
+			<input type="date"
+				   id="joinDate"
+				   class="search-box" />
 
-            </button>
+			<!-- SEARCH -->
+			<button type="button"
+					class="search-btn"
+					onclick="filterStaff()">
+				<i class="fa-solid fa-magnifying-glass"></i>
+				Search
+
+			</button>
+
             
+			<!-- RESET -->
+			<button type="button"
+					class="reset-btn"
+					onclick="resetFilter()">
 
-            <!-- RESET -->
-            <button type="button"
-                    class="reset-btn"
-                    onclick="resetFilter()">
+				Reset
 
-                Reset
+			</button>
 
-            </button>
+		</div>
+		<a asp-action="Create"
+		   class="add-btn">
 
-        </div>
-        <a asp-action="Create"
-           class="add-btn">
+			<i class="fa-solid fa-plus"></i>
 
-            <i class="fa-solid fa-plus"></i>
+		</a>
 
-        </a>
+	</div>
 
-    </div>
+	<!-- NO DATA -->
+	<div id="noData" class="no-data">
+		No staff found
+	</div>
 
-    <!-- NO DATA -->
-    <div id="noData" class="no-data">
-        No staff found
-    </div>
+	<!-- TABLE -->
+	<div class="table-container">
+		<table>
+			<thead>
+				<tr>
+					<th>Photo</th>
+					<th>Name</th>
+					<th>Designation</th>
+					<th>Phone</th>
+					<th>Joining Date</th>
+					<th>Action</th>
+				</tr>
+			</thead>
 
-    <!-- TABLE -->
-    <div class="table-container">
-        <table>
-            <thead>
-                <tr>
-                    <th>Photo</th>
-                    <th>Name</th>
-                    <th>Designation</th>
-                    <th>Phone</th>
-                    <th>Joining Date</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
+			<tbody>
 
-            <tbody>
+				@foreach (var item in Model)
+				{
+					<tr class="staff-row"
+						data-designation="@item.Designation"
+						data-date="@(item.JoiningDate?.ToString("yyyy-MM-dd"))">
 
-                @foreach (var item in Model)
-                {
-                    <tr class="staff-row"
-                        data-designation="@item.Designation"
-                        data-date="@(item.JoiningDate?.ToString("yyyy-MM-dd"))">
+						<td>
+							@if (!string.IsNullOrEmpty(item.StafPhoto))
+							{
+								<img src="@item.StafPhoto" />
+							}
+							else
+							{
+								<div class="no-img">📷</div>
+							}
+						</td>
 
-                        <td>
-                            @if (!string.IsNullOrEmpty(item.StafPhoto))
-                            {
-                                <img src="@item.StafPhoto" />
-                            }
-                            else
-                            {
-                                <div class="no-img">📷</div>
-                            }
-                        </td>
+						<td>@item.FirstName @item.LastName</td>
+						<td>@item.Designation</td>
+						<td>@item.Phone</td>
+						<td>@item.JoiningDate?.ToString("dd-MM-yyyy")</td>
 
-                        <td>@item.FirstName @item.LastName</td>
-                        <td>@item.Designation</td>
-                        <td>@item.Phone</td>
-                        <td>@item.JoiningDate?.ToString("dd-MM-yyyy")</td>
+						<td class="actions">
+							<a asp-action="Edit" class="edit" asp-route-id="@item.StaffId">Edit</a>
+							<a asp-action="Details" class="details" asp-route-id="@item.StaffId">View</a>
+							<a asp-action="Delete" class="delete" asp-route-id="@item.StaffId">Delete</a>
+						</td>
 
-                        <td class="actions">
-                            <a asp-action="Edit" class="edit" asp-route-id="@item.StaffId">Edit</a>
-                            <a asp-action="Details" class="details"  asp-route-id="@item.StaffId">View</a>
-                            <a asp-action="Delete" class="delete" asp-route-id="@item.StaffId">Delete</a>
-                        </td>
+					</tr>
+				}
 
-                    </tr>
-                }
-
-            </tbody>
-        </table>
-    </div>
+			</tbody>
+		</table>
+	</div>
 </div>
 <script>
 
-    function filterStaff() {
+	function filterStaff() {
 
-        let name = document.getElementById("nameSearch").value.toLowerCase();
-        let desig = document.getElementById("designationFilter").value.toLowerCase();
-        let date = document.getElementById("joinDate").value;
+		let name = document.getElementById("nameSearch").value.toLowerCase();
+		let desig = document.getElementById("designationFilter").value.toLowerCase();
+		let date = document.getElementById("joinDate").value;
 
-        let rows = document.querySelectorAll(".staff-row");
+		let rows = document.querySelectorAll(".staff-row");
 
-        let visible = 0;
+		let visible = 0;
 
-        rows.forEach(r => {
+		rows.forEach(r => {
 
-            let rowName = r.innerText.toLowerCase();
-            let rowDesig = r.dataset.designation.toLowerCase();
-            let rowDate = r.dataset.date;
+			let rowName = r.innerText.toLowerCase();
+			let rowDesig = r.dataset.designation.toLowerCase();
+			let rowDate = r.dataset.date;
 
-            let matchName = name === "" || rowName.includes(name);
-            let matchDesig = desig === "all" || rowDesig === desig;
-            let matchDate = !date || rowDate === date;
+			let matchName = name === "" || rowName.includes(name);
+			let matchDesig = desig === "all" || rowDesig === desig;
+			let matchDate = !date || rowDate === date;
 
-            if (matchName && matchDesig && matchDate) {
-                r.style.display = "";
-                visible++;
-            } else {
-                r.style.display = "none";
-            }
+			if (matchName && matchDesig && matchDate) {
+				r.style.display = "";
+				visible++;
+			} else {
+				r.style.display = "none";
+			}
 
-        });
+		});
 
-        document.getElementById("noData").style.display =
-            visible === 0 ? "block" : "none";
-    }
+		document.getElementById("noData").style.display =
+			visible === 0 ? "block" : "none";
+	}
 
-    function resetFilter() {
+	function resetFilter() {
 
-        document.getElementById("nameSearch").value = "";
-        document.getElementById("designationFilter").value = "all";
-        document.getElementById("joinDate").value = "";
+		document.getElementById("nameSearch").value = "";
+		document.getElementById("designationFilter").value = "all";
+		document.getElementById("joinDate").value = "";
 
-        document.querySelectorAll(".staff-row")
-            .forEach(r => r.style.display = "");
+		document.querySelectorAll(".staff-row")
+			.forEach(r => r.style.display = "");
 
-        document.getElementById("noData").style.display = "none";
-    }
+		document.getElementById("noData").style.display = "none";
+	}
 
 </script>

@@ -15,9 +15,7 @@ namespace SVM.Controllers
             _client.BaseAddress = new Uri("https://localhost:7191/api/");
         }
 
-        /* =========================
-           USER SIDE FORM
-        ========================= */
+        /*  USER SIDE FORM  */
 
         // GET
         public IActionResult Create()
@@ -120,9 +118,7 @@ namespace SVM.Controllers
             
         }
 
-        /* =========================
-           ADMIN PANEL
-        ========================= */
+        /*  ADMIN PANEL */
 
         // LIST
         [LoginCheckFilter]
@@ -160,9 +156,7 @@ namespace SVM.Controllers
 			return View(inquiryList);
         }
 
-        /* =========================
-           DETAILS
-        ========================= */
+        /*  DETAILS */
         [LoginCheckFilter]
         public async Task<IActionResult> Details(int id)
         {
@@ -206,9 +200,7 @@ namespace SVM.Controllers
             return View(inquiry);
         }
 
-        /* =========================
-           ATTEND INQUIRY
-        ========================= */
+        /* ATTEND INQUIRY */
         [LoginCheckFilter]
         [HttpPost]
         public async Task<IActionResult> Attend(
@@ -257,9 +249,7 @@ namespace SVM.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        /* =========================
-           DELETE
-        ========================= */
+        /*  DELETE */
         [LoginCheckFilter]
         [HttpPost]
         public async Task<IActionResult> Delete(int id)
@@ -273,9 +263,7 @@ namespace SVM.Controllers
             return RedirectToAction(nameof(Index));
         }
 
-        /* =========================
-           NOTIFICATION COUNT
-        ========================= */
+        /* NOTIFICATION COUNT */
         [LoginCheckFilter]
         [HttpGet]
 		public async Task<JsonResult> GetUnseenInquiryCount()

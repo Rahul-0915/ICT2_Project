@@ -49,7 +49,7 @@ namespace SVM_API.Controllers
             existing.Email = user.Email;
             existing.FullName = user.FullName;
             existing.GroupId = user.GroupId;
-            // existing.IsActive = user.IsActive;   // ❌ REMOVE – no IsActive in User model
+            // existing.IsActive = user.IsActive;   // REMOVE – no IsActive in User model
             existing.ProfilePhoto = user.ProfilePhoto;
 
             // Hash password only if provided
@@ -151,7 +151,7 @@ namespace SVM_API.Controllers
                 user.Username,
                 user.Email,
                 user.FullName,
-                user.GroupId   // ✅ IMPORTANT
+                user.GroupId
             });
 
         }
@@ -185,7 +185,7 @@ namespace SVM_API.Controllers
             }
             catch (Exception ex)
             {
-                // Log error (optional)
+                // Log error 
                 return StatusCode(500, new { error = "Failed to send email. Please try again later." });
             }
         }

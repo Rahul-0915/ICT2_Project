@@ -50,7 +50,7 @@ namespace SVM_API.Controllers
 			if (id != @class.ClassId)
 				return BadRequest();
 
-			// ✅ Check for duplicate in the SAME session (excluding current record)
+			//  Check for duplicate in the SAME session (excluding current record)
 			bool duplicateExists = await _context.Classes.AnyAsync(c =>
 				c.ClassName == @class.ClassName &&
 				c.Medium == @class.Medium &&
@@ -83,7 +83,7 @@ namespace SVM_API.Controllers
 		[HttpPost]
 		public async Task<ActionResult<Class>> PostClass(Class @class)
 		{
-			// ✅ Check for duplicate in the SAME session (for new record)
+			//  Check for duplicate in the SAME session (for new record)
 			bool duplicateExists = await _context.Classes.AnyAsync(c =>
 				c.ClassName == @class.ClassName &&
 				c.Medium == @class.Medium &&

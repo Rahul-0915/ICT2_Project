@@ -217,7 +217,7 @@ body {
     margin-top: 20px;
 }
 
-/* ================= PRINT CSS ================= */
+/*  PRINT CSS  */
 @page {
     size: A4 portrait;
     margin: 10mm;

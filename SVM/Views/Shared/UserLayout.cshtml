@@ -30,7 +30,7 @@
 	</head>
 	<body>
 
-		<!-- 🔥 PRELOADER (ONLY HOME PAGE) -->
+		<!--  PRELOADER (ONLY HOME PAGE) -->
 		@if (ViewBag.ShowPreloader == true)
 		{
 			<div id="preloader">
@@ -48,7 +48,7 @@
 			</div>
 		}
 
-		<!-- 🔹 TOPBAR - LOGO ADDED 🔹 -->
+		<!--  TOPBAR - LOGO ADDED  -->
 		<div class="topbar">
 			<div class="logo">
 				<img src="@Url.Content("~/images/logo2_hd.png")" alt="logo" style="width: 60px; height: 60px; object-fit: contain;">
@@ -65,7 +65,7 @@
 			</div>
 		</div>
 
-		<!-- 🔹 NAVBAR -->
+		<!--  NAVBAR -->
 		<div class="navbar">
 			<ul class="menu" id="menu">
 				<li><a asp-controller="UserHome" asp-action="UserHome">Home</a></li>
@@ -115,10 +115,10 @@
       
 		</div>
 
-		<!-- 🔥 PAGE CONTENT -->
+		<!--  PAGE CONTENT -->
 		@RenderBody()
 
-		<!-- 🔹 FOOTER -->
+		<!--  FOOTER -->
 		<footer class="footer">
 			<div class="footer-container">
 				<div class="footer-col">
@@ -205,7 +205,7 @@
 				});
 			}
 
-			// MARK AS READ - jab notice page open kare
+			// MARK AS READ 
 			function markNoticesAsRead() {
 				$.get('/UserHome/GetPublicNotices', function (notices) {
 					if (notices && notices.length > 0) {
@@ -228,19 +228,17 @@
 			// Initial badge update
 			updateNoticeBadge();
 
-			// Agar Notice page pe ho toh mark as read
 			if (window.location.pathname.toLowerCase().includes('notice')) {
 				markNoticesAsRead();
 			}
 
-			// Notice link click pe badge clear
+			
 			$('a[href*="Notice"]').on('click', function () {
 				setTimeout(function () {
 					markNoticesAsRead();
 				}, 500);
 			});
 
-			// Har 1 minute me badge refresh
 			setInterval(updateNoticeBadge, 60000);
 		});
 

@@ -46,7 +46,6 @@
 			<h2>@ViewBag.TotalStaff</h2>
 			Staff
 		</div>
-		<!-- baki panels jaisa hai waise rakh (Fees, Expenses, Attendance, Exams) -->
 		<div class="panel" onclick="parent.frames['mainFrame'].location.href='@Url.Action("FeesPayment", "Admin")'"
 			 style="cursor:pointer;">
 			<div class="iconBox c3"><i class="fa fa-money-bill"></i></div>
@@ -162,7 +161,7 @@
 			const res = await fetch('/AdmissionInquiries/GetUnseenInquiryCount');
 			const count = await res.json();
 
-			// 🚀 ONLY update DOM if value changed
+			//  ONLY update DOM if value changed
 			if (count !== lastCount) {
 				lastCount = count;
 

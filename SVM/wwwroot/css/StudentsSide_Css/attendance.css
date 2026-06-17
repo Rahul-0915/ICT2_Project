@@ -6,7 +6,7 @@
     margin: 10px;
 }
 
-/* HEADER SIMPLE (match admin style) */
+/* HEADER SIMPLE */
 .monthly-attendance-header {
     background-color:lavender;
     border-radius: 5px;
@@ -170,9 +170,7 @@ td {
     font-weight: 600;
 }
 
-/* =============================================
-   MOBILE RESPONSIVE - COMPLETELY FIXED
-   ============================================= */
+/*  MOBILE RESPONSIVE - COMPLETELY FIXED */
 
 /* TABLET & MOBILE (max 768px) */
 @media(max-width:768px) {

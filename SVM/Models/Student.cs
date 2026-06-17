@@ -13,10 +13,10 @@ public partial class Student
     [Display(Name = "Added By")]
     public int? UserId { get; set; }
 
-    // Admission Number - Auto generated (no need for Required attribute)
+    // Admission Number - Auto generated 
   
     [Display(Name = "Admission Number")]
-    public string? AdmissionNo { get; set; }  // Removed Required - will be auto-generated
+    public string? AdmissionNo { get; set; } 
 
     [Required(ErrorMessage = "Admission Date is required")]
     [DataType(DataType.Date)]
@@ -26,7 +26,7 @@ public partial class Student
     // Roll Number - Will be auto-incremented per class/section
     [Range(1, 9999, ErrorMessage = "Roll Number must be between 1 and 9999")]
     [Display(Name = "Roll Number")]
-    public int? RollNo { get; set; }  // Removed Required - will be auto-generated
+    public int? RollNo { get; set; } 
 
     [Required(ErrorMessage = "First Name is required")]
     [StringLength(50, MinimumLength = 2, ErrorMessage = "First Name must be between 2 and 50 characters")]

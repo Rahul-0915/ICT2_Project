@@ -1,24 +1,19 @@
-﻿/* =========================
-   NOTICE PAGE
-========================= */
+﻿/* NOTICE PAGE */
 
 body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
-    
     color: #333;
     overflow-x: hidden;
     font-size: 15px;
     line-height: 1.5;
 }
-.notice-page {
 
+.notice-page {
     width: 90%;
     max-width: 1250px;
-    margin:-40px auto;
-    
+    margin: -40px auto;
     background: #fff;
-    
     padding: 45px 0 70px;
     box-sizing: border-box;
     border-radius: 18px;
@@ -62,8 +57,8 @@ body {
 /* CARD */
 
 .notice-card {
-    background-color:white;
-    border-radius:9px;
+    background-color: white;
+    border-radius: 9px;
     padding: 16px;
     display: flex;
     align-items: flex-start;
@@ -106,7 +101,7 @@ body {
 /* CONTENT */
 
 .notice-content {
-    text-align:left;
+    text-align: left;
     flex: 1;
     padding: 16px 18px;
     min-width: 0;
@@ -142,7 +137,6 @@ body {
 
 .notice-description {
     color: #555;
-    
     font-size: 14px;
     line-height: 1.8;
     margin: 0;
@@ -163,9 +157,7 @@ body {
     box-shadow: 0 5px 20px rgba(0,0,0,0.05);
 }
 
-/* =========================
-   MOBILE
-========================= */
+/*  MOBILE */
 
 @media(max-width:768px) {
 
@@ -214,12 +206,10 @@ body {
 
 .notice-file {
     padding: 15px 6px;
-    
     text-align: center;
 }
 
 .view-file-btn {
-    
     display: inline-block;
     padding: 10px 8px;
     background: #83a7da;

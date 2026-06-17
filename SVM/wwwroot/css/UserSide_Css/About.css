@@ -1,4 +1,4 @@
-﻿/* ===== GLOBAL ===== */
+﻿/*  GLOBAL  */
 body {
     margin: 0;
     font-family: 'Poppins', sans-serif;
@@ -9,7 +9,7 @@ body {
     line-height: 1.5;
 }
 
-/* ===== HERO ===== */
+/*  HERO  */
 .hero {
     height: 720px;
     background-image: url('/images/AboutSchoolModelPic.png');
@@ -47,7 +47,7 @@ body {
         margin-top: 10px;
     }
 
-/* ===== SECTION ===== */
+/*  SECTION  */
 .section {
     padding: 60px 20px;
     background: #f9f9f9;
@@ -101,7 +101,7 @@ body {
         bottom: -6px;
     }
 
-/* ===== PROFILE ===== */
+/*  PROFILE  */
 .profile {
     display: flex;
     gap: 35px;
@@ -148,7 +148,7 @@ body {
     font-size: 14px;
 }
 
-/* ===== PRINCIPAL CARDS ===== */
+/*  PRINCIPAL CARDS  */
 .multi-profile {
     display: flex;
     gap: 22px;
@@ -200,7 +200,7 @@ body {
     color: gray;
 }
 
-/* ===== STAFF ===== */
+/*  STAFF  */
 .staff-box {
     display: flex;
     gap: 35px;
@@ -222,7 +222,7 @@ body {
         line-height: 1.7;
     }
 
-/* ===== ACHIEVEMENTS ===== */
+/*  ACHIEVEMENTS  */
 .achievements {
     display: flex;
     gap: 18px;
@@ -265,7 +265,7 @@ body {
         background: linear-gradient(135deg, #f7971e, #ffd200);
     }
 
-/* ===== MOBILE ===== */
+/*  MOBILE  */
 @media(max-width:768px) {
 
     body {
